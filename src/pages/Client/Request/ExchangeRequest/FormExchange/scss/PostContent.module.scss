@@ -1,0 +1,151 @@
+@import '../../../../../../assets/scss/variables.scss';
+
+.contentWrapper {
+  :global {
+    .ant-input {
+      padding: 4px 0;
+    }
+  }
+}
+
+.titleWrap {
+  margin: 6px 0;
+  :global(.ant-input) {
+    resize: none;
+    font-size: 16px;
+    font-weight: 500;
+    &::placeholder {
+      color: $colorTextPlaceholder;
+    }
+  }
+}
+
+.postContent {
+  :global(.ant-input) {
+    font-size: 14px;
+    resize: none;
+    margin-bottom: 10px;
+  }
+}
+
+.uploadedImages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+}
+
+.emojiPickerContainer {
+  margin-bottom: 16px;
+}
+
+.uploadedImages {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+
+  .imagePreviewContainer {
+    position: relative;
+
+    .previewImage {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: all 0.3s;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .removeImageButton {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: $colorMain;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+.uploadedFiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.filePreviewContainer {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f0f0f0;
+
+  &:hover .removeFileButton {
+    opacity: 1;
+  }
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.videoWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $black;
+}
+
+.previewVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.removeFileButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: white;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}

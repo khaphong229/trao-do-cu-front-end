@@ -1,0 +1,56 @@
+@import '../../../../../../../assets/scss/variables.scss';
+
+.TopBarWrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contentWelcome {
+  text-align: left;
+  font-size: 14px;
+  color: $colorWhite;
+}
+.TopBarLeft {
+  text-align: left;
+  font-size: 14px;
+  color: $textColor;
+}
+.TopBarRight {
+  display: flex;
+  text-align: right;
+  font-size: 10px;
+}
+.IconColor {
+  color: $textColor;
+}
+
+.button {
+  color: $colorWhite;
+  &:hover {
+    color: $colorHover !important;
+  }
+}
+.topBarContent {
+  display: flex;
+  text-align: right;
+  font-size: 10px;
+}
+
+@media screen and (max-width: 576px) {
+  .contentWelcome {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 431px) {
+  .button {
+    padding: 4px;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .button {
+    padding: 4px;
+  }
+}

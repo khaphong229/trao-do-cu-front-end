@@ -1,0 +1,220 @@
+import React, { useState, useEffect } from 'react'
+import { Button, Row, Col, Image, Typography, Divider, Avatar } from 'antd'
+import { ClockCircleOutlined, EnvironmentOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
+import styles from './../scss/PostInfoDetail.module.scss'
+import CreatePostModal from '../../CreatePost/CreatePost'
+import withAuth from 'hooks/useAuth'
+import { useDispatch, useSelector } from 'react-redux'
+import dayjs from 'dayjs'
+import avt from 'assets/images/logo/avatar.jpg'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/vi'
+import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
+import ContactInfoModal from 'pages/Client/Request/GiftRequest/components/ContactInfoModal'
+import { GiftRequestConfirmModal } from 'pages/Client/Request/GiftRequest/components/GiftRequestConfirmModal'
+import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange/FormExchange'
+import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
+import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
+import { checkRequestedGift } from 'features/client/request/giftRequest/giftRequestThunks'
+import { checkRequestedExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
+
+const { Title, Text } = Typography
+
+dayjs.extend(relativeTime)
+dayjs.locale('vi')
+
+const PostInfoDetail = () => {
+  const { selectedPost } = useSelector(state => state.post)
+  const { user } = useSelector(state => state.auth)
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [mainImage, setMainImage] = useState(null)
+  const [isRequested, setIsRequested] = useState(false)
+  const [isCheckingStatus, setIsCheckingStatus] = useState(true)
+  const thumbnails = Array.isArray(selectedPost?.image_url) ? selectedPost.image_url : []
+  const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
+  const { isExchangeFormModalVisible } = useSelector(state => state.exchangeRequest)
+  const AuthButton = withAuth(Button)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const checkRequestStatus = async () => {
+      if (!selectedPost?._id || !user?._id) {
+        setIsCheckingStatus(false)
+        return
+      }
+
+      try {
+        const checkParams = {
+          post_id: selectedPost._id,
+          user_req_id: user._id
+        }
+
+        let requestStatus = false
+        if (selectedPost.type === 'gift') {
+          const response = await dispatch(checkRequestedGift(checkParams))
+          requestStatus = response.payload?.data?.total > 0
+        } else {
+          const response = await dispatch(checkRequestedExchange(checkParams))
+          requestStatus = response.payload?.data?.total > 0
+        }
+
+        setIsRequested(requestStatus)
+      } catch (error) {
+        console.error('Error checking request status:', error)
+      } finally {
+        setIsCheckingStatus(false)
+      }
+    }
+
+    checkRequestStatus()
+  }, [selectedPost, user, dispatch])
+
+  if (!selectedPost) {
+    return <div>Đang tải...</div>
+  }
+
+  const handleRequest = item => {
+    if (!isRequested) {
+      handleGiftRequest(item, item.type)
+    }
+  }
+
+  const renderActionButton = () => {
+    if (!user) {
+      return (
+        <AuthButton
+          onClick={() => handleRequest(selectedPost)}
+          type="primary"
+          size="large"
+          className={styles.ButtonChat}
+        >
+          {selectedPost.type === 'gift' ? 'Nhận' : 'Đổi'}
+        </AuthButton>
+      )
+    }
+
+    if (isCheckingStatus) {
+      return (
+        <Button type="primary" size="large" className={styles.ButtonChat} loading>
+          Đang kiểm tra...
+        </Button>
+      )
+    }
+
+    if (isRequested) {
+      return (
+        <Button type="primary" size="large" className={styles.ButtonChat} disabled>
+          Đã yêu cầu
+        </Button>
+      )
+    }
+
+    return (
+      <AuthButton onClick={() => handleRequest(selectedPost)} type="primary" size="large" className={styles.ButtonChat}>
+        {selectedPost.type === 'gift' ? 'Nhận' : 'Đổi'}
+      </AuthButton>
+    )
+  }
+
+  return (
+    <div className={styles.ContentWrap}>
+      <Row gutter={32}>
+        <Col xs={24} md={12}>
+          <Image
+            src={`${URL_SERVER_IMAGE}${thumbnails[0] || '/placeholder-image.png'}`}
+            alt="post main"
+            width="100%"
+            style={{ cursor: 'pointer' }}
+          />
+          <Row gutter={16} style={{ marginTop: '20px' }}>
+            {thumbnails.map((imageUrl, index) => (
+              <Col key={index} span={6}>
+                <Image
+                  src={`${URL_SERVER_IMAGE}${imageUrl}`}
+                  alt={`image ${index + 1}`}
+                  width="100%"
+                  style={{
+                    border: mainImage === imageUrl ? '2px solid #1890ff' : '',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => setMainImage(imageUrl)}
+                />
+              </Col>
+            ))}
+          </Row>
+        </Col>
+
+        <Col xs={24} md={12}>
+          <Title level={4} className={styles.postTitle}>
+            {selectedPost.title || 'Không có tiêu đề'}
+          </Title>
+          <Title level={3} className={styles.statusText}>
+            {selectedPost.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
+          </Title>
+          <div>
+            <Text className={styles.textAdress}>
+              <EnvironmentOutlined />
+              {selectedPost?.specificLocation
+                ? selectedPost.specificLocation.startsWith(',')
+                  ? selectedPost.specificLocation.slice(1)
+                  : selectedPost.specificLocation
+                : 'Không rõ địa điểm'}
+            </Text>
+            <Text className={styles.textAdress}>
+              <ClockCircleOutlined />{' '}
+              {dayjs(selectedPost?.created_at).isValid()
+                ? dayjs(selectedPost?.created_at).fromNow()
+                : 'Không rõ thời gian'}
+            </Text>
+          </div>
+
+          <Row className={styles.rowGive} gutter={15}>
+            <Col span={12}>
+              <Button type="default" size="large" className={styles.ButtonNumber}>
+                Thông tin liên hệ
+              </Button>
+            </Col>
+            <Col span={12}>{renderActionButton()}</Col>
+          </Row>
+
+          <Divider />
+          <div className={styles.SellerInfo}>
+            <div className={styles.InfoName}>
+              <Avatar
+                className={styles.avtUser}
+                src={selectedPost.user_id?.avatar ? `${URL_SERVER_IMAGE}${selectedPost.user_id.avatar}` : avt}
+                icon={<UserOutlined />}
+              />
+              <div>
+                <Text className={styles.TextName}>{selectedPost?.user_id?.name || 'Người dùng'}</Text>
+                <Text className={styles.TextStatus}>
+                  <span className={styles.Status} />
+                  {`Đã tham gia ${
+                    dayjs(selectedPost?.user_id?.created_at).isValid()
+                      ? dayjs(selectedPost?.user_id?.created_at).fromNow()
+                      : 'Không rõ thời gian'
+                  }`}
+                </Text>
+              </div>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <StarOutlined className={styles.StartIcon} />
+              <Text className={styles.Evaluate}>0 đánh giá</Text>
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      <ContactInfoModal onSubmit={handleInfoSubmit} />
+      <GiftRequestConfirmModal onConfirm={handleRequestConfirm} />
+      <FormExchangeModal
+        visible={isExchangeFormModalVisible}
+        onClose={() => dispatch(setExchangeFormModalVisible(false))}
+      />
+      <CreatePostModal visible={isModalVisible} onClose={() => setIsModalVisible(false)} />
+    </div>
+  )
+}
+
+export default PostInfoDetail

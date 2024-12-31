@@ -1,0 +1,125 @@
+import React, { useState, useEffect } from 'react'
+import { Select, Input, Button, Space } from 'antd'
+import { dataVN } from 'constants/dataVN'
+import './AddressSelection.scss'
+import { FormOutlined } from '@ant-design/icons'
+
+export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, onEdit }) => {
+  const [selectedProvince, setSelectedProvince] = useState(null)
+  const [selectedDistrict, setSelectedDistrict] = useState(null)
+  const [selectedWard, setSelectedWard] = useState(null)
+  const [specificAddress, setSpecificAddress] = useState('')
+
+  const provinces = dataVN.map(province => ({
+    code: province.Code,
+    name: province.FullName
+  }))
+
+  const districts = selectedProvince
+    ? dataVN
+        .find(p => p.Code === selectedProvince)
+        ?.District.map(district => ({
+          code: district.Code,
+          name: district.FullName
+        })) || []
+    : []
+
+  const wards = selectedDistrict
+    ? dataVN
+        .find(p => p.Code === selectedProvince)
+        ?.District.find(d => d.Code === selectedDistrict)
+        ?.Ward.map(ward => ({
+          code: ward.Code,
+          name: ward.FullName
+        })) || []
+    : []
+
+  useEffect(() => {
+    if (selectedProvince && selectedDistrict && selectedWard) {
+      const provinceName = provinces.find(p => p.code === selectedProvince)?.name
+      const districtName = districts.find(d => d.code === selectedDistrict)?.name
+      const wardName = wards.find(w => w.code === selectedWard)?.name
+
+      const fullAddress = [specificAddress, wardName, districtName, provinceName].filter(Boolean).join(', ')
+
+      onAddressChange(fullAddress)
+    }
+  }, [selectedProvince, selectedDistrict, selectedWard, specificAddress, districts, onAddressChange, provinces, wards])
+
+  useEffect(() => {
+    if (initialAddress && !isEditing) {
+      onAddressChange(initialAddress)
+    }
+  }, [initialAddress, isEditing, onAddressChange])
+
+  if (!isEditing && initialAddress) {
+    return (
+      <div className="address-display">
+        <Space className="address-display-content">
+          <span>{initialAddress}</span>
+          <Button type="link" onClick={onEdit} icon={<FormOutlined />} />
+        </Space>
+      </div>
+    )
+  }
+
+  return (
+    <Space direction="vertical" className="address-form" size="middle">
+      <Select
+        className="address-select"
+        placeholder="Chọn Tỉnh/Thành phố"
+        value={selectedProvince}
+        onChange={value => {
+          setSelectedProvince(value)
+          setSelectedDistrict(null)
+          setSelectedWard(null)
+        }}
+      >
+        {provinces.map(province => (
+          <Select.Option key={province.code} value={province.code}>
+            {province.name}
+          </Select.Option>
+        ))}
+      </Select>
+
+      <Select
+        className="address-select"
+        placeholder="Chọn Quận/Huyện"
+        value={selectedDistrict}
+        disabled={!selectedProvince}
+        onChange={value => {
+          setSelectedDistrict(value)
+          setSelectedWard(null)
+        }}
+      >
+        {districts.map(district => (
+          <Select.Option key={district.code} value={district.code}>
+            {district.name}
+          </Select.Option>
+        ))}
+      </Select>
+
+      <Select
+        className="address-select"
+        placeholder="Chọn Phường/Xã"
+        value={selectedWard}
+        disabled={!selectedDistrict}
+        onChange={value => setSelectedWard(value)}
+      >
+        {wards.map(ward => (
+          <Select.Option key={ward.code} value={ward.code}>
+            {ward.name}
+          </Select.Option>
+        ))}
+      </Select>
+
+      <Input
+        placeholder="Nhập địa chỉ cụ thể (VD: Số 252, Minh Khai)"
+        value={specificAddress}
+        onChange={e => setSpecificAddress(e.target.value)}
+      />
+    </Space>
+  )
+}
+
+export default AddressSelection

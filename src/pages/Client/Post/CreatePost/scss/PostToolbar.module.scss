@@ -1,0 +1,85 @@
+@import '../../../../../assets/scss/variables.scss';
+
+.postTools {
+  border: 1px solid $colorBorderBox;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 16px 0;
+
+  .toolsText {
+    color: $colorTextPlaceholder;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .toolsButtons {
+    display: flex;
+    gap: 8px;
+
+    :global(.ant-btn) {
+      padding: 8px;
+      border-radius: 50%;
+
+      &:hover {
+        background: #f0f2f5;
+      }
+
+      :global(.anticon) {
+        font-size: 20px;
+        color: #65676b;
+
+        &:hover {
+          color: $colorMain;
+        }
+      }
+    }
+  }
+}
+
+.iconPicture {
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #4caf50 !important;
+  }
+}
+
+.iconSmile {
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #fbbd02 !important;
+  }
+}
+
+.iconEnvironment {
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #40a9ff !important;
+  }
+}
+
+.iconTags {
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: $colorRed !important;
+  }
+}
+
+.iconEllipsis {
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #d9d9d9;
+  }
+}
+
+.customIcon {
+  font-size: 22px;
+  transition: color 0.3s ease;
+  &:hover {
+    color: #40a9ff;
+  }
+}

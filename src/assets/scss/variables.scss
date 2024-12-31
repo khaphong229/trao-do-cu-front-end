@@ -1,0 +1,56 @@
+//main
+$borderBottom: rgb(0, 0, 0, 0.05);
+$subTextColor: rgb(163, 174, 208);
+$textColor: rgb(255, 255, 255);
+$colorHover: rgb(244, 247, 254);
+$colorButton: #ff8800;
+// $colorMain: #7b920a;
+// $colorMain: #8dc63f;
+$colorMain: #23c686;
+$colorWhite: #ffffff;
+$colorRed: red;
+$textColor2: #333;
+$colorTextPlaceholder: #65676b;
+$colorBorderBox: #e8e8e8;
+
+//internet
+$black: #010101;
+$loafer: #fbfcf6;
+$mountain-meadow: #23c686;
+$cello: #1d3853;
+$deco: #c5d893;
+$juniper: #7a9295;
+$matrix: #ac5b4d;
+$yellow-orange: #fc9d45;
+$anakiwa: #9fcdfd;
+$japanese-laurel: #099d02;
+
+//home
+$colorBg: rgb(244, 244, 244);
+
+//footer
+$colorBgFooter: #1c2431;
+$colorTextFooter: #666666;
+
+// Colors
+$primary-color: #00b96b;
+$text-color: #222222;
+$border-color: #e8e8e8;
+$background-color: #f4f4f4;
+
+// Breakpoints
+$mobile: 576px;
+$tablet: 768px;
+$desktop: 1024px;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+}
+
+@mixin container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}

@@ -1,0 +1,149 @@
+@import '../../../../../assets/scss/variables.scss';
+
+.contentWrap {
+  background: $colorWhite;
+  padding: 10px;
+}
+
+.topContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Tabs {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  justify-content: space-between;
+}
+
+.Card {
+  margin: 0;
+  border-radius: 0;
+  border: 1px solid #f0f0f0;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+
+  :global {
+    .ant-card-cover {
+      width: 40%;
+      flex-shrink: 0;
+
+      > * {
+        border-radius: 0;
+      }
+    }
+
+    .ant-card-body {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px;
+    }
+  }
+
+  &:hover {
+    z-index: 1;
+  }
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .heartIcon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 10; // Đặt icon nằm trên tất cả các thành phần khác
+    font-size: 24px;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+      color 0.3s ease,
+      background-color 0.3s ease;
+
+    &:hover {
+      color: red;
+    }
+  }
+}
+
+.Container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.TimeRole {
+  color: $subTextColor;
+  font-size: 12px;
+  margin-top: 6px;
+  margin-bottom: 30px;
+}
+
+.User {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.TextUser {
+  margin-left: 8px;
+}
+
+.ButtonChat {
+  width: 100px;
+  text-align: center;
+}
+
+.pagination {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.status {
+  font-weight: 600;
+  color: $colorRed;
+}
+
+.noPosts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px; // Adjust as needed for your layout
+  text-align: center;
+
+  &Image {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #f0f0f0;
+  }
+
+  &Text {
+    font-size: 18px;
+    color: #888;
+    text-align: center;
+  }
+}

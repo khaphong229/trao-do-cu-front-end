@@ -1,0 +1,44 @@
+@import '../../../../../../assets/scss/variables.scss';
+.userInfo {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+
+  .userDetails {
+    margin-left: 12px;
+
+    .username {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .privacyBtn {
+      display: flex;
+      align-items: center;
+      border-radius: 6px;
+      border: none;
+      padding: 2px 8px;
+
+      :global(.anticon) {
+        font-size: 12px;
+        margin-left: 4px;
+      }
+    }
+
+    :global {
+      .ant-radio-group {
+        margin-left: 0 !important;
+      }
+    }
+  }
+}
+
+.infoMore {
+  margin-bottom: 4px;
+  color: $colorTextFooter;
+  font-size: 12px;
+  .cityText {
+  }
+  .categoryText {
+  }
+}

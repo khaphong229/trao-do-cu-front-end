@@ -1,0 +1,100 @@
+@import '../../../../../assets/scss/variables.scss';
+.LayoutWrap {
+  background: #f1f3f5;
+}
+.ContentWrap {
+  padding: 10px;
+  background: $textColor;
+}
+
+.postTitle {
+  margin: 10px 0;
+}
+
+.categoryText {
+  display: block;
+  color: $subTextColor;
+  font-size: 14px;
+}
+.statusText {
+  color: $colorRed !important;
+  margin-top: 10px !important;
+}
+.textAdress {
+  display: block;
+  color: $textColor2;
+  margin-bottom: 5px;
+}
+.rowGive {
+  margin: 20px 0;
+  .ButtonNumber {
+    font-weight: bold;
+    width: 100%;
+  }
+  .ButtonChat {
+    border-radius: 8px;
+    font-weight: bold;
+    width: 100%;
+  }
+}
+
+.SellerInfo {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  max-width: 600px;
+}
+.InfoName {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.Avartar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ffd700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: $textColor;
+  margin-right: 10px;
+}
+.TextName {
+  display: block;
+  font-weight: bold;
+  font-size: 14px;
+}
+.TextStatus {
+  display: block;
+  color: $subTextColor;
+  font-size: 12px;
+}
+.Status {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #999;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.StartIcon {
+  font-size: 20px;
+  color: #ccc;
+}
+.Evaluate {
+  display: block;
+  color: #999;
+  font-size: 12px;
+}
+.ButtonQuestion {
+  background: #f2f2f2;
+  border-color: #e0e0e0;
+  border-radius: 16px;
+}

@@ -1,0 +1,291 @@
+$gray-50: #f9fafb;
+$gray-muted: #6b7280;
+$blue-primary: #3b82f6;
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #f8f9fa;
+$border-radius: 8px;
+
+@import '../../../../../assets/scss/variables.scss';
+
+.profile-page {
+  min-height: auto;
+  background-color: $colorWhite;
+
+  .container {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 10px;
+  }
+
+  .card {
+    background-color: $colorWhite;
+    border-radius: 8px;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    margin-bottom: 14px;
+
+    .profile-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .avatar {
+        width: 120px;
+        height: 120px;
+        border: 4px solid $colorWhite;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-right: 24px;
+
+        @media (max-width: 768px) {
+          margin-right: 0;
+          margin-bottom: 1rem;
+        }
+      }
+
+      .profile-info {
+        flex: 1;
+        text-align: left;
+
+        @media (max-width: 768px) {
+          text-align: center;
+          margin-bottom: 10px;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin: 0;
+
+          @media (max-width: 480px) {
+            font-size: 1.25rem;
+          }
+        }
+
+        p {
+          color: $gray-muted;
+          margin: 0.5rem 0;
+        }
+
+        .followers {
+          margin-top: 0.5rem;
+          color: $gray-muted;
+          font-size: 0.875rem;
+
+          strong {
+            color: #000;
+          }
+
+          @media (max-width: 480px) {
+            font-size: 0.75rem;
+          }
+        }
+      }
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        @media (max-width: 768px) {
+          width: 100%;
+        }
+
+        button {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          border-radius: 0.25rem;
+          font-size: 0.875rem;
+
+          &:first-child {
+            border: none;
+          }
+
+          &:nth-child(2) {
+            background-color: transparent;
+          }
+
+          @media (max-width: 480px) {
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+
+    .badges-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1.5rem;
+
+      @media (max-width: 768px) {
+        justify-content: center;
+      }
+
+      .badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        background-color: #f3f4f6;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        color: $gray-muted;
+
+        svg {
+          width: 1rem;
+          height: 1rem;
+        }
+
+        .icons {
+          display: flex;
+          gap: 0.5rem;
+
+          svg {
+            width: 1rem;
+            height: 1rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          font-size: 0.75rem;
+        }
+      }
+    }
+
+    .tabs {
+      padding: 1rem;
+
+      .tab-list {
+        display: flex;
+
+        button {
+          flex: 1;
+          padding: 0.5rem 1rem;
+          text-align: center;
+          border: none;
+          background-color: #e5e7eb;
+          cursor: pointer;
+
+          &.active {
+            background-color: $blue-primary;
+            color: #fff;
+          }
+        }
+      }
+
+      .tab-content {
+        text-align: center;
+        padding: 2rem 0;
+
+        @media (max-width: 768px) {
+          padding: 1rem 0;
+        }
+
+        svg {
+          max-width: 100%;
+          height: auto;
+          margin-bottom: 1rem;
+        }
+
+        h3 {
+          color: $gray-muted;
+        }
+
+        button {
+          border: none;
+          padding: 0.5rem 1.5rem;
+          border-radius: 0.25rem;
+          font-size: 1rem;
+
+          @media (max-width: 480px) {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+          }
+        }
+      }
+    }
+  }
+}
+// linksocialmedial
+.social-links-card {
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: $background-color;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .card-header {
+    padding: 24px;
+    text-align: center;
+    border-bottom: 1px solid #dee2e6;
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: $secondary-color;
+    }
+
+    .description {
+      font-size: 14px;
+      color: $secondary-color;
+      margin-bottom: 0;
+    }
+  }
+
+  .link-buttons {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 16px;
+
+    .link-button {
+      font-size: 16px;
+      font-weight: 500;
+
+      &.facebook {
+        background-color: #3b5998;
+        border-color: #3b5998;
+
+        &:hover {
+          background-color: darken(#3b5998, 5%);
+          border-color: darken(#3b5998, 5%);
+        }
+      }
+
+      &.google {
+        background-color: #db4437;
+        border-color: #db4437;
+
+        &:hover {
+          background-color: darken(#db4437, 5%);
+          border-color: darken(#db4437, 5%);
+        }
+      }
+
+      &.apple {
+        background-color: #000000;
+        border-color: #000000;
+
+        &:hover {
+          background-color: lighten(#000000, 10%);
+          border-color: lighten(#000000, 10%);
+        }
+      }
+    }
+  }
+}

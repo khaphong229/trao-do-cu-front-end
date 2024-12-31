@@ -1,0 +1,105 @@
+@import '../../../../../assets/scss/variables.scss';
+
+.listingManagement {
+  min-height: 600px;
+  .listingHeader {
+    margin-bottom: 24px;
+  }
+
+  .listingTabs {
+    background: $colorWhite;
+    padding: 0 10px 10px 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+    .ant-tabs-nav {
+      margin-bottom: 10px;
+    }
+
+    .tabLabel {
+      @include flex-center;
+      gap: 4px;
+
+      .tabCount {
+        color: $colorTextFooter;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .subTabs {
+    .ant-tabs-nav {
+      margin-bottom: 16px;
+    }
+
+    .subTabLabel {
+      @include flex-center;
+      gap: 4px;
+      font-size: 14px;
+
+      .subTabCount {
+        color: #999;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .emptyState {
+    padding: 48px 0;
+  }
+
+  // Add responsive styles
+  @media (max-width: 768px) {
+    .listingTabs {
+      padding: 0 5px 5px 5px;
+    }
+
+    .tabLabel {
+      font-size: 14px;
+
+      .tabCount {
+        font-size: 10px;
+      }
+    }
+
+    .subTabs .subTabLabel {
+      font-size: 12px;
+
+      .subTabCount {
+        font-size: 10px;
+      }
+    }
+
+    .emptyState {
+      padding: 24px 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .listingTabs {
+      padding: 0 2px 2px 2px;
+    }
+
+    .tabLabel {
+      font-size: 12px;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .tabCount {
+        font-size: 10px;
+        margin-top: 4px;
+      }
+    }
+
+    .subTabs .subTabLabel {
+      font-size: 10px;
+
+      .subTabCount {
+        font-size: 8px;
+      }
+    }
+
+    .emptyState {
+      padding: 16px 0;
+    }
+  }
+}

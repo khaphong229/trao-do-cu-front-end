@@ -1,0 +1,199 @@
+@import '../../assets/scss/variables.scss';
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+.layoutWrap {
+  font-family: 'Montserrat', sans-serif !important;
+
+  :global {
+    * {
+      font-family: inherit;
+    }
+  }
+}
+
+.demoLogoVertical {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100px;
+  box-sizing: border-box;
+  padding: 36px;
+  // border-bottom: 1px solid $borderBottom;
+
+  .demoLogoImg {
+    width: 70px;
+    height: 70px;
+  }
+
+  .demoLogoText {
+    font-weight: 800;
+    font-size: 20px;
+    color: $colorMain;
+    opacity: 1;
+    transition: opacity 0.3s;
+  }
+}
+
+.menuWrap {
+  padding: 28px 36px;
+
+  :global {
+    .ant-menu-item {
+      margin-bottom: 20px;
+      height: 50px;
+      padding: 7px 10px !important;
+      display: flex;
+      align-items: center;
+
+      &.ant-menu-item-selected {
+        .ant-menu-title-content,
+        .ant-menu-item-icon {
+          color: $textColor;
+        }
+        &:last-child {
+          color: $textColor;
+
+          .ant-menu-title-content,
+          .ant-menu-item-icon {
+            color: $textColor !important;
+          }
+        }
+      }
+
+      .ant-menu-title-content {
+        opacity: 1;
+        transition: opacity 0.3s;
+        font-weight: 600;
+      }
+
+      .ant-menu-title-content,
+      .ant-menu-item-icon {
+        color: $subTextColor;
+      }
+
+      .ant-menu-item-icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+      }
+
+      &:not(.ant-menu-item-selected):hover {
+        background-color: $colorHover !important;
+      }
+
+      &:last-child {
+        .ant-menu-item-icon,
+        .ant-menu-title-content {
+          color: $colorMain;
+        }
+      }
+    }
+  }
+}
+
+[data-menu-collapsed='true'] {
+  .demoLogoVertical {
+    .demoLogoText {
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+  }
+
+  .menuWrap {
+    padding: 28px 6px;
+    text-align: center;
+
+    :global {
+      .ant-menu-item {
+        justify-content: center;
+
+        .ant-menu-title-content {
+          opacity: 0;
+          width: 0;
+          overflow: hidden;
+        }
+
+        .ant-menu-item-icon {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}
+
+.headerWrap {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+
+  .headerLeft {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    .headerText {
+      font-weight: 600;
+      font-size: 20px;
+      color: $colorMain;
+    }
+  }
+
+  .headerRight {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    :global {
+      .ant-input-outlined {
+        border-radius: 20px;
+        height: 40px;
+      }
+    }
+
+    > svg {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      padding: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .headerImage {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+.siderWrap {
+  position: relative;
+
+  :global {
+    .ant-layout-sider-zero-width-trigger {
+      position: fixed; // Changed from absolute to fixed
+      top: 20px; // Adjust to vertically center in the header
+      left: 20px; // Adjust horizontal positioning if needed
+      z-index: 1000; // Ensure it's above other elements
+      background-color: $colorMain; // Optional: use your main color
+      color: white; // Optional: set icon color
+      width: 40px; // Optional: set specific width
+      height: 40px; // Optional: set specific height
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px; // Optional: rounded corners
+    }
+  }
+}

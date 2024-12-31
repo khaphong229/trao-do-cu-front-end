@@ -1,0 +1,18 @@
+.listingCard {
+  width: calc(50% - 8px); // Chiếm 50% trừ đi một nửa khoảng gap
+  margin: 0;
+  height: 100%;
+
+  .listingCardImages {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .listingCardImage {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+  }
+}

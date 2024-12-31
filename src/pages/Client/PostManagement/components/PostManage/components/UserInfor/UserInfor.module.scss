@@ -1,0 +1,20 @@
+@import '../../../../../../../assets/scss/variables.scss';
+
+.user-info {
+  display: flex;
+  align-items: center;
+  background-color: $colorWhite;
+  padding: 10px;
+
+  .user-avatar {
+    flex-shrink: 0;
+  }
+
+  .user-details {
+    margin-left: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+}

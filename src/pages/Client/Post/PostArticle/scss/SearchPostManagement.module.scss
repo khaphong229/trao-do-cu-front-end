@@ -1,0 +1,42 @@
+@import '../../../../../assets/scss/variables.scss';
+
+.Container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  max-width: 1000px;
+}
+.TempSelectedItem {
+  background-color: #e6f7ff; /* Light blue background */
+  color: #1890ff; /* Blue text */
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ListItem {
+  padding: 10px 16px;
+  cursor: pointer;
+  &:hover {
+    background-color: #f5f5f5; /* Light gray hover */
+  }
+}
+
+@media screen and (min-width: 1176px) {
+  .SearchBar {
+    width: 400px;
+  }
+}
+
+@media screen and (max-width: 1175px) {
+  .SearchBar {
+    width: 300px;
+  }
+}
+
+@media screen and (max-width: 683px) {
+  .SearchBar {
+    width: 100%;
+  }
+}

@@ -1,0 +1,21 @@
+.SearchBar {
+  border-radius: 5px;
+}
+
+@media screen and (min-width: 1176px) {
+  .SearchBar {
+    width: 500px;
+  }
+}
+
+@media screen and (max-width: 1175px) {
+  .SearchBar {
+    width: 300px;
+  }
+}
+
+@media screen and (max-width: 683px) {
+  .SearchBar {
+    width: 100%;
+  }
+}

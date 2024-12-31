@@ -1,0 +1,11 @@
+@import '../../../assets/scss/variables.scss';
+
+.layoutClientWrap {
+  font-family: 'Montserrat', sans-serif !important;
+  background: $colorBg;
+  :global {
+    * {
+      font-family: inherit;
+    }
+  }
+}

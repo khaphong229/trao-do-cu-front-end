@@ -1,0 +1,206 @@
+@import '../../../../../../../../assets/scss/variables.scss';
+
+.listingCard {
+  margin-bottom: 10px;
+  background-color: $colorWhite;
+  transition: ease 0.3s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  :global {
+    .ant-card-bordered {
+      border: 0;
+      border-radius: 0;
+    }
+
+    .ant-card-body {
+      padding: 0 10px 10px 10px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .listingTitle {
+    margin: 10px 0;
+  }
+
+  .listingCardDescription {
+    margin-bottom: 10px;
+    margin-top: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &Header {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    .ownerAvatar {
+      margin-right: 12px;
+    }
+
+    .headerInfo {
+      flex: 1;
+    }
+
+    .ownerName {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .listingTitle {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .listingCardAvatar {
+      margin-right: 12px;
+    }
+
+    .listingCardUsername {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .listingCardTitle {
+      margin: 0;
+      color: #888;
+    }
+  }
+
+  &Description {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 16px;
+  }
+
+  &Images {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    max-height: 340px;
+    overflow-y: auto;
+
+    .listingCardImage {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #f0f0f0;
+    }
+  }
+
+  &Actions {
+    display: flex;
+    justify-content: flex-end;
+
+    .listingCardButton {
+      background-color: #00b96b;
+      color: #fff;
+    }
+  }
+
+  .listingCardContent {
+    flex: 1;
+  }
+
+  .listingCardActions {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 16px;
+  }
+
+  .listingCardButton {
+    min-width: 160px;
+  }
+
+  // Responsive styles
+  @media (max-width: 768px) {
+    margin-bottom: 20px;
+
+    &Header {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .listingCardAvatar {
+        margin-bottom: 10px;
+      }
+
+      .listingCardUsername {
+        font-size: 14px;
+      }
+
+      .listingCardTitle {
+        font-size: 12px;
+      }
+    }
+
+    &Description {
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    &Images {
+      justify-content: start;
+
+      .listingCardImage {
+        width: 160px;
+        height: 160px;
+      }
+    }
+
+    &Actions {
+      justify-content: center;
+
+      .listingCardButton {
+        width: 100%;
+        font-size: 14px;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    &Header {
+      .listingCardUsername {
+        font-size: 12px;
+      }
+
+      .listingCardTitle {
+        font-size: 10px;
+      }
+    }
+
+    &Description {
+      font-size: 10px;
+    }
+
+    &Images {
+      .listingCardImage {
+        width: 160px;
+        height: 160px;
+      }
+    }
+
+    &Actions {
+      .listingCardButton {
+        font-size: 12px;
+      }
+    }
+  }
+}

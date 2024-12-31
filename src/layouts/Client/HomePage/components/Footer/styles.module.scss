@@ -1,0 +1,33 @@
+@import '../../../../../assets/scss/variables.scss';
+
+.footerWrap {
+  background-color: $colorBgFooter;
+  color: $colorTextFooter;
+  padding: 40px 20px;
+}
+.image {
+  margin-bottom: 20px;
+}
+.text {
+  color: $textColor;
+  display: block;
+  margin-top: 10px;
+}
+.title {
+  color: $textColor !important;
+}
+.link {
+  color: #adb5bd !important;
+}
+
+.textLogo {
+  font-weight: 700;
+  font-size: 26px;
+  color: $colorWhite;
+  user-select: none;
+  transition: ease 0.3s;
+  &:hover {
+    color: $colorMain;
+    cursor: pointer;
+  }
+}

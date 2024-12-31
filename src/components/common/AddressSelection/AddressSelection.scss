@@ -1,0 +1,25 @@
+.address-display {
+  border: 1px solid #d9d9d9;
+  padding: 8px 12px;
+  border-radius: 2px;
+
+  &-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.address-form {
+  width: 100%;
+
+  .address-select {
+    width: 100%;
+  }
+}
+
+.form-actions {
+  margin-top: 24px;
+  text-align: right;
+}

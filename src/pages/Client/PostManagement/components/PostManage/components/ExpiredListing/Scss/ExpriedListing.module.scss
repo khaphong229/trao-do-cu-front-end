@@ -1,0 +1,65 @@
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.error {
+  color: #ff4d4f;
+  text-align: center;
+  padding: 20px;
+}
+
+.emptyListing {
+  margin: 40px 0;
+}
+
+.subTabs {
+  :global {
+    .ant-tabs-nav {
+      margin-bottom: 24px;
+    }
+
+    .ant-tabs-content {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      padding: 0 16px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ant-tabs-tabpane {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+
+      @media (max-width: 768px) {
+        grid-column: span 1;
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ant-empty {
+      grid-column: span 2;
+
+      @media (max-width: 768px) {
+        grid-column: span 1;
+      }
+    }
+  }
+}
+
+.subTabLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subTabCount {
+  color: rgba(0, 0, 0, 0.45);
+}

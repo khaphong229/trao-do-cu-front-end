@@ -1,0 +1,256 @@
+/* Biến toàn cục */
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #f8f9fa;
+$border-radius: 8px;
+$text-color: #333;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+$gray-light: #d1d5db;
+
+/* Responsive Breakpoints */
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+/* Wrapper chung */
+.personal-info-wrapper {
+  display: flex;
+  background-color: lighten($background-color, 5%);
+  padding: 20px;
+  min-height: auto; /* Chiều cao tối thiểu */
+  gap: 20px;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+}
+
+/* Sidebar Menu */
+.menu-item {
+  padding: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  color: $text-color;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: lighten($primary-color, 45%);
+    border-radius: 5px;
+  }
+
+  &.active {
+    color: $primary-color;
+    font-weight: bold;
+  }
+}
+
+/* Nội dung chính */
+.content {
+  width: 100%;
+  margin-left: 10px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+
+  .card {
+    margin-bottom: 16px;
+  }
+  @media (max-width: $breakpoint-md) {
+    margin-left: 0;
+  }
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: $text-color;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid $gray-light;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+}
+
+/* Nút */
+button {
+  background-color: #22c55e;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+
+  &:hover {
+    background-color: darken(#22c55e, 10%);
+  }
+}
+
+/* Layout của trang Security */
+.form-design-layout {
+  background-color: $background-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: auto;
+  padding: 20px;
+
+  .form-design-content {
+    background-color: #fff;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    padding: 32px;
+    width: 100%;
+    max-width: 720px;
+
+    .form-design-header {
+      text-align: center;
+      margin-bottom: 24px;
+
+      h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: $text-color;
+        margin-bottom: 8px;
+      }
+
+      p {
+        color: $secondary-color;
+        font-size: 16px;
+      }
+    }
+
+    .form-design-form {
+      .form-item {
+        margin-bottom: 24px;
+
+        label {
+          display: block;
+          font-size: 16px;
+          font-weight: 500;
+          color: $text-color;
+          margin-bottom: 8px;
+        }
+
+        .ant-input-password {
+          width: 100%;
+          border-radius: $border-radius;
+          border: 1px solid $gray-light;
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .ant-checkbox-wrapper {
+          color: $text-color;
+          font-size: 16px;
+        }
+
+        .ant-btn {
+          font-size: 16px;
+          padding: 8px 24px;
+        }
+      }
+    }
+  }
+}
+
+/* Links Social Media */
+.social-links-card {
+  max-width: 700px;
+  margin: 0 auto;
+  background-color: $background-color;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+
+  .card-header {
+    padding: 24px;
+    text-align: center;
+    border-bottom: 1px solid lighten($gray-light, 10%);
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: $secondary-color;
+    }
+
+    .description {
+      font-size: 14px;
+      color: $secondary-color;
+    }
+  }
+
+  .link-buttons {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+
+    .link-button {
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      color: #fff;
+      border: none;
+
+      &.facebook {
+        background-color: #3b5998;
+
+        &:hover {
+          background-color: darken(#3b5998, 5%);
+        }
+      }
+
+      &.google {
+        background-color: #db4437;
+
+        &:hover {
+          background-color: darken(#db4437, 5%);
+        }
+      }
+
+      &.apple {
+        background-color: #000;
+
+        &:hover {
+          background-color: lighten(#000, 10%);
+        }
+      }
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: $breakpoint-sm) {
+  .menu-item {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .content {
+    padding: 15px;
+  }
+
+  .social-links-card {
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,53 @@
+@import '../../assets/scss/variables.scss';
+
+.authWrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 92px;
+}
+
+.authHeading {
+  margin-bottom: 40px;
+}
+
+.authForm {
+  width: 500px;
+  * {
+    border-radius: 0px !important;
+  }
+}
+.loginFormForgot {
+  float: right;
+}
+.authFormButton {
+  width: 100%;
+}
+
+.loginFormForgot,
+.registerAgreement {
+  color: $colorMain;
+  &:hover {
+    color: $subTextColor;
+  }
+}
+
+@media screen and (min-width: 960px) {
+  .authWrap {
+    margin-bottom: 40px;
+  }
+}
+
+@media screen and (max-width: 530px) {
+  .authForm {
+    width: 400px;
+  }
+}
+
+@media screen and (max-width: 431px) {
+  .authForm {
+    width: 340px;
+  }
+}

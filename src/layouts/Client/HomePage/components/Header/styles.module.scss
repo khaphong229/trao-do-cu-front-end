@@ -1,0 +1,40 @@
+@import '../../../../../assets/scss/variables.scss';
+
+.headerWrap {
+  background-color: $colorMain;
+  padding: 10px 20px;
+}
+
+.bottomBar {
+  padding: 15px 0;
+}
+
+.search {
+  // margin-left: 18px;
+  // margin-right: 20px;
+}
+
+@media screen and (max-width: 1244px) {
+  .postContent {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+  }
+}
+
+@media screen and (max-width: 683px) {
+  .colLogo {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 683px) {
+  .search {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  .colLogo {
+    width: 100%;
+  }
+}

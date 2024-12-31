@@ -1,0 +1,125 @@
+@import '../../../../assets/scss/variables.scss';
+
+.ContentWrap {
+  margin: 10px 0;
+  padding: 20px 10px;
+  background: $textColor;
+}
+
+.title {
+  display: block;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.scrollWrapper {
+  overflow: hidden;
+  width: 100%;
+}
+
+.categoriesRow {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.cardItem {
+  text-align: center;
+  border: 0px;
+  margin: 0 8px;
+
+  :global {
+    .ant-card-body {
+      padding: 0;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.titleCategory {
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 10px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.imageCategory {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 25%;
+  transition: ease 0.5s;
+
+  &:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+}
+
+.scrollContainer {
+  position: relative;
+  width: 100%;
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-70%);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  z-index: 10;
+  background-color: white;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  &.left {
+    left: -0.2rem;
+  }
+
+  &.right {
+    right: -0.2rem;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .imageCategory {
+    width: 66px;
+    height: 66px;
+  }
+  .titleCategory {
+    font-size: 11px;
+  }
+  .ContentWrap {
+    padding: 10px 10px;
+  }
+}
+
+@media screen and (max-width: 431px) {
+  .imageCategory {
+    width: 54px;
+    height: 54px;
+  }
+  .titleCategory {
+    font-size: 10px;
+  }
+}
+
+@media screen and (max-width: 372px) {
+  .imageCategory {
+    width: 44px;
+    height: 44px;
+  }
+}

@@ -1,0 +1,57 @@
+@import '../../../../../../../assets/scss/variables.scss';
+
+.SubMenu {
+  font-weight: 500;
+}
+
+.Logo {
+  // height: 100px;
+  object-fit: cover;
+  height: 30px;
+  width: 200px;
+  margin-right: 10px;
+}
+
+.Icon {
+  font-size: 16px;
+}
+
+.Button {
+  font-weight: 500;
+  color: $textColor;
+  font-size: 14px;
+}
+
+.IconDown {
+  font-size: 12px;
+  color: $textColor;
+}
+
+@media screen and (max-width: 1006px) {
+  .contentWrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.textLogo {
+  font-weight: 700;
+  font-size: 26px;
+  color: $colorWhite;
+  user-select: none;
+  transition: ease 0.3s;
+
+  &:hover {
+    color: $colorHover;
+    cursor: pointer;
+  }
+}
+
+@media screen and (max-width: 372px) {
+  .textLogo {
+    font-size: 18px;
+  }
+}

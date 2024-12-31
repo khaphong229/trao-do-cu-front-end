@@ -1,0 +1,162 @@
+/* ExpriedListingDrawer.module.scss */
+
+.drawer-avatar-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.drawer-avatar {
+  margin-right: 16px;
+  border-radius: 50%;
+  border: 2px solid #f0f0f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 480px) {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+.drawer-user-info {
+  margin: 0;
+
+  h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #333;
+
+    @media (max-width: 768px) {
+      font-size: 1.2rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.1rem;
+    }
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: #888;
+    font-size: 1rem;
+
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.drawer-description {
+  margin-top: 20px;
+  font-size: 1rem;
+  color: #333;
+
+  @media (max-width: 768px) {
+    margin-top: 16px;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
+}
+
+.recipient-info {
+  margin-top: 20px;
+
+  h4 {
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #333;
+
+    @media (max-width: 768px) {
+      font-size: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 0.95rem;
+    }
+  }
+
+  .recipient-detail {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    background-color: #f9f9f9;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px;
+    }
+
+    .avatar {
+      margin-right: 12px;
+      border-radius: 50%;
+      border: 2px solid #f0f0f0;
+
+      @media (max-width: 768px) {
+        margin-right: 0;
+        margin-bottom: 8px;
+      }
+
+      @media (max-width: 480px) {
+        width: 36px;
+        height: 36px;
+      }
+    }
+
+    span {
+      color: #333;
+      font-size: 1rem;
+      font-weight: 500;
+
+      @media (max-width: 480px) {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .exchange-requirement {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      gap: 8px;
+    }
+
+    img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #f0f0f0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+      @media (max-width: 768px) {
+        width: 80px;
+        height: 80px;
+      }
+
+      @media (max-width: 480px) {
+        width: 70px;
+        height: 70px;
+      }
+    }
+  }
+}
