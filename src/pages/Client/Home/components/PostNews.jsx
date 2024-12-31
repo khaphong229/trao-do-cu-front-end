@@ -116,7 +116,7 @@ const PostNews = () => {
       <Empty
         style={{ textAlign: 'center' }}
         imageStyle={{ height: 200 }}
-        description={<Typography.Text>Có lỗi xảy ra khi tải bài đăng.</Typography.Text>}
+        description={<Typography.Text>Lỗi xảy ra khi tải bài đăng.</Typography.Text>}
       />
     )
   }
