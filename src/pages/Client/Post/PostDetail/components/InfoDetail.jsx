@@ -6,7 +6,7 @@ import CreatePostModal from '../../CreatePost/CreatePost'
 import withAuth from 'hooks/useAuth'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
-import avt from 'assets/images/logo/avatar.jpg'
+import avt from 'assets/images/logo/avtDefault.jpg'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
@@ -17,6 +17,8 @@ import { setExchangeFormModalVisible } from 'features/client/request/exchangeReq
 import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
 import { checkRequestedGift } from 'features/client/request/giftRequest/giftRequestThunks'
 import { checkRequestedExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
+import { getValidImageUrl } from 'helpers/helper'
+import imageNotFound from 'assets/images/others/imagenotfound.jpg'
 
 const { Title, Text } = Typography
 
@@ -121,16 +123,24 @@ const PostInfoDetail = () => {
       <Row gutter={32}>
         <Col xs={24} md={12}>
           <Image
-            src={`${URL_SERVER_IMAGE}${thumbnails[0] || '/placeholder-image.png'}`}
+            src={getValidImageUrl(thumbnails)}
             alt="post main"
             width="100%"
             style={{ cursor: 'pointer' }}
+            onError={e => {
+              e.target.onerror = null
+              e.target.src = imageNotFound
+            }}
           />
           <Row gutter={16} style={{ marginTop: '20px' }}>
             {thumbnails.map((imageUrl, index) => (
               <Col key={index} span={6}>
                 <Image
-                  src={`${URL_SERVER_IMAGE}${imageUrl}`}
+                  src={getValidImageUrl(imageUrl)}
+                  onError={e => {
+                    e.target.onError = null
+                    e.target.src = imageNotFound
+                  }}
                   alt={`image ${index + 1}`}
                   width="100%"
                   style={{
@@ -153,7 +163,7 @@ const PostInfoDetail = () => {
           </Title>
           <div>
             <Text className={styles.textAdress}>
-              <EnvironmentOutlined />
+              <EnvironmentOutlined />{' '}
               {selectedPost?.specificLocation
                 ? selectedPost.specificLocation.startsWith(',')
                   ? selectedPost.specificLocation.slice(1)

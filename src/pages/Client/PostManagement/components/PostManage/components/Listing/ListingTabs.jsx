@@ -3,7 +3,7 @@ import { Tabs, Empty, Spin, message } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { ActiveListings } from '../ActiveListing/ActiveListing'
 import { ExpiredListings } from '../ExpiredListing/ExpriedListing'
-import { getPostGiftPagination } from 'redux/slices/postManageThunks'
+import { getPostGiftPagination } from 'features/client/post/postThunks'
 import styles from './Scss/ListingTabs.module.scss'
 
 const { TabPane } = Tabs

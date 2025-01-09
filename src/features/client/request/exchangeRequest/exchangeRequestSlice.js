@@ -1,8 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getMyRequestedExchange, requestExchange } from './exchangeRequestThunks'
+import { getExchangeRequest, getMyRequestedExchange, requestExchange } from './exchangeRequestThunks'
 import { uploadExchangeImages } from 'features/upload/uploadThunks'
 
 const initialState = {
+  posts: [], // Ensure posts is an array
+  total: 0,
+  current: 1,
+  limit: 20,
+  isError: false,
+  errorMessage: '',
+
   requests: [],
   requestData: {
     post_id: '',
@@ -30,6 +37,9 @@ const exchangeRequestSlice = createSlice({
   name: 'exchangeRequest',
   initialState,
   reducers: {
+    resetPosts: state => {
+      state.posts = []
+    },
     setInfoModalVisible: (state, action) => {
       state.isInfoModalVisible = action.payload
     },
@@ -97,6 +107,32 @@ const exchangeRequestSlice = createSlice({
         state.isLoading = false
         state.error = action.payload
       })
+
+      .addCase(getExchangeRequest.pending, state => {
+        state.isLoading = true
+        state.isError = false
+        state.errorMessage = ''
+      })
+      .addCase(getExchangeRequest.fulfilled, (state, action) => {
+        state.isLoading = false
+        if (action.payload) {
+          state.posts = Array.isArray(action.payload.data) ? action.payload.data : []
+          state.total = action.payload.total || 0
+          state.current = action.payload.current || 1
+          state.limit = action.payload.limit || 5
+        } else {
+          state.posts = []
+          state.total = 0
+          state.current = 1
+          state.limit = 5
+        }
+      })
+      .addCase(getExchangeRequest.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.errorMessage = action.payload || 'An error occurred'
+        state.posts = []
+      })
   }
 })
 
@@ -109,6 +145,7 @@ export const {
   setSocialLinkModalVisible,
   setLocationModalVisible,
   setCategoryModalVisible,
-  setSelectedPostExchange
+  setSelectedPostExchange,
+  resetPosts
 } = exchangeRequestSlice.actions
 export default exchangeRequestSlice.reducer

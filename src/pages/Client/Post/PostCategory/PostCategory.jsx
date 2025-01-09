@@ -6,7 +6,6 @@ const PostCategory = () => {
   return (
     <div>
       <div className="container">
-        {/* <Banner /> */}
         <Category />
         <PostList />
       </div>

@@ -1,5 +1,5 @@
 import { uploadPostImages } from '../../upload/uploadThunks'
-import { createPost, getPostId, getPostPagination } from './postThunks'
+import { createPost, getPostGiftPagination, getPostId, getPostPagination } from './postThunks'
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
@@ -33,8 +33,12 @@ const initialState = {
   current: 1,
   pageSize: 5,
   hasMore: true,
-  query: ''
+  query: '',
   // get my post
+  requestStatuses: {},
+  statusCache: {},
+  cacheTL: 5 * 60 * 1000,
+  lastCacheUpdate: null
 }
 
 const postSlice = createSlice({
@@ -92,6 +96,27 @@ const postSlice = createSlice({
     },
     resetSearch: state => {
       state.query = ''
+    },
+    setRequestStatuses: (state, action) => {
+      const { postId, status } = action.payload
+      state.requestStatuses[postId] = status
+      state.statusCache[postId] = {
+        status,
+        timestamp: Date.now()
+      }
+    },
+    clearExpiredCache: state => {
+      const now = Date.now()
+      Object.keys(state.statusCache).forEach(postId => {
+        if (now - state.statusCache[postId].timestamp > state.cacheTL) {
+          delete state.statusCache[postId]
+          delete state.requestStatuses[postId]
+        }
+      })
+    },
+    updatePostStatus: (state, action) => {
+      const { postId, isRequested } = action.payload
+      state.requestStatuses[postId] = isRequested
     }
   },
 
@@ -166,6 +191,32 @@ const postSlice = createSlice({
       .addCase(getPostId.rejected, state => {
         state.isLoading = false
       })
+
+      .addCase(getPostGiftPagination.pending, state => {
+        state.isLoading = true
+        state.isError = false
+        state.errorMessage = ''
+      })
+      .addCase(getPostGiftPagination.fulfilled, (state, action) => {
+        state.isLoading = false
+        if (action.payload) {
+          state.posts = Array.isArray(action.payload.data.data) ? action.payload.data.data : []
+          state.total = action.payload.data.total || 0
+          state.current = action.payload.data.current || 1
+          state.limit = action.payload.data.limit || 5
+        } else {
+          state.posts = []
+          state.total = 0
+          state.current = 1
+          state.limit = 5
+        }
+      })
+      .addCase(getPostGiftPagination.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.errorMessage = action.payload || 'An error occurred'
+        state.posts = []
+      })
   }
 })
 
@@ -183,7 +234,10 @@ export const {
   resetPosts,
   resetSearch,
   resetPage,
-  clearPosts
+  clearPosts,
+  setRequestStatuses,
+  clearExpiredCache,
+  updatePostStatus
 } = postSlice.actions
 
 export default postSlice.reducer

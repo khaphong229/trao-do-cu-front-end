@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react'
-import { Drawer, Card, List, Avatar, Space, Button, Image, Empty, message, Badge, Descriptions } from 'antd'
+import { Drawer, Card, List, Avatar, Space, Button, Image, message, Badge, Descriptions } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './ExchangeDrawer.module.scss'
+
+import { URL_SERVER_IMAGE } from '../../../../../../../config/url_server'
 import {
   acceptExchangeRequest,
   rejectExchangeRequest
-} from 'features/client/getExchangeRequests/getExchangeRequestThunks'
-import { URL_SERVER_IMAGE } from '../../../../../../../config/url_server'
+} from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 
 export const ExchangeDrawer = ({ visible, onClose, listing, exchangeRequests, refetch, onUpdateSuccess }) => {
   const dispatch = useDispatch()

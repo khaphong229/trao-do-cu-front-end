@@ -1,11 +1,11 @@
 import React from 'react'
-import { Drawer, Card, List, Avatar, Space, Button, message, Badge, Descriptions } from 'antd'
+import { Drawer, Card, List, Avatar, Button, message, Badge, Descriptions } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './RegistrationDrawer.module.scss'
-import avt from 'assets/images/logo/avt-3d.jpg'
-import { acceptGiftRequest, rejectGiftRequest } from 'features/client/getReceiveRequests/getReceiveRequestGiftThunks'
+import avt from 'assets/images/logo/avtDefault.jpg'
 import { URL_SERVER_IMAGE } from '../../../../../../../config/url_server'
+import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 
 export const RegistrationDrawer = ({ visible, onClose, listing, receiveRequests, refetch, onUpdateSuccess }) => {
   const dispatch = useDispatch()

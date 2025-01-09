@@ -3,17 +3,19 @@ import { Tabs, Empty, Typography } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { ListingCard } from '../Listing/ListingCard'
 import { RegistrationDrawer } from '../RegistrationDrawer/RegistrationDrawer'
-import { getPostGiftPagination } from 'features/client/postManage/postManageThunks'
-import { getReceiveRequestGift } from 'features/client/getReceiveRequests/getReceiveRequestGiftThunks'
+import { getPostGiftPagination } from 'features/client/post/postThunks'
+
 import styles from './Scss/ActiveListing.module.scss'
 import { ExchangeDrawer } from '../ExchangeDrawer/ExchangeDrawer'
-import { getExchangeRequest } from 'features/client/getExchangeRequests/getExchangeRequestThunks'
+import { getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
+import { getExchangeRequest } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
+import notFoundPost from 'components/feature/post/notFoundPost'
 
 const { TabPane } = Tabs
 
 export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, setPageSize }) => {
   const dispatch = useDispatch()
-  const { posts = [], isLoading } = useSelector(state => state.postManage)
+  const { posts = [], isLoading } = useSelector(state => state.post)
   const [selectedListing, setSelectedListing] = useState(null)
   const [visibleDrawer, setVisibleDrawer] = useState(false)
   const [receiveRequests, setReceiveRequests] = useState([])
@@ -102,11 +104,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
                 description={<Typography.Text>Đang tải...</Typography.Text>}
               />
             ) : filteredListings.length === 0 ? (
-              <Empty
-                style={{ textAlign: 'center' }}
-                imageStyle={{ height: 200 }}
-                description={<Typography.Text>Không có bài đăng nào.</Typography.Text>}
-              />
+              notFoundPost()
             ) : (
               <div className={styles.listingCardsContainer}>
                 {filteredListings.map(listing => (

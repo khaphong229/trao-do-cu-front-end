@@ -31,7 +31,7 @@ const FormExchangeModal = () => {
   return (
     <>
       <Modal
-        title="Biểu mẫu thông tin món đồ"
+        title="Thông tin đồ trao đổi"
         open={isExchangeFormModalVisible}
         onCancel={() => dispatch(setExchangeFormModalVisible(false))}
         footer={null}

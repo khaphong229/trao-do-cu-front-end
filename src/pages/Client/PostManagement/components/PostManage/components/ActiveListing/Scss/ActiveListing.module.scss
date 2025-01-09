@@ -2,42 +2,18 @@
 
 .subTabs {
   margin-bottom: 16px;
-
-  @media (max-width: 992px) {
-    margin-bottom: 12px; /* Reduce margin for tablets */
-  }
-
-  @media (max-width: 768px) {
-    margin-bottom: 8px; /* Reduce margin for mobile devices */
-  }
 }
 
 .subTabLabel {
   display: flex;
   align-items: center;
   font-size: 14px;
-
-  @media (max-width: 768px) {
-    font-size: 12px; /* Reduce font size on smaller screens */
-  }
-
-  @media (max-width: 576px) {
-    font-size: 10px; /* Further reduce font size on very small screens */
-  }
 }
 
 .subTabCount {
   margin-left: 8px;
   color: #999;
   font-size: 12px;
-
-  @media (max-width: 768px) {
-    font-size: 10px; /* Reduce font size for count on smaller screens */
-  }
-
-  @media (max-width: 576px) {
-    font-size: 8px; /* Further reduce font size for count on very small screens */
-  }
 }
 
 .listingCardsContainer {

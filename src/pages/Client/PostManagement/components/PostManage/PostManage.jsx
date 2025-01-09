@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Tabs } from 'antd'
+import { Divider, Tabs } from 'antd'
 import styles from './PostManage.module.scss'
 import CreatePostModal from 'pages/Client/Post/CreatePost/CreatePost'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCreateModalVisibility } from 'features/client/post/postSlice'
-import { getPostGiftPagination } from 'features/client/postManage/postManageThunks'
+import { getPostGiftPagination } from 'features/client/post/postThunks'
 import { UserInfo } from './components/UserInfor/UserInfor'
 import { ActiveListings } from './components/ActiveListing/ActiveListing'
 import { ExpiredListings } from './components/ExpiredListing/ExpriedListing'
@@ -16,7 +16,7 @@ export const PostManage = () => {
   const [activeTab, setActiveTab] = useState('active')
   const [activeSubTab, setActiveSubTab] = useState('all')
   const { user } = useSelector(state => state.auth)
-  const { posts = [], total, isLoading, isError, errorMessage } = useSelector(state => state.postManage)
+  const { posts = [], isLoading, isError, errorMessage } = useSelector(state => state.post)
   const dispatch = useDispatch()
 
   useEffect(() => {

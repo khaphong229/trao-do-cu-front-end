@@ -25,6 +25,8 @@ const Login = () => {
         })
       ).unwrap()
 
+      // console.log(responseLogin, 'res login')
+
       if (responseLogin.status === 200) {
         const responseGetUser = await dispatch(getCurrentUser(isAdminLogin)).unwrap()
         if (responseGetUser) {

@@ -10,7 +10,7 @@ import {
   TwitterOutlined,
   MailOutlined
 } from '@ant-design/icons'
-import Avatar from 'assets/images/logo/avatar.jpg'
+import Avatar from 'assets/images/logo/avtDefault.jpg'
 import styles from '../scss/ProfileUser.module.scss'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'

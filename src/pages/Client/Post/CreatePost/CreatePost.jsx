@@ -110,7 +110,11 @@ const CreatePostModal = () => {
     } catch (error) {
       if (error.status === 400) {
         Object.values(error.detail).forEach(val => {
-          message.error(val)
+          if (val === 'ID danh mục sai định dạng.') {
+            message.error('Vui lòng chọn danh mục cho món đồ!')
+          } else {
+            message.error(val)
+          }
         })
       }
     }

@@ -14,7 +14,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserPagination, toggleUserStatus, deleteUser } from '../../../../../features/admin/user/userThunks'
 import styles from './styles.module.scss'
-import avt from '../../../../../assets/images/logo/avt-3d.jpg'
+import avt from '../../../../../assets/images/logo/avtDefault.jpg'
 
 const UserTable = ({ onEdit, onViewDetails }) => {
   const dispatch = useDispatch()

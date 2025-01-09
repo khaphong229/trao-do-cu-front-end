@@ -4,9 +4,11 @@ import { ListingCard } from '../Listing/ListingCard'
 import { RegistrationDrawer } from '../RegistrationDrawer/RegistrationDrawer'
 import { ExchangeDrawer } from '../ExchangeDrawer/ExchangeDrawer'
 import { useDispatch } from 'react-redux'
-import { getReceiveRequestGift } from 'features/client/getReceiveRequests/getReceiveRequestGiftThunks'
-import { getExchangeRequest } from 'features/client/getExchangeRequests/getExchangeRequestThunks'
+
 import styles from './Scss/ExpriedListing.module.scss'
+import { getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
+import { getExchangeRequest } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
+import notFoundPost from 'components/feature/post/notFoundPost'
 
 const { TabPane } = Tabs
 
@@ -84,7 +86,7 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
   }
 
   if (!listings || listings.length === 0) {
-    return <Empty className={styles.emptyListing} description="Không có bài đăng nào đã thành công!" />
+    notFoundPost()
   }
 
   return (
@@ -100,21 +102,15 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
               </span>
             }
           >
-            {filteredListings.length === 0 ? (
-              <Empty
-                style={{ textAlign: 'center' }}
-                imageStyle={{ height: 200 }}
-                description={<Typography.Text>Không có bài đăng nào.</Typography.Text>}
-              />
-            ) : (
-              filteredListings.map(listing => (
-                <ListingCard
-                  key={listing._id}
-                  listing={listing}
-                  onViewRegistrations={() => handleViewDetails(listing)}
-                />
-              ))
-            )}
+            {filteredListings.length === 0
+              ? notFoundPost()
+              : filteredListings.map(listing => (
+                  <ListingCard
+                    key={listing._id}
+                    listing={listing}
+                    onViewRegistrations={() => handleViewDetails(listing)}
+                  />
+                ))}
           </TabPane>
         ))}
       </Tabs>

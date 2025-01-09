@@ -20,7 +20,7 @@ const HeaderIcons = ({ notificationMenu, cartMenu, menu }) => {
           placement="bottomRight"
           getPopupContainer={() => document.body}
         >
-          <Badge count={99} size="small" color="red">
+          <Badge count={0} size="small" color="red">
             <HeartOutlined className={styles.Icon} />
           </Badge>
         </Dropdown>
@@ -30,7 +30,7 @@ const HeaderIcons = ({ notificationMenu, cartMenu, menu }) => {
           placement="bottomRight"
           getPopupContainer={() => document.body}
         >
-          <Badge count={99} size="small" color="red">
+          <Badge count={0} size="small" color="red">
             <BellOutlined className={styles.Icon} />
           </Badge>
         </Dropdown>

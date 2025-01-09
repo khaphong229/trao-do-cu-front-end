@@ -62,13 +62,13 @@ const RequestedPosts = () => {
   return (
     <div className="request-list">
       <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <TabPane tab="Tất cả" key="all">
+        <TabPane tab={`Tất cả (${allRequests.length})`} key="all">
           <div className="posts-grid">{allRequests.map(renderPostCard)}</div>
         </TabPane>
-        <TabPane tab="Trao tặng" key="gift">
+        <TabPane tab={`Trao tặng (${giftRequests.length})`} key="gift">
           <div className="posts-grid">{giftRequests.map(renderPostCard)}</div>
         </TabPane>
-        <TabPane tab="Trao đổi" key="exchange">
+        <TabPane tab={`Trao đổi (${exchangeRequests.length})`} key="exchange">
           <div className="posts-grid">{exchangeRequests.map(renderPostCard)}</div>
         </TabPane>
       </Tabs>

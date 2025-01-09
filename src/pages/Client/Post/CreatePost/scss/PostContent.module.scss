@@ -101,10 +101,6 @@
   border-radius: 8px;
   overflow: hidden;
   background-color: #f0f0f0;
-
-  &:hover .removeFileButton {
-    opacity: 1;
-  }
 }
 
 .previewImage {
@@ -141,7 +137,6 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  opacity: 0;
   transition: opacity 0.2s;
   color: white;
 

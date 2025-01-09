@@ -36,3 +36,44 @@ export const getMyRequestedExchange = createAsyncThunk(
     }
   }
 )
+
+export const getExchangeRequest = createAsyncThunk(
+  'exchangeRequest/getExchangeRequest',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await exchangeRequestService.getExchangeRequests()
+
+      if (!response?.data) {
+        throw new Error('No data received from server')
+      }
+
+      return response
+    } catch (error) {
+      return rejectWithValue(error.response.data || 'An error occurred')
+    }
+  }
+)
+
+export const acceptExchangeRequest = createAsyncThunk(
+  'exchangeRequest/acceptExchangeRequest',
+  async ({ requestId, status }, { rejectWithValue }) => {
+    try {
+      const response = await exchangeRequestService.confirmRequestExchange(requestId, status)
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response.data || 'An error occurred while accepting the request')
+    }
+  }
+)
+
+export const rejectExchangeRequest = createAsyncThunk(
+  'exchangeRequest/rejectExchangeRequest',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await exchangeRequestService.rejectRequestExchange(id)
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response.data || 'An error occurred while accepting the request')
+    }
+  }
+)

@@ -2,10 +2,28 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import AuthService from '../../services/authService'
 import { setAuthToken } from '../../utils/localStorageUtils'
 
+const TIMEOUT_DURATION = 5000
+
+const timeoutPromise = () => {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject({
+        response: {
+          data: {
+            message: 'Request timeout - Vui lòng kiểm tra kết nối mạng'
+          }
+        }
+      })
+    }, TIMEOUT_DURATION)
+  })
+}
+
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
   const { isAdmin, ...data } = credentials
 
   try {
+    // const response = await Promise.race([AuthService.login(data, isAdmin), timeoutPromise()])
+
     const response = await AuthService.login(data, isAdmin)
 
     const { status } = response.data
