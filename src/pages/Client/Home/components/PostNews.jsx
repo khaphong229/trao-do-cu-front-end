@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Row, Col, Button, Avatar, Empty, Typography } from 'antd'
 import styles from '../scss/PostNews.module.scss'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
 import { getPostPagination } from '../../../../features/client/post/postThunks'
 import { resetPosts } from '../../../../features/client/post/postSlice'
@@ -20,6 +20,10 @@ import { setExchangeFormModalVisible } from 'features/client/request/exchangeReq
 import { URL_SERVER_IMAGE } from '../../../../config/url_server'
 import { ArrowDownOutlined } from '@ant-design/icons'
 import { usePostStatus } from 'hooks/usePostStatus'
+import BoxWrap from 'components/common/BoxWrap'
+import getPostError from 'components/feature/post/getPostError'
+import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
+import notFoundPost from 'components/feature/post/notFoundPost'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -103,113 +107,98 @@ const PostNews = () => {
 
   if (isLoading || isChecking) {
     return (
-      <Empty
-        style={{ textAlign: 'center' }}
-        imageStyle={{ height: 200 }}
-        description={<Typography.Text>Đang tải bài đăng...</Typography.Text>}
-      />
+      <BoxWrap>
+        <span className={styles.postTitle}>Bài đăng mới nhất</span>
+        <Row justify="start" className={styles.itemsGrid}>
+          {[...Array(8)].map((_, index) => (
+            <Col key={index} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
+              <PostCardSkeleton />
+            </Col>
+          ))}
+        </Row>
+      </BoxWrap>
     )
   }
 
   if (isError) {
-    return (
-      <Empty
-        style={{ textAlign: 'center' }}
-        imageStyle={{ height: 200 }}
-        description={<Typography.Text>Có lỗi xảy ra khi tải bài đăng.</Typography.Text>}
-      />
-    )
+    return getPostError()
   }
 
   return (
-    <div className={styles.postWrap}>
-      <span className={styles.postTitle}>Bài đăng mới nhất</span>
+    <>
+      <div className={styles.postWrap}>
+        <span className={styles.postTitle}>Bài đăng mới nhất</span>
 
-      {filteredPosts && filteredPosts.length > 0 ? (
-        <Row justify="start" className={styles.itemsGrid}>
-          {filteredPosts.map(item => (
-            <Col key={item._id} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
-              <Card
-                hoverable
-                className={styles.itemCard}
-                cover={
-                  <div className={styles.imageWrapper} onClick={() => goDetail(item._id)}>
-                    <img
-                      alt={item.title}
-                      src={getValidImageUrl(item.image_url)}
-                      onError={e => {
-                        e.target.onerror = null
-                        e.target.src = imageNotFound
-                      }}
-                    />
-                  </div>
-                }
-              >
-                <div className={styles.cardContent}>
-                  <p className={styles.itemTitle} onClick={() => goDetail(item._id)}>
-                    {item.title}
-                  </p>
-                  <p className={styles.itemDesc}>{item?.description || ''}</p>
-                  <div className={styles.statusRow}>
-                    <span className={styles.status}>{item.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>
-                    {renderActionButton(item)}
-                  </div>
-                  <div className={styles.locationRow}>
-                    <div className={styles.userGroup}>
-                      <Avatar
-                        className={styles.avtUser}
-                        src={item?.user_id?.avatar ? `${URL_SERVER_IMAGE}${item.user_id.avatar}` : avt}
+        {filteredPosts && filteredPosts.length > 0 ? (
+          <Row justify="start" className={styles.itemsGrid}>
+            {filteredPosts.map(item => (
+              <Col key={item._id} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
+                <Card
+                  hoverable
+                  className={styles.itemCard}
+                  cover={
+                    <div className={styles.imageWrapper} onClick={() => goDetail(item._id)}>
+                      <img
+                        alt={item.title}
+                        src={getValidImageUrl(item.image_url)}
+                        onError={e => {
+                          e.target.onerror = null
+                          e.target.src = imageNotFound
+                        }}
                       />
-                      <span className={styles.time}>
-                        {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
-                      </span>
                     </div>
-                    <span className={styles.location}>{item.city}</span>
+                  }
+                >
+                  <div className={styles.cardContent}>
+                    <p className={styles.itemTitle} onClick={() => goDetail(item._id)}>
+                      {item.title}
+                    </p>
+                    <p className={styles.itemDesc}>{item?.description || ''}</p>
+                    <div className={styles.statusRow}>
+                      <span className={styles.status}>{item.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>
+                      {renderActionButton(item)}
+                    </div>
+                    <div className={styles.locationRow}>
+                      <div className={styles.userGroup}>
+                        <Avatar
+                          className={styles.avtUser}
+                          src={item?.user_id?.avatar ? `${URL_SERVER_IMAGE}${item.user_id.avatar}` : avt}
+                        />
+                        <span className={styles.time}>
+                          {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
+                        </span>
+                      </div>
+                      <span className={styles.location}>{item.city}</span>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      ) : (
-        <Empty
-          style={{ textAlign: 'center' }}
-          imageStyle={{ height: 200 }}
-          description={<Typography.Text>Không có bài đăng nào.</Typography.Text>}
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        ) : (
+          notFoundPost()
+        )}
+
+        {hasMore && (
+          <div className={styles.buttonWrapper}>
+            <Button
+              icon={<ArrowDownOutlined />}
+              onClick={handleLoadMore}
+              loading={isLoading}
+              type="link"
+              className={styles.textMore}
+            />
+          </div>
+        )}
+
+        <ContactInfoModal onSubmit={handleInfoSubmit} />
+        <GiftRequestConfirmModal onConfirm={handleRequestConfirm} />
+        <FormExchangeModal
+          visible={isExchangeFormModalVisible}
+          onClose={() => dispatch(setExchangeFormModalVisible(false))}
         />
-      )}
-
-      {hasMore && (
-        <div className={styles.buttonWrapper}>
-          <Button
-            icon={<ArrowDownOutlined />}
-            onClick={handleLoadMore}
-            loading={isLoading}
-            type="link"
-            className={styles.textMore}
-          />
-        </div>
-      )}
-
-      {/* {!hasMore && (
-        <p style={{ textAlign: 'center' }}>
-          <Empty
-            description={
-              <Typography.Text>
-                Không có <Link to="/">Dữ Liệu</Link>
-              </Typography.Text>
-            }
-          />
-        </p>
-      )} */}
-
-      <ContactInfoModal onSubmit={handleInfoSubmit} />
-      <GiftRequestConfirmModal onConfirm={handleRequestConfirm} />
-      <FormExchangeModal
-        visible={isExchangeFormModalVisible}
-        onClose={() => dispatch(setExchangeFormModalVisible(false))}
-      />
-    </div>
+      </div>
+    </>
   )
 }
 

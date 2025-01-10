@@ -1,4 +1,3 @@
-// src/utils/errorUtils.js
 export const handleApiError = error => {
   if (error.response) {
     // Lỗi từ server trả về

@@ -2,19 +2,17 @@
   border-radius: 5px;
 }
 
-@media screen and (min-width: 1176px) {
-  .SearchBar {
-    width: 500px;
-  }
+.SearchBar {
+  width: 500px;
 }
 
 @media screen and (max-width: 1175px) {
   .SearchBar {
-    width: 300px;
+    width: 400px;
   }
 }
 
-@media screen and (max-width: 683px) {
+@media screen and (max-width: 797px) {
   .SearchBar {
     width: 100%;
   }

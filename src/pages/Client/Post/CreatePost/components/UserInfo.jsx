@@ -3,7 +3,7 @@ import { Avatar, Radio } from 'antd'
 import styles from '../scss/UserInfo.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
-import avt from 'assets/images/logo/avt-3d.jpg'
+import avt from 'assets/images/logo/avtDefault.jpg'
 const UserInfo = ({ ref1 }) => {
   const dispatch = useDispatch()
   const { dataCreatePost } = useSelector(state => state.post)

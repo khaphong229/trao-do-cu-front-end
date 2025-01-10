@@ -1,7 +1,7 @@
 import React from 'react'
 import { Avatar, Button } from 'antd'
 import styles from './UserInfor.module.scss'
-import avt from 'assets/images/logo/avt-3d.jpg'
+import avt from 'assets/images/logo/avtDefault.jpg'
 
 export const UserInfo = ({ user, onCreatePost }) => (
   <div className={styles['user-info']}>

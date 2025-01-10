@@ -1,14 +1,18 @@
 import imageNotFound from 'assets/images/others/imagenotfound.jpg'
 import { URL_SERVER_IMAGE } from '../config/url_server'
+import { isArray } from 'lodash'
 
 export const getValidImageUrl = imageUrls => {
-  if (!imageUrls || imageUrls.length === 0) {
+  if (!imageUrls) {
     return imageNotFound
   }
 
   try {
-    const imageUrl = `${URL_SERVER_IMAGE}${imageUrls[0]}`
-    return imageUrl
+    if (isArray(imageUrls)) {
+      return `${URL_SERVER_IMAGE}${imageUrls[0]}`
+    } else {
+      return `${URL_SERVER_IMAGE}${imageUrls}`
+    }
   } catch (error) {
     return imageNotFound
   }

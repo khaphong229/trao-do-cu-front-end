@@ -8,8 +8,7 @@ import { IoNotifications } from 'react-icons/io5'
 import { Layout, Menu, message, Popover, theme } from 'antd'
 import styles from './styles.module.scss'
 import logo from '../../assets/images/final/logo_traodocu.png'
-import Search from 'antd/es/transfer/search'
-import avatar from '../../assets/images/logo/avt-3d.jpg'
+import avatar from '../../assets/images/logo/avtDefault.jpg'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { removeAuthToken } from '../../utils/localStorageUtils'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,7 +23,7 @@ const App = () => {
   const {
     token: { colorBgContainer, borderRadiusLG }
   } = theme.useToken()
-  const onSearch = (value, _e, info) => console.log(info?.source, value)
+  // const onSearch = (value, _e, info) => console.log(info?.source, value)
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap()

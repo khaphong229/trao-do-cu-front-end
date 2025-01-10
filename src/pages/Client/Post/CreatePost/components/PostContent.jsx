@@ -4,7 +4,7 @@ import EmojiPicker from 'emoji-picker-react'
 import styles from '../scss/PostContent.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
-import { CloseOutlined, PlayCircleOutlined } from '@ant-design/icons'
+import { CloseOutlined } from '@ant-design/icons'
 import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
 
 const { TextArea } = Input

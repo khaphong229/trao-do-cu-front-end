@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination, Empty } from 'antd'
+import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination } from 'antd'
 import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.jpg'
@@ -11,14 +11,17 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import withAuth from 'hooks/useAuth'
 import { getValidImageUrl } from 'helpers/helper'
-import avt from 'assets/images/logo/avatar.jpg'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import avt from 'assets/images/logo/avtDefault.jpg'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useGiftRequest } from '../../../Request/GiftRequest/useRequestGift'
 import ContactInfoModal from '../../../Request/GiftRequest/components/ContactInfoModal'
 import { GiftRequestConfirmModal } from '../../../Request/GiftRequest/components/GiftRequestConfirmModal'
 import FormExchangeModal from '../../../Request/ExchangeRequest/FormExchange'
 import { setExchangeFormModalVisible } from '../../../../../features/client/request/exchangeRequest/exchangeRequestSlice'
 import { usePostStatus } from 'hooks/usePostStatus'
+import getPostError from 'components/feature/post/getPostError'
+import notFoundPost from 'components/feature/post/notFoundPost'
+import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
 
 const { Text } = Typography
 
@@ -146,17 +149,15 @@ const PostList = () => {
         </div>
       </div>
       {isLoading || isChecking ? (
-        <Empty
-          style={{ textAlign: 'center' }}
-          imageStyle={{ height: 200 }}
-          description={<Typography.Text>Đang tải bài đăng...</Typography.Text>}
-        />
+        <Row gutter={[8, 8]}>
+          {[...Array(4)].map((_, index) => (
+            <Col xs={24} sm={12} key={index}>
+              <PostCardRowSkeleton />
+            </Col>
+          ))}
+        </Row>
       ) : isError ? (
-        <Empty
-          style={{ textAlign: 'center' }}
-          imageStyle={{ height: 200 }}
-          description={<Typography.Text>Có lỗi xảy ra khi tải bài đăng.</Typography.Text>}
-        />
+        getPostError()
       ) : sortedPosts.length > 0 ? (
         <Row gutter={[8, 8]}>
           {sortedPosts.map(item => (
@@ -224,16 +225,7 @@ const PostList = () => {
           ))}
         </Row>
       ) : (
-        <p style={{ textAlign: 'center' }}>
-          <Empty
-            description={
-              <Typography.Text>
-                Không có <Link to="/">Dữ Liệu</Link>
-              </Typography.Text>
-            }
-          />
-          .
-        </p>
+        notFoundPost()
       )}
       <Pagination
         className={styles.pagination}

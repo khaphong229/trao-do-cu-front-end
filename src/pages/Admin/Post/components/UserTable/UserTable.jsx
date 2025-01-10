@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Table, Button, Space, Modal, message, Input } from 'antd'
 import {
   EditOutlined,
   DeleteOutlined,
-  LoadingOutlined,
   EyeOutlined,
   PhoneOutlined,
   SearchOutlined,
   MailOutlined
 } from '@ant-design/icons'
 import styles from './styles.module.scss'
-import avt from '../../../../../assets/images/logo/avt-3d.jpg'
+import avt from '../../../../../assets/images/logo/avtDefault.jpg'
 const initialUsers = [
   {
     _id: '1',

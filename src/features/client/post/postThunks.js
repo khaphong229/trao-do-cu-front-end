@@ -1,4 +1,3 @@
-// postThunks.js
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import postService from 'services/client/postService'
 
@@ -48,3 +47,21 @@ export const getPostId = createAsyncThunk('post/getPostId', async (id, { rejectW
     return rejectWithValue(error.response.data)
   }
 })
+
+export const getPostGiftPagination = createAsyncThunk(
+  'post/getPostGiftPagination',
+  async ({ current, pageSize, status, type, q }, { rejectWithValue }) => {
+    try {
+      const response = await postService.getPostOfMePagination({
+        current,
+        pageSize,
+        status,
+        type,
+        q
+      })
+      return response
+    } catch (error) {
+      return rejectWithValue(error.message || 'An error occurred')
+    }
+  }
+)

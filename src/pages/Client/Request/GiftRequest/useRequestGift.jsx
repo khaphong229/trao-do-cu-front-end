@@ -10,6 +10,7 @@ import {
   setSelectedPostExchange
 } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
+import { updatePostStatus } from 'features/client/post/postSlice'
 
 export const useGiftRequest = () => {
   const dispatch = useDispatch()
@@ -56,7 +57,6 @@ export const useGiftRequest = () => {
         message.success(msg)
         dispatch(setInfoModalVisible(false))
         dispatch(setAcceptModalVisible(true))
-        // window.location.reload()
       }
     } catch (error) {
       message.error('Không thể cập nhật thông tin liên hệ')
@@ -84,6 +84,12 @@ export const useGiftRequest = () => {
       const { status, message: msg } = response
       if (status === 201) {
         message.success(msg)
+        dispatch(
+          updatePostStatus({
+            postId: selectedPostExchange._id,
+            isRequested: true
+          })
+        )
         dispatch(setAcceptModalVisible(false))
       }
     } catch (error) {
@@ -119,6 +125,12 @@ export const useGiftRequest = () => {
       const response = await dispatch(requestExchange(requestData)).unwrap()
       const { status, message: msg } = response
       if (status === 201) {
+        dispatch(
+          updatePostStatus({
+            postId: selectedPostExchange._id,
+            isRequested: true
+          })
+        )
         message.success(msg)
         dispatch(setExchangeFormModalVisible(false))
         dispatch(resetRequestData())
