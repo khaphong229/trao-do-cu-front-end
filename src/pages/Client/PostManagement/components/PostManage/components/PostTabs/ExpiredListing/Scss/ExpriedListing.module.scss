@@ -1,0 +1,26 @@
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.error {
+  color: #ff4d4f;
+  text-align: center;
+  padding: 20px;
+}
+
+.emptyListing {
+  margin: 40px 0;
+}
+
+.subTabLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subTabCount {
+  color: rgba(0, 0, 0, 0.45);
+}

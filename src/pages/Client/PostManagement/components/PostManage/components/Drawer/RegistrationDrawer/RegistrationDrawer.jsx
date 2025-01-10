@@ -4,7 +4,7 @@ import { UserOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './RegistrationDrawer.module.scss'
 import avt from 'assets/images/logo/avtDefault.jpg'
-import { URL_SERVER_IMAGE } from '../../../../../../../config/url_server'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 
 export const RegistrationDrawer = ({ visible, onClose, listing, receiveRequests, refetch, onUpdateSuccess }) => {

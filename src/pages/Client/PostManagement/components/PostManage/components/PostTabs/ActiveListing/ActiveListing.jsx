@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Tabs, Empty, Typography } from 'antd'
+import { Tabs, Empty, Typography, Badge, Button, Table, Image, Space } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import { ListingCard } from '../Listing/ListingCard'
-import { RegistrationDrawer } from '../RegistrationDrawer/RegistrationDrawer'
+import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { getPostGiftPagination } from 'features/client/post/postThunks'
 
 import styles from './Scss/ActiveListing.module.scss'
-import { ExchangeDrawer } from '../ExchangeDrawer/ExchangeDrawer'
+import { ExchangeDrawer } from '../../Drawer/ExchangeDrawer/ExchangeDrawer'
 import { getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
 import { getExchangeRequest } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import notFoundPost from 'components/feature/post/notFoundPost'
+import dayjs from 'dayjs'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 
 const { TabPane } = Tabs
 
@@ -28,30 +28,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
 
   useEffect(() => {
     fetchPosts()
-  }, [dispatch, fetchPosts])
-
-  const subTabItems = [
-    { key: 'all', label: 'Tất cả', count: Array.isArray(posts) ? posts.filter(l => l.status === 'active').length : 0 },
-    {
-      key: 'gift',
-      label: 'Trao tặng',
-      count: Array.isArray(posts) ? posts.filter(l => l.status === 'active' && l.type === 'gift').length : 0
-    },
-    {
-      key: 'exchange',
-      label: 'Trao đổi',
-      count: Array.isArray(posts) ? posts.filter(l => l.status === 'active' && l.type === 'exchange').length : 0
-    }
-  ]
-
-  const filteredListings =
-    activeSubTab === 'all'
-      ? Array.isArray(posts)
-        ? posts.filter(l => l.status === 'active')
-        : []
-      : Array.isArray(posts)
-        ? posts.filter(l => l.status === 'active' && l.type === activeSubTab)
-        : []
+  }, [fetchPosts])
 
   const handleViewRegistrations = async listing => {
     setSelectedListing(listing)
@@ -84,6 +61,91 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
     }
   }
 
+  const columns = [
+    {
+      title: 'Hình ảnh',
+      dataIndex: 'image_url',
+      key: 'image',
+      width: 120,
+      render: images => (
+        <Image
+          src={`${URL_SERVER_IMAGE}${images[0]}`}
+          alt="Sản phẩm"
+          width={100}
+          height={100}
+          style={{ objectFit: 'cover' }}
+        />
+      )
+    },
+    {
+      title: 'Tiêu đề',
+      dataIndex: 'title',
+      key: 'title',
+      render: (text, record) => (
+        <Space direction="vertical" size="small">
+          <Typography.Text strong>{text}</Typography.Text>
+          <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
+            {record.description}
+          </Typography.Text>
+        </Space>
+      )
+    },
+    {
+      title: 'Loại',
+      dataIndex: 'type',
+      key: 'type',
+      width: 120,
+      render: type => {
+        const statusOK = type === 'exchange' ? 'success' : 'processing'
+        const text = type === 'exchange' ? 'Trao đổi' : 'Trao tặng'
+        return <Badge status={statusOK} text={text} />
+      }
+    },
+    {
+      title: 'Thời gian đăng',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      width: 150,
+      render: created_at => dayjs(created_at).format('DD/MM/YYYY HH:mm')
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      width: 150,
+      render: (_, record) => {
+        const typeButton = record.type === 'gift' ? 'primary' : 'dashed'
+        return (
+          <Button type={typeButton} onClick={() => handleViewRegistrations(record)}>
+            {record.type === 'exchange' ? 'Xem người đổi' : 'Xem người nhận'}
+          </Button>
+        )
+      }
+    }
+  ]
+
+  const subTabItems = [
+    { key: 'all', label: 'Tất cả', count: Array.isArray(posts) ? posts.filter(l => l.status === 'active').length : 0 },
+    {
+      key: 'gift',
+      label: 'Trao tặng',
+      count: Array.isArray(posts) ? posts.filter(l => l.status === 'active' && l.type === 'gift').length : 0
+    },
+    {
+      key: 'exchange',
+      label: 'Trao đổi',
+      count: Array.isArray(posts) ? posts.filter(l => l.status === 'active' && l.type === 'exchange').length : 0
+    }
+  ]
+
+  const filteredListings =
+    activeSubTab === 'all'
+      ? Array.isArray(posts)
+        ? posts.filter(l => l.status === 'active')
+        : []
+      : Array.isArray(posts)
+        ? posts.filter(l => l.status === 'active' && l.type === activeSubTab)
+        : []
+
   return (
     <>
       <Tabs activeKey={activeSubTab} onChange={setActiveSubTab} className={styles.subTabs}>
@@ -103,22 +165,19 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
                 imageStyle={{ height: 200 }}
                 description={<Typography.Text>Đang tải...</Typography.Text>}
               />
-            ) : filteredListings.length === 0 ? (
-              notFoundPost()
             ) : (
-              <div className={styles.listingCardsContainer}>
-                {filteredListings.map(listing => (
-                  <ListingCard
-                    key={listing._id}
-                    listing={listing}
-                    onViewRegistrations={() => handleViewRegistrations(listing)}
-                  />
-                ))}
-              </div>
+              <Table
+                columns={columns}
+                dataSource={filteredListings}
+                rowKey="_id"
+                pagination={false}
+                scroll={{ x: 800 }}
+              />
             )}
           </TabPane>
         ))}
       </Tabs>
+
       <RegistrationDrawer
         visible={visibleDrawer}
         onClose={() => setVisibleDrawer(false)}
@@ -127,6 +186,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
         refetch={() => selectedListing && getRequests(selectedListing)}
         onUpdateSuccess={fetchPosts}
       />
+
       <ExchangeDrawer
         visible={visibleExchangeDrawer}
         onClose={() => setVisibleExchangeDrawer(false)}

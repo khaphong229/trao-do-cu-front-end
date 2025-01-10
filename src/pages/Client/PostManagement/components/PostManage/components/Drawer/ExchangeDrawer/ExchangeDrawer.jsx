@@ -4,7 +4,7 @@ import { UserOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './ExchangeDrawer.module.scss'
 
-import { URL_SERVER_IMAGE } from '../../../../../../../config/url_server'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 import {
   acceptExchangeRequest,
   rejectExchangeRequest

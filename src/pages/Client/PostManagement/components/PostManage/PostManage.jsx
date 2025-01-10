@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Divider, Tabs } from 'antd'
+import { Tabs } from 'antd'
 import styles from './PostManage.module.scss'
 import CreatePostModal from 'pages/Client/Post/CreatePost/CreatePost'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCreateModalVisibility } from 'features/client/post/postSlice'
 import { getPostGiftPagination } from 'features/client/post/postThunks'
 import { UserInfo } from './components/UserInfor/UserInfor'
-import { ActiveListings } from './components/ActiveListing/ActiveListing'
-import { ExpiredListings } from './components/ExpiredListing/ExpriedListing'
-import RequestedPosts from './components/RequestedPosts'
+import { ActiveListings } from './components/PostTabs/ActiveListing/ActiveListing'
+import { ExpiredListings } from './components/PostTabs/ExpiredListing/ExpriedListing'
+import RequestedPosts from './components/PostTabs/RequestedPosts'
 
 const { TabPane } = Tabs
 
@@ -40,13 +40,11 @@ export const PostManage = () => {
   const tabItems = [
     {
       key: 'active',
-      label: 'Đang hiển thị',
-      count: filteredPosts.filter(post => post.status === 'active').length
+      label: 'Đang hiển thị'
     },
     {
       key: 'expired',
-      label: 'Đã thành công',
-      count: filteredPosts.filter(post => post.status === 'inactive').length
+      label: 'Đã thành công'
     },
     {
       key: 'requested',
@@ -59,15 +57,7 @@ export const PostManage = () => {
       <UserInfo user={user} onCreatePost={() => dispatch(setCreateModalVisibility(true))} />
       <Tabs activeKey={activeTab} onChange={setActiveTab} className={styles.listingTabs}>
         {tabItems.map(tab => (
-          <TabPane
-            key={tab.key}
-            tab={
-              <span className={styles.tabLabel}>
-                {tab.label}
-                <span className={styles.tabCount}>({tab.count || 0})</span>
-              </span>
-            }
-          >
+          <TabPane key={tab.key} tab={<span className={styles.tabLabel}>{tab.label}</span>}>
             {tab.key === 'active' ? (
               <ActiveListings
                 posts={filteredPosts}
