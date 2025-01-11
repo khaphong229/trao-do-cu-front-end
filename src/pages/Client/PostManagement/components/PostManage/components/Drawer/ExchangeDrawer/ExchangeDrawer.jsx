@@ -60,7 +60,6 @@ export const ExchangeDrawer = ({ visible, onClose, listing, exchangeRequests, re
     >
       {listing && (
         <Card className={styles.originalPost}>
-          <h3>Bài đăng của bạn</h3>
           <div className={styles.postContent}>
             <h4>{listing.title}</h4>
             <p>{listing.description}</p>

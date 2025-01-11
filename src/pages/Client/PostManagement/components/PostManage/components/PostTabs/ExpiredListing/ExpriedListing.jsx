@@ -136,15 +136,15 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
         ? listings.filter(l => l.status === 'inactive' && l.type === activeSubTab)
         : []
 
-  if (isLoading) {
-    return (
-      <Empty
-        style={{ textAlign: 'center' }}
-        imageStyle={{ height: 200 }}
-        description={<Typography.Text>Đang tải...</Typography.Text>}
-      />
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <Empty
+  //       style={{ textAlign: 'center' }}
+  //       imageStyle={{ height: 200 }}
+  //       description={<Typography.Text>Đang tải...</Typography.Text>}
+  //     />
+  //   )
+  // }
 
   if (isError) {
     getPostError()
@@ -163,17 +163,13 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
               </span>
             }
           >
-            {filteredListings.length === 0 ? (
-              notFoundPost()
-            ) : (
-              <Table
-                columns={columns}
-                dataSource={filteredListings}
-                rowKey="_id"
-                pagination={false}
-                scroll={{ x: 800 }}
-              />
-            )}
+            <Table
+              columns={columns}
+              dataSource={filteredListings}
+              rowKey="_id"
+              pagination={false}
+              scroll={{ x: 800 }}
+            />
           </TabPane>
         ))}
       </Tabs>

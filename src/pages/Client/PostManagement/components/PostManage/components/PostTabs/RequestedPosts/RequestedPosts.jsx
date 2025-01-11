@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Tabs, Avatar, Tag } from 'antd'
+import { Table, Avatar, Tag, Image, Typography, Tabs } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import avt from 'assets/images/logo/avtDefault.jpg'
 import './styles.scss'
@@ -8,7 +8,7 @@ import { getMyRequestedExchange } from 'features/client/request/exchangeRequest/
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetailModal from './components/PostDetailModal'
 
-const { TabPane } = Tabs
+const { Text } = Typography
 
 const RequestedPosts = () => {
   const dispatch = useDispatch()
@@ -28,7 +28,10 @@ const RequestedPosts = () => {
     a.status === 'accepted' ? -1 : b.status === 'accepted' ? 1 : 0
   )
 
-  const handlePostClick = post => {
+  const handlePostClick = (post, e) => {
+    if (e?.target?.closest('.ant-image') || e?.target?.closest('.ant-btn')) {
+      return
+    }
     setSelectedPost(post)
     setIsModalVisible(true)
   }
@@ -38,43 +41,121 @@ const RequestedPosts = () => {
     setSelectedPost(null)
   }
 
-  const renderPostCard = item => (
-    <div className="post-card" key={item._id} onClick={() => handlePostClick(item)}>
-      <div className="post-image">
-        <img src={item?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${item.post_id.image_url[0]}` : avt} alt="Post" />
-      </div>
-      <div className="post-content">
-        <div className="post-header">
-          <Avatar src={item?.post_id?.user?.avatar || avt} />
-          <div className="post-info">
-            <h3>{item?.post_id?.title}</h3>
-            <Tag color={item.status === 'accepted' ? 'green' : 'blue'}>
-              {item.status === 'accepted' ? 'Đã nhận' : 'Chờ duyệt'}
-            </Tag>
+  const columns = [
+    {
+      title: 'Trạng thái',
+      key: 'status',
+      width: 120,
+      render: (_, record) => (
+        <Tag color={record.status === 'accepted' ? 'success' : 'warning'}>
+          {record.status === 'accepted' ? 'Đã nhận' : 'Chờ duyệt'}
+        </Tag>
+      )
+    },
+    {
+      title: 'Ảnh bài viết',
+      key: 'postImage',
+      width: 120,
+      render: (_, record) => (
+        <Image
+          src={record?.post_id?.image_url?.[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : avt}
+          alt="Post image"
+          style={{ width: 100, height: 100, objectFit: 'cover' }}
+          fallback={avt}
+          preview={{
+            mask: null
+          }}
+        />
+      )
+    },
+    {
+      title: 'Chủ bài đăng',
+      key: 'owner',
+      width: 200,
+      render: (_, record) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Avatar
+            src={record?.user_req_id?.avatar ? `${URL_SERVER_IMAGE}${record.user_req_id.avatar}` : avt}
+            size={40}
+          />
+          <div>
+            <Text strong>{record?.user_req_id?.name || 'Không xác định'}</Text>
+            <br />
+            <Text type="secondary">{record?.post_id?.user?.email || ''}</Text>
           </div>
         </div>
-        <p className="post-description">{item?.post_id?.description}</p>
-        <p className="post-location">Địa chỉ: {item?.post_id?.specificLocation || 'Không rõ địa chỉ'}</p>
-      </div>
-    </div>
-  )
+      )
+    },
+    {
+      title: 'Loại',
+      key: 'type',
+      width: 100,
+      render: (_, record) => (
+        <Tag color={record?.post_id?.type === 'exchange' ? 'green' : 'blue'}>
+          {record?.post_id?.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
+        </Tag>
+      )
+    },
+    {
+      title: 'Tiêu đề',
+      dataIndex: ['post_id', 'title'],
+      key: 'title',
+      width: 200,
+      render: text => <Text strong>{text}</Text>
+    },
+    {
+      title: 'Mô tả',
+      dataIndex: ['post_id', 'description'],
+      key: 'description',
+      ellipsis: true,
+      width: 250
+    },
+    {
+      title: 'Địa chỉ',
+      key: 'address',
+      width: 200,
+      render: (_, record) => <Text>{record?.post_id?.specificLocation || 'Không rõ địa chỉ'}</Text>
+    }
+  ]
+
+  const tableProps = {
+    columns,
+    scroll: { x: 1200 },
+    pagination: {
+      pageSize: 10,
+      showSizeChanger: true,
+      showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} bài đăng`
+    },
+    onRow: record => ({
+      onClick: e => handlePostClick(record, e),
+      style: { cursor: 'pointer' }
+    })
+  }
+
+  const tabItems = [
+    {
+      key: 'all',
+      label: 'Tất cả',
+      children: <Table {...tableProps} dataSource={allRequests} rowKey={record => record.id} />
+    },
+    {
+      key: 'gifts',
+      label: 'Quà tặng',
+      children: <Table {...tableProps} dataSource={giftRequests} rowKey={record => record.id} />
+    },
+    {
+      key: 'exchanges',
+      label: 'Trao đổi',
+      children: <Table {...tableProps} dataSource={exchangeRequests} rowKey={record => record.id} />
+    }
+  ]
 
   return (
-    <div className="request-list">
-      <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <TabPane tab={`Tất cả (${allRequests.length})`} key="all">
-          <div className="posts-grid">{allRequests.map(renderPostCard)}</div>
-        </TabPane>
-        <TabPane tab={`Trao tặng (${giftRequests.length})`} key="gift">
-          <div className="posts-grid">{giftRequests.map(renderPostCard)}</div>
-        </TabPane>
-        <TabPane tab={`Trao đổi (${exchangeRequests.length})`} key="exchange">
-          <div className="posts-grid">{exchangeRequests.map(renderPostCard)}</div>
-        </TabPane>
-      </Tabs>
+    <>
+      <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
 
       <PostDetailModal isVisible={isModalVisible} onClose={handleModalClose} post={selectedPost} />
-    </div>
+    </>
   )
 }
 

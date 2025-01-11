@@ -14,7 +14,7 @@ const HeaderIcons = ({ notificationMenu, cartMenu, menu }) => {
   return (
     <>
       <Space size="large" className={styles.contentWrapper}>
-        <Dropdown
+        {/* <Dropdown
           overlay={cartMenu}
           trigger={['click']}
           placement="bottomRight"
@@ -23,7 +23,7 @@ const HeaderIcons = ({ notificationMenu, cartMenu, menu }) => {
           <Badge count={0} size="small" color="red">
             <HeartOutlined className={styles.Icon} />
           </Badge>
-        </Dropdown>
+        </Dropdown> */}
         <Dropdown
           overlay={notificationMenu}
           trigger={['click']}

@@ -17,6 +17,12 @@
   }
 }
 
+:global {
+  .ant-drawer-body {
+    padding: 10px 20px !important;
+  }
+}
+
 .userInfo {
   display: flex;
   align-items: center;

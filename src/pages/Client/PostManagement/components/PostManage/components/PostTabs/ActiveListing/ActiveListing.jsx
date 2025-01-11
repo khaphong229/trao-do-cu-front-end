@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Tabs, Empty, Typography, Badge, Button, Table, Image, Space } from 'antd'
+import { Tabs, Typography, Badge, Button, Table, Image, Space } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { getPostGiftPagination } from 'features/client/post/postThunks'
@@ -159,21 +159,13 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
               </span>
             }
           >
-            {isLoading ? (
-              <Empty
-                style={{ textAlign: 'center' }}
-                imageStyle={{ height: 200 }}
-                description={<Typography.Text>Đang tải...</Typography.Text>}
-              />
-            ) : (
-              <Table
-                columns={columns}
-                dataSource={filteredListings}
-                rowKey="_id"
-                pagination={false}
-                scroll={{ x: 800 }}
-              />
-            )}
+            <Table
+              columns={columns}
+              dataSource={filteredListings}
+              rowKey="_id"
+              pagination={false}
+              scroll={{ x: 800 }}
+            />
           </TabPane>
         ))}
       </Tabs>

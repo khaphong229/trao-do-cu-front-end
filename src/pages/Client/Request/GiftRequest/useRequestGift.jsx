@@ -81,6 +81,7 @@ export const useGiftRequest = () => {
 
     try {
       const response = await dispatch(requestGift(requestData)).unwrap()
+
       const { status, message: msg } = response
       if (status === 201) {
         message.success(msg)
@@ -95,7 +96,11 @@ export const useGiftRequest = () => {
     } catch (error) {
       const { status, message: msg } = error
       if (status === 400) {
-        message.error(msg || 'Có lỗi xảy ra khi gửi yêu cầu')
+        if (error?.detail) {
+          Object.values(error?.detail).map(messageDetail => message.error(messageDetail))
+        } else {
+          message.error(msg || 'Có lỗi xảy ra khi gửi yêu cầu')
+        }
       }
       dispatch(setAcceptModalVisible(false))
     }
