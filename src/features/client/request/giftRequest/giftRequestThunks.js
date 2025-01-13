@@ -43,9 +43,9 @@ export const getMyRequestedGift = createAsyncThunk('giftRequest/getMyRequestedGi
 
 export const getReceiveRequestGift = createAsyncThunk(
   'giftRequest/getReceiveRequestGift',
-  async (_, { rejectWithValue }) => {
+  async ({ current, pageSize }, { rejectWithValue }) => {
     try {
-      const response = await giftRequestService.getPostReceiveRequestService()
+      const response = await giftRequestService.getPostReceiveRequestService({ current, pageSize })
       return response
     } catch (error) {
       return rejectWithValue(error.response.data || 'An error occurred')

@@ -25,8 +25,6 @@ const Login = () => {
         })
       ).unwrap()
 
-      // console.log(responseLogin, 'res login')
-
       if (responseLogin.status === 200) {
         const responseGetUser = await dispatch(getCurrentUser(isAdminLogin)).unwrap()
         if (responseGetUser) {
@@ -35,8 +33,12 @@ const Login = () => {
         }
       }
     } catch (error) {
-      const { message: msg } = error
-      if (error.status === 400) {
+      console.log(error, 'ok')
+
+      const { message: msg, status } = error
+      if (status === 408) {
+        message.error(msg)
+      } else if (error.status === 400) {
         message.error(msg)
       } else if (error.status === 403) {
         message.error('Không có quyền truy cập')

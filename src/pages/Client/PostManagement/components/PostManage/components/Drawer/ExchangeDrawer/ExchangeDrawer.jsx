@@ -60,17 +60,16 @@ export const ExchangeDrawer = ({ visible, onClose, listing, exchangeRequests, re
     >
       {listing && (
         <Card className={styles.originalPost}>
-          <h3>Bài đăng của bạn</h3>
           <div className={styles.postContent}>
-            <h4>{listing.title}</h4>
-            <p>{listing.description}</p>
+            <p className={styles.title}>{`Tiêu đề: ${listing.title}`}</p>
+            <p className={styles.description}>{listing.description}</p>
             <div className={styles.imageGrid}>
               {listing.image_url?.map((img, index) => (
                 <Image
+                  className={styles.imgItem}
                   key={index}
                   src={`${URL_SERVER_IMAGE}${img}`}
                   alt={`Post image ${index + 1}`}
-                  style={{ width: 100, height: 100, objectFit: 'cover' }}
                 />
               ))}
             </div>
@@ -115,12 +114,7 @@ export const ExchangeDrawer = ({ visible, onClose, listing, exchangeRequests, re
                 <div className={styles.imageTitle}>Hình ảnh trao đổi</div>
                 <div className={styles.imageGrid}>
                   {request.image_url.map((img, index) => (
-                    <Image
-                      key={index}
-                      src={`${URL_SERVER_IMAGE}${img}`}
-                      alt={`Exchange item ${index + 1}`}
-                      style={{ width: 100, height: 100, objectFit: 'cover' }}
-                    />
+                    <Image key={index} src={`${URL_SERVER_IMAGE}${img}`} alt={`Exchange item ${index + 1}`} />
                   ))}
                 </div>
               </div>

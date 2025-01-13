@@ -25,10 +25,46 @@
     :global {
       .ant-tree-treenode {
         width: 100%;
-        border: 1px solid #ccc;
-        margin-bottom: 8px;
-        padding: 10px;
+        padding: 4px;
       }
     }
   }
+}
+
+.categoryModal {
+  :global {
+    .ant-tree-node-content-wrapper {
+      width: 100%;
+      padding: 10px;
+    }
+
+    .ant-tree-treenode {
+      width: 100%;
+      margin: 0;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .ant-tree-node-selected {
+      width: 100%;
+    }
+    .ant-tree-switcher {
+      display: flex;
+      align-items: center;
+      &::before {
+        display: none;
+      }
+    }
+  }
+}
+
+.categoryTreeWrapper {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.categoryTree {
+  width: 100%;
 }

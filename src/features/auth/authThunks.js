@@ -1,30 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import AuthService from '../../services/authService'
 import { setAuthToken } from '../../utils/localStorageUtils'
+import { timeoutPromise } from 'utils/errorUtils'
+import { setLoading } from './authSlice'
 
-const TIMEOUT_DURATION = 5000
-
-const timeoutPromise = () => {
-  return new Promise((_, reject) => {
-    setTimeout(() => {
-      reject({
-        response: {
-          data: {
-            message: 'Request timeout - Vui lòng kiểm tra kết nối mạng'
-          }
-        }
-      })
-    }, TIMEOUT_DURATION)
-  })
-}
-
-export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
+export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue, dispatch }) => {
   const { isAdmin, ...data } = credentials
 
   try {
-    // const response = await Promise.race([AuthService.login(data, isAdmin), timeoutPromise()])
+    const response = await Promise.race([AuthService.login(data, isAdmin), timeoutPromise(2500)])
 
-    const response = await AuthService.login(data, isAdmin)
+    // const response = await AuthService.login(data, isAdmin)
 
     const { status } = response.data
     if (status === 200) {
@@ -32,11 +18,25 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, 
       return response.data
     } else {
       return rejectWithValue({
-        message: response.data.message || 'Login failed'
+        message: response.data.message || 'Đăng nhập thất bại.'
       })
     }
   } catch (error) {
-    return rejectWithValue(error.response.data)
+    dispatch(setLoading(false))
+
+    if (error?.response?.data?.status === 408) {
+      return rejectWithValue({
+        message: error.response.data.message,
+        status: 408
+      })
+    }
+
+    return rejectWithValue(
+      error.response.data || {
+        message: 'Đăng nhập thất bại',
+        status: 500
+      }
+    )
   }
 })
 

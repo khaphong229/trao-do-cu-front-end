@@ -1,76 +1,160 @@
 import React from 'react'
-import { Modal, Avatar, Tag, Descriptions, Image } from 'antd'
+import { Modal, Avatar, Tag, Descriptions, Image, Card, Typography } from 'antd'
+import { UserOutlined, PhoneOutlined, FacebookOutlined, HomeOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import avt from 'assets/images/logo/avtDefault.jpg'
 import '../styles.scss'
+
+const { Title, Text } = Typography
 
 const PostDetailModal = ({ isVisible, onClose, post }) => {
   if (!post) return null
 
   return (
-    <Modal open={isVisible} onCancel={onClose} footer={null} width={800} className="post-detail-modal">
-      <div className="post-detail-content">
-        <div className="post-images">
-          {post.post_id.image_url.map((image, index) => (
-            <Image
-              key={index}
-              src={`${URL_SERVER_IMAGE}${image}`}
-              alt={`Post image ${index + 1}`}
-              fallback={avt}
-              className="post-image"
+    <Modal
+      open={isVisible}
+      onCancel={onClose}
+      footer={null}
+      width={1000}
+      className="post-detail-modal"
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Title level={4} style={{ margin: 0 }}>
+            Chi tiết bài đăng
+          </Title>
+          <Tag color={post.status === 'accepted' ? 'success' : 'processing'}>
+            {post.status === 'accepted' ? 'Đã nhận' : 'Chờ duyệt'}
+          </Tag>
+        </div>
+      }
+    >
+      <div style={{ display: 'flex', gap: '24px' }}>
+        <div style={{ flex: '1', maxWidth: '400px' }}>
+          <Card title="Hình ảnh sản phẩm" bordered={false}>
+            <div
               style={{
-                height: '200px'
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                gap: '16px'
               }}
-            />
-          ))}
+            >
+              {post.post_id.image_url.map((image, index) => (
+                <Image
+                  key={index}
+                  src={`${URL_SERVER_IMAGE}${image}`}
+                  alt={`Post image ${index + 1}`}
+                  fallback={avt}
+                  style={{
+                    width: '100%',
+                    height: '150px',
+                    objectFit: 'cover',
+                    borderRadius: '8px'
+                  }}
+                />
+              ))}
+            </div>
+          </Card>
         </div>
 
-        <div className="post-info">
-          <div className="post-header">
-            <Avatar src={`${URL_SERVER_IMAGE}${post.user_req_id?.avatar}` || avt} size={64} />
-            <div className="user-info">
-              <h2>{post.user_req_id?.name}</h2>
-              <Tag color={post.status === 'accepted' ? 'green' : 'blue'}>
-                {post.status === 'accepted' ? 'Đã nhận' : 'Chờ duyệt'}
-              </Tag>
+        <div style={{ flex: '1.5' }}>
+          <Card
+            title={
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <UserOutlined />
+                <span>Thông tin chủ bài đăng</span>
+              </div>
+            }
+            bordered={false}
+            style={{ marginBottom: '16px' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <Avatar src={`${URL_SERVER_IMAGE}${post.post_id.user?.avatar}` || avt} size={80} />
+              <div>
+                <Title level={4} style={{ margin: 0 }}>
+                  {post.post_id.user?.fullName || 'Không xác định'}
+                </Title>
+                <Text type="secondary">{post.post_id.user?.email}</Text>
+              </div>
             </div>
-          </div>
+          </Card>
 
-          <Descriptions column={1} className="post-details">
-            <Descriptions.Item label="Tiêu đề">{post.post_id.title}</Descriptions.Item>
-            {post.post_id.description && (
-              <Descriptions.Item label="Mô tả">{post.post_id.description}</Descriptions.Item>
-            )}
-            <Descriptions.Item label="Địa chỉ">{post.post_id.specificLocation}</Descriptions.Item>
-            <Descriptions.Item label="Thành phố">{post.post_id.city}</Descriptions.Item>
-            <Descriptions.Item label="Loại">
-              {post.post_id.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
-            </Descriptions.Item>
-            <Descriptions.Item label="Thời gian yêu cầu">
-              {new Date(post.requestAt).toLocaleDateString('vi-VN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </Descriptions.Item>
-          </Descriptions>
-
-          {post.contact_phone && (
-            <div className="contact-info">
-              <h3>Thông tin liên hệ</h3>
-              <p>Số điện thoại: {post.contact_phone}</p>
-              {post.contact_social_media?.facebook && (
-                <p>
-                  Facebook:{' '}
-                  <a href={post.contact_social_media.facebook} target="_blank" rel="noopener noreferrer">
-                    Liên kết Facebook
-                  </a>
-                </p>
+          <Card
+            title={
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <HomeOutlined />
+                <span>Thông tin bài đăng</span>
+              </div>
+            }
+            bordered={false}
+            style={{ marginBottom: '16px' }}
+          >
+            <Descriptions column={1} labelStyle={{ fontWeight: '500' }}>
+              <Descriptions.Item label="Tiêu đề">
+                <Text strong>{post.post_id.title}</Text>
+              </Descriptions.Item>
+              {post.post_id.description && (
+                <Descriptions.Item label="Mô tả">{post.post_id.description}</Descriptions.Item>
               )}
-              <p>Địa chỉ liên hệ: {post.contact_address}</p>
-            </div>
+              <Descriptions.Item label="Địa chỉ">{post.post_id.specificLocation}</Descriptions.Item>
+              <Descriptions.Item label="Thành phố">{post.post_id.city}</Descriptions.Item>
+              <Descriptions.Item label="Loại">
+                <Tag color={post.post_id.type === 'gift' ? 'blue' : 'green'}>
+                  {post.post_id.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <ClockCircleOutlined />
+                    <span>Thời gian yêu cầu</span>
+                  </div>
+                }
+              >
+                {new Date(post.requestAt).toLocaleDateString('vi-VN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+
+          {/* Contact Information */}
+          {post.contact_phone && (
+            <Card
+              title={
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <PhoneOutlined />
+                  <span>Thông tin liên hệ</span>
+                </div>
+              }
+              bordered={false}
+            >
+              <Descriptions column={1} labelStyle={{ fontWeight: '500' }}>
+                <Descriptions.Item label="Số điện thoại">{post.contact_phone}</Descriptions.Item>
+                {post.contact_social_media?.facebook && (
+                  <Descriptions.Item
+                    label={
+                      <span>
+                        <FacebookOutlined /> Facebook
+                      </span>
+                    }
+                  >
+                    <a
+                      href={post.contact_social_media.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#1890ff' }}
+                    >
+                      Liên kết Facebook
+                    </a>
+                  </Descriptions.Item>
+                )}
+                <Descriptions.Item label="Địa chỉ liên hệ">{post.contact_address}</Descriptions.Item>
+              </Descriptions>
+            </Card>
           )}
         </div>
       </div>

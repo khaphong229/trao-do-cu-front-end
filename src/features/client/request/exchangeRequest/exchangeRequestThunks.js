@@ -39,9 +39,12 @@ export const getMyRequestedExchange = createAsyncThunk(
 
 export const getExchangeRequest = createAsyncThunk(
   'exchangeRequest/getExchangeRequest',
-  async (_, { rejectWithValue }) => {
+  async ({ current, pageSize }, { rejectWithValue }) => {
     try {
-      const response = await exchangeRequestService.getExchangeRequests()
+      const response = await exchangeRequestService.getExchangeRequests({
+        current,
+        pageSize
+      })
 
       if (!response?.data) {
         throw new Error('No data received from server')
