@@ -3,7 +3,6 @@ import { Tabs, Typography, Badge, Button, Table, Image, Space } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { getPostGiftPagination } from 'features/client/post/postThunks'
-
 import styles from './Scss/ActiveListing.module.scss'
 import { ExchangeDrawer } from '../../Drawer/ExchangeDrawer/ExchangeDrawer'
 import { getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
@@ -15,20 +14,47 @@ const { TabPane } = Tabs
 
 export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, setPageSize }) => {
   const dispatch = useDispatch()
-  const { posts = [], isLoading } = useSelector(state => state.post)
+  const { posts = [], total = 0 } = useSelector(state => state.post)
   const [selectedListing, setSelectedListing] = useState(null)
   const [visibleDrawer, setVisibleDrawer] = useState(false)
   const [receiveRequests, setReceiveRequests] = useState([])
   const [exchangeRequests, setExchangeRequests] = useState([])
   const [visibleExchangeDrawer, setVisibleExchangeDrawer] = useState(false)
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  })
 
   const fetchPosts = useCallback(() => {
-    dispatch(getPostGiftPagination({ current: 1, pageSize: 1000, status: 'active' }))
-  }, [dispatch])
+    dispatch(
+      getPostGiftPagination({
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+        status: 'active',
+        type: activeSubTab !== 'all' ? activeSubTab : undefined
+      })
+    )
+  }, [dispatch, pagination.current, pagination.pageSize, activeSubTab])
 
   useEffect(() => {
     fetchPosts()
   }, [fetchPosts])
+
+  useEffect(() => {
+    setPagination(prev => ({
+      ...prev,
+      total: total
+    }))
+  }, [total])
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPagination(prev => ({
+      ...prev,
+      current: pagination.current,
+      pageSize: pagination.pageSize
+    }))
+  }
 
   const handleViewRegistrations = async listing => {
     setSelectedListing(listing)
@@ -39,17 +65,13 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
     try {
       if (listing.type === 'exchange') {
         const response = await dispatch(getExchangeRequest()).unwrap()
-
         const requestsData = response.data?.receiveRequests || []
-
         const filteredRequests = requestsData.filter(request => request.post_id?._id === listing._id)
-
         setExchangeRequests(filteredRequests)
         setVisibleExchangeDrawer(true)
         setVisibleDrawer(false)
       } else if (listing.type === 'gift') {
         const response = await dispatch(getReceiveRequestGift()).unwrap()
-
         const filteredRequests = response.data.filter(request => request.post_id._id === listing._id)
         setReceiveRequests(filteredRequests)
         setVisibleDrawer(true)
@@ -124,31 +146,30 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
   ]
 
   const subTabItems = [
-    { key: 'all', label: 'Tất cả', count: Array.isArray(posts) ? posts.filter(l => l.status === 'active').length : 0 },
+    { key: 'all', label: 'Tất cả', count: total },
     {
       key: 'gift',
       label: 'Trao tặng',
-      count: Array.isArray(posts) ? posts.filter(l => l.status === 'active' && l.type === 'gift').length : 0
+      count: Array.isArray(posts) ? posts.filter(l => l.type === 'gift').length : 0
     },
     {
       key: 'exchange',
       label: 'Trao đổi',
-      count: Array.isArray(posts) ? posts.filter(l => l.status === 'active' && l.type === 'exchange').length : 0
+      count: Array.isArray(posts) ? posts.filter(l => l.type === 'exchange').length : 0
     }
   ]
 
-  const filteredListings =
-    activeSubTab === 'all'
-      ? Array.isArray(posts)
-        ? posts.filter(l => l.status === 'active')
-        : []
-      : Array.isArray(posts)
-        ? posts.filter(l => l.status === 'active' && l.type === activeSubTab)
-        : []
+  const handleTabChange = key => {
+    setActiveSubTab(key)
+    setPagination(prev => ({
+      ...prev,
+      current: 1
+    }))
+  }
 
   return (
     <>
-      <Tabs activeKey={activeSubTab} onChange={setActiveSubTab} className={styles.subTabs}>
+      <Tabs activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
         {subTabItems.map(subTab => (
           <TabPane
             key={subTab.key}
@@ -161,9 +182,14 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
           >
             <Table
               columns={columns}
-              dataSource={filteredListings}
+              dataSource={posts}
               rowKey="_id"
-              pagination={false}
+              pagination={{
+                ...pagination,
+                showSizeChanger: true,
+                showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
+              }}
+              onChange={handleTableChange}
               scroll={{ x: 800 }}
             />
           </TabPane>

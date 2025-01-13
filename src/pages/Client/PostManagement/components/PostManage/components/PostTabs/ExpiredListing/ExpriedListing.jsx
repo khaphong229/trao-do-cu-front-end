@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Table, Tabs, Empty, Typography, Button, Badge, Image, Space } from 'antd'
 import { useDispatch } from 'react-redux'
 import { getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
@@ -21,20 +21,66 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
   const [receiveRequests, setReceiveRequests] = useState([])
   const [exchangeRequests, setExchangeRequests] = useState([])
   const [activeSubTab, setActiveSubTab] = useState('all')
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  })
+  const [requestsPagination, setRequestsPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  })
 
-  const getRequests = async listing => {
+  useEffect(() => {
+    if (Array.isArray(listings)) {
+      setPagination(prev => ({
+        ...prev,
+        total: listings.filter(l =>
+          activeSubTab === 'all' ? l.status === 'inactive' : l.status === 'inactive' && l.type === activeSubTab
+        ).length
+      }))
+    }
+  }, [listings, activeSubTab])
+
+  const getRequests = async (listing, page = 1, pageSize = 10) => {
     try {
       if (listing.type === 'exchange') {
-        const response = await dispatch(getExchangeRequest()).unwrap()
+        const response = await dispatch(
+          getExchangeRequest({
+            current: page,
+            pageSize: pageSize
+          })
+        ).unwrap()
+
         const requestsData = response.data?.receiveRequests || []
         const filteredRequests = requestsData.filter(request => request.post_id?._id === listing._id)
+
         setExchangeRequests(filteredRequests)
+        setRequestsPagination(prev => ({
+          ...prev,
+          total: filteredRequests.length,
+          current: page,
+          pageSize: pageSize
+        }))
         setVisibleExchangeDrawer(true)
         setVisibleDrawer(false)
       } else if (listing.type === 'gift') {
-        const response = await dispatch(getReceiveRequestGift()).unwrap()
+        const response = await dispatch(
+          getReceiveRequestGift({
+            current: page,
+            pageSize: pageSize
+          })
+        ).unwrap()
+
         const filteredRequests = response.data.filter(request => request.post_id._id === listing._id)
         setReceiveRequests(filteredRequests)
+        setRequestsPagination(prev => ({
+          ...prev,
+          total: filteredRequests.length,
+          current: page,
+          pageSize: pageSize
+        }))
         setVisibleDrawer(true)
         setVisibleExchangeDrawer(false)
       }
@@ -46,7 +92,29 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
 
   const handleViewDetails = async listing => {
     setSelectedListing(listing)
-    await getRequests(listing)
+    await getRequests(listing, 1, requestsPagination.pageSize)
+  }
+
+  const handleTableChange = (newPagination, filters, sorter) => {
+    setPagination(prev => ({
+      ...prev,
+      current: newPagination.current,
+      pageSize: newPagination.pageSize
+    }))
+  }
+
+  const handleRequestsTableChange = newPagination => {
+    if (selectedListing) {
+      getRequests(selectedListing, newPagination.current, newPagination.pageSize)
+    }
+  }
+
+  const handleTabChange = key => {
+    setActiveSubTab(key)
+    setPagination(prev => ({
+      ...prev,
+      current: 1
+    }))
   }
 
   const columns = [
@@ -101,11 +169,14 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
       title: 'Hành động',
       key: 'action',
       width: 150,
-      render: (_, record) => (
-        <Button type="primary" onClick={() => handleViewDetails(record)}>
-          {record.type === 'exchange' ? 'Xem người đổi' : 'Xem người nhận'}
-        </Button>
-      )
+      render: (_, record) => {
+        const variantBtn = record.type === 'exchange' ? 'dashed' : 'primary'
+        return (
+          <Button type={variantBtn} onClick={() => handleViewDetails(record)}>
+            {record.type === 'exchange' ? 'Xem người đổi' : 'Xem người nhận'}
+          </Button>
+        )
+      }
     }
   ]
 
@@ -136,15 +207,10 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
         ? listings.filter(l => l.status === 'inactive' && l.type === activeSubTab)
         : []
 
-  // if (isLoading) {
-  //   return (
-  //     <Empty
-  //       style={{ textAlign: 'center' }}
-  //       imageStyle={{ height: 200 }}
-  //       description={<Typography.Text>Đang tải...</Typography.Text>}
-  //     />
-  //   )
-  // }
+  const paginatedListings = filteredListings.slice(
+    (pagination.current - 1) * pagination.pageSize,
+    pagination.current * pagination.pageSize
+  )
 
   if (isError) {
     getPostError()
@@ -152,7 +218,7 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
 
   return (
     <>
-      <Tabs activeKey={activeSubTab} onChange={setActiveSubTab} className={styles.subTabs}>
+      <Tabs activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
         {subTabItems.map(subTab => (
           <TabPane
             key={subTab.key}
@@ -165,9 +231,15 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
           >
             <Table
               columns={columns}
-              dataSource={filteredListings}
+              dataSource={paginatedListings}
               rowKey="_id"
-              pagination={false}
+              pagination={{
+                ...pagination,
+                showSizeChanger: true,
+                showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
+              }}
+              onChange={handleTableChange}
+              loading={isLoading}
               scroll={{ x: 800 }}
             />
           </TabPane>
@@ -179,7 +251,11 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
         onClose={() => setVisibleDrawer(false)}
         listing={selectedListing}
         receiveRequests={receiveRequests}
-        refetch={() => selectedListing && getRequests(selectedListing)}
+        refetch={() =>
+          selectedListing && getRequests(selectedListing, requestsPagination.current, requestsPagination.pageSize)
+        }
+        pagination={requestsPagination}
+        onPaginationChange={handleRequestsTableChange}
       />
 
       <ExchangeDrawer
@@ -187,7 +263,11 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
         onClose={() => setVisibleExchangeDrawer(false)}
         listing={selectedListing}
         exchangeRequests={exchangeRequests}
-        refetch={() => selectedListing && getRequests(selectedListing)}
+        refetch={() =>
+          selectedListing && getRequests(selectedListing, requestsPagination.current, requestsPagination.pageSize)
+        }
+        pagination={requestsPagination}
+        onPaginationChange={handleRequestsTableChange}
       />
     </>
   )

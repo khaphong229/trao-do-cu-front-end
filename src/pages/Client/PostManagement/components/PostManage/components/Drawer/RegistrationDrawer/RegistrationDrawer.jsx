@@ -1,5 +1,5 @@
 import React from 'react'
-import { Drawer, Card, List, Avatar, Button, message, Badge, Descriptions } from 'antd'
+import { Drawer, Card, List, Avatar, Button, message, Badge, Descriptions, Image } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './RegistrationDrawer.module.scss'
@@ -58,15 +58,14 @@ export const RegistrationDrawer = ({ visible, onClose, listing, receiveRequests,
     >
       <Card className={styles.registrationCard}>
         <div className={styles.registrationHeader}>
-          <Avatar src={listing?.user_id?.avatar || avt} size={50} className={styles.registrationAvatar} />
-          <div>
-            <h4 className={styles.registrationUsername}>{listing.title}</h4>
-            <p className={styles.registrationTitle}>{listing.description}</p>
+          <div className={styles.registrationInfo}>
+            <h4 className={styles.registrationTitle}>{`Tiêu đề: ${listing.title}`}</h4>
+            <p className={styles.registrationDescription}>{`Mô tả: ${listing.description}`}</p>
           </div>
         </div>
         <div className={styles.registrationImages}>
           {(listing.image_url || []).map((img, index) => (
-            <img
+            <Image
               key={index}
               src={`${URL_SERVER_IMAGE}${img}`}
               alt={`Sản phẩm ${index + 1}`}
@@ -88,7 +87,7 @@ export const RegistrationDrawer = ({ visible, onClose, listing, receiveRequests,
                   icon={<UserOutlined />}
                   size={40}
                 />
-                <span className={styles.userName}>{request.user_req_id?.name}</span>
+                <span className={styles.userName}>{request.user_req_id?.name || 'Không xác định'}</span>
               </div>
               <Badge
                 status={request.status === 'accepted' ? 'success' : 'processing'}

@@ -1,4 +1,3 @@
-// src/utils/errorUtils.js
 export const handleApiError = error => {
   if (error.response) {
     // Lỗi từ server trả về
@@ -29,4 +28,19 @@ export const handleApiError = error => {
 export const logError = (error, context = '') => {
   console.error(`Error in ${context}:`, error)
   // Có thể tích hợp logging service như Sentry
+}
+
+export const timeoutPromise = (timeout = 5000) => {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject({
+        response: {
+          data: {
+            status: 408,
+            message: 'Timeout: Đăng nhập quá thời gian, vui lòng thử lại!'
+          }
+        }
+      })
+    }, timeout)
+  })
 }

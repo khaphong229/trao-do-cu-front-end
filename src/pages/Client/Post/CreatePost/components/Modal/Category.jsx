@@ -16,7 +16,7 @@ const CategoryModal = () => {
     dispatch(getAllCategory())
   }, [dispatch])
 
-  const onSelect = (_, { selectedNodes }) => {
+  const onSelect = (_, { selectedNodes, node }) => {
     if (selectedNodes.length > 0) {
       const selectedNode = selectedNodes[0]
 
@@ -29,6 +29,10 @@ const CategoryModal = () => {
 
       dispatch(setSelectedCategory(selectedNode))
       dispatch(updatePostData({ category_id: categoryId }))
+
+      if (node.children) {
+        node.expanded = !node.expanded
+      }
     }
   }
 
@@ -74,6 +78,7 @@ const CategoryModal = () => {
             onSelect={onSelect}
             selectedKeys={selectedCategory?.key ? [selectedCategory.key] : []}
             className={styles.categoryTree}
+            expandAction="click"
           >
             {renderTreeNodes(categories)}
           </Tree>

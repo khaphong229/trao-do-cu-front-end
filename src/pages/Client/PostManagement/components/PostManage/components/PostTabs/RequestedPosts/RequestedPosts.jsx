@@ -7,7 +7,8 @@ import { getMyRequestedGift } from 'features/client/request/giftRequest/giftRequ
 import { getMyRequestedExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetailModal from './components/PostDetailModal'
-
+import imgNotFound from 'assets/images/others/imagenotfound.jpg'
+import { all } from 'axios'
 const { Text } = Typography
 
 const RequestedPosts = () => {
@@ -58,7 +59,7 @@ const RequestedPosts = () => {
       width: 120,
       render: (_, record) => (
         <Image
-          src={record?.post_id?.image_url?.[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : avt}
+          src={record?.post_id?.image_url?.[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : imgNotFound}
           alt="Post image"
           style={{ width: 100, height: 100, objectFit: 'cover' }}
           fallback={avt}
@@ -135,17 +136,17 @@ const RequestedPosts = () => {
   const tabItems = [
     {
       key: 'all',
-      label: 'Tất cả',
+      label: `Tất cả (${allRequests.length})`,
       children: <Table {...tableProps} dataSource={allRequests} rowKey={record => record.id} />
     },
     {
       key: 'gifts',
-      label: 'Quà tặng',
+      label: `Quà tặng (${giftRequests.length})`,
       children: <Table {...tableProps} dataSource={giftRequests} rowKey={record => record.id} />
     },
     {
       key: 'exchanges',
-      label: 'Trao đổi',
+      label: `Trao đổi (${exchangeRequests.length})`,
       children: <Table {...tableProps} dataSource={exchangeRequests} rowKey={record => record.id} />
     }
   ]

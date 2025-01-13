@@ -15,71 +15,75 @@ const authSlice = createSlice({
   reducers: {
     clearError: state => {
       state.error = null
+    },
+    setLoading: (state, action) => {
+      state.isLoading = action.payload
     }
   },
   extraReducers: builder => {
     // Login
-    builder.addCase(loginUser.pending, state => {
-      state.isLoading = true
-    })
-    builder.addCase(loginUser.fulfilled, (state, action) => {
-      state.isLoading = false
-      state.isAuthenticated = true
-      state.isAdmin = action.meta.arg.isAdmin || false
-    })
-    builder.addCase(loginUser.rejected, (state, action) => {
-      state.isLoading = false
-      state.error = action.payload.message
-    })
+    builder
+      .addCase(loginUser.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isAuthenticated = true
+        state.isAdmin = action.meta.arg.isAdmin || false
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action?.payload?.message || 'Đăng nhập Không thành công. Vui lòng thử lại'
+      })
 
-    // Logout
-    builder.addCase(logoutUser.fulfilled, (state, action) => {
-      state.user = null
-      state.isAuthenticated = false
-      state.isAdmin = false
-    })
+      // Logout
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.user = null
+        state.isAuthenticated = false
+        state.isAdmin = false
+      })
 
-    // Register
-    builder.addCase(registerUser.pending, state => {
-      state.isLoading = true
-    })
-    builder.addCase(registerUser.fulfilled, (state, action) => {
-      state.isLoading = false
-    })
-    builder.addCase(registerUser.rejected, (state, action) => {
-      state.isLoading = false
-    })
+      // Register
+      .addCase(registerUser.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.isLoading = false
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.isLoading = false
+      })
 
-    // Get Current User
-    builder.addCase(getCurrentUser.pending, state => {
-      state.isLoading = true
-    })
-    builder.addCase(getCurrentUser.fulfilled, (state, action) => {
-      state.user = action.payload.data
-      state.isLoading = false
-      state.isAuthenticated = true
-      state.isAdmin = action.meta.arg || false
-    })
-    builder.addCase(getCurrentUser.rejected, state => {
-      state.isLoading = false
-    })
-    //Update User
-    builder.addCase(updateUserProfile.pending, state => {
-      state.isLoading = true
-    })
-    builder.addCase(updateUserProfile.fulfilled, (state, action) => {
-      state.isLoading = false
-      state.user = {
-        ...state.user,
-        ...action.payload.data
-      }
-    })
-    builder.addCase(updateUserProfile.rejected, (state, action) => {
-      state.isLoading = false
-      state.error = action.payload?.message || 'Profile update failed'
-    })
+      // Get Current User
+      .addCase(getCurrentUser.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.user = action.payload.data
+        state.isLoading = false
+        state.isAuthenticated = true
+        state.isAdmin = action.meta.arg || false
+      })
+      .addCase(getCurrentUser.rejected, state => {
+        state.isLoading = false
+      })
+      //Update User
+      .addCase(updateUserProfile.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.user = {
+          ...state.user,
+          ...action.payload.data
+        }
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload?.message || 'Profile update failed'
+      })
   }
 })
 
-export const { clearError } = authSlice.actions
+export const { clearError, setLoading } = authSlice.actions
 export default authSlice.reducer
