@@ -16,7 +16,7 @@ import {
   UserOutlined
 } from '@ant-design/icons'
 import { message } from 'antd'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { removeAuthToken } from 'utils/localStorageUtils'
 
 export const categoryData = [

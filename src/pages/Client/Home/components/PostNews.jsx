@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Row, Col, Button, Avatar, Empty, Typography } from 'antd'
+import { Card, Row, Col, Button, Avatar } from 'antd'
 import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
@@ -20,7 +20,6 @@ import { setExchangeFormModalVisible } from 'features/client/request/exchangeReq
 import { URL_SERVER_IMAGE } from '../../../../config/url_server'
 import { ArrowDownOutlined } from '@ant-design/icons'
 import { usePostStatus } from 'hooks/usePostStatus'
-import BoxWrap from 'components/common/BoxWrap'
 import getPostError from 'components/feature/post/getPostError'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 import notFoundPost from 'components/feature/post/notFoundPost'
@@ -105,20 +104,20 @@ const PostNews = () => {
     )
   }
 
-  if (isLoading || isChecking) {
-    return (
-      <BoxWrap>
-        <span className={styles.postTitle}>Bài đăng mới nhất</span>
-        <Row justify="start" className={styles.itemsGrid}>
-          {[...Array(8)].map((_, index) => (
-            <Col key={index} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
-              <PostCardSkeleton />
-            </Col>
-          ))}
-        </Row>
-      </BoxWrap>
-    )
-  }
+  // if (isLoading || isChecking) {
+  //   return (
+  //     <BoxWrap>
+  //       <span className={styles.postTitle}>Bài đăng mới nhất</span>
+  //       <Row justify="start" className={styles.itemsGrid}>
+  //         {[...Array(8)].map((_, index) => (
+  //           <Col key={index} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
+  //             <PostCardSkeleton />
+  //           </Col>
+  //         ))}
+  //       </Row>
+  //     </BoxWrap>
+  //   )
+  // }
 
   if (isError) {
     return getPostError()
@@ -128,6 +127,16 @@ const PostNews = () => {
     <>
       <div className={styles.postWrap}>
         <span className={styles.postTitle}>Bài đăng mới nhất</span>
+
+        {isLoading && (
+          <Row justify="start" className={styles.itemsGrid}>
+            {[...Array(8)].map((_, index) => (
+              <Col key={index} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
+                <PostCardSkeleton />
+              </Col>
+            ))}
+          </Row>
+        )}
 
         {filteredPosts && filteredPosts.length > 0 ? (
           <Row justify="start" className={styles.itemsGrid}>

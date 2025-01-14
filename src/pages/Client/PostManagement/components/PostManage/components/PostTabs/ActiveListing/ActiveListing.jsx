@@ -69,6 +69,8 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
         const filteredRequests = requestsData.filter(request => request.post_id?._id === listing._id)
         setExchangeRequests(filteredRequests)
         setVisibleExchangeDrawer(true)
+        console.log(visibleExchangeDrawer)
+
         setVisibleDrawer(false)
       } else if (listing.type === 'gift') {
         const response = await dispatch(getReceiveRequestGift()).unwrap()
@@ -78,6 +80,8 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
         setVisibleExchangeDrawer(false)
       }
     } catch (error) {
+      console.log(error)
+
       setExchangeRequests([])
       setReceiveRequests([])
     }
@@ -106,7 +110,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, setCurrentPage, 
       render: (text, record) => (
         <Space direction="vertical" size="small">
           <Typography.Text strong>{text}</Typography.Text>
-          <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
+          <Typography.Text type="secondary" style={{ fontSize: '12px' }} className={styles.descPost}>
             {record.description}
           </Typography.Text>
         </Space>
