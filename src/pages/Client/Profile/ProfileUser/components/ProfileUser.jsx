@@ -1,4 +1,4 @@
-import { Button, Card, Tabs, Badge, Tooltip, Image } from 'antd'
+import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message } from 'antd'
 import {
   ShareAltOutlined,
   EditOutlined,
@@ -8,7 +8,8 @@ import {
   EnvironmentOutlined,
   FacebookOutlined,
   TwitterOutlined,
-  MailOutlined
+  MailOutlined,
+  CameraOutlined
 } from '@ant-design/icons'
 import Avatar from 'assets/images/logo/avtDefault.jpg'
 import styles from '../scss/ProfileUser.module.scss'
@@ -16,17 +17,95 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
 import { setCreateModalVisibility } from 'features/client/post/postSlice'
+import { uploadAvatar } from 'features/upload/uploadThunks'
+import { useEffect, useState } from 'react'
 
 const { TabPane } = Tabs
 const ProfilePage = () => {
   const dispatch = useDispatch()
-  const { user } = useSelector(state => state.auth)
+  const { user, isLoading } = useSelector(state => state.auth)
+  const [uploading, setUploading] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState('')
+
+  // Cập nhật avatarUrl khi user thay đổi
+  useEffect(() => {
+    // Force re-render khi avatar URL thay đổi
+    if (avatarUrl) {
+      const img = new Image()
+      img.src = avatarUrl
+      img.onload = () => {
+        // Trigger re-render
+        setAvatarUrl(prevUrl => prevUrl)
+      }
+    }
+  }, [avatarUrl])
+
+  // Get avatar URL from multiple possible locations
+  const getAvatarUrl = () => {
+    const directAvatar = user?.avatar
+    const socialMediaAvatar = user?.social_media?.[0]?.avatar
+
+    return directAvatar || socialMediaAvatar || Avatar
+  }
+
+  const handleCustomUpload = async options => {
+    const { file, onSuccess, onError } = options
+    try {
+      setUploading(true)
+
+      // Upload avatar trước
+      const uploadResponse = await dispatch(uploadAvatar(file)).unwrap()
+
+      if (uploadResponse.success && uploadResponse.files?.[0]?.url) {
+        const newAvatarUrl = uploadResponse.files[0].url
+        setAvatarUrl(newAvatarUrl)
+
+        // Không cần gọi getCurrentUser ngay lập tức
+        message.success('Upload ảnh thành công')
+        onSuccess(uploadResponse)
+      } else {
+        throw new Error('Upload response không hợp lệ')
+      }
+    } catch (error) {
+      console.error('Upload error:', error)
+      message.error(error.message || 'Đã xảy ra lỗi khi upload ảnh')
+      onError(error)
+    } finally {
+      setUploading(false)
+    }
+  }
   return (
     <main className={styles['profile-page']}>
       <div className={styles.container}>
         <Card className={styles.card}>
           <div className={styles['profile-header']}>
-            <Image src={user?.avatar ? user.avatar : Avatar} alt="Profile picture" className={styles.avatar} />
+            <div className={styles['avatar-container']}>
+              <Image
+                src={getAvatarUrl()}
+                alt="Ảnh đại diện"
+                className={styles.avatar}
+                preview={false}
+                onError={e => {
+                  console.log('Failed to load avatar:', e.target.src)
+                  e.target.src = Avatar
+                }}
+              />
+              <Upload
+                name="avatar"
+                showUploadList={false}
+                accept="image/*"
+                customRequest={handleCustomUpload}
+                className={styles['avatar-upload']}
+              >
+                <Button
+                  icon={<CameraOutlined />}
+                  loading={uploading}
+                  className={styles['upload-button']}
+                  type="primary"
+                  shape="circle"
+                />
+              </Upload>
+            </div>
             <div className={styles['profile-info']}>
               <h1>{user?.name ? user.name : 'Tài khoản'}</h1>
               <p className="text-muted">Chưa có đánh giá</p>

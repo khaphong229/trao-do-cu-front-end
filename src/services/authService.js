@@ -26,9 +26,15 @@ const authService = {
   getAdminCurrentUser() {
     return this.http.get('/admin/auth/me')
   },
+  changePassWord(data) {
+    return this.http.patch('/auth/change-password', {
+      password: data.currentPassword, // Chuyển thành `password`
+      new_password: data.newPassword // Chuyển thành `new_password`
+    })
+  },
 
-  resetPassword(email) {
-    return this.http.post('/auth/reset-password', { email })
+  resetPassword(token) {
+    return this.http.post('/auth/reset-password', { token })
   },
 
   updateProfile(userData) {

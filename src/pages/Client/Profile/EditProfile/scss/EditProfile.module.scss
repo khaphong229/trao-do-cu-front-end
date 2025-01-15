@@ -19,7 +19,9 @@ $breakpoint-xl: 1200px;
   background-color: lighten($background-color, 5%);
   padding: 20px;
   min-height: auto; /* Chiều cao tối thiểu */
-  gap: 20px;
+  gap: 10px;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
 
   @media (max-width: $breakpoint-md) {
     flex-direction: column;
@@ -51,9 +53,8 @@ $breakpoint-xl: 1200px;
   width: 100%;
   margin-left: 10px;
   padding: 20px;
-  background-color: #fff;
   border-radius: $border-radius;
-  box-shadow: $box-shadow;
+  margin-top: -20px;
 
   .card {
     margin-bottom: 16px;
@@ -101,35 +102,36 @@ button {
 
 /* Layout của trang Security */
 .form-design-layout {
-  background-color: $background-color;
+  max-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: auto;
-  padding: 20px;
 
   .form-design-content {
-    background-color: #fff;
-    border-radius: $border-radius;
-    box-shadow: $box-shadow;
-    padding: 32px;
     width: 100%;
-    max-width: 720px;
+    max-width: 780px;
+    padding: 32px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    @media (max-width: 576px) {
+      padding: 20px;
+    }
 
     .form-design-header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
 
       h2 {
         font-size: 24px;
         font-weight: 600;
-        color: $text-color;
-        margin-bottom: 8px;
-      }
+        color: #262626;
+        margin: 0;
 
-      p {
-        color: $secondary-color;
-        font-size: 16px;
+        @media (max-width: 576px) {
+          font-size: 20px;
+        }
       }
     }
 
@@ -139,16 +141,18 @@ button {
 
         label {
           display: block;
-          font-size: 16px;
-          font-weight: 500;
-          color: $text-color;
           margin-bottom: 8px;
+          font-size: 14px;
+          color: #262626;
+          font-weight: 500;
         }
 
         .ant-input-password {
           width: 100%;
-          border-radius: $border-radius;
-          border: 1px solid $gray-light;
+          
+          .ant-input {
+            height: 40px;
+          }
         }
       }
 
@@ -156,20 +160,54 @@ button {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-bottom: 24px;
+
+        @media (max-width: 576px) {
+          flex-direction: column;
+          gap: 16px;
+          align-items: stretch;
+        }
 
         .ant-checkbox-wrapper {
-          color: $text-color;
-          font-size: 16px;
+          color: #262626;
+          font-size: 14px;
         }
 
         .ant-btn {
-          font-size: 16px;
-          padding: 8px 24px;
+          min-width: 120px;
+          height: 40px;
+          font-weight: 500;
+          font-size: 14px;
+
+          @media (max-width: 576px) {
+            width: 100%;
+          }
         }
+      }
+
+      .error {
+        color: #ff4d4f;
+        margin-top: 16px;
+        font-size: 14px;
+        text-align: center;
+
+        p {
+          margin: 4px 0 0;
+        }
+      }
+
+      .success {
+        color: #52c41a;
+        margin-top: 16px;
+        font-size: 14px;
+        text-align: center;
       }
     }
   }
 }
+
+
+
 
 /* Links Social Media */
 .social-links-card {
@@ -238,6 +276,11 @@ button {
     }
   }
 }
+.error{
+  color: red;
+  margin-top: 10px;
+  font-size: 15px;
+}
 
 /* Responsive */
 @media (max-width: $breakpoint-sm) {
@@ -247,7 +290,7 @@ button {
   }
 
   .content {
-    padding: 15px;
+    margin-left: -20px;
   }
 
   .social-links-card {
