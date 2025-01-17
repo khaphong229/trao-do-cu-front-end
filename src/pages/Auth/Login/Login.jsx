@@ -33,8 +33,6 @@ const Login = () => {
         }
       }
     } catch (error) {
-      console.log(error, 'ok')
-
       const { message: msg, status } = error
       if (status === 408) {
         message.error(msg)
@@ -73,6 +71,10 @@ const Login = () => {
             {
               required: true,
               message: 'Vui lòng nhập mật khẩu!'
+            },
+            {
+              min: 6,
+              message: 'Mật khẩu tối thiểu 6 kí tự.'
             }
           ]}
         >

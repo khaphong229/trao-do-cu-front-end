@@ -15,11 +15,12 @@ const exchangeRequestService = {
     return this.http.get('/request_exchange/me')
   },
 
-  getExchangeRequests: function ({ current = 1, pageSize = 10 }) {
+  getExchangeRequests: function ({ current = 1, pageSize = 10, post_id }) {
     let path = '/request_exchange'
     const queryParams = new URLSearchParams()
     queryParams.append('current', current)
     queryParams.append('pageSize', pageSize)
+    queryParams.append('post_id', post_id)
 
     const queryString = queryParams.toString()
     if (queryString) {

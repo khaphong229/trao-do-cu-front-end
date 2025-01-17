@@ -1,111 +1,150 @@
-import React, { useState, useEffect } from 'react'
-import { Table, Tabs, Empty, Typography, Button, Badge, Image, Space } from 'antd'
-import { useDispatch } from 'react-redux'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import { Table, Tabs, Typography, Button, Badge, Image, Space } from 'antd'
+import { useDispatch, useSelector } from 'react-redux'
 import { getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
 import { getExchangeRequest } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
+import { getPostGiftPagination } from 'features/client/post/postThunks'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { ExchangeDrawer } from '../../Drawer/ExchangeDrawer/ExchangeDrawer'
 import dayjs from 'dayjs'
 import styles from './Scss/ExpriedListing.module.scss'
-import notFoundPost from 'components/feature/post/notFoundPost'
 import getPostError from 'components/feature/post/getPostError'
+import PostDetail from '../components/PostDetail/PostDetail'
 
 const { TabPane } = Tabs
 
-export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessage }) => {
+export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive }) => {
   const dispatch = useDispatch()
+  const { posts = [], total = 0, isLoading, isError } = useSelector(state => state.post)
   const [selectedListing, setSelectedListing] = useState(null)
   const [visibleDrawer, setVisibleDrawer] = useState(false)
   const [visibleExchangeDrawer, setVisibleExchangeDrawer] = useState(false)
   const [receiveRequests, setReceiveRequests] = useState([])
   const [exchangeRequests, setExchangeRequests] = useState([])
-  const [activeSubTab, setActiveSubTab] = useState('all')
+  const [isModalDetail, setIsModalDetail] = useState(false)
+  const [tabCounts, setTabCounts] = useState({
+    all: 0,
+    gift: 0,
+    exchange: 0
+  })
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
     total: 0
   })
-  const [requestsPagination, setRequestsPagination] = useState({
+  const [requestPagination, setRequestPagination] = useState({
     current: 1,
     pageSize: 10,
     total: 0
   })
 
-  useEffect(() => {
-    if (Array.isArray(listings)) {
-      setPagination(prev => ({
-        ...prev,
-        total: listings.filter(l =>
-          activeSubTab === 'all' ? l.status === 'inactive' : l.status === 'inactive' && l.type === activeSubTab
-        ).length
-      }))
-    }
-  }, [listings, activeSubTab])
+  const fetchParams = useMemo(
+    () => ({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+      status: 'inactive',
+      type: activeSubTab !== 'all' ? activeSubTab : undefined
+    }),
+    [pagination.current, pagination.pageSize, activeSubTab]
+  )
 
-  const getRequests = async (listing, page = 1, pageSize = 10) => {
-    try {
-      if (listing.type === 'exchange') {
-        const response = await dispatch(
-          getExchangeRequest({
-            current: page,
-            pageSize: pageSize
-          })
-        ).unwrap()
-
-        const requestsData = response.data?.receiveRequests || []
-        const filteredRequests = requestsData.filter(request => request.post_id?._id === listing._id)
-
-        setExchangeRequests(filteredRequests)
-        setRequestsPagination(prev => ({
-          ...prev,
-          total: filteredRequests.length,
-          current: page,
-          pageSize: pageSize
-        }))
-        setVisibleExchangeDrawer(true)
-        setVisibleDrawer(false)
-      } else if (listing.type === 'gift') {
-        const response = await dispatch(
-          getReceiveRequestGift({
-            current: page,
-            pageSize: pageSize
-          })
-        ).unwrap()
-
-        const filteredRequests = response.data.filter(request => request.post_id._id === listing._id)
-        setReceiveRequests(filteredRequests)
-        setRequestsPagination(prev => ({
-          ...prev,
-          total: filteredRequests.length,
-          current: page,
-          pageSize: pageSize
-        }))
-        setVisibleDrawer(true)
-        setVisibleExchangeDrawer(false)
+  const fetchPosts = useCallback(() => {
+    dispatch(getPostGiftPagination(fetchParams)).then(response => {
+      if (response?.payload?.data?.data) {
+        const allPosts = response.payload.data.data
+        setTabCounts({
+          all: response.payload.data.total || 0,
+          gift: allPosts.filter(post => post.type === 'gift').length,
+          exchange: allPosts.filter(post => post.type === 'exchange').length
+        })
       }
-    } catch (error) {
-      setExchangeRequests([])
-      setReceiveRequests([])
-    }
-  }
+    })
+  }, [dispatch, fetchParams])
 
-  const handleViewDetails = async listing => {
-    setSelectedListing(listing)
-    await getRequests(listing, 1, requestsPagination.pageSize)
-  }
-
-  const handleTableChange = (newPagination, filters, sorter) => {
+  useEffect(() => {
     setPagination(prev => ({
       ...prev,
-      current: newPagination.current,
-      pageSize: newPagination.pageSize
+      total: total
+    }))
+  }, [total])
+
+  useEffect(() => {
+    if (isActive) {
+      fetchPosts()
+    }
+  }, [fetchPosts, isActive, refreshKey])
+
+  const getRequests = useCallback(
+    async (listing, paginationParams = null) => {
+      const params = paginationParams || {
+        current: requestPagination.current,
+        pageSize: requestPagination.pageSize,
+        post_id: listing?._id
+      }
+
+      try {
+        if (listing.type === 'exchange') {
+          const response = await dispatch(getExchangeRequest(params)).unwrap()
+          const requestsData = response.data?.receiveRequests || []
+          const filteredRequests = requestsData.filter(request => request.post_id?._id === listing._id)
+          setExchangeRequests(filteredRequests)
+          setVisibleExchangeDrawer(true)
+          setVisibleDrawer(false)
+          setRequestPagination(prev => ({
+            ...prev,
+            total: response.total || filteredRequests.length
+          }))
+        } else if (listing.type === 'gift') {
+          const response = await dispatch(getReceiveRequestGift(params)).unwrap()
+          const filteredRequests = response.data.filter(request => request.post_id._id === listing._id)
+          setReceiveRequests(filteredRequests)
+          setVisibleDrawer(true)
+          setVisibleExchangeDrawer(false)
+          setRequestPagination(prev => ({
+            ...prev,
+            total: response.total || filteredRequests.length
+          }))
+        }
+      } catch (error) {
+        setExchangeRequests([])
+        setReceiveRequests([])
+      }
+    },
+    [dispatch, requestPagination.current, requestPagination.pageSize]
+  )
+
+  const handleViewRegistrations = async listing => {
+    setSelectedListing(listing)
+    setRequestPagination({
+      current: 1,
+      pageSize: 10,
+      total: 0
+    })
+    await getRequests(listing, { current: 1, pageSize: 10, post_id: listing._id })
+  }
+
+  const handleTableChange = pagination => {
+    setPagination(prev => ({
+      ...prev,
+      current: pagination.current,
+      pageSize: pagination.pageSize
     }))
   }
 
-  const handleRequestsTableChange = newPagination => {
+  const handleRequestPaginationChange = async pagination => {
+    setRequestPagination(prev => ({
+      ...prev,
+      current: pagination.current,
+      pageSize: pagination.pageSize
+    }))
+
     if (selectedListing) {
-      getRequests(selectedListing, newPagination.current, newPagination.pageSize)
+      await getRequests(selectedListing, {
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+        post_id: selectedListing._id
+      })
     }
   }
 
@@ -115,6 +154,19 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
       ...prev,
       current: 1
     }))
+  }
+
+  const handlePostDetail = (e, post) => {
+    if (e?.target?.closest('.ant-image') || e?.target?.closest('.ant-btn')) {
+      return
+    }
+    setSelectedListing(post)
+    setIsModalDetail(true)
+  }
+
+  const handleClosePostDetail = () => {
+    setIsModalDetail(false)
+    setSelectedListing(null)
   }
 
   const columns = [
@@ -141,7 +193,7 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
       render: (text, record) => (
         <Space direction="vertical" size="small">
           <Typography.Text strong>{text}</Typography.Text>
-          <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
+          <Typography.Text type="secondary" style={{ fontSize: '12px' }} className={styles.descPost}>
             {record.description}
           </Typography.Text>
         </Space>
@@ -168,49 +220,26 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
     {
       title: 'Hành động',
       key: 'action',
-      width: 150,
+      width: 250,
       render: (_, record) => {
-        const variantBtn = record.type === 'exchange' ? 'dashed' : 'primary'
+        const typeButton = record.type === 'gift' ? 'primary' : 'dashed'
         return (
-          <Button type={variantBtn} onClick={() => handleViewDetails(record)}>
-            {record.type === 'exchange' ? 'Xem người đổi' : 'Xem người nhận'}
-          </Button>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'space-between' }}>
+            <Button type={typeButton} onClick={() => handleViewRegistrations(record)}>
+              {record.type === 'exchange' ? 'Xem người đổi' : 'Xem người nhận'}
+            </Button>
+            <Button>Đăng lại</Button>
+          </div>
         )
       }
     }
   ]
 
   const subTabItems = [
-    {
-      key: 'all',
-      label: 'Tất cả',
-      count: Array.isArray(listings) ? listings.filter(l => l.status === 'inactive').length : 0
-    },
-    {
-      key: 'gift',
-      label: 'Trao tặng',
-      count: Array.isArray(listings) ? listings.filter(l => l.status === 'inactive' && l.type === 'gift').length : 0
-    },
-    {
-      key: 'exchange',
-      label: 'Trao đổi',
-      count: Array.isArray(listings) ? listings.filter(l => l.status === 'inactive' && l.type === 'exchange').length : 0
-    }
+    { key: 'all', label: 'Tất cả', count: tabCounts.all },
+    { key: 'gift', label: 'Trao tặng', count: tabCounts.gift },
+    { key: 'exchange', label: 'Trao đổi', count: tabCounts.exchange }
   ]
-
-  const filteredListings =
-    activeSubTab === 'all'
-      ? Array.isArray(listings)
-        ? listings.filter(l => l.status === 'inactive')
-        : []
-      : Array.isArray(listings)
-        ? listings.filter(l => l.status === 'inactive' && l.type === activeSubTab)
-        : []
-
-  const paginatedListings = filteredListings.slice(
-    (pagination.current - 1) * pagination.pageSize,
-    pagination.current * pagination.pageSize
-  )
 
   if (isError) {
     getPostError()
@@ -231,7 +260,7 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
           >
             <Table
               columns={columns}
-              dataSource={paginatedListings}
+              dataSource={posts}
               rowKey="_id"
               pagination={{
                 ...pagination,
@@ -241,6 +270,10 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
               onChange={handleTableChange}
               loading={isLoading}
               scroll={{ x: 800 }}
+              onRow={record => ({
+                onClick: e => handlePostDetail(e, record),
+                style: { cursor: 'pointer' }
+              })}
             />
           </TabPane>
         ))}
@@ -251,11 +284,10 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
         onClose={() => setVisibleDrawer(false)}
         listing={selectedListing}
         receiveRequests={receiveRequests}
-        refetch={() =>
-          selectedListing && getRequests(selectedListing, requestsPagination.current, requestsPagination.pageSize)
-        }
-        pagination={requestsPagination}
-        onPaginationChange={handleRequestsTableChange}
+        refetch={getRequests}
+        onUpdateSuccess={fetchPosts}
+        pagination={requestPagination}
+        onPaginationChange={handleRequestPaginationChange}
       />
 
       <ExchangeDrawer
@@ -263,12 +295,13 @@ export const ExpiredListings = ({ listings = [], isLoading, isError, errorMessag
         onClose={() => setVisibleExchangeDrawer(false)}
         listing={selectedListing}
         exchangeRequests={exchangeRequests}
-        refetch={() =>
-          selectedListing && getRequests(selectedListing, requestsPagination.current, requestsPagination.pageSize)
-        }
-        pagination={requestsPagination}
-        onPaginationChange={handleRequestsTableChange}
+        refetch={getRequests}
+        onUpdateSuccess={fetchPosts}
+        pagination={requestPagination}
+        onPaginationChange={handleRequestPaginationChange}
       />
+
+      <PostDetail isVisible={isModalDetail} onClose={handleClosePostDetail} post={selectedListing} />
     </>
   )
 }

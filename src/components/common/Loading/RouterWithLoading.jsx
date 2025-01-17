@@ -7,7 +7,7 @@ const RouterWithLoading = () => {
   const [isNavigating, setIsNavigating] = useState(false)
   useEffect(() => {
     setIsNavigating(true)
-    const timer = setTimeout(() => setIsNavigating(false), 200)
+    const timer = setTimeout(() => setIsNavigating(false), 100)
     return () => clearTimeout(timer)
   }, [location.pathname])
 

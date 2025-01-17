@@ -126,3 +126,9 @@
     }
   }
 }
+
+@media screen and (max-width: '600px') {
+  .DetailPostContainer {
+    flex-direction: column !important;
+  }
+}

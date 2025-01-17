@@ -1,5 +1,5 @@
-import React from 'react'
-import { Drawer, Card, List, Avatar, Button, message, Badge, Descriptions, Image } from 'antd'
+import React, { useState } from 'react'
+import { Drawer, Card, List, Avatar, Button, message, Badge, Descriptions, Image, Pagination } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './RegistrationDrawer.module.scss'
@@ -7,8 +7,18 @@ import avt from 'assets/images/logo/avtDefault.jpg'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 
-export const RegistrationDrawer = ({ visible, onClose, listing, receiveRequests, refetch, onUpdateSuccess }) => {
+export const RegistrationDrawer = ({
+  visible,
+  onClose,
+  listing,
+  receiveRequests,
+  refetch,
+  onUpdateSuccess,
+  pagination
+}) => {
   const dispatch = useDispatch()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   const sortedRequests = React.useMemo(() => {
     if (!receiveRequests) return []
@@ -25,8 +35,8 @@ export const RegistrationDrawer = ({ visible, onClose, listing, receiveRequests,
     try {
       await dispatch(acceptGiftRequest({ requestId, status })).unwrap()
       message.success(status === 'accepted' ? 'Đã chấp nhận yêu cầu thành công' : 'Đã hủy yêu cầu thành công')
-      refetch()
-      onUpdateSuccess()
+      await handleRefetch()
+      onUpdateSuccess?.()
     } catch (error) {
       message.error(error.message || 'Có lỗi xảy ra khi xử lý yêu cầu')
     }
@@ -37,10 +47,32 @@ export const RegistrationDrawer = ({ visible, onClose, listing, receiveRequests,
       const response = await dispatch(rejectGiftRequest(id)).unwrap()
       if (response.status === 201) {
         message.success(response.message)
-        refetch()
+        await handleRefetch()
       }
     } catch (error) {
       message.error('Từ chối thất bại!')
+    }
+  }
+
+  const handleRefetch = async () => {
+    if (listing) {
+      await refetch(listing, {
+        current: currentPage,
+        pageSize: pageSize,
+        post_id: listing._id
+      })
+    }
+  }
+
+  const handlePaginationChange = async (page, size) => {
+    setCurrentPage(page)
+    setPageSize(size)
+    if (listing) {
+      await refetch(listing, {
+        current: page,
+        pageSize: size,
+        post_id: listing._id
+      })
     }
   }
 
@@ -60,7 +92,9 @@ export const RegistrationDrawer = ({ visible, onClose, listing, receiveRequests,
         <div className={styles.registrationHeader}>
           <div className={styles.registrationInfo}>
             <h4 className={styles.registrationTitle}>{`Tiêu đề: ${listing.title}`}</h4>
-            <p className={styles.registrationDescription}>{`Mô tả: ${listing.description}`}</p>
+            <p className={styles.registrationDescription}>
+              {listing?.description ? `Mô tả: ${listing.description}` : ''}
+            </p>
           </div>
         </div>
         <div className={styles.registrationImages}>
@@ -133,6 +167,20 @@ export const RegistrationDrawer = ({ visible, onClose, listing, receiveRequests,
           </div>
         )}
       />
+
+      <div className={styles.paginationContainer}>
+        <Pagination
+          align="end"
+          current={currentPage}
+          pageSize={pagination.pageSize}
+          total={pagination.total || 0}
+          showTotal={(total, range) => `${range[0]}-${range[1]} của ${total} yêu cầu`}
+          showSizeChanger={true}
+          onChange={handlePaginationChange}
+          onShowSizeChange={handlePaginationChange}
+          style={{ margin: '40px 0' }}
+        />
+      </div>
     </Drawer>
   )
 }

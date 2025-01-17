@@ -76,7 +76,7 @@ const UserFormModal = ({ visible, isEditing, initialUser, onClose }) => {
   return (
     <Modal
       title={isEditing ? 'Chỉnh sửa người dùng' : 'Thêm người dùng'}
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       footer={null}
       destroyOnClose

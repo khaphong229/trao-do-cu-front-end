@@ -60,7 +60,7 @@ const CategoryModal = () => {
   return (
     <Modal
       title="Chọn danh mục"
-      visible={isCategoryModalVisible}
+      open={isCategoryModalVisible}
       onOk={handleOk}
       onCancel={handleCancel}
       okText="Lưu"

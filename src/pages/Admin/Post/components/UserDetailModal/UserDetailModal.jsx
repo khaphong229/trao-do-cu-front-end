@@ -25,7 +25,7 @@ const UserDetailModal = ({ visible, user, onClose }) => {
   return (
     <Modal
       title="Chi tiết người dùng"
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       footer={[
         <Button key="close" onClick={onClose}>

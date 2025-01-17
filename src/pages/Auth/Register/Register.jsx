@@ -41,6 +41,14 @@ const Register = () => {
             {
               required: true,
               message: 'Vui lòng nhập tên tài khoản!'
+            },
+            {
+              min: 6,
+              message: 'Tên tài khoản tối thiểu 6 kí tự.'
+            },
+            {
+              max: 255,
+              message: 'Tên tài khoản tối đa 255 kí tự.'
             }
           ]}
         >
@@ -57,6 +65,10 @@ const Register = () => {
             {
               required: true,
               message: 'Vui lòng nhập email!'
+            },
+            {
+              min: 6,
+              message: 'Email tối thiểu 10 kí tự.'
             }
           ]}
         >
@@ -70,6 +82,10 @@ const Register = () => {
             {
               required: true,
               message: 'Vui lòng nhập mật khẩu!'
+            },
+            {
+              min: 6,
+              message: 'Mật khẩu tối thiểu 6 kí tự.'
             }
           ]}
           hasFeedback
@@ -86,6 +102,10 @@ const Register = () => {
             {
               required: true,
               message: 'Vui lòng xác nhận lại mật khẩu!'
+            },
+            {
+              min: 6,
+              message: 'Mật khẩu tối thiểu 6 kí tự.'
             },
             ({ getFieldValue }) => ({
               validator(rule, value) {
