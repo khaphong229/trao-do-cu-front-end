@@ -16,8 +16,10 @@ const CategoryModal = () => {
   const { categories, isLoading } = useSelector(state => state.category)
 
   useEffect(() => {
-    dispatch(getAllCategory())
-  }, [dispatch])
+    if (categories.length === 0) {
+      dispatch(getAllCategory())
+    }
+  }, [dispatch, categories.length])
 
   const onSelect = (_, { selectedNodes }) => {
     if (selectedNodes.length > 0) {

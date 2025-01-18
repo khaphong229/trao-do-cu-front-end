@@ -81,6 +81,9 @@ const postService = {
       .catch(error => {
         throw error
       })
+  },
+  rePost(data) {
+    return this.http.post('/posts/repost', data)
   }
 }
 

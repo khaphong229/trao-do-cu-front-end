@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Table, Tabs, Typography, Button, Badge, Image, Space } from 'antd'
+import { Table, Tabs, Typography, Button, Badge, Image, Space, Popconfirm, message } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
 import { getExchangeRequest } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import { getPostGiftPagination } from 'features/client/post/postThunks'
+import { getPostGiftPagination, rePost } from 'features/client/post/postThunks'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { ExchangeDrawer } from '../../Drawer/ExchangeDrawer/ExchangeDrawer'
@@ -46,7 +46,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
       status: 'inactive',
       type: activeSubTab !== 'all' ? activeSubTab : undefined
     }),
-    [pagination.current, pagination.pageSize, activeSubTab]
+    [activeSubTab, pagination]
   )
 
   const fetchPosts = useCallback(() => {
@@ -111,7 +111,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
         setReceiveRequests([])
       }
     },
-    [dispatch, requestPagination.current, requestPagination.pageSize]
+    [dispatch, requestPagination]
   )
 
   const handleViewRegistrations = async listing => {
@@ -167,6 +167,20 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
   const handleClosePostDetail = () => {
     setIsModalDetail(false)
     setSelectedListing(null)
+  }
+
+  const handleRepost = async post_id => {
+    try {
+      const res = await dispatch(rePost({ postId: post_id })).unwrap()
+      const { status, message: msg } = res
+      if (status === 201) {
+        message.success(msg)
+      }
+    } catch (error) {
+      if (error.status === 404) {
+        message.error(error?.message)
+      }
+    }
   }
 
   const columns = [
@@ -228,7 +242,15 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
             <Button type={typeButton} onClick={() => handleViewRegistrations(record)}>
               {record.type === 'exchange' ? 'Xem người đổi' : 'Xem người nhận'}
             </Button>
-            <Button>Đăng lại</Button>
+            <Popconfirm
+              onConfirm={() => handleRepost(record?._id)}
+              placement="topRight"
+              title={'Bạn chắc chắn muốn đăng lại bài này?'}
+              okText="OK"
+              cancelText="Hủy"
+            >
+              <Button>Đăng lại</Button>
+            </Popconfirm>
           </div>
         )
       }

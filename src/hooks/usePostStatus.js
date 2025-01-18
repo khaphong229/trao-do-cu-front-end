@@ -99,7 +99,10 @@ export const usePostStatus = (posts = [], userId = null) => {
               dispatch(
                 setRequestStatuses({
                   postId: post._id,
-                  status: response?.data?.total > 0
+                  status:
+                    post.type === 'gift'
+                      ? response?.data?.receiveRequests?.length > 0
+                      : response?.data?.exchangeRequests?.length > 0
                 })
               )
             } catch (error) {
