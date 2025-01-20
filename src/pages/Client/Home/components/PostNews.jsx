@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Row, Col, Button, Avatar } from 'antd'
+import { Card, Row, Col, Button, Avatar, Tooltip } from 'antd'
 import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
-import avt from 'assets/images/logo/avt-3d.jpg'
+import avt from 'assets/images/logo/avtDefault.jpg'
 import imageNotFound from 'assets/images/others/imagenotfound.jpg'
 import { getValidImageUrl } from 'helpers/helper'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
@@ -92,32 +92,27 @@ const PostNews = () => {
         </Button>
       )
     }
-
+    const isMe = item?.user_id?._id === user._id ? true : false
     return item.type === 'gift' ? (
-      <AuthButton size="small" color="primary" variant="filled" onClick={() => handleGiftRequest(item, item.type)}>
-        Nhận
-      </AuthButton>
+      <Tooltip title={isMe && 'Không thể thực hiện thao tác với bài đăng của bạn'}>
+        <AuthButton
+          disabled={isMe}
+          size="small"
+          color="primary"
+          variant="filled"
+          onClick={() => handleGiftRequest(item, item.type)}
+        >
+          Nhận
+        </AuthButton>
+      </Tooltip>
     ) : (
-      <AuthButton size="small" type="primary" onClick={() => handleGiftRequest(item, item.type)}>
-        Đổi
-      </AuthButton>
+      <Tooltip title={isMe && 'Không thể thực hiện thao tác với bài đăng của bạn'}>
+        <AuthButton disabled={isMe} size="small" type="primary" onClick={() => handleGiftRequest(item, item.type)}>
+          Đổi
+        </AuthButton>
+      </Tooltip>
     )
   }
-
-  // if (isLoading || isChecking) {
-  //   return (
-  //     <BoxWrap>
-  //       <span className={styles.postTitle}>Bài đăng mới nhất</span>
-  //       <Row justify="start" className={styles.itemsGrid}>
-  //         {[...Array(8)].map((_, index) => (
-  //           <Col key={index} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
-  //             <PostCardSkeleton />
-  //           </Col>
-  //         ))}
-  //       </Row>
-  //     </BoxWrap>
-  //   )
-  // }
 
   if (isError) {
     return getPostError()

@@ -60,6 +60,10 @@ const Login = () => {
             {
               type: 'email',
               message: 'Vui lòng nhập email hợp lệ!'
+            },
+            {
+              min: 10,
+              message: 'Email tối thiểu 10 kí tự.'
             }
           ]}
         >

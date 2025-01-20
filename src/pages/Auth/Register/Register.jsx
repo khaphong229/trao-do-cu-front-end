@@ -67,7 +67,7 @@ const Register = () => {
               message: 'Vui lòng nhập email!'
             },
             {
-              min: 6,
+              min: 10,
               message: 'Email tối thiểu 10 kí tự.'
             }
           ]}

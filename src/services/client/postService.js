@@ -59,6 +59,7 @@ const postService = {
 
     queryParams.append('current', current)
     queryParams.append('pageSize', pageSize)
+    queryParams.append('isDeleted', false)
     if (q) queryParams.append('q', q)
     if (type) queryParams.append('type', type)
     if (status) queryParams.append('status', status)

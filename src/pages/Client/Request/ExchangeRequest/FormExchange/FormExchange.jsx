@@ -52,7 +52,7 @@ const FormExchangeModal = () => {
           loading={isLoading}
           disabled={!requestData.title.trim() || requestData.image_url.length === 0}
         >
-          Đăng
+          Gửi
         </Button>
       </Modal>
 

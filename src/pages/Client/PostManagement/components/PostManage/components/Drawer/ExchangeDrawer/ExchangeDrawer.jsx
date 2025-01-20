@@ -18,8 +18,6 @@ export const ExchangeDrawer = ({
   onUpdateSuccess,
   pagination
 }) => {
-  console.log(exchangeRequests)
-
   const dispatch = useDispatch()
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)

@@ -34,6 +34,18 @@ export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, o
         })) || []
     : []
 
+  const filterProvinces = (input, option) => {
+    return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+  }
+
+  const filterDistricts = (input, option) => {
+    return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+  }
+
+  const filterWards = (input, option) => {
+    return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+  }
+
   useEffect(() => {
     if (selectedProvince && selectedDistrict && selectedWard) {
       const provinceName = provinces.find(p => p.code === selectedProvince)?.name
@@ -66,9 +78,12 @@ export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, o
   return (
     <Space direction="vertical" className="address-form" size="middle">
       <Select
+        showSearch
         className="address-select"
         placeholder="Chọn Tỉnh/Thành phố"
         value={selectedProvince}
+        filterOption={filterProvinces}
+        optionFilterProp="children"
         onChange={value => {
           setSelectedProvince(value)
           setSelectedDistrict(null)
@@ -83,10 +98,13 @@ export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, o
       </Select>
 
       <Select
+        showSearch
         className="address-select"
         placeholder="Chọn Quận/Huyện"
         value={selectedDistrict}
         disabled={!selectedProvince}
+        filterOption={filterDistricts}
+        optionFilterProp="children"
         onChange={value => {
           setSelectedDistrict(value)
           setSelectedWard(null)
@@ -100,6 +118,9 @@ export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, o
       </Select>
 
       <Select
+        showSearch
+        optionFilterProp="children"
+        filterOption={filterWards}
         className="address-select"
         placeholder="Chọn Phường/Xã"
         value={selectedWard}

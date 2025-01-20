@@ -16,9 +16,9 @@ const TopBar = () => {
         <Button icon={<UserOutlined />} type="text" className={styles.button}>
           <Link to="/profile">Tài khoản</Link>
         </Button>
-        <Button icon={<HeartOutlined />} type="text" className={styles.button}>
+        {/* <Button icon={<HeartOutlined />} type="text" className={styles.button}>
           Yêu thích
-        </Button>
+        </Button> */}
         {!isAuthenticated ? (
           <Button icon={<LoginOutlined />} type="text" className={styles.button}>
             <Link to="/login">Đăng nhập</Link>

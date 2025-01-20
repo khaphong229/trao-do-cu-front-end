@@ -41,6 +41,9 @@
   .contentWelcome {
     display: none;
   }
+  .TopBarWrap {
+    justify-content: end;
+  }
 }
 
 @media screen and (max-width: 431px) {

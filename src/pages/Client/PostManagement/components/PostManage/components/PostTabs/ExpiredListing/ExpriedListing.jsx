@@ -175,6 +175,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
       const { status, message: msg } = res
       if (status === 201) {
         message.success(msg)
+        fetchPosts()
       }
     } catch (error) {
       if (error.status === 404) {
