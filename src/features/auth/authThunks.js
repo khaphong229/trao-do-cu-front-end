@@ -73,18 +73,62 @@ export const getCurrentUser = createAsyncThunk('auth/getCurrentUser', async (isA
 
 export const updateUserProfile = createAsyncThunk(
   'auth/updateUserProfile',
-  async (userData, { rejectWithValue, dispatch }) => {
+  async (userData, { rejectWithValue, getState }) => {
     try {
-      const response = await AuthService.updateProfile(userData)
+      // Lấy thông tin user hiện tại
+      const currentUser = getState().auth.user
 
-      if (response.data.status === 201) {
-        await dispatch(getCurrentUser())
-        return response.data
-      } else {
-        return rejectWithValue(response.data)
+      // Nếu có avatar mới, format lại URL
+      let formattedAvatar = userData.avatar
+      if (formattedAvatar && formattedAvatar.startsWith('http')) {
+        // Lấy phần path sau /static/
+        formattedAvatar = formattedAvatar.split('/static/')[1]
       }
+
+      // Tạo payload với thông tin cập nhật
+      const payload = {
+        name: currentUser?.name || '',
+        email: currentUser?.email || '',
+        phone: currentUser?.phone || '',
+        address: currentUser?.address || '',
+        ...userData,
+        avatar: formattedAvatar // Ghi đè avatar với URL đã format
+      }
+
+      console.log('Payload gửi lên API:', payload)
+
+      const response = await AuthService.updateProfile(payload)
+
+      return response.data
     } catch (error) {
+      console.error('Update profile error:', error.response?.data)
       return rejectWithValue(error.response?.data || { message: 'Failed to update profile' })
     }
   }
 )
+
+export const changePassWord = createAsyncThunk('auth/changePassWord', async (data, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.changePassWord({
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
+      confirmPassword: data.confirmPassword
+    })
+
+    console.log('Change password response:', response)
+    return response.data
+  } catch (error) {
+    console.error('Change password error:', error.response?.data)
+    return rejectWithValue(error.response?.data || { message: 'Failed to change password' })
+  }
+})
+
+export const shareProfile = createAsyncThunk('auth/shareProfile', async (userId, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.shareProfile(userId)
+    return response.data
+  } catch (error) {
+    console.error('Share profile error:', error.response?.data)
+    return rejectWithValue(error.response?.data)
+  }
+})
