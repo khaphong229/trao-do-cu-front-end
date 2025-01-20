@@ -11,9 +11,7 @@ import {
 import { uploadAvatar } from 'features/upload/uploadThunks'
 
 const initialState = {
-  user: {
-    social_media: [] // Khởi tạo là mảng rỗng thay vì object
-  },
+  user: {},
   isAuthenticated: false,
   isAdmin: false,
   isLoading: false,
@@ -45,6 +43,12 @@ const authSlice = createSlice({
     },
     setShareUrl: (state, action) => {
       state.shareUrl = action.payload
+    },
+    updateImageData: (state, action) => {
+      state.user = {
+        ...state.user,
+        ...action.payload
+      }
     }
   },
   extraReducers: builder => {
@@ -86,17 +90,13 @@ const authSlice = createSlice({
     })
     builder.addCase(getCurrentUser.fulfilled, (state, action) => {
       const currentAvatar = state.user?.avatar
-      const currentSocialMedia = state.user?.social_media
 
-      // Cập nhật user data từ response
+      // Update user data from response
       state.user = action.payload.data
 
-      // Giữ lại avatar và social_media nếu có
+      // Keep the current avatar if it exists
       if (currentAvatar) {
         state.user.avatar = currentAvatar
-      }
-      if (currentSocialMedia?.length > 0) {
-        state.user.social_media = currentSocialMedia
       }
 
       state.isLoading = false
@@ -145,25 +145,17 @@ const authSlice = createSlice({
         if (action.payload?.files?.[0]?.url) {
           const newAvatarUrl = action.payload.files[0].url
 
-          // Đảm bảo state.user tồn tại
+          // Ensure state.user exists
           if (!state.user) {
             state.user = {}
           }
 
-          // Cập nhật avatar trực tiếp
-          state.user.avatar = newAvatarUrl
-
-          // Đảm bảo social_media là mảng và cập nhật
-          if (!Array.isArray(state.user.social_media)) {
-            state.user.social_media = []
-          }
-
-          // Cập nhật vào social_media
-          if (state.user.social_media.length === 0) {
-            state.user.social_media = [{ avatar: newAvatarUrl }]
+          // Update avatar directly
+          if (state.user.length === 0) {
+            state.user = [{ avatar: newAvatarUrl }]
           } else {
-            state.user.social_media[0] = {
-              ...state.user.social_media[0],
+            state.user[0] = {
+              ...state.user[0],
               avatar: newAvatarUrl
             }
           }
