@@ -1,12 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getCurrentUser, loginUser, logoutUser, registerUser, updateUserProfile } from './authThunks'
+import {
+  changePassWord,
+  getCurrentUser,
+  loginUser,
+  logoutUser,
+  registerUser,
+  shareProfile,
+  updateUserProfile
+} from './authThunks'
+import { uploadAvatar } from 'features/upload/uploadThunks'
 
 const initialState = {
   user: {},
   isAuthenticated: false,
   isAdmin: false,
   isLoading: false,
-  error: null
+  error: null,
+  changePassWordSuccess: false,
+  changePassWordMessage: '',
+  sharedProfile: null,
+  isLoadingShare: false,
+  shareError: null,
+  shareSuccess: false,
+  shareUrl: ''
 }
 
 const authSlice = createSlice({
@@ -18,6 +34,24 @@ const authSlice = createSlice({
     },
     setLoading: (state, action) => {
       state.isLoading = action.payload
+    },
+    clearChangePassWordState: state => {
+      state.changePassWordSuccess = false
+      state.changePassWordMessage = ''
+      state.error = null
+    },
+    clearShareState: state => {
+      state.shareError = null
+      state.shareSuccess = false
+    },
+    setShareUrl: (state, action) => {
+      state.shareUrl = action.payload
+    },
+    updateImageData: (state, action) => {
+      state.user = {
+        ...state.user,
+        ...action.payload
+      }
     }
   },
   extraReducers: builder => {
@@ -54,36 +88,37 @@ const authSlice = createSlice({
         state.isLoading = false
       })
 
-      // Get Current User
-      .addCase(getCurrentUser.pending, state => {
-        state.isLoading = true
-      })
-      .addCase(getCurrentUser.fulfilled, (state, action) => {
-        state.user = action.payload.data
-        state.isLoading = false
-        state.isAuthenticated = true
-        state.isAdmin = action.meta.arg || false
-      })
-      .addCase(getCurrentUser.rejected, state => {
-        state.isLoading = false
-      })
-      //Update User
-      .addCase(updateUserProfile.pending, state => {
-        state.isLoading = true
-      })
-      .addCase(updateUserProfile.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.user = {
-          ...state.user,
-          ...action.payload.data
-        }
-      })
-      .addCase(updateUserProfile.rejected, (state, action) => {
-        state.isLoading = false
-        state.error = action.payload?.message || 'Profile update failed'
-      })
+    // Get Current User
+    builder.addCase(getCurrentUser.pending, state => {
+      state.isLoading = true
+    })
+    builder.addCase(getCurrentUser.fulfilled, (state, action) => {
+      state.user = action.payload.data
+      state.isLoading = false
+      state.isAuthenticated = true
+      state.isAdmin = action.meta.arg || false
+    })
+    builder.addCase(getCurrentUser.rejected, state => {
+      state.isLoading = false
+    })
+    //Update User
+    builder.addCase(updateUserProfile.pending, state => {
+      state.isLoading = true
+    })
+    builder.addCase(updateUserProfile.fulfilled, (state, action) => {
+      state.isLoading = false
+      state.user = {
+        ...state.user,
+        ...action.payload.data
+      }
+    })
+    builder.addCase(updateUserProfile.rejected, (state, action) => {
+      state.isLoading = false
+      state.error = action.payload?.message || 'Profile update failed'
+    })
   }
 })
 
-export const { clearError, setLoading } = authSlice.actions
+export const { clearError, setLoading, clearChangePassWordState, clearShareState, setShareUrl, updateImageData } =
+  authSlice.actions
 export default authSlice.reducer

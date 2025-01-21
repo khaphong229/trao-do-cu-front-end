@@ -16,8 +16,10 @@ const CategoryModal = () => {
   const { categories, isLoading } = useSelector(state => state.category)
 
   useEffect(() => {
-    dispatch(getAllCategory())
-  }, [dispatch])
+    if (categories.length === 0) {
+      dispatch(getAllCategory())
+    }
+  }, [dispatch, categories.length])
 
   const onSelect = (_, { selectedNodes }) => {
     if (selectedNodes.length > 0) {
@@ -60,7 +62,7 @@ const CategoryModal = () => {
   return (
     <Modal
       title="Chọn danh mục"
-      visible={isCategoryModalVisible}
+      open={isCategoryModalVisible}
       onOk={handleOk}
       onCancel={handleCancel}
       okText="Lưu"

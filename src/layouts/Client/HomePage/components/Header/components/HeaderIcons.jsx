@@ -1,16 +1,19 @@
 import React from 'react'
 import { Space, Badge, Avatar, Dropdown, Button } from 'antd'
-import { BellOutlined, DownOutlined, HeartOutlined, SignatureOutlined, UserOutlined } from '@ant-design/icons'
+import { BellOutlined, DownOutlined, SignatureOutlined } from '@ant-design/icons'
 import styles from './scss/HeaderIcons.module.scss'
 import CreatePostModal from '../../../../../../pages/Client/Post/CreatePost'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCreateModalVisibility, setShowTour } from 'features/client/post/postSlice'
 import withAuth from 'hooks/useAuth'
+import avtDefault from 'assets/images/logo/avtDefault.jpg'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 
 const HeaderIcons = ({ notificationMenu, cartMenu, menu }) => {
   const dispatch = useDispatch()
   const AuthenticatedButton = withAuth(Button)
   const { isAuthenticated, user } = useSelector(state => state.auth)
+
   return (
     <>
       <Space size="large" className={styles.contentWrapper}>
@@ -36,7 +39,7 @@ const HeaderIcons = ({ notificationMenu, cartMenu, menu }) => {
         </Dropdown>
         <Dropdown overlay={menu} placement="bottomRight">
           <Space className={styles.Avatar} style={{ cursor: 'pointer', color: '#fff' }}>
-            <Avatar src={user.avatar} icon={<UserOutlined />} size={32} />
+            <Avatar src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avtDefault} size={32} />
             {!isAuthenticated ? 'Tài khoản' : user.name}
             <DownOutlined className={styles.IconDown} />
           </Space>

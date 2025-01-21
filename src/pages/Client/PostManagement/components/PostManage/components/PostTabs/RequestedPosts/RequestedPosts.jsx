@@ -8,7 +8,8 @@ import { getMyRequestedExchange } from 'features/client/request/exchangeRequest/
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetailModal from './components/PostDetailModal'
 import imgNotFound from 'assets/images/others/imagenotfound.jpg'
-import { all } from 'axios'
+import { FacebookOutlined } from '@ant-design/icons'
+import ContactInfoDisplay from './components/ContactInfoDisplay'
 const { Text } = Typography
 
 const RequestedPosts = () => {
@@ -30,7 +31,7 @@ const RequestedPosts = () => {
   )
 
   const handlePostClick = (post, e) => {
-    if (e?.target?.closest('.ant-image') || e?.target?.closest('.ant-btn')) {
+    if (e?.target?.closest('.ant-image') || e?.target?.closest('.ant-btn') || e?.target?.closest('a')) {
       return
     }
     setSelectedPost(post)
@@ -47,11 +48,29 @@ const RequestedPosts = () => {
       title: 'Trạng thái',
       key: 'status',
       width: 120,
-      render: (_, record) => (
-        <Tag color={record.status === 'accepted' ? 'success' : 'warning'}>
-          {record.status === 'accepted' ? 'Đã nhận' : 'Chờ duyệt'}
-        </Tag>
-      )
+      render: (_, record) => {
+        let typeCheck
+        if (record.post_id.status === 'inactive' && record.status === 'accepted') {
+          typeCheck = 'acp'
+        } else if (record.post_id.status === 'inactive' && record.status !== 'accepted') {
+          typeCheck = 'end'
+        } else {
+          typeCheck = 'pend'
+        }
+        return (
+          <Tag color={typeCheck === 'acp' ? 'success' : typeCheck === 'end' ? 'error' : 'warning'}>
+            {typeCheck === 'acp' ? 'Đã nhận' : typeCheck === 'end' ? 'Kết thúc' : 'Chờ duyệt'}
+          </Tag>
+        )
+      }
+    },
+    {
+      title: 'Thông tin liên hệ',
+      key: 'contact',
+      width: 150,
+      render: (_, record) => {
+        return <ContactInfoDisplay post={record} showInTable={true} />
+      }
     },
     {
       title: 'Ảnh bài viết',
@@ -59,7 +78,7 @@ const RequestedPosts = () => {
       width: 120,
       render: (_, record) => (
         <Image
-          src={record?.post_id?.image_url?.[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : imgNotFound}
+          src={record?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : imgNotFound}
           alt="Post image"
           style={{ width: 100, height: 100, objectFit: 'cover' }}
           fallback={avt}
@@ -76,13 +95,13 @@ const RequestedPosts = () => {
       render: (_, record) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Avatar
-            src={record?.user_req_id?.avatar ? `${URL_SERVER_IMAGE}${record.user_req_id.avatar}` : avt}
+            src={record?.post_id?.user_id?.avatar ? `${URL_SERVER_IMAGE}${record.post_id.user_id.avatar}` : avt}
             size={40}
           />
           <div>
-            <Text strong>{record?.user_req_id?.name || 'Không xác định'}</Text>
+            <Text strong>{record?.post_id?.user_id?.name || 'Không xác định'}</Text>
             <br />
-            <Text type="secondary">{record?.post_id?.user?.email || ''}</Text>
+            <Text type="secondary">{record?.post_id?.user_id?.email || ''}</Text>
           </div>
         </div>
       )
@@ -109,7 +128,7 @@ const RequestedPosts = () => {
       dataIndex: ['post_id', 'description'],
       key: 'description',
       ellipsis: true,
-      width: 250
+      width: 200
     },
     {
       title: 'Địa chỉ',

@@ -16,16 +16,16 @@ const TopBar = () => {
         <Button icon={<UserOutlined />} type="text" className={styles.button}>
           <Link to="/profile">Tài khoản</Link>
         </Button>
-        <Button icon={<HeartOutlined />} type="text" className={styles.button}>
+        {/* <Button icon={<HeartOutlined />} type="text" className={styles.button}>
           Yêu thích
-        </Button>
+        </Button> */}
         {!isAuthenticated ? (
           <Button icon={<LoginOutlined />} type="text" className={styles.button}>
             <Link to="/login">Đăng nhập</Link>
           </Button>
         ) : (
           <Button icon={<BarsOutlined />} type="text" className={styles.button}>
-            <Link to="/management_post">Quản lý bài đăng</Link>
+            <Link to="/management-post">Quản lý bài đăng</Link>
           </Button>
         )}
       </div>

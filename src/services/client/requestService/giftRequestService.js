@@ -14,12 +14,14 @@ const giftRequestService = {
   getMyRequestedGift() {
     return this.http.get('/request_gift/me')
   },
-  getPostReceiveRequestService({ current = 1, pageSize = 10 }) {
+  getReceiveRequest({ current = 1, pageSize = 10, post_id = '' }) {
     let path = '/request_gift'
     const queryParams = new URLSearchParams()
 
     queryParams.append('current', current)
     queryParams.append('pageSize', pageSize)
+    queryParams.append('post_id', post_id)
+
     const queryString = queryParams.toString()
     if (queryString) {
       path += `?${queryString}`

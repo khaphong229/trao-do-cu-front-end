@@ -22,20 +22,8 @@ import { usePostStatus } from 'hooks/usePostStatus'
 import getPostError from 'components/feature/post/getPostError'
 import notFoundPost from 'components/feature/post/notFoundPost'
 import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
-
+import { VIETNAMESE_CITIES } from 'constants/cityVN'
 const { Text } = Typography
-
-const VIETNAMESE_CITIES = [
-  { value: null, label: 'Tất cả thành phố' },
-  { value: 'Thành phố Hà Nội', label: 'Hà Nội' },
-  { value: 'Thành phố Hồ Chí Minh', label: 'Hồ Chí Minh' },
-  { value: 'Thành phố Đà Nẵng', label: 'Đà Nẵng' },
-  { value: 'Thành phố Hải Phòng', label: 'Hải Phòng' },
-  { value: 'Thành phố Cần Thơ', label: 'Cần Thơ' },
-  { value: 'Tỉnh Khánh Hòa', label: 'Khánh Hòa' },
-  { value: 'Tỉnh Nghệ An', label: 'Nghệ An' },
-  { value: 'Tỉnh Đồng Tháp', label: 'Đồng Tháp' }
-]
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -118,6 +106,10 @@ const PostList = () => {
     handleGiftRequest(post, post.type)
   }
 
+  const filterProvinces = (input, option) => {
+    return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+  }
+
   return (
     <div className={styles.contentWrap}>
       <div className={styles.topContent}>
@@ -130,15 +122,19 @@ const PostList = () => {
         </div>
         <div className={styles.filterContainer} style={{ display: 'flex', gap: '10px' }}>
           <Select
-            style={{ width: 200 }}
+            showSearch
+            style={{ width: 150 }}
             placeholder="Chọn thành phố"
             value={selectedCity}
+            optionFilterProp="children"
+            filterOption={filterProvinces}
             onChange={handleCityChange}
             options={VIETNAMESE_CITIES}
+            allowClear
           />
           <Select
             defaultValue="newest"
-            style={{ width: 150 }}
+            style={{ width: 120 }}
             size="middle"
             onChange={handleSortChange}
             options={[

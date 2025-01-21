@@ -1,5 +1,7 @@
 const URL_SERVER =
-  process.env.REACT_APP_BUILD_MODE === 'production' ? 'https://trao-do-cu-api.onrender.com' : 'http://localhost:3456'
+  process.env.REACT_APP_BUILD_MODE === 'production'
+    ? process.env.REACT_APP_API_BASE_URL_PROD
+    : process.env.REACT_APP_API_BASE_URL_DEV
 
 console.log('URL Server:', URL_SERVER)
 

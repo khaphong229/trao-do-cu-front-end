@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input } from 'antd'
+import { Image, Input } from 'antd'
 import EmojiPicker from 'emoji-picker-react'
 import styles from '../scss/PostContent.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
@@ -43,7 +43,7 @@ const PostContent = ({ ref2 }) => {
           <div className={styles.videoWrapper}>
             <video className={styles.previewVideo} controls>
               <source src={fileUrl} type="video/mp4" />
-              Your browser does not support the video tag.
+              Trình duyệt của bạn không hỗ trợ video.
             </video>
           </div>
           <button className={styles.removeFileButton} onClick={() => handleRemoveFile(index)}>
@@ -55,7 +55,7 @@ const PostContent = ({ ref2 }) => {
 
     return (
       <div key={index} className={styles.filePreviewContainer}>
-        <img src={fileUrl} alt={`Uploaded ${index + 1}`} className={styles.previewImage} />
+        <Image src={fileUrl} alt={`Uploaded ${index + 1}`} className={styles.previewImage} />
         <button className={styles.removeFileButton} onClick={() => handleRemoveFile(index)}>
           <CloseOutlined />
         </button>

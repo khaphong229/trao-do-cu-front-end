@@ -80,7 +80,7 @@ const SearchPostArticle = () => {
         </div>
         <Modal
           title="Chọn tỉnh, thành phố"
-          visible={isModalVisible}
+          open={isModalVisible}
           onCancel={handleCancel}
           footer={
             <Button type="primary" onClick={handleOk}>

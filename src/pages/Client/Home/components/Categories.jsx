@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import { Row, Col, Card, Button } from 'antd'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import styles from '../scss/Categories.module.scss'
@@ -8,29 +8,98 @@ import batdongsan from '../../../../assets/images/categories/batdongsan.jpg'
 import xeco from '../../../../assets/images/categories/xeco.jpg'
 import dodientu from '../../../../assets/images/categories/dodientu.jpg'
 import dogiadung from '../../../../assets/images/categories/dogiadung.jpg'
-import giaitri from '../../../../assets/images/categories/dogiaitri.jpg'
 import mevabe from '../../../../assets/images/categories/domevabe.jpg'
 import thucung from '../../../../assets/images/categories/thucung.jpg'
 import thoitrang from '../../../../assets/images/categories/thoitrang.jpg'
+import imgNotFound from 'assets/images/others/imagenotfound.jpg'
+import tulanh from 'assets/images/categories/tulanh.jpg'
+import doan from 'assets/images/categories/doan.jpg'
+import giaitri from 'assets/images/categories/dochoi.jpg'
 
 import { useNavigate } from 'react-router-dom'
 
+const imgCategory = [
+  { title: 'Tất cả danh mục', image: tatcadanhmuc },
+  { title: 'Bất động sản', image: batdongsan },
+  { title: 'Xe cộ', image: xeco },
+  { title: 'Đồ điện tử', image: dodientu },
+  { title: 'Đồ gia dụng, nội thất, cây cảnh', image: dogiadung },
+  { title: 'Tủ lạnh, máy giặt, điều hòa', image: tulanh },
+  { title: 'Mẹ và bé', image: mevabe },
+  { title: 'Thời trang', image: thoitrang },
+  { title: 'Thú cưng', image: thucung },
+  { title: 'Đồ ăn, thực phẩm', image: doan },
+  { title: 'Giải trí, thể thao', image: giaitri }
+]
+
+const dataDefaultCategory = [
+  {
+    category_id: '67852b5c6ee1505482c724f8',
+    title: 'Bất động sản'
+  },
+  {
+    category_id: '67852bd46ee1505482c72513',
+    title: 'Xe cộ'
+  },
+  {
+    category_id: '67852bfc6ee1505482c7252c',
+    title: 'Đồ điện tử'
+  },
+  {
+    category_id: '67852c896ee1505482c72562',
+    title: 'Đồ gia dụng, nội thất, cây cảnh'
+  },
+  {
+    category_id: '67852ce66ee1505482c72589',
+    title: 'Tủ lạnh, máy giặt, điều hòa'
+  },
+  {
+    category_id: '67852d086ee1505482c725ae',
+    title: 'Mẹ và bé'
+  },
+  {
+    category_id: '67852d2a6ee1505482c725ce',
+    title: 'Thời trang'
+  },
+  {
+    category_id: '67852d736ee1505482c725fe',
+    title: 'Thú cưng'
+  },
+  {
+    category_id: '67852e346ee1505482c72679',
+    title: 'Đồ ăn, thực phẩm'
+  },
+  {
+    category_id: '67852e9c6ee1505482c726cc',
+    title: 'Giải trí, thể thao'
+  }
+]
+
 const Categories = () => {
-  const categories = [
-    { category_id: 'all', title: 'Tất cả danh mục', image: tatcadanhmuc },
-    { category_id: '675ed6b7fe4a47fe5de068b6', title: 'Bất động sản', image: batdongsan },
-    { category_id: '675b08f6a40aa8fbb535a8d4', title: 'Xe cộ', image: xeco },
-    { category_id: '675becf9aed9b9b7ae396659', title: 'Đồ điện tử', image: dodientu },
-    { category_id: '675ed6d7fe4a47fe5de068c6', title: 'Đồ gia dụng', image: dogiadung },
-    { category_id: '67622645db41240c20cb41ad', title: 'Giải trí', image: giaitri },
-    { category_id: '675ed708fe4a47fe5de068e5', title: 'Mẹ và bé', image: mevabe },
-    { category_id: '675ed65afe4a47fe5de0688d', title: 'Thú cưng', image: thucung },
-    { category_id: '6760eb34b7c773d17130eed3', title: 'Thời trang', image: thoitrang }
-  ]
-
   const scrollContainerRef = useRef(null)
+  const navigate = useNavigate()
 
-  const scroll = direction => {
+  const proccessedCategory = useMemo(() => {
+    const mappedCategory = dataDefaultCategory.map(cate => {
+      const matchingImg = imgCategory.find(imgItem => imgItem.title === cate.title)
+      return {
+        category_id: cate.category_id,
+        title: cate.title,
+        image: matchingImg ? matchingImg.image : imgNotFound
+      }
+    })
+
+    return [
+      {
+        category_id: 'all',
+        title: 'Tất cả danh mục',
+        image: imgCategory[0].image
+      },
+      ...mappedCategory
+    ]
+  }, [])
+
+  const scroll = useCallback(direction => {
     if (scrollContainerRef.current) {
       const scrollAmount = direction === 'left' ? -400 : 400
 
@@ -39,12 +108,14 @@ const Categories = () => {
         behavior: 'smooth'
       })
     }
-  }
+  }, [])
 
-  const navigate = useNavigate()
-  const goPostFilter = id => {
-    navigate(`/post/category/${id}`)
-  }
+  const goPostFilter = useCallback(
+    id => {
+      navigate(`/post/category/${id}`)
+    },
+    [navigate]
+  )
 
   return (
     <div className={styles.ContentWrap}>
@@ -61,7 +132,7 @@ const Categories = () => {
 
         <div className={styles.scrollWrapper}>
           <Row ref={scrollContainerRef} className={styles.categoriesRow} wrap={false}>
-            {categories.map((category, index) => (
+            {proccessedCategory.map((category, index) => (
               <Col key={index} span={4}>
                 <Card className={styles.cardItem}>
                   <img

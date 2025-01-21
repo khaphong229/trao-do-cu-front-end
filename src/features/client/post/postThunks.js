@@ -65,3 +65,12 @@ export const getPostGiftPagination = createAsyncThunk(
     }
   }
 )
+
+export const rePost = createAsyncThunk('post/rePost', async (data, { rejectWithValue }) => {
+  try {
+    const res = await postService.rePost(data)
+    return res.data
+  } catch (error) {
+    return rejectWithValue(error.response.data)
+  }
+})

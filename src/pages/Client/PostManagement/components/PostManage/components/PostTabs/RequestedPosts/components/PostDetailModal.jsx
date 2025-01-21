@@ -3,32 +3,41 @@ import { Modal, Avatar, Tag, Descriptions, Image, Card, Typography } from 'antd'
 import { UserOutlined, PhoneOutlined, FacebookOutlined, HomeOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import avt from 'assets/images/logo/avtDefault.jpg'
+import imgNotFound from 'assets/images/others/imagenotfound.jpg'
 import '../styles.scss'
+import ContactInfoDisplay from './ContactInfoDisplay'
 
 const { Title, Text } = Typography
 
 const PostDetailModal = ({ isVisible, onClose, post }) => {
   if (!post) return null
-
+  let typeCheck
+  if (post.post_id.status === 'inactive' && post.status === 'accepted') {
+    typeCheck = 'acp'
+  } else if (post.post_id.status === 'inactive' && post.status !== 'accepted') {
+    typeCheck = 'end'
+  } else {
+    typeCheck = 'pend'
+  }
   return (
     <Modal
       open={isVisible}
       onCancel={onClose}
       footer={null}
-      width={1000}
+      width={800}
       className="post-detail-modal"
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Title level={4} style={{ margin: 0 }}>
             Chi tiết bài đăng
           </Title>
-          <Tag color={post.status === 'accepted' ? 'success' : 'processing'}>
-            {post.status === 'accepted' ? 'Đã nhận' : 'Chờ duyệt'}
+          <Tag color={typeCheck === 'acp' ? 'success' : typeCheck === 'end' ? 'error' : 'warning'}>
+            {typeCheck === 'acp' ? 'Đã nhận' : typeCheck === 'end' ? 'Kết thúc' : 'Chờ duyệt'}
           </Tag>
         </div>
       }
     >
-      <div style={{ display: 'flex', gap: '24px' }}>
+      <div style={{ display: 'flex', gap: '24px' }} className="DetailPostContainer">
         <div style={{ flex: '1', maxWidth: '400px' }}>
           <Card title="Hình ảnh sản phẩm" bordered={false}>
             <div
@@ -41,7 +50,7 @@ const PostDetailModal = ({ isVisible, onClose, post }) => {
               {post.post_id.image_url.map((image, index) => (
                 <Image
                   key={index}
-                  src={`${URL_SERVER_IMAGE}${image}`}
+                  src={image ? `${URL_SERVER_IMAGE}${image}` : imgNotFound}
                   alt={`Post image ${index + 1}`}
                   fallback={avt}
                   style={{
@@ -68,12 +77,12 @@ const PostDetailModal = ({ isVisible, onClose, post }) => {
             style={{ marginBottom: '16px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <Avatar src={`${URL_SERVER_IMAGE}${post.post_id.user?.avatar}` || avt} size={80} />
+              <Avatar src={`${URL_SERVER_IMAGE}${post.post_id.user_id?.avatar}` || avt} size={40} />
               <div>
                 <Title level={4} style={{ margin: 0 }}>
-                  {post.post_id.user?.fullName || 'Không xác định'}
+                  {post.post_id.user_id?.name || 'Không xác định'}
                 </Title>
-                <Text type="secondary">{post.post_id.user?.email}</Text>
+                <Text type="secondary">{post.post_id.user_id?.email}</Text>
               </div>
             </div>
           </Card>
@@ -121,41 +130,17 @@ const PostDetailModal = ({ isVisible, onClose, post }) => {
             </Descriptions>
           </Card>
 
-          {/* Contact Information */}
-          {post.contact_phone && (
-            <Card
-              title={
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <PhoneOutlined />
-                  <span>Thông tin liên hệ</span>
-                </div>
-              }
-              bordered={false}
-            >
-              <Descriptions column={1} labelStyle={{ fontWeight: '500' }}>
-                <Descriptions.Item label="Số điện thoại">{post.contact_phone}</Descriptions.Item>
-                {post.contact_social_media?.facebook && (
-                  <Descriptions.Item
-                    label={
-                      <span>
-                        <FacebookOutlined /> Facebook
-                      </span>
-                    }
-                  >
-                    <a
-                      href={post.contact_social_media.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: '#1890ff' }}
-                    >
-                      Liên kết Facebook
-                    </a>
-                  </Descriptions.Item>
-                )}
-                <Descriptions.Item label="Địa chỉ liên hệ">{post.contact_address}</Descriptions.Item>
-              </Descriptions>
-            </Card>
-          )}
+          <Card
+            title={
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <PhoneOutlined />
+                <span>Thông tin liên hệ</span>
+              </div>
+            }
+            bordered={false}
+          >
+            <ContactInfoDisplay post={post} showInTable={false} />
+          </Card>
         </div>
       </div>
     </Modal>

@@ -1,22 +1,22 @@
 import {
+  ArrowRightOutlined,
   CameraOutlined,
   CarOutlined,
-  HeartOutlined,
+  CheckSquareOutlined,
   HomeOutlined,
   LaptopOutlined,
   LockOutlined,
   LogoutOutlined,
   MobileOutlined,
-  RetweetOutlined,
+  PlayCircleOutlined,
   ShoppingOutlined,
   SkinOutlined,
   SolutionOutlined,
-  SwapRightOutlined,
   TagsOutlined,
   UserOutlined
 } from '@ant-design/icons'
 import { message } from 'antd'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { removeAuthToken } from 'utils/localStorageUtils'
 
 export const categoryData = [
@@ -116,24 +116,28 @@ export const menuItems = [
     title: 'Quản lý bài đăng',
     items: [
       {
-        label: <NavigateItem to="/management_post">Trao tặng</NavigateItem>,
-        icon: <SwapRightOutlined style={{ color: '#00b96b' }} />
+        label: <NavigateItem to="/management-post?type=active">Đang hiển thị</NavigateItem>,
+        icon: <PlayCircleOutlined style={{ color: '#00b96b' }} />
       },
       {
-        label: <NavigateItem to="/management_post">Trao đổi</NavigateItem>,
-        icon: <RetweetOutlined style={{ color: '#00b96b' }} />
-      }
-    ]
-  },
-  {
-    title: 'Tiện ích',
-    items: [
+        label: <NavigateItem to="/management-post?type=expired">Đã thành công</NavigateItem>,
+        icon: <CheckSquareOutlined style={{ color: '#00b96b' }} />
+      },
       {
-        name: 'Bài đăng yêu thích',
-        icon: <HeartOutlined style={{ color: '#ff4d4f' }} />
+        label: <NavigateItem to="/management-post?type=requested">Đã yêu cầu</NavigateItem>,
+        icon: <ArrowRightOutlined style={{ color: '#00b96b' }} />
       }
     ]
   },
+  // {
+  //   title: 'Tiện ích',
+  //   items: [
+  //     {
+  //       name: 'Bài đăng yêu thích',
+  //       icon: <HeartOutlined style={{ color: '#ff4d4f' }} />
+  //     }
+  //   ]
+  // },
 
   {
     title: 'Tài khoản của tôi',
@@ -143,11 +147,10 @@ export const menuItems = [
         icon: <UserOutlined style={{ color: '#00b96b' }} />
       },
       {
-        name: 'Đổi mật khẩu',
+        name: <NavigateItem to="/edit-profile">Đổi mật khẩu</NavigateItem>,
         icon: <LockOutlined style={{ color: '#00b96b' }} />
       },
       {
-        // name: 'Đăng xuất',
         label: <span onClick={() => handleLogout()}>Đăng xuất</span>,
         icon: <LogoutOutlined style={{ color: '#00b96b' }} />
       }

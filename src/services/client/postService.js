@@ -59,6 +59,7 @@ const postService = {
 
     queryParams.append('current', current)
     queryParams.append('pageSize', pageSize)
+    queryParams.append('isDeleted', false)
     if (q) queryParams.append('q', q)
     if (type) queryParams.append('type', type)
     if (status) queryParams.append('status', status)
@@ -81,6 +82,9 @@ const postService = {
       .catch(error => {
         throw error
       })
+  },
+  rePost(data) {
+    return this.http.post('/posts/repost', data)
   }
 }
 
