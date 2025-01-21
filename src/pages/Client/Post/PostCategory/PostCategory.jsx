@@ -1,5 +1,5 @@
 import React from 'react'
-// import Banner from '../../Home/components/Banner'
+
 import Category from '../../Home/components/Categories'
 import PostList from './components/PostList'
 const PostCategory = () => {

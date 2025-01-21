@@ -119,5 +119,6 @@ const authSlice = createSlice({
   }
 })
 
-export const { clearError } = authSlice.actions
+export const { clearError, setLoading, clearChangePassWordState, clearShareState, setShareUrl, updateImageData } =
+  authSlice.actions
 export default authSlice.reducer

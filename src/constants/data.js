@@ -1,17 +1,18 @@
 import {
+  ArrowRightOutlined,
   CameraOutlined,
   CarOutlined,
+  CheckSquareOutlined,
   HeartOutlined,
   HomeOutlined,
   LaptopOutlined,
   LockOutlined,
   LogoutOutlined,
   MobileOutlined,
-  RetweetOutlined,
+  PlayCircleOutlined,
   ShoppingOutlined,
   SkinOutlined,
   SolutionOutlined,
-  SwapRightOutlined,
   TagsOutlined,
   UserOutlined
 } from '@ant-design/icons'
@@ -116,24 +117,28 @@ export const menuItems = [
     title: 'Quản lý bài đăng',
     items: [
       {
-        label: <NavigateItem to="/management_post">Trao tặng</NavigateItem>,
-        icon: <SwapRightOutlined style={{ color: '#00b96b' }} />
+        label: <NavigateItem to="/management_post?type=active">Đang hiển thị</NavigateItem>,
+        icon: <PlayCircleOutlined style={{ color: '#00b96b' }} />
       },
       {
-        label: <NavigateItem to="/management_post">Trao đổi</NavigateItem>,
-        icon: <RetweetOutlined style={{ color: '#00b96b' }} />
-      }
-    ]
-  },
-  {
-    title: 'Tiện ích',
-    items: [
+        label: <NavigateItem to="/management_post?type=expired">Đã thành công</NavigateItem>,
+        icon: <CheckSquareOutlined style={{ color: '#00b96b' }} />
+      },
       {
-        name: 'Bài đăng yêu thích',
-        icon: <HeartOutlined style={{ color: '#ff4d4f' }} />
+        label: <NavigateItem to="/management_post?type=requested">Đã yêu cầu</NavigateItem>,
+        icon: <ArrowRightOutlined style={{ color: '#00b96b' }} />
       }
     ]
   },
+  // {
+  //   title: 'Tiện ích',
+  //   items: [
+  //     {
+  //       name: 'Bài đăng yêu thích',
+  //       icon: <HeartOutlined style={{ color: '#ff4d4f' }} />
+  //     }
+  //   ]
+  // },
 
   {
     title: 'Tài khoản của tôi',

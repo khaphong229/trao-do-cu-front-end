@@ -17,7 +17,6 @@ import doan from 'assets/images/categories/doan.jpg'
 import giaitri from 'assets/images/categories/dochoi.jpg'
 
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 
 const imgCategory = [
   { title: 'Tất cả danh mục', image: tatcadanhmuc },
@@ -33,17 +32,59 @@ const imgCategory = [
   { title: 'Giải trí, thể thao', image: giaitri }
 ]
 
+const dataDefaultCategory = [
+  {
+    category_id: '67852b5c6ee1505482c724f8',
+    title: 'Bất động sản'
+  },
+  {
+    category_id: '67852bd46ee1505482c72513',
+    title: 'Xe cộ'
+  },
+  {
+    category_id: '67852bfc6ee1505482c7252c',
+    title: 'Đồ điện tử'
+  },
+  {
+    category_id: '67852c896ee1505482c72562',
+    title: 'Đồ gia dụng, nội thất, cây cảnh'
+  },
+  {
+    category_id: '67852ce66ee1505482c72589',
+    title: 'Tủ lạnh, máy giặt, điều hòa'
+  },
+  {
+    category_id: '67852d086ee1505482c725ae',
+    title: 'Mẹ và bé'
+  },
+  {
+    category_id: '67852d2a6ee1505482c725ce',
+    title: 'Thời trang'
+  },
+  {
+    category_id: '67852d736ee1505482c725fe',
+    title: 'Thú cưng'
+  },
+  {
+    category_id: '67852e346ee1505482c72679',
+    title: 'Đồ ăn, thực phẩm'
+  },
+  {
+    category_id: '67852e9c6ee1505482c726cc',
+    title: 'Giải trí, thể thao'
+  }
+]
+
 const Categories = () => {
-  const { categories: cate } = useSelector(state => state.category)
   const scrollContainerRef = useRef(null)
   const navigate = useNavigate()
 
   const proccessedCategory = useMemo(() => {
-    const mappedCategory = cate.map(cate => {
-      const matchingImg = imgCategory.find(imgItem => imgItem.title === cate.name)
+    const mappedCategory = dataDefaultCategory.map(cate => {
+      const matchingImg = imgCategory.find(imgItem => imgItem.title === cate.title)
       return {
-        category_id: cate._id,
-        title: cate.name,
+        category_id: cate.category_id,
+        title: cate.title,
         image: matchingImg ? matchingImg.image : imgNotFound
       }
     })
@@ -56,7 +97,7 @@ const Categories = () => {
       },
       ...mappedCategory
     ]
-  }, [cate])
+  }, [])
 
   const scroll = useCallback(direction => {
     if (scrollContainerRef.current) {

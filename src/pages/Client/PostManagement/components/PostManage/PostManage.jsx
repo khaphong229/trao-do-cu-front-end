@@ -9,11 +9,16 @@ import { UserInfo } from './components/UserInfor/UserInfor'
 import { ActiveListings } from './components/PostTabs/ActiveListing/ActiveListing'
 import { ExpiredListings } from './components/PostTabs/ExpiredListing/ExpriedListing'
 import RequestedPosts from './components/PostTabs/RequestedPosts'
+import { useLocation } from 'react-router-dom'
 
 const { TabPane } = Tabs
 
 export const PostManage = () => {
   const dispatch = useDispatch()
+  const location = useLocation()
+
+  console.log(location.pathname)
+
   const { user } = useSelector(state => state.auth)
   const [activeTab, setActiveTab] = useState('active')
   const [activeSubTab, setActiveSubTab] = useState('all')
