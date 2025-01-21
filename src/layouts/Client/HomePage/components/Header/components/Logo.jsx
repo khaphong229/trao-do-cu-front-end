@@ -11,26 +11,30 @@ const iconCategories = {
   'Bất động sản': <FaHome />
 }
 
-const renderMenuItems = categories =>
+const renderMenuItems = (categories, navigate) =>
   categories.map(category => {
+    const handleClick = () => {
+      navigate(`/post/category/${category.id}`)
+    }
+
     if (category.children && category.children.length > 0) {
       return (
         <Menu.SubMenu
           key={category.title}
           title={
-            <Space>
+            <Space onClick={handleClick} style={{ width: '100%' }}>
               {category.icon}
               {category.title}
             </Space>
           }
           className={styles.SubMenu}
         >
-          {renderMenuItems(category.children)}
+          {renderMenuItems(category.children, navigate)}
         </Menu.SubMenu>
       )
     }
     return (
-      <Menu.Item key={category.title} icon={category.icon} className={styles.SubMenu}>
+      <Menu.Item key={category.title} icon={category.icon} className={styles.SubMenu} onClick={handleClick}>
         {category.title}
       </Menu.Item>
     )
@@ -39,6 +43,7 @@ const renderMenuItems = categories =>
 const handleDataCategory = categories => {
   return categories.map(category => {
     const formattedCategory = {
+      id: category._id,
       title: category.name,
       // icon: iconCategories[category.name] || <ShoppingOutlined />,
       children: []
@@ -52,7 +57,7 @@ const handleDataCategory = categories => {
   })
 }
 
-const Logo = ({ categoryData }) => {
+const Logo = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { categories } = useSelector(state => state.category)
@@ -74,8 +79,7 @@ const Logo = ({ categoryData }) => {
       <span className={styles.textLogo} onClick={goHome}>
         TRAO ĐỒ CŨ
       </span>
-      {/* <img src={logo} alt="logo" className={styles.Logo} onClick={goHome} style={{ cursor: 'pointer' }} /> */}
-      <Dropdown overlay={<Menu>{renderMenuItems(formattedCategories)}</Menu>} trigger={['hover']}>
+      <Dropdown overlay={<Menu>{renderMenuItems(formattedCategories, navigate)}</Menu>} trigger={['hover']}>
         <Button type="text" icon={<UnorderedListOutlined className={styles.Icon} />} className={styles.Button}>
           Danh mục <DownOutlined className={styles.IconDown} />
         </Button>

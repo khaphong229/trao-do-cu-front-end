@@ -154,7 +154,6 @@ const ContentComponent = ({ activeTab }) => {
         </>
       )}
 
-      {/* Thông tin bảo mật */}
       {activeTab === 'security' && (
         <Layout className={styles['form-design-layout']}>
           <Content className={styles['form-design-content']}>

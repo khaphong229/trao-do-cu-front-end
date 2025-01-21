@@ -67,7 +67,7 @@ const router = createBrowserRouter([
                 element: <ProtectedRoute requireAuth={true} adminOnly={false} />,
                 children: [
                   {
-                    path: 'management_post',
+                    path: 'management-post',
                     element: <PostManagementClient />
                   },
                   { path: 'profile', element: <ProfileUser /> },

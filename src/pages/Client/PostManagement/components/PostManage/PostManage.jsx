@@ -1,5 +1,4 @@
-// PostManage.jsx
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Tabs } from 'antd'
 import styles from './PostManage.module.scss'
 import CreatePostModal from 'pages/Client/Post/CreatePost/CreatePost'
@@ -9,18 +8,14 @@ import { UserInfo } from './components/UserInfor/UserInfor'
 import { ActiveListings } from './components/PostTabs/ActiveListing/ActiveListing'
 import { ExpiredListings } from './components/PostTabs/ExpiredListing/ExpriedListing'
 import RequestedPosts from './components/PostTabs/RequestedPosts'
-import { useLocation } from 'react-router-dom'
 
 const { TabPane } = Tabs
 
-export const PostManage = () => {
+export const PostManage = ({ tabType }) => {
   const dispatch = useDispatch()
-  const location = useLocation()
-
-  console.log(location.pathname)
 
   const { user } = useSelector(state => state.auth)
-  const [activeTab, setActiveTab] = useState('active')
+  const [activeTab, setActiveTab] = useState(tabType)
   const [activeSubTab, setActiveSubTab] = useState('all')
   const [tabRefreshKey, setTabRefreshKey] = useState(0)
 
