@@ -23,10 +23,9 @@ export const uploadExchangeImages = createAsyncThunk(
 )
 export const uploadAvatar = createAsyncThunk('auth/uploadAvatar', async (file, { rejectWithValue }) => {
   try {
-    const response = await UploadService.uploadImage(file)
+    const response = await UploadService.uploadImage(file, 'avatar')
     return response.data
   } catch (error) {
-    console.error('Lỗi từ API:', error.response?.data)
     return rejectWithValue(error.response.data || { message: 'Upload ảnh thất bại' })
   }
 })

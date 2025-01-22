@@ -9,7 +9,7 @@ import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
 
 const { TextArea } = Input
 
-const PostContent = ({ ref2 }) => {
+const PostContent = ({ ref2, errorPost, setErrorPost }) => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const { isShowEmoji, dataCreatePost } = useSelector(state => state.post)
@@ -67,11 +67,15 @@ const PostContent = ({ ref2 }) => {
     <div className={styles.contentWrapper}>
       <div className={styles.titleWrap} ref={ref2}>
         <Input
-          variant="borderless"
-          placeholder="Nhập tiêu đề bài đăng"
+          status={errorPost?.title ? 'error' : ''}
+          variant={errorPost?.title ? 'outlined' : 'borderless'}
+          placeholder={errorPost?.title ? errorPost.title : 'Nhập tiêu đề bài đăng *'}
           value={dataCreatePost.title}
-          onChange={e => dispatch(updatePostData({ title: e.target.value }))}
-          style={{ width: '100%' }}
+          onChange={e => {
+            dispatch(updatePostData({ title: e.target.value }))
+            setErrorPost(null)
+          }}
+          style={{ width: '100%', borderRadius: '0' }}
         />
       </div>
 

@@ -3,6 +3,7 @@ import { Card, List, Avatar, Typography, Menu, Divider, Empty, Button, Space, In
 import { UserOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import avatar from '../assets/images/logo/avtDefault.jpg'
 import { cartItems, menuItems, notifications } from './data'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 
 const { Text } = Typography
 
@@ -94,7 +95,7 @@ export const menu = user => {
           gap: '10px'
         }}
       >
-        <Avatar size={40} src={user.avatar || avatar} />
+        <Avatar size={40} src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avatar} />
         <Text level={5}>{user.name || 'Tài khoản'}</Text>
       </div>
       <Divider

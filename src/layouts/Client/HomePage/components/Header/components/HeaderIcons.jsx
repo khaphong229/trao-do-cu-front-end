@@ -39,7 +39,11 @@ const HeaderIcons = ({ notificationMenu, cartMenu, menu }) => {
         </Dropdown>
         <Dropdown overlay={menu} placement="bottomRight">
           <Space className={styles.Avatar} style={{ cursor: 'pointer', color: '#fff' }}>
-            <Avatar src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avtDefault} size={32} />
+            <Avatar
+              className={styles.avt}
+              src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avtDefault}
+              size={32}
+            />
             {!isAuthenticated ? 'Tài khoản' : user.name}
             <DownOutlined className={styles.IconDown} />
           </Space>

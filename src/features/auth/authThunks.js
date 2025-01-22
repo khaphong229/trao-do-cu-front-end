@@ -73,35 +73,25 @@ export const getCurrentUser = createAsyncThunk('auth/getCurrentUser', async (isA
 
 export const updateUserProfile = createAsyncThunk(
   'auth/updateUserProfile',
-  async (userData, { rejectWithValue, getState }) => {
+  async (userData, { rejectWithValue, getState, dispatch }) => {
     try {
-      // Lấy thông tin user hiện tại
       const currentUser = getState().auth.user
-
-      // Nếu có avatar mới, format lại URL
-      let formattedAvatar = userData.avatar
-      if (formattedAvatar && formattedAvatar.startsWith('http')) {
-        // Lấy phần path sau /static/
-        formattedAvatar = formattedAvatar.split('/static/')[1]
-      }
-
-      // Tạo payload với thông tin cập nhật
       const payload = {
         name: currentUser?.name || '',
         email: currentUser?.email || '',
         phone: currentUser?.phone || '',
         address: currentUser?.address || '',
-        ...userData,
-        avatar: formattedAvatar // Ghi đè avatar với URL đã format
+        social_media: [currentUser?.social_media[0] || ''],
+        ...userData
       }
-
-      console.log('Payload gửi lên API:', payload)
 
       const response = await AuthService.updateProfile(payload)
 
+      if (response.status === 201) {
+        dispatch(getCurrentUser(false))
+      }
       return response.data
     } catch (error) {
-      console.error('Update profile error:', error.response?.data)
       return rejectWithValue(error.response?.data || { message: 'Failed to update profile' })
     }
   }

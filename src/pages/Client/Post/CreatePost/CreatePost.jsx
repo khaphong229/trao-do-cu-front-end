@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Modal, Tour, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
@@ -20,12 +20,14 @@ import FacebookLinkModal from './components/Modal/Contact'
 import styles from './scss/CreatePost.module.scss'
 import { uploadPostImages } from 'features/upload/uploadThunks'
 import CategoryModal from './components/Modal/Category'
+import _ from 'lodash'
 
 const TOUR_STORAGE_KEY = 'lastTourShownTime'
 const TOUR_COOLDOWN_DAYS = 3
 
 const CreatePostModal = () => {
   const dispatch = useDispatch()
+  const [errorPost, setErrorPost] = useState(null)
   const { user } = useSelector(state => state.auth)
   const { dataCreatePost, isCreateModalVisible, isLoadingButton, isShowTour } = useSelector(state => state.post)
 
@@ -41,6 +43,17 @@ const CreatePostModal = () => {
       checkAndShowTour()
     }
   }, [isCreateModalVisible])
+
+  useEffect(() => {
+    if (isCreateModalVisible && user?.address) {
+      dispatch(
+        updatePostData({
+          city: user.address.split(', ').pop(),
+          specificLocation: user.address
+        })
+      )
+    }
+  }, [isCreateModalVisible, user?.address, dispatch])
 
   const checkAndShowTour = () => {
     const lastShownTime = localStorage.getItem(TOUR_STORAGE_KEY)
@@ -100,7 +113,12 @@ const CreatePostModal = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await dispatch(createPost(dataCreatePost)).unwrap()
+      // if (dataCreatePost.category_id === null) {
+      //   _.omit(dataCreatePost, ['category_id'])
+      // }
+      const response = await dispatch(
+        createPost(dataCreatePost.category_id === null ? _.omit(dataCreatePost, ['category_id']) : dataCreatePost)
+      ).unwrap()
       const { status, message: msg } = response
       if (status === 201) {
         message.success(msg)
@@ -109,6 +127,7 @@ const CreatePostModal = () => {
       }
     } catch (error) {
       if (error.status === 400) {
+        setErrorPost(error?.detail)
         Object.values(error.detail).forEach(val => {
           if (val === 'ID danh mục sai định dạng.') {
             message.error('Vui lòng chọn danh mục cho món đồ!')
@@ -142,6 +161,8 @@ const CreatePostModal = () => {
         <UserInfoSection ref1={ref1} />
 
         <PostContentEditor
+          errorPost={errorPost}
+          setErrorPost={setErrorPost}
           ref2={ref2}
           uploadedImages={dataCreatePost.image_url}
           setUploadedImages={handleImageUpload}
@@ -168,7 +189,7 @@ const CreatePostModal = () => {
       </Modal>
 
       <LocationModal
-        location={user?.address}
+        location={dataCreatePost.specificLocation || user?.address}
         setLocation={specificLocation => dispatch(updatePostData({ specificLocation }))}
       />
 
