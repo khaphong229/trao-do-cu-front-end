@@ -1,4 +1,4 @@
-import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message } from 'antd'
+import { Button, Card, Badge, Tooltip, Image, Upload, message } from 'antd'
 import {
   ShareAltOutlined,
   EditOutlined,
@@ -16,66 +16,53 @@ import styles from '../scss/ProfileUser.module.scss'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
-import { setCreateModalVisibility, updatePostData } from 'features/client/post/postSlice'
 import { uploadAvatar } from 'features/upload/uploadThunks'
 import { useEffect, useState } from 'react'
-import { updateUserProfile } from 'features/auth/authThunks'
-import PostManage from 'pages/Client/PostManagement/components/PostManage'
+import { getCurrentUser, updateUserProfile } from 'features/auth/authThunks'
 
-const { TabPane } = Tabs
+import { URL_SERVER_IMAGE } from 'config/url_server'
+
 const ProfilePage = () => {
   const dispatch = useDispatch()
-  const { user, isLoading } = useSelector(state => state.auth)
+  const { user } = useSelector(state => state.auth)
   const [uploading, setUploading] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState('')
 
-  // Cập nhật avatarUrl khi user thay đổi
   useEffect(() => {
-    // Force re-render khi avatar URL thay đổi
     if (avatarUrl) {
       const img = new Image()
       img.src = avatarUrl
       img.onload = () => {
-        // Trigger re-render
         setAvatarUrl(prevUrl => prevUrl)
       }
     }
   }, [avatarUrl])
-
-  // Get avatar URL from multiple possible locations
-  const getAvatarUrl = () => {
-    const directAvatar = user?.avatar
-
-    return directAvatar || Avatar
-  }
 
   const handleCustomUpload = async options => {
     const { file, onSuccess, onError } = options
     try {
       setUploading(true)
 
-      // Upload avatar
       const uploadResponse = await dispatch(uploadAvatar(file)).unwrap()
 
-      if (uploadResponse.success && uploadResponse.files?.[0]?.url) {
-        const newAvatarUrl = uploadResponse.files[0].url
-        console.log('Payload gửi lên API:', { avatar: newAvatarUrl })
-
-        // Update profile with new avatar
-        const updateResponse = await dispatch(
+      if (uploadResponse.success && uploadResponse.files?.[0]) {
+        const newAvatarUrl = uploadResponse.files[0].filepath
+        const response = await dispatch(
           updateUserProfile({
             avatar: newAvatarUrl
           })
         ).unwrap()
-
-        console.log('Update profile response:', updateResponse) // debug log
-        message.success('Upload ảnh thành công')
-        onSuccess(uploadResponse)
+        if (response.status === 201) {
+          message.success('Upload ảnh thành công')
+          dispatch(getCurrentUser(false))
+          onSuccess(uploadResponse)
+        } else {
+          message.error('Upload ảnh thất bại')
+        }
       } else {
         throw new Error('Upload response không hợp lệ')
       }
     } catch (error) {
-      console.error('Upload error:', error)
       message.error(error.message || 'Đã xảy ra lỗi khi upload ảnh')
       onError(error)
     } finally {
@@ -90,12 +77,11 @@ const ProfilePage = () => {
           <div className={styles['profile-header']}>
             <div className={styles['avatar-container']}>
               <Image
-                src={getAvatarUrl()}
+                src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : Avatar}
                 alt="Ảnh đại diện"
                 className={styles.avatar}
                 preview={false}
                 onError={e => {
-                  console.log('Failed to load avatar:', e.target.src)
                   e.target.src = Avatar
                 }}
               />
