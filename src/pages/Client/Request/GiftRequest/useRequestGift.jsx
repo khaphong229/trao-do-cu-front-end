@@ -29,7 +29,7 @@ export const useGiftRequest = () => {
     } else {
       if (type === 'gift') {
         dispatch(setAcceptModalVisible(true))
-      } else {
+      } else if (type === 'exchange') {
         dispatch(setExchangeFormModalVisible(true))
       }
     }
@@ -56,7 +56,11 @@ export const useGiftRequest = () => {
       if (status === 201) {
         message.success(msg)
         dispatch(setInfoModalVisible(false))
-        dispatch(setAcceptModalVisible(true))
+        if (selectedPostExchange.type === 'gift') {
+          dispatch(setAcceptModalVisible(true))
+        } else {
+          dispatch(setExchangeFormModalVisible(true))
+        }
       }
     } catch (error) {
       message.error('Không thể cập nhật thông tin liên hệ')
@@ -71,11 +75,11 @@ export const useGiftRequest = () => {
       user_req_id: user._id,
       reason_receive: values.reason_receive === undefined ? '' : values.reason_receive,
       status: 'pending',
-      contact_phone: user.phone || '',
+      contact_phone: user?.phone ? user.phone : '',
       contact_social_media: {
-        facebook: user.social_media?.[0] || 'https://www.facebook.com/'
+        facebook: user.social_media?.[0] || ''
       },
-      contact_address: user.address,
+      contact_address: user?.address ? user.address : '',
       contact_name: user.name
     }
 
@@ -119,15 +123,16 @@ export const useGiftRequest = () => {
       description: data.description,
       status: 'pending',
       image_url: data.image_url,
-      contact_phone: user.phone || '',
+      contact_phone: user?.phone ? user.phone : '',
       contact_social_media: {
-        facebook: user.social_media?.[0] || 'https://www.facebook.com/'
+        facebook: user.social_media?.[0] || ''
       },
-      contact_address: user.address
+      contact_address: user?.address ? user.address : ''
     }
 
     try {
       const response = await dispatch(requestExchange(requestData)).unwrap()
+
       const { status, message: msg } = response
       if (status === 201) {
         dispatch(
@@ -142,8 +147,10 @@ export const useGiftRequest = () => {
       }
     } catch (error) {
       if (error.status === 400) {
-        message.error(error.message)
-        dispatch(setExchangeFormModalVisible(false))
+        Object.values(error?.detail).forEach(err => {
+          message.error(err)
+        })
+        // dispatch(setExchangeFormModalVisible(false))
       }
     }
   }

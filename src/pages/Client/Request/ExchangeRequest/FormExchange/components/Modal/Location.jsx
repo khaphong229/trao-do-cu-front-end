@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Modal, message } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -11,10 +11,25 @@ import { updateUserProfile } from 'features/auth/authThunks'
 
 const LocationModal = ({ location, setLocation }) => {
   const dispatch = useDispatch()
-  const [fullAddress, setFullAddress] = useState(location || '')
-  const [isEditing, setIsEditing] = useState(!location)
+  const [fullAddress, setFullAddress] = useState('')
+  const [isEditing, setIsEditing] = useState(false)
+  const [initialAddress, setInitialAddress] = useState('')
   const { isLocationModalVisible } = useSelector(state => state.exchangeRequest)
   const { user } = useSelector(state => state.auth)
+
+  useEffect(() => {
+    if (location) {
+      setFullAddress(location)
+      setInitialAddress(location)
+      setIsEditing(false)
+    }
+  }, [location])
+
+  useEffect(() => {
+    if (isLocationModalVisible) {
+      setIsEditing(!location)
+    }
+  }, [isLocationModalVisible, location])
 
   const handleAddressChange = address => {
     setFullAddress(address)
@@ -40,24 +55,27 @@ const LocationModal = ({ location, setLocation }) => {
       setLocation(fullAddress)
     }
 
-    try {
-      const response = await dispatch(
-        updateUserProfile({
-          name: user.name,
-          email: user.email,
-          address: fullAddress,
-          phone: user.phone
-        })
-      ).unwrap()
-      const { status } = response
-      if (status === 201) {
-        message.success('Cập nhật địa chỉ thành công!')
-      }
-    } catch (error) {
-      if (error.status === 400) {
-        Object.values(error.detail).forEach(val => {
-          message.error(val)
-        })
+    if (isEditing && fullAddress !== initialAddress) {
+      try {
+        const response = await dispatch(
+          updateUserProfile({
+            name: user.name,
+            email: user.email,
+            address: fullAddress,
+            phone: user.phone
+          })
+        ).unwrap()
+
+        if (response.status === 201) {
+          message.success('Cập nhật địa chỉ thành công!')
+          setInitialAddress(fullAddress)
+        }
+      } catch (error) {
+        if (error.status === 400) {
+          Object.values(error.detail).forEach(val => {
+            message.error(val)
+          })
+        }
       }
     }
 

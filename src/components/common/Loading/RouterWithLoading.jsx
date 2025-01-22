@@ -3,17 +3,17 @@ import { Outlet, useLocation } from 'react-router-dom'
 import FullScreenLoading from './Loading'
 
 const RouterWithLoading = () => {
-  const location = useLocation()
-  const [isNavigating, setIsNavigating] = useState(false)
-  useEffect(() => {
-    setIsNavigating(true)
-    const timer = setTimeout(() => setIsNavigating(false), 100)
-    return () => clearTimeout(timer)
-  }, [location.pathname])
+  // const location = useLocation()
+  // const [isNavigating, setIsNavigating] = useState(false)
+  // useEffect(() => {
+  //   setIsNavigating(true)
+  //   const timer = setTimeout(() => setIsNavigating(false), 100)
+  //   return () => clearTimeout(timer)
+  // }, [location.pathname])
 
   return (
     <>
-      <FullScreenLoading isVisible={isNavigating} />
+      {/* <FullScreenLoading isVisible={isNavigating} /> */}
       <Outlet />
     </>
   )

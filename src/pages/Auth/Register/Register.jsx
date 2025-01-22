@@ -23,9 +23,11 @@ const Register = () => {
       }
     } catch (error) {
       if (error.status === 400) {
-        Object.values(error.detail).forEach(val => {
-          message.error(val)
-        })
+        const errorListForm = Object.entries(error.detail).map(([field, msg]) => ({
+          name: field,
+          errors: [msg]
+        }))
+        form.setFields(errorListForm)
       }
     }
   }

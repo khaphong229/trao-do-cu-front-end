@@ -77,16 +77,16 @@ const authSlice = createSlice({
         state.isAdmin = false
       })
 
-      // Register
-      .addCase(registerUser.pending, state => {
-        state.isLoading = true
-      })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.isLoading = false
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.isLoading = false
-      })
+    // Register
+    // .addCase(registerUser.pending, state => {
+    //   state.isLoading = true
+    // })
+    // .addCase(registerUser.fulfilled, (state, action) => {
+    //   state.isLoading = false
+    // })
+    // .addCase(registerUser.rejected, (state, action) => {
+    //   state.isLoading = false
+    // })
 
     // Get Current User
     builder.addCase(getCurrentUser.pending, state => {

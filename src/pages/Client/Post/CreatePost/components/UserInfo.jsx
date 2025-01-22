@@ -4,6 +4,7 @@ import styles from '../scss/UserInfo.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
 import avt from 'assets/images/logo/avtDefault.jpg'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 const UserInfo = ({ ref1 }) => {
   const dispatch = useDispatch()
   const { dataCreatePost } = useSelector(state => state.post)
@@ -11,7 +12,7 @@ const UserInfo = ({ ref1 }) => {
   const { user } = useSelector(state => state.auth)
   return (
     <div className={styles.userInfo}>
-      <Avatar size={40} src={user.avatar || avt} />
+      <Avatar size={40} src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avt} />
       <div className={styles.userDetails}>
         <div className={styles.textWrapper}>
           <div className={styles.username}>{user.name}</div>

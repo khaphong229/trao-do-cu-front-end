@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Modal } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
@@ -22,6 +22,20 @@ const FormExchangeModal = () => {
   const { requestData, isExchangeFormModalVisible, isLoading } = useSelector(state => state.exchangeRequest)
   const { user } = useSelector(state => state.auth)
   const { handleExchangeConfirm } = useGiftRequest()
+
+  useEffect(() => {
+    if (isExchangeFormModalVisible && user?.address) {
+      const addressParts = user.address.split(', ')
+      const city = addressParts[addressParts.length - 1]
+      dispatch(
+        updateRequestData({
+          city,
+          contact_address: user.address
+        })
+      )
+    }
+  }, [isExchangeFormModalVisible, user?.address, dispatch])
+
   const handleSubmit = async () => {
     try {
       await handleExchangeConfirm(requestData)
@@ -40,11 +54,8 @@ const FormExchangeModal = () => {
         width={600}
       >
         <UserInfoSection />
-
         <PostContentEditor />
-
         <PostToolbar />
-
         <Button
           type="primary"
           className={styles.postButton}
@@ -57,7 +68,7 @@ const FormExchangeModal = () => {
       </Modal>
 
       <LocationModal
-        location={user?.address}
+        location={requestData.contact_address || user?.address}
         setLocation={contact_address => dispatch(updateRequestData({ contact_address }))}
       />
 

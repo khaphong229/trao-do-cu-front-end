@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, Form, Modal, Radio, Input, message } from 'antd'
+import { Button, Form, Modal, Radio, Input, message, Tooltip } from 'antd'
 import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
 import { getCurrentUser } from 'features/auth/authThunks'
 import AddressSelection from 'components/common/AddressSelection'
@@ -77,7 +77,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
       <Form form={form} onFinish={handleSubmit} layout="vertical">
         <Form.Item
           name="contact_method"
-          label="Phương thức liên hệ"
+          label={<Tooltip title="Tùy chọn 1 trong 2 cách thức liên hệ">Phương thức liên hệ</Tooltip>}
           rules={[{ required: true, message: 'Vui lòng chọn phương thức liên hệ' }]}
         >
           <Radio.Group onChange={e => setContactMethod(e.target.value)}>
@@ -87,21 +87,13 @@ export const ContactInfoModal = ({ onSubmit }) => {
         </Form.Item>
 
         {contactMethod === 'phone' && (
-          <Form.Item
-            name="phone"
-            label="Số điện thoại"
-            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại' }]}
-          >
+          <Form.Item name="phone" label="Số điện thoại">
             <Input placeholder="Nhập số điện thoại của bạn" />
           </Form.Item>
         )}
 
         {contactMethod === 'social_media' && (
-          <Form.Item
-            name="social_media"
-            label="Link mạng xã hội Facebook"
-            rules={[{ required: true, message: 'Vui lòng nhập link mạng xã hội' }]}
-          >
+          <Form.Item name="social_media" label="Link mạng xã hội Facebook">
             <Input placeholder="Nhập link mạng xã hội của bạn" />
           </Form.Item>
         )}
