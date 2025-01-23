@@ -1,6 +1,6 @@
 # Giới thiệu Website: Trao Đồ Cũ
 
-Đây là một website sử dụng ReactJS được xây dựng với Create React App. Website cung cấp [mô tả ngắn gọn về mục đích hoặc chức năng của website, ví dụ: "nền tảng quản lý và hiển thị các liên kết rút gọn cho dịch vụ rút gọn URL"].
+Đây là một website sử dụng ReactJS được xây dựng với Create React App.
 
 ## Tính năng
 
