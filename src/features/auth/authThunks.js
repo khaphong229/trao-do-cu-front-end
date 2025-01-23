@@ -102,7 +102,7 @@ export const changePassWord = createAsyncThunk('auth/changePassWord', async (dat
     const response = await AuthService.changePassWord({
       currentPassword: data.currentPassword,
       newPassword: data.newPassword,
-      confirmPassword: data.confirmPassword
+      confirm_password: data.newPassword
     })
 
     console.log('Change password response:', response)

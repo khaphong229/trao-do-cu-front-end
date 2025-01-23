@@ -3,9 +3,20 @@ $gray-muted: #6b7280;
 $blue-primary: #3b82f6;
 $primary-color: #007bff;
 $secondary-color: #6c757d;
-$background-color: #f8f9fa;
 $border-radius: 8px;
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #fff;
+$border-radius: 8px;
+$text-color: #333;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+$gray-light: #d1d5db;
 
+/* Responsive Breakpoints */
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
 @import '../../../../../assets/scss/variables.scss';
 
 .profile-page {
@@ -248,72 +259,333 @@ $border-radius: 8px;
     }
   }
 }
-// linksocialmedial
+// Profile
+.personal-info-wrapper {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  max-width: 1000px;
+  margin: 20px auto;
+  transition: all 0.4s ease;
+
+  .form-group {
+    margin-bottom: 20px;
+    position: relative;
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px 10px 10px 20px; /* Giảm padding để trường input nhỏ hơn */
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px; /* Giảm font-size để trường input nhỏ hơn */
+      color: #555;
+      background-color: #f9f9f9;
+      transition: all 0.4s ease;
+
+      &:focus {
+        border-color: #80ff88;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        outline: none;
+      }
+
+      &::placeholder {
+        color: #ccc;
+      }
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #aaa;
+      font-size: 18px;
+      pointer-events: none;
+    }
+  }
+
+  .form-actions1 {
+    display: flex;
+    justify-content: flex-start;
+
+    button {
+      color: #fff;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.4s ease;
+    }
+  }
+}
+
+/* Icon Input */
+.form-group {
+  input {
+    padding-left: 45px;
+  }
+}
+
+/* Layout của trang Security */
+.form-design-layout {
+  max-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .form-design-content {
+    width: 100%;
+    max-width: 920px;
+    // padding: 32px;
+    background-color: #fff;
+    border-radius: 8px;
+
+    @media (max-width: $breakpoint-sm) {
+      padding: 20px;
+    }
+
+    .form-design-header {
+      text-align: center;
+      margin-bottom: 32px;
+
+      h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #262626;
+        margin: 0;
+
+        @media (max-width: $breakpoint-sm) {
+          font-size: 20px;
+        }
+      }
+    }
+
+    .form-design {
+      .form-item {
+        margin-bottom: 24px;
+
+        label {
+          display: block;
+          margin-bottom: 8px;
+          font-size: 14px;
+          color: #262626;
+          font-weight: 500;
+        }
+
+        .ant-input-password {
+          width: 100%;
+
+          .ant-input {
+            height: 40px;
+          }
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+
+        button {
+          color: #fff;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: bold;
+          transition: all 0.4s ease;
+        }
+
+        @media (max-width: $breakpoint-sm) {
+          flex-direction: column;
+          gap: 16px;
+          align-items: stretch;
+        }
+
+        .ant-checkbox-wrapper {
+          color: #262626;
+          font-size: 14px;
+        }
+
+        .ant-btn {
+          min-width: 120px;
+          height: 40px;
+          font-weight: 500;
+          font-size: 14px;
+
+          @media (max-width: $breakpoint-sm) {
+            width: 100%;
+          }
+        }
+      }
+
+      .error {
+        color: #ff4d4f;
+        margin-top: 16px;
+        font-size: 14px;
+        text-align: center;
+
+        p {
+          margin: 4px 0 0;
+        }
+      }
+
+      .success {
+        color: #52c41a;
+        margin-top: 16px;
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+/* Social Links Card */
 .social-links-card {
-  max-width: 400px;
-  margin: 0 auto;
-  background-color: $background-color;
+  max-width: 700px;
+  margin: 16px auto;
+  background-color: #fff;
   border-radius: $border-radius;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
 
   .card-header {
-    padding: 24px;
+    padding: 20px;
     text-align: center;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid lighten($gray-light, 10%);
+    margin-bottom: 16px;
 
     .card-title {
       font-size: 24px;
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       color: $secondary-color;
     }
 
     .description {
       font-size: 14px;
-      color: $secondary-color;
-      margin-bottom: 0;
+      line-height: 1.5;
+      color: darken($secondary-color, 10%);
     }
   }
 
-  .link-buttons {
-    padding: 24px;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 16px;
+  .link-button {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 14px;
+    text-align: center;
+    border-radius: 8px;
+    color: #fff;
+    border: none;
+    margin-bottom: 12px; // Thêm khoảng cách giữa các nút
+    transition:
+      background-color 0.3s ease,
+      transform 0.2s ease;
 
-    .link-button {
-      font-size: 16px;
-      font-weight: 500;
+    &:hover {
+      transform: scale(1.05);
+    }
 
-      &.facebook {
-        background-color: #3b5998;
-        border-color: #3b5998;
+    &:active {
+      transform: scale(0.98);
+    }
 
-        &:hover {
-          background-color: darken(#3b5998, 5%);
-          border-color: darken(#3b5998, 5%);
-        }
-      }
+    &.facebook {
+      background-color: #3b5998;
 
-      &.google {
-        background-color: #db4437;
-        border-color: #db4437;
-
-        &:hover {
-          background-color: darken(#db4437, 5%);
-          border-color: darken(#db4437, 5%);
-        }
-      }
-
-      &.apple {
-        background-color: #000000;
-        border-color: #000000;
-
-        &:hover {
-          background-color: lighten(#000000, 10%);
-          border-color: lighten(#000000, 10%);
-        }
+      &:hover {
+        background-color: darken(#3b5998, 5%);
       }
     }
+
+    &.google {
+      background-color: #db4437;
+
+      &:hover {
+        background-color: darken(#db4437, 5%);
+      }
+    }
+
+    &.apple {
+      background-color: #000;
+
+      &:hover {
+        background-color: lighten(#000, 10%);
+      }
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: $breakpoint-sm) {
+  .personal-info-wrapper {
+    padding: 20px;
+    max-width: 100%;
+    margin: 20px auto;
+  }
+
+  .form-actions1 button {
+    width: 100%;
+  }
+
+  .social-links-card {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .card-header {
+    padding: 16px;
+
+    .card-title {
+      font-size: 20px;
+    }
+
+    .description {
+      font-size: 12px;
+    }
+  }
+
+  .link-button {
+    font-size: 14px;
+    padding: 12px;
+    margin-bottom: 10px; // Điều chỉnh khoảng cách cho nút trên màn hình nhỏ
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .form-design-layout {
+    padding: 20px;
+  }
+
+  .form-design-content {
+    padding: 24px;
+  }
+
+  .link-button {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none;
+    transition: none;
   }
 }

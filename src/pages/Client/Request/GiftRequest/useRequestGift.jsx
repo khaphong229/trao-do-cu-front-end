@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { requestGift } from 'features/client/request/giftRequest/giftRequestThunks'
 import { setInfoModalVisible, setAcceptModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
@@ -11,18 +10,19 @@ import {
 } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import { updatePostStatus } from 'features/client/post/postSlice'
+import _ from 'lodash'
 
 export const useGiftRequest = () => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const selectedPostExchange = useSelector(state => state.exchangeRequest?.selectedPostExchange) || null
-  const [selectedPost, setSelectedPost] = useState(null)
+  // const [selectedPost, setSelectedPost] = useState(null)
   const checkUserContactInfo = () => {
     return (user?.phone || (user?.social_media && user?.social_media?.length > 0)) && user?.address
   }
 
   const handleGiftRequest = (post, type) => {
-    setSelectedPost(post)
+    // setSelectedPost(post)
     dispatch(setSelectedPostExchange(post))
     if (!checkUserContactInfo()) {
       dispatch(setInfoModalVisible(true))
@@ -70,7 +70,7 @@ export const useGiftRequest = () => {
   const handleRequestConfirm = async values => {
     if (!selectedPostExchange) return
 
-    const requestData = {
+    let requestData = {
       post_id: selectedPostExchange._id,
       user_req_id: user._id,
       reason_receive: values.reason_receive === undefined ? '' : values.reason_receive,
@@ -81,6 +81,10 @@ export const useGiftRequest = () => {
       },
       contact_address: user?.address ? user.address : '',
       contact_name: user.name
+    }
+
+    if (user.social_media.length === 0) {
+      requestData = _.omit(requestData, ['contact_social_media'])
     }
 
     try {

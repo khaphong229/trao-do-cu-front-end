@@ -14,7 +14,7 @@ import PostManagement from '../pages/Admin/Post'
 import PostManagementClient from 'pages/Client/PostManagement'
 import PostArticle from '../pages/Client/Post/PostArticle'
 import ProfileUser from 'pages/Client/Profile/ProfileUser'
-import EditProfile from 'pages/Client/Profile/EditProfile'
+
 import ErrorBoundary from 'components/common/ErrorBoundary'
 import NotFound from '../components/common/NotFound'
 
@@ -70,8 +70,7 @@ const router = createBrowserRouter([
                     path: 'management-post',
                     element: <PostManagementClient />
                   },
-                  { path: 'profile', element: <ProfileUser /> },
-                  { path: 'edit-profile', element: <EditProfile /> }
+                  { path: 'profile', element: <ProfileUser /> }
                 ]
               }
             ]

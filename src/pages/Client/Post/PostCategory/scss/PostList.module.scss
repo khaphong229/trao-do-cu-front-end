@@ -11,6 +11,13 @@
   align-items: center;
 }
 
+.title {
+  transition: all 0.3s;
+  &:hover {
+    color: $colorMain;
+  }
+}
+
 @media screen and (max-width: 640px) {
   .topContent {
     flex-direction: column;

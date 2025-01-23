@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { message, Modal, Tree } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllCategory } from 'features/client/category/categoryThunks'
+// import { getAllCategory } from 'features/client/category/categoryThunks'
 import { setSelectedCategory } from 'features/client/category/categorySlice'
 import styles from '../../scss/CategoryModal.module.scss'
 import {
@@ -15,11 +15,11 @@ const CategoryModal = () => {
   const { isCategoryModalVisible } = useSelector(state => state.exchangeRequest)
   const { categories, isLoading } = useSelector(state => state.category)
 
-  useEffect(() => {
-    if (categories.length === 0) {
-      dispatch(getAllCategory())
-    }
-  }, [dispatch, categories.length])
+  // useEffect(() => {
+  //   if (categories.length === 0) {
+  //     dispatch(getAllCategory())
+  //   }
+  // }, [dispatch, categories.length])
 
   const onSelect = (_, { selectedNodes }) => {
     if (selectedNodes.length > 0) {

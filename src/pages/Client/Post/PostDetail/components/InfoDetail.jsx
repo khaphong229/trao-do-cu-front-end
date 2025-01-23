@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Button, Row, Col, Image, Typography, Divider, Avatar } from 'antd'
 import { ClockCircleOutlined, EnvironmentOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
 import styles from './../scss/PostInfoDetail.module.scss'
@@ -15,10 +15,9 @@ import { GiftRequestConfirmModal } from 'pages/Client/Request/GiftRequest/compon
 import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange/FormExchange'
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
-import { checkRequestedGift } from 'features/client/request/giftRequest/giftRequestThunks'
-import { checkRequestedExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import { getValidImageUrl } from 'helpers/helper'
 import imageNotFound from 'assets/images/others/imagenotfound.jpg'
+import PostDetailSkeleton from 'components/common/Skeleton/PostDetailSkeleton'
 
 const { Title, Text } = Typography
 
@@ -26,57 +25,22 @@ dayjs.extend(relativeTime)
 dayjs.locale('vi')
 
 const PostInfoDetail = () => {
-  const { selectedPost } = useSelector(state => state.post)
+  const { postDetail: selectedPost } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [mainImage, setMainImage] = useState(null)
-  const [isRequested, setIsRequested] = useState(false)
-  const [isCheckingStatus, setIsCheckingStatus] = useState(true)
   const thumbnails = Array.isArray(selectedPost?.image_url) ? selectedPost.image_url : []
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
   const { isExchangeFormModalVisible } = useSelector(state => state.exchangeRequest)
   const AuthButton = withAuth(Button)
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    const checkRequestStatus = async () => {
-      if (!selectedPost?._id || !user?._id) {
-        setIsCheckingStatus(false)
-        return
-      }
-
-      try {
-        const checkParams = {
-          post_id: selectedPost._id,
-          user_req_id: user._id
-        }
-
-        let requestStatus = false
-        if (selectedPost.type === 'gift') {
-          const response = await dispatch(checkRequestedGift(checkParams))
-          requestStatus = response.payload?.data?.total > 0
-        } else {
-          const response = await dispatch(checkRequestedExchange(checkParams))
-          requestStatus = response.payload?.data?.total > 0
-        }
-
-        setIsRequested(requestStatus)
-      } catch (error) {
-        console.error('Error checking request status:', error)
-      } finally {
-        setIsCheckingStatus(false)
-      }
-    }
-
-    checkRequestStatus()
-  }, [selectedPost, user, dispatch])
-
   if (!selectedPost) {
-    return <div>Đang tải...</div>
+    return <PostDetailSkeleton />
   }
 
   const handleRequest = item => {
-    if (!isRequested) {
+    if (!selectedPost.isRequested) {
       handleGiftRequest(item, item.type)
     }
   }
@@ -95,15 +59,7 @@ const PostInfoDetail = () => {
       )
     }
 
-    if (isCheckingStatus) {
-      return (
-        <Button type="primary" size="large" className={styles.ButtonChat} loading>
-          Đang kiểm tra...
-        </Button>
-      )
-    }
-
-    if (isRequested) {
+    if (selectedPost.isRequested) {
       return (
         <Button type="primary" size="large" className={styles.ButtonChat} disabled>
           Đã yêu cầu

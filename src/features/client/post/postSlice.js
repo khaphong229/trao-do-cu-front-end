@@ -38,13 +38,17 @@ const initialState = {
   requestStatuses: {},
   statusCache: {},
   cacheTL: 5 * 60 * 1000,
-  lastCacheUpdate: null
+  lastCacheUpdate: null,
+  postDetail: null
 }
 
 const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
+    setSelectedPost: (state, action) => {
+      state.postDetail = action.payload
+    },
     //create post action
     setCreateModalVisibility: (state, action) => {
       state.isCreateModalVisible = action.payload
@@ -237,7 +241,8 @@ export const {
   clearPosts,
   setRequestStatuses,
   clearExpiredCache,
-  updatePostStatus
+  updatePostStatus,
+  setSelectedPost
 } = postSlice.actions
 
 export default postSlice.reducer

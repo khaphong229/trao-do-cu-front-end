@@ -128,11 +128,24 @@ const CreatePostModal = () => {
     } catch (error) {
       if (error.status === 400) {
         setErrorPost(error?.detail)
-        Object.values(error.detail).forEach(val => {
-          if (val === 'ID danh mục sai định dạng.') {
+        // Object.values(error.detail).forEach(val => {
+        //   if (val === 'ID danh mục sai định dạng.') {
+        //     message.error('Vui lòng chọn danh mục cho món đồ!')
+        //   } else {
+        //     message.error(val)
+        //   }
+        // })
+        let ok = 0
+        Object.entries(error.detail).forEach(([field, msg]) => {
+          if (field === 'category_id') {
             message.error('Vui lòng chọn danh mục cho món đồ!')
+          } else if (field === 'specificLocation' || field === 'city') {
+            if (ok === 0) {
+              message.error('Vui lòng thêm địa chỉ')
+              ok = 1
+            }
           } else {
-            message.error(val)
+            message.error(msg)
           }
         })
       }

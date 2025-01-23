@@ -16,10 +16,15 @@ const DescDetail = () => {
       <Typography>
         <Text strong>{selectedPost?.title || 'Không có tiêu đề'}</Text>
         <br />
-        <Text>{selectedPost?.description || ''}</Text>
-        <br />
-
-        <Link href="/">{`Số điện thoại: ${selectedPost?.user_id?.phone ? selectedPost?.user_id?.phone : ''}`}</Link>
+        {selectedPost?.description && (
+          <>
+            <Text>{selectedPost?.description || ''}</Text>
+            <br />
+          </>
+        )}
+        {selectedPost?.user_id?.phone && (
+          <Link>{`Số điện thoại: ${selectedPost.user_id.phone.slice(0, 3)}xxxxxxx}`}</Link>
+        )}
       </Typography>
 
       <div className={styles.recommendWrap}>

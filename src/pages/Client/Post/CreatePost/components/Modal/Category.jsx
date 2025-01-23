@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { message, Modal, Tree } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCategoryModalVisibility, updatePostData } from 'features/client/post/postSlice'
-import { getAllCategory } from 'features/client/category/categoryThunks'
+// import { getAllCategory } from 'features/client/category/categoryThunks'
 import { setSelectedCategory } from 'features/client/category/categorySlice'
 import styles from '../../scss/CategoryModal.module.scss'
 
@@ -11,11 +11,11 @@ const CategoryModal = () => {
   const { selectedCategory } = useSelector(state => state.category)
   const { isCategoryModalVisible } = useSelector(state => state.post)
   const { categories, isLoading } = useSelector(state => state.category)
-  useEffect(() => {
-    if (categories.length === 0) {
-      dispatch(getAllCategory())
-    }
-  }, [dispatch, categories.length])
+  // useEffect(() => {
+  //   if (categories.length === 0) {
+  //     dispatch(getAllCategory())
+  //   }
+  // }, [dispatch, categories.length])
 
   const onSelect = (_, { selectedNodes, node }) => {
     if (selectedNodes.length > 0) {

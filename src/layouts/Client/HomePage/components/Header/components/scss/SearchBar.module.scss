@@ -1,19 +1,77 @@
-.SearchBar {
-  border-radius: 5px;
-}
+.search-bar {
+  position: relative;
+  width: 100%;
 
-.SearchBar {
-  width: 500px;
-}
+  .input-wrapper {
+    position: relative;
 
-@media screen and (max-width: 1175px) {
-  .SearchBar {
-    width: 400px;
+    .input {
+      padding-left: 2.5rem;
+      width: 400px;
+      height: 36px;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      font-size: 14px;
+
+      &:focus {
+        outline: none;
+        border-color: #d1d5db;
+      }
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 16px;
+      width: 16px;
+      color: #9ca3af;
+    }
+  }
+
+  .suggestions {
+    position: absolute;
+    width: 100%;
+    max-width: 600px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    margin-top: 0.25rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    font-size: 13px;
+
+    .suggestion-item {
+      cursor: pointer;
+      display: block;
+      color: #333333;
+
+      &:hover {
+        background-color: #f3f4f6;
+      }
+
+      .title {
+        display: flex;
+        gap: 4px;
+      }
+    }
+
+    .no-results {
+      padding: 8px 12px;
+      color: #6b7280;
+      font-size: 13px;
+      text-align: center;
+    }
   }
 }
 
-@media screen and (max-width: 797px) {
-  .SearchBar {
-    width: 100%;
+@media screen and (max-width: '796px') {
+  .input-wrapper {
+    position: relative;
+
+    .input {
+      width: 100% !important;
+    }
   }
 }
