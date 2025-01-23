@@ -29,6 +29,7 @@ dayjs.locale('vi')
 
 const PostNews = () => {
   const [curPage, setCurPage] = useState(1)
+  const [isSearchMode, setIsSearchMode] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -49,6 +50,9 @@ const PostNews = () => {
       })
     )
   }, [dispatch, query])
+  useEffect(() => {
+    setIsSearchMode(!!query) // Kiểm tra xem query có nội dung hay không
+  }, [query])
 
   const handleLoadMore = () => {
     const nextPage = curPage + 1
@@ -121,7 +125,7 @@ const PostNews = () => {
   return (
     <>
       <div className={styles.postWrap}>
-        <span className={styles.postTitle}>Bài đăng mới nhất</span>
+        <span className={styles.postTitle}>{isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}</span>
 
         {isLoading && (
           <Row justify="start" className={styles.itemsGrid}>
@@ -183,7 +187,7 @@ const PostNews = () => {
           notFoundPost()
         )}
 
-        {hasMore && (
+        {hasMore && !isSearchMode && (
           <div className={styles.buttonWrapper}>
             <Button
               icon={<ArrowDownOutlined />}
