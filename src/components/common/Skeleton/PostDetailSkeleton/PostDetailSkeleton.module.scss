@@ -1,0 +1,49 @@
+.mainImageSkeleton {
+  width: 100% !important;
+  height: 400px !important;
+}
+
+.thumbnailSkeleton {
+  width: 100% !important;
+  height: 100px !important;
+}
+
+.titleSkeleton {
+  margin-bottom: 16px;
+}
+
+.statusSkeleton {
+  margin-bottom: 16px;
+}
+
+.locationSkeleton,
+.timeSkeleton {
+  margin-bottom: 12px;
+}
+
+.buttonsSkeleton {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.sellerInfoSkeleton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.userInfoSkeleton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.userDetailsSkeleton {
+  display: flex;
+  align-items: center;
+}
+
+.userRatingSkeleton {
+  text-align: center;
+}

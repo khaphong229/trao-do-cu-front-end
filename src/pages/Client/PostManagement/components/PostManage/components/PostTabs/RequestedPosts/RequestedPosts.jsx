@@ -45,6 +45,13 @@ const RequestedPosts = () => {
 
   const columns = [
     {
+      title: 'Tiêu đề',
+      dataIndex: ['post_id', 'title'],
+      key: 'title',
+      width: 200,
+      render: text => <Text strong>{text}</Text>
+    },
+    {
       title: 'Trạng thái',
       key: 'status',
       width: 120,
@@ -72,22 +79,7 @@ const RequestedPosts = () => {
         return <ContactInfoDisplay post={record} showInTable={true} />
       }
     },
-    {
-      title: 'Ảnh bài viết',
-      key: 'postImage',
-      width: 120,
-      render: (_, record) => (
-        <Image
-          src={record?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : imgNotFound}
-          alt="Post image"
-          style={{ width: 100, height: 100, objectFit: 'cover' }}
-          fallback={avt}
-          preview={{
-            mask: null
-          }}
-        />
-      )
-    },
+
     {
       title: 'Chủ bài đăng',
       key: 'owner',
@@ -107,6 +99,22 @@ const RequestedPosts = () => {
       )
     },
     {
+      title: 'Ảnh bài viết',
+      key: 'postImage',
+      width: 120,
+      render: (_, record) => (
+        <Image
+          src={record?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : imgNotFound}
+          alt="Post image"
+          style={{ width: 100, height: 100, objectFit: 'cover' }}
+          fallback={avt}
+          preview={{
+            mask: null
+          }}
+        />
+      )
+    },
+    {
       title: 'Loại',
       key: 'type',
       width: 100,
@@ -116,13 +124,7 @@ const RequestedPosts = () => {
         </Tag>
       )
     },
-    {
-      title: 'Tiêu đề',
-      dataIndex: ['post_id', 'title'],
-      key: 'title',
-      width: 200,
-      render: text => <Text strong>{text}</Text>
-    },
+
     {
       title: 'Mô tả',
       dataIndex: ['post_id', 'description'],

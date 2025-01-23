@@ -76,11 +76,11 @@
   line-height: 1.2;
   font-weight: 600;
   // height: 2.4em;
+  transition: ease 0.3s;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  transition: ease 0.3s;
   &:hover {
     color: $colorMain;
   }
@@ -205,4 +205,18 @@
   60% {
     transform: translateY(-5px);
   }
+}
+
+.time {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.location {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }

@@ -7,8 +7,8 @@
 
     .input {
       padding-left: 2.5rem;
-      width: 600px; // Chỉnh kích thước nhỏ hơn để cân đối hơn
-      height: 36px; // Giảm chiều cao
+      width: 400px;
+      height: 36px;
       border: 1px solid #e5e7eb;
       border-radius: 4px;
       font-size: 14px;
@@ -24,8 +24,8 @@
       left: 0.75rem;
       top: 50%;
       transform: translateY(-50%);
-      height: 16px; // Thu nhỏ icon
-      width: 16px; // Thu nhỏ icon
+      height: 16px;
+      width: 16px;
       color: #9ca3af;
     }
   }
@@ -33,22 +33,22 @@
   .suggestions {
     position: absolute;
     width: 100%;
-    max-width: 600px; // Giới hạn chiều rộng bằng input
+    max-width: 600px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     margin-top: 0.25rem;
     border-radius: 0.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Giảm độ mờ của bóng
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 50;
-    font-size: 13px; // Giảm font chữ
+    font-size: 13px;
 
     .suggestion-item {
       cursor: pointer;
-      display: block; // Căn chỉnh nội dung dòng đơn
+      display: block;
       color: #333333;
 
       &:hover {
-        background-color: #f3f4f6; // Màu nền khi hover nhạt hơn
+        background-color: #f3f4f6;
       }
 
       .title {
@@ -58,10 +58,20 @@
     }
 
     .no-results {
-      padding: 8px 12px; // Giảm padding
+      padding: 8px 12px;
       color: #6b7280;
-      font-size: 13px; // Font chữ nhỏ hơn
-      text-align: center; // Căn giữa nội dung
+      font-size: 13px;
+      text-align: center;
+    }
+  }
+}
+
+@media screen and (max-width: '796px') {
+  .input-wrapper {
+    position: relative;
+
+    .input {
+      width: 100% !important;
     }
   }
 }

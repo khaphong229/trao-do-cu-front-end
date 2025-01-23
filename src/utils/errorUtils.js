@@ -37,7 +37,7 @@ export const timeoutPromise = (timeout = 5000) => {
         response: {
           data: {
             status: 408,
-            message: 'Timeout: Đăng nhập quá thời gian, vui lòng thử lại!'
+            message: 'Đăng nhập quá thời gian, vui lòng thử lại!'
           }
         }
       })

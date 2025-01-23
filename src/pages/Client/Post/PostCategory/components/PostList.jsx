@@ -5,7 +5,7 @@ import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.jpg'
 import { useSelector, useDispatch } from 'react-redux'
 import { getPostPagination } from '../../../../../features/client/post/postThunks'
-import { resetPage, clearPosts } from '../../../../../features/client/post/postSlice'
+import { resetPage, clearPosts, setSelectedPost } from '../../../../../features/client/post/postSlice'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
@@ -95,7 +95,8 @@ const PostList = () => {
     }
   })
 
-  const goDetail = id => {
+  const goDetail = (id, post) => {
+    dispatch(setSelectedPost(post))
     navigate(`/post/${id}/detail`)
   }
 
@@ -170,13 +171,13 @@ const PostList = () => {
                         e.target.onerror = null
                         e.target.src = imageNotFound
                       }}
-                      onClick={() => goDetail(item._id)}
+                      onClick={() => goDetail(item._id, item)}
                     />
                   </div>
                 }
               >
                 <div className={styles.Container}>
-                  <Text strong onClick={() => goDetail(item._id)}>
+                  <Text strong onClick={() => goDetail(item._id, item)} className={styles.title}>
                     {item.title}
                   </Text>
                   <span className={styles.status}>{item.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>

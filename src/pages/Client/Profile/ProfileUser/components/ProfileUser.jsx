@@ -1,7 +1,6 @@
-import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message, Checkbox, Input, Layout, Select } from 'antd'
+import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message, Checkbox, Input, Select } from 'antd'
 import {
   ShareAltOutlined,
-  EditOutlined,
   MessageOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
@@ -15,7 +14,6 @@ import {
 } from '@ant-design/icons'
 import Avatar from 'assets/images/logo/avtDefault.jpg'
 import styles from '../scss/ProfileUser.module.scss'
-import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
 import { uploadAvatar } from 'features/upload/uploadThunks'
@@ -23,7 +21,6 @@ import { useEffect, useState } from 'react'
 import { changePassWord, getCurrentUser, updateUserProfile } from 'features/auth/authThunks'
 
 import { URL_SERVER_IMAGE } from 'config/url_server'
-import { Content } from 'antd/es/layout/layout'
 import Title from 'antd/es/skeleton/Title'
 
 const { TabPane } = Tabs
@@ -72,9 +69,15 @@ const ProfilePage = () => {
     setFormData(prev => ({ ...prev, gender: value }))
   }
 
-  const handleUpdateMe = () => {
-    dispatch(updateUserProfile(formData))
-    console.log('FormData:', formData)
+  const handleUpdateMe = async () => {
+    try {
+      const response = await dispatch(updateUserProfile(formData)).unwrap()
+      if (response.status === 201) {
+        message.success(response.message)
+      }
+    } catch (error) {
+      message.error('Cập nhật thông tin thất bại')
+    }
   }
 
   const handleChangePassword = e => {
@@ -87,26 +90,21 @@ const ProfilePage = () => {
   const handleSubmitPassword = e => {
     e.preventDefault()
     if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
-      console.error('Vui lòng nhập đầy đủ thông tin!')
       return
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      console.error('Mật khẩu mới và xác nhận mật khẩu không khớp!')
       return
     }
 
     dispatch(changePassWord({ currentPassword: formData.currentPassword, newPassword: formData.newPassword }))
       .unwrap()
       .then(() => {
-        // Hiển thị thông báo thành công
         message.success('Đổi mật khẩu thành công!')
       })
       .catch(err => {
-        // Hiển thị thông báo lỗi nếu có
         message.error(err.message || 'Đã xảy ra lỗi khi đổi mật khẩu!')
       })
-    console.log('Payload gửi đi:', { password: formData.currentPassword, new_password: formData.newPassword })
   }
 
   useEffect(() => {
@@ -118,13 +116,6 @@ const ProfilePage = () => {
       }
     }
   }, [avatarUrl])
-
-  // Get avatar URL from multiple possible locations
-  const getAvatarUrl = () => {
-    const directAvatar = userData?.avatar
-
-    return directAvatar || Avatar
-  }
 
   const handleCustomUpload = async options => {
     const { file, onSuccess, onError } = options
@@ -244,63 +235,58 @@ const ProfilePage = () => {
         <div className={styles['personal-info-wrapper']}>
           <Tabs defaultActiveKey="personal">
             <TabPane tab="Thông tin cá nhân" key="personal">
-              <Card className={styles.card}>
-                <Title level={3}>Hồ sơ cá nhân</Title>
-                <div className={styles['form-group']}>
-                  <label htmlFor="fullname">Họ và tên</label>
-                  <Input id="fullname" value={formData.name} onChange={handleInputChange} />
-                </div>
-                <div className={styles['form-group']}>
-                  <label htmlFor="phone">Số điện thoại</label>
-                  <Input
-                    id="phone"
-                    placeholder="Nhập số điện thoại"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className={styles['form-group']}>
-                  <label htmlFor="address">Địa chỉ</label>
-                  <Input
-                    id="address"
-                    placeholder="Nhập địa chỉ"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className={styles['form-group']}>
-                  <label htmlFor="email">Email</label>
-                  <Input id="email" value={formData.email} readOnly />
-                </div>
-                <div className={styles['form-group']}>
-                  <label htmlFor="gender">Giới tính</label>
-                  <Select
-                    id="gender"
-                    defaultValue="Nam"
-                    style={{ width: '100%' }}
-                    onChange={handleSelectChange}
-                    value={formData.gender}
-                  >
-                    <Select.Option value="Nam">Nam</Select.Option>
-                    <Select.Option value="Nữ">Nữ</Select.Option>
-                    <Select.Option value="Khác">Khác</Select.Option>
-                  </Select>
-                </div>
-                <div className={styles['form-group']}>
-                  <label htmlFor="dob">Ngày, tháng, năm sinh</label>
-                  <Input id="dob" type="date" />
-                </div>
-                <div className={styles['form-actions1']}>
-                  <Button type="primary" block style={{ width: '100px' }} onClick={handleUpdateMe}>
-                    Thay đổi
-                  </Button>
-                </div>
-              </Card>
+              {/* <Card className={styles.card}> */}
+              <Title level={3}>Hồ sơ cá nhân</Title>
+              <div className={styles['form-group']}>
+                <label htmlFor="fullname">Họ và tên</label>
+                <Input id="fullname" value={formData.name} onChange={handleInputChange} />
+              </div>
+              <div className={styles['form-group']}>
+                <label htmlFor="phone">Số điện thoại</label>
+                <Input
+                  id="phone"
+                  placeholder="Nhập số điện thoại"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className={styles['form-group']}>
+                <label htmlFor="address">Địa chỉ</label>
+                <Input id="address" placeholder="Nhập địa chỉ" value={formData.address} onChange={handleInputChange} />
+              </div>
+              <div className={styles['form-group']}>
+                <label htmlFor="email">Email</label>
+                <Input id="email" value={formData.email} readOnly />
+              </div>
+              <div className={styles['form-group']}>
+                <label htmlFor="gender">Giới tính</label>
+                <Select
+                  id="gender"
+                  defaultValue="Nam"
+                  style={{ width: '100%' }}
+                  onChange={handleSelectChange}
+                  value={formData.gender}
+                >
+                  <Select.Option value="Nam">Nam</Select.Option>
+                  <Select.Option value="Nữ">Nữ</Select.Option>
+                  <Select.Option value="Khác">Khác</Select.Option>
+                </Select>
+              </div>
+              <div className={styles['form-group']}>
+                <label htmlFor="dob">Ngày, tháng, năm sinh</label>
+                <Input id="dob" type="date" />
+              </div>
+              <div className={styles['form-actions1']}>
+                <Button type="primary" block style={{ width: '100px' }} onClick={handleUpdateMe}>
+                  Thay đổi
+                </Button>
+              </div>
+              {/* </Card> */}
             </TabPane>
 
-            <TabPane tab="Cài đặt tài khoản" key="security">
-              <Layout className={styles['form-design-layout']}>
-                <Content className={styles['form-design-content']}>
+            <TabPane tab="Thay đổi mật khẩu" key="security">
+              <div className={styles['form-design-layout']}>
+                <div className={styles['form-design-content']}>
                   <div className={styles['form-design-header']}>
                     <h2>Thay đổi mật khẩu</h2>
                   </div>
@@ -355,8 +341,8 @@ const ProfilePage = () => {
 
                     {changePassWordSuccess && <div className={styles['success']}>{changePassWordMessage}</div>}
                   </form>
-                </Content>
-              </Layout>
+                </div>
+              </div>
             </TabPane>
 
             <TabPane tab="Liên kết mạng xã hội" key="linksocialmedia">
