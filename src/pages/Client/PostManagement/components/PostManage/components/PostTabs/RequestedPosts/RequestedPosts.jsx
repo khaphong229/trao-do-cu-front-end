@@ -8,12 +8,12 @@ import { getMyRequestedExchange } from 'features/client/request/exchangeRequest/
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetailModal from './components/PostDetailModal'
 import imgNotFound from 'assets/images/others/imagenotfound.jpg'
-import { FacebookOutlined } from '@ant-design/icons'
 import ContactInfoDisplay from './components/ContactInfoDisplay'
 const { Text } = Typography
 
 const RequestedPosts = () => {
   const dispatch = useDispatch()
+  const { isLoading } = useSelector(state => state.giftRequest)
   const [activeTab, setActiveTab] = useState('all')
   const [selectedPost, setSelectedPost] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -83,7 +83,7 @@ const RequestedPosts = () => {
     {
       title: 'Chủ bài đăng',
       key: 'owner',
-      width: 200,
+      width: 300,
       render: (_, record) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Avatar
@@ -158,17 +158,19 @@ const RequestedPosts = () => {
     {
       key: 'all',
       label: `Tất cả (${allRequests.length})`,
-      children: <Table {...tableProps} dataSource={allRequests} rowKey={record => record.id} />
+      children: <Table isLoading={isLoading} {...tableProps} dataSource={allRequests} rowKey={record => record.id} />
     },
     {
       key: 'gifts',
       label: `Quà tặng (${giftRequests.length})`,
-      children: <Table {...tableProps} dataSource={giftRequests} rowKey={record => record.id} />
+      children: <Table isLoading={isLoading} {...tableProps} dataSource={giftRequests} rowKey={record => record.id} />
     },
     {
       key: 'exchanges',
       label: `Trao đổi (${exchangeRequests.length})`,
-      children: <Table {...tableProps} dataSource={exchangeRequests} rowKey={record => record.id} />
+      children: (
+        <Table isLoading={isLoading} {...tableProps} dataSource={exchangeRequests} rowKey={record => record.id} />
+      )
     }
   ]
 

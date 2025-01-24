@@ -22,8 +22,6 @@ export const notificationMenu = (
       dataSource={notifications}
       renderItem={(item, index) => (
         <List.Item key={index}>
-          {' '}
-          {/* Add key here for each item */}
           <List.Item.Meta avatar={<Avatar icon={<UserOutlined />} />} title={item.title} description={item.time} />
         </List.Item>
       )}
