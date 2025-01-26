@@ -39,6 +39,10 @@ const authService = {
 
   updateProfile(userData) {
     return this.http.put('/auth/me', userData)
+  },
+
+  loginGoogle(id) {
+    return this.http.post('/auth/login-success', { googleId: id })
   }
 }
 

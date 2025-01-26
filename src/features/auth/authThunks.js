@@ -81,7 +81,7 @@ export const updateUserProfile = createAsyncThunk(
         email: currentUser?.email || '',
         phone: currentUser?.phone || '',
         address: currentUser?.address || '',
-        social_media: [currentUser?.social_media[0] || ''],
+        social_media: currentUser?.social_media.length > 0 ? currentUser?.social_media[0] : [],
         ...userData
       }
 
@@ -105,10 +105,8 @@ export const changePassWord = createAsyncThunk('auth/changePassWord', async (dat
       confirm_password: data.newPassword
     })
 
-    console.log('Change password response:', response)
     return response.data
   } catch (error) {
-    console.error('Change password error:', error.response?.data)
     return rejectWithValue(error.response?.data || { message: 'Failed to change password' })
   }
 })
@@ -118,7 +116,15 @@ export const shareProfile = createAsyncThunk('auth/shareProfile', async (userId,
     const response = await AuthService.shareProfile(userId)
     return response.data
   } catch (error) {
-    console.error('Share profile error:', error.response?.data)
+    return rejectWithValue(error.response?.data)
+  }
+})
+
+export const loginGoogle = createAsyncThunk('auth/loginGoogle', async (id, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.loginGoogle(id)
+    return response.data
+  } catch (error) {
     return rejectWithValue(error.response?.data)
   }
 })

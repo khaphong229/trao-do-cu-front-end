@@ -17,6 +17,7 @@ import ProfileUser from 'pages/Client/Profile/ProfileUser'
 
 import ErrorBoundary from 'components/common/ErrorBoundary'
 import NotFound from '../components/common/NotFound'
+import LoginGoogle from 'pages/Auth/LoginGoogle'
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
                 ]
               }
             ]
+          },
+          {
+            path: 'login-success/:id',
+            element: <LoginGoogle />
           }
         ]
       },

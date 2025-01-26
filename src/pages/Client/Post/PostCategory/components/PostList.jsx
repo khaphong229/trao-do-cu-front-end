@@ -165,6 +165,7 @@ const PostList = () => {
                 cover={
                   <div className={styles.imageWrapper}>
                     <img
+                      loading="lazy"
                       alt={item.title}
                       src={getValidImageUrl(item.image_url)}
                       onError={e => {

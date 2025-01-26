@@ -142,7 +142,10 @@ const ProfilePage = () => {
         throw new Error('Upload response không hợp lệ')
       }
     } catch (error) {
-      message.error(error.message || 'Đã xảy ra lỗi khi upload ảnh')
+      // message.error(error.message === 'Bad Request' && 'Đã xảy ra lỗi khi upload ảnh')
+      Object.values(error.detail).forEach(err => {
+        message.error(err)
+      })
       onError(error)
     } finally {
       setUploading(false)

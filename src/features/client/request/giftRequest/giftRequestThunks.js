@@ -32,20 +32,23 @@ export const checkRequestedGift = createAsyncThunk(
   }
 )
 
-export const getMyRequestedGift = createAsyncThunk('giftRequest/getMyRequestedGift', async (_, { rejectWithValue }) => {
-  try {
-    const response = await giftRequestService.getMyRequestedGift()
-    return response.data
-  } catch (error) {
-    return rejectWithValue(error.response?.data || 'Có lỗi xảy ra')
+export const getMyRequestedGift = createAsyncThunk(
+  'giftRequest/getMyRequestedGift',
+  async (status, { rejectWithValue }) => {
+    try {
+      const response = await giftRequestService.getMyRequestedGift(status)
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Có lỗi xảy ra')
+    }
   }
-})
+)
 
 export const getReceiveRequestGift = createAsyncThunk(
   'giftRequest/getReceiveRequestGift',
-  async ({ current, pageSize, post_id = '' }, { rejectWithValue }) => {
+  async ({ current, pageSize, post_id = '', status, statusPotsId }, { rejectWithValue }) => {
     try {
-      const response = await giftRequestService.getReceiveRequest({ current, pageSize, post_id })
+      const response = await giftRequestService.getReceiveRequest({ current, pageSize, post_id, status, statusPotsId })
       return response
     } catch (error) {
       return rejectWithValue(error.response.data || 'An error occurred')

@@ -39,6 +39,7 @@ const PostNews = () => {
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
   const { postsWithStatus } = usePostStatus(posts, user?._id)
+  console.log(postsWithStatus)
 
   useEffect(() => {
     dispatch(resetPosts())
@@ -51,7 +52,7 @@ const PostNews = () => {
     )
   }, [dispatch, query])
   useEffect(() => {
-    setIsSearchMode(!!query) // Kiểm tra xem query có nội dung hay không
+    setIsSearchMode(!!query)
   }, [query])
 
   const handleLoadMore = () => {
@@ -123,8 +124,6 @@ const PostNews = () => {
     return getPostError()
   }
 
-  console.log(filteredPosts, 'okll')
-
   return (
     <>
       <div className={styles.postWrap}>
@@ -150,6 +149,7 @@ const PostNews = () => {
                   cover={
                     <div className={styles.imageWrapper} onClick={() => goDetail(item._id, item)}>
                       <img
+                        loading="lazy"
                         alt={item.title}
                         src={getValidImageUrl(item.image_url)}
                         onError={e => {
@@ -180,7 +180,7 @@ const PostNews = () => {
                         </span>
                       </div>
                       <span className={styles.location}>
-                        {item.city.split('Thành phố')[1] || item.city.split('Tỉnh')[1]}
+                        {item?.city?.split('Thành phố')[1] || item?.city?.split('Tỉnh')[1]}
                       </span>
                     </div>
                   </div>

@@ -13,22 +13,22 @@ const Banner = () => {
     <div className={styles.carouselWrap}>
       <Carousel autoplay>
         <div>
-          <img src={banner1} alt="Banner 1" className={styles.bannerCarousel} />
+          <img loading="lazy" src={banner1} alt="Banner 1" className={styles.bannerCarousel} />
         </div>
         <div>
-          <img src={banner2} alt="Banner 1" className={styles.bannerCarousel} />
+          <img loading="lazy" src={banner2} alt="Banner 1" className={styles.bannerCarousel} />
         </div>
         <div>
-          <img src={banner3} alt="Banner 2" className={styles.bannerCarousel} />
+          <img loading="lazy" src={banner3} alt="Banner 2" className={styles.bannerCarousel} />
         </div>
         <div>
-          <img src={banner4} alt="Banner 2" className={styles.bannerCarousel} />
+          <img loading="lazy" src={banner4} alt="Banner 2" className={styles.bannerCarousel} />
         </div>
         <div>
-          <img src={banner5} alt="Banner 2" className={styles.bannerCarousel} />
+          <img loading="lazy" src={banner5} alt="Banner 2" className={styles.bannerCarousel} />
         </div>
         <div>
-          <img src={banner6} alt="Banner 2" className={styles.bannerCarousel} />
+          <img loading="lazy" src={banner6} alt="Banner 2" className={styles.bannerCarousel} />
         </div>
       </Carousel>
     </div>
