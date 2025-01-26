@@ -9,7 +9,6 @@ const { Text } = Typography
 
 export const NotificationMenu = () => {
   const { listNotification } = UseListNotification()
-  console.log(listNotification, 'okkk')
 
   return (
     <Card
