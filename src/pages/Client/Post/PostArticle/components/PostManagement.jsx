@@ -59,7 +59,7 @@ const PostList = () => {
                   hoverable
                   cover={
                     <div className={styles.imageWrapper}>
-                      <img alt={item.title} src={item.image_url[0]} />
+                      <img loading="lazy" alt={item.title} src={item.image_url[0]} />
                       <div
                         className={styles.heartIcon}
                         onClick={e => {

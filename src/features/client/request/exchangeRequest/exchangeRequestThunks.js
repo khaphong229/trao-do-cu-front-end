@@ -27,9 +27,9 @@ export const checkRequestedExchange = createAsyncThunk(
 
 export const getMyRequestedExchange = createAsyncThunk(
   'exchangeRequest/getMyRequestedExchange',
-  async (_, { rejectWithValue }) => {
+  async (status, { rejectWithValue }) => {
     try {
-      const response = await exchangeRequestService.getMyRequestedExchange()
+      const response = await exchangeRequestService.getMyRequestedExchange(status)
       return response.data
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Có lỗi xảy ra')
@@ -39,12 +39,14 @@ export const getMyRequestedExchange = createAsyncThunk(
 
 export const getExchangeRequest = createAsyncThunk(
   'exchangeRequest/getExchangeRequest',
-  async ({ current, pageSize, post_id = '' }, { rejectWithValue }) => {
+  async ({ current, pageSize, post_id = '', status, statusPotsId }, { rejectWithValue }) => {
     try {
       const response = await exchangeRequestService.getExchangeRequests({
         current,
         pageSize,
-        post_id
+        post_id,
+        status,
+        statusPotsId
       })
 
       if (!response?.data) {

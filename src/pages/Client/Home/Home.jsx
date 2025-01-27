@@ -1,15 +1,14 @@
-import React from 'react'
+import React, { lazy } from 'react'
 import Categories from './components/Categories'
 import TopSales from './components/Banner'
-import PostUser from './components/PostNews'
-import styles from './Home.module.scss'
-
+// import PostNews from './components/PostNews'
+const PostNews = lazy(() => import('./components/PostNews'))
 const Home = () => {
   return (
-    <div className={`container ${styles.homePageWrap}`}>
+    <div className={`container`}>
       <TopSales />
       <Categories />
-      <PostUser />
+      <PostNews />
     </div>
   )
 }

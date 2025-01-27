@@ -5,7 +5,7 @@ import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.jpg'
 import { useSelector, useDispatch } from 'react-redux'
 import { getPostPagination } from '../../../../../features/client/post/postThunks'
-import { resetPage, clearPosts, setSelectedPost } from '../../../../../features/client/post/postSlice'
+import { resetPage, clearPosts } from '../../../../../features/client/post/postSlice'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
@@ -18,8 +18,6 @@ import ContactInfoModal from '../../../Request/GiftRequest/components/ContactInf
 import { GiftRequestConfirmModal } from '../../../Request/GiftRequest/components/GiftRequestConfirmModal'
 import FormExchangeModal from '../../../Request/ExchangeRequest/FormExchange'
 import { setExchangeFormModalVisible } from '../../../../../features/client/request/exchangeRequest/exchangeRequestSlice'
-import { usePostStatus } from 'hooks/usePostStatus'
-import getPostError from 'components/feature/post/getPostError'
 import notFoundPost from 'components/feature/post/notFoundPost'
 import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
 import { VIETNAMESE_CITIES } from 'constants/cityVN'
@@ -53,9 +51,6 @@ const PostList = () => {
     )
   }, [dispatch, currentPage, category_id, selectedCity])
 
-  const { user } = useSelector(state => state.auth)
-  const { postsWithStatus, isChecking } = usePostStatus(posts, user?._id)
-
   const handleTabChange = key => {
     setActiveTab(key)
     dispatch(
@@ -82,7 +77,7 @@ const PostList = () => {
     setCurrentPage(page)
   }
 
-  const filteredPosts = postsWithStatus.filter(post => {
+  const filteredPosts = posts.filter(post => {
     if (activeTab === 'all') return true
     return post.type === activeTab
   })
@@ -95,8 +90,7 @@ const PostList = () => {
     }
   })
 
-  const goDetail = (id, post) => {
-    dispatch(setSelectedPost(post))
+  const goDetail = id => {
     navigate(`/post/${id}/detail`)
   }
 
@@ -145,7 +139,7 @@ const PostList = () => {
           />
         </div>
       </div>
-      {isLoading || isChecking ? (
+      {isLoading || isError ? (
         <Row gutter={[8, 8]}>
           {[...Array(4)].map((_, index) => (
             <Col xs={24} sm={12} key={index}>
@@ -153,8 +147,6 @@ const PostList = () => {
             </Col>
           ))}
         </Row>
-      ) : isError ? (
-        getPostError()
       ) : sortedPosts.length > 0 ? (
         <Row gutter={[8, 8]}>
           {sortedPosts.map(item => (
@@ -165,19 +157,20 @@ const PostList = () => {
                 cover={
                   <div className={styles.imageWrapper}>
                     <img
+                      loading="lazy"
                       alt={item.title}
                       src={getValidImageUrl(item.image_url)}
                       onError={e => {
                         e.target.onerror = null
                         e.target.src = imageNotFound
                       }}
-                      onClick={() => goDetail(item._id, item)}
+                      onClick={() => goDetail(item._id)}
                     />
                   </div>
                 }
               >
                 <div className={styles.Container}>
-                  <Text strong onClick={() => goDetail(item._id, item)} className={styles.title}>
+                  <Text strong onClick={() => goDetail(item._id)} className={styles.title}>
                     {item.title}
                   </Text>
                   <span className={styles.status}>{item.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>

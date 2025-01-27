@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Row, Col, Image, Typography, Divider, Avatar } from 'antd'
+import { Button, Row, Col, Image, Typography, Divider, Avatar, Tooltip } from 'antd'
 import { ClockCircleOutlined, EnvironmentOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
 import styles from './../scss/PostInfoDetail.module.scss'
 import CreatePostModal from '../../CreatePost/CreatePost'
@@ -25,7 +25,7 @@ dayjs.extend(relativeTime)
 dayjs.locale('vi')
 
 const PostInfoDetail = () => {
-  const { postDetail: selectedPost } = useSelector(state => state.post)
+  const { selectedPost } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [mainImage, setMainImage] = useState(null)
@@ -45,7 +45,7 @@ const PostInfoDetail = () => {
     }
   }
 
-  const renderActionButton = () => {
+  const renderActionButton = selectedPost => {
     if (!user) {
       return (
         <AuthButton
@@ -66,11 +66,19 @@ const PostInfoDetail = () => {
         </Button>
       )
     }
-
+    const isMe = selectedPost?.user_id?._id === user._id ? true : false
     return (
-      <AuthButton onClick={() => handleRequest(selectedPost)} type="primary" size="large" className={styles.ButtonChat}>
-        {selectedPost.type === 'gift' ? 'Nhận' : 'Đổi'}
-      </AuthButton>
+      <Tooltip title={isMe && 'Không thể thực hiện thao tác với bài đăng của bạn'}>
+        <AuthButton
+          disabled={isMe}
+          onClick={() => handleRequest(selectedPost)}
+          type="primary"
+          size="large"
+          className={styles.ButtonChat}
+        >
+          {selectedPost.type === 'gift' ? 'Nhận' : 'Đổi'}
+        </AuthButton>
+      </Tooltip>
     )
   }
 
@@ -140,7 +148,7 @@ const PostInfoDetail = () => {
                 Thông tin liên hệ
               </Button>
             </Col>
-            <Col span={12}>{renderActionButton()}</Col>
+            <Col span={12}>{renderActionButton(selectedPost)}</Col>
           </Row>
 
           <Divider />

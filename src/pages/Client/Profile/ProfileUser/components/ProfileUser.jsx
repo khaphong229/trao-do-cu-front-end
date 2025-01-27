@@ -142,7 +142,10 @@ const ProfilePage = () => {
         throw new Error('Upload response không hợp lệ')
       }
     } catch (error) {
-      message.error(error.message || 'Đã xảy ra lỗi khi upload ảnh')
+      // message.error(error.message === 'Bad Request' && 'Đã xảy ra lỗi khi upload ảnh')
+      Object.values(error.detail).forEach(err => {
+        message.error(err)
+      })
       onError(error)
     } finally {
       setUploading(false)
@@ -156,7 +159,13 @@ const ProfilePage = () => {
           <div className={styles['profile-header']}>
             <div className={styles['avatar-container']}>
               <Image
-                src={userData?.avatar ? `${URL_SERVER_IMAGE}${userData.avatar}` : Avatar}
+                src={
+                  userData?.avatar
+                    ? userData?.isGoogle
+                      ? userData.avatar
+                      : `${URL_SERVER_IMAGE}${userData.avatar}`
+                    : Avatar
+                }
                 alt="Ảnh đại diện"
                 className={styles.avatar}
                 preview={false}
@@ -284,66 +293,70 @@ const ProfilePage = () => {
               {/* </Card> */}
             </TabPane>
 
-            <TabPane tab="Thay đổi mật khẩu" key="security">
-              <div className={styles['form-design-layout']}>
-                <div className={styles['form-design-content']}>
-                  <div className={styles['form-design-header']}>
-                    <h2>Thay đổi mật khẩu</h2>
-                  </div>
-
-                  <form onSubmit={handleSubmitPassword} className={styles['form-design']}>
-                    <div className={styles['form-item']}>
-                      <label htmlFor="current-password">Mật khẩu hiện tại</label>
-                      <Input.Password
-                        id="current-password"
-                        placeholder="Nhập mật khẩu hiện tại"
-                        value={formData.currentPassword}
-                        onChange={handleChangePassword}
-                      />
-                    </div>
-
-                    <div className={styles['form-item']}>
-                      <label htmlFor="new-password">Mật khẩu mới</label>
-                      <Input.Password
-                        id="new-password"
-                        placeholder="Nhập mật khẩu mới"
-                        value={formData.newPassword}
-                        onChange={handleChangePassword}
-                      />
-                    </div>
-
-                    <div className={styles['form-item']}>
-                      <label htmlFor="confirm-password">Xác nhận mật khẩu mới</label>
-                      <Input.Password
-                        id="confirm-password"
-                        placeholder="Xác nhận mật khẩu mới"
-                        value={formData.confirmPassword}
-                        onChange={handleChangePassword}
-                      />
-                    </div>
-
-                    <div className={styles['form-actions']}>
-                      <Checkbox checked={savePassword} onChange={e => setSavePassword(e.target.checked)}>
-                        Lưu mật khẩu mới
-                      </Checkbox>
-                      <Button type="primary" htmlType="submit" loading={isLoading}>
-                        ĐỔI MẬT KHẨU
-                      </Button>
-                    </div>
-
-                    {error && (
-                      <div className={styles['error']}>
-                        {error.message}
-                        {error.detail?.password && <p>{error.detail.password}</p>}
-                        {error.detail?.new_password && <p>{error.detail.new_password}</p>}
+            {!userData?.isGoogle && (
+              <>
+                <TabPane tab="Thay đổi mật khẩu" key="security">
+                  <div className={styles['form-design-layout']}>
+                    <div className={styles['form-design-content']}>
+                      <div className={styles['form-design-header']}>
+                        <h2>Thay đổi mật khẩu</h2>
                       </div>
-                    )}
 
-                    {changePassWordSuccess && <div className={styles['success']}>{changePassWordMessage}</div>}
-                  </form>
-                </div>
-              </div>
-            </TabPane>
+                      <form onSubmit={handleSubmitPassword} className={styles['form-design']}>
+                        <div className={styles['form-item']}>
+                          <label htmlFor="current-password">Mật khẩu hiện tại</label>
+                          <Input.Password
+                            id="current-password"
+                            placeholder="Nhập mật khẩu hiện tại"
+                            value={formData.currentPassword}
+                            onChange={handleChangePassword}
+                          />
+                        </div>
+
+                        <div className={styles['form-item']}>
+                          <label htmlFor="new-password">Mật khẩu mới</label>
+                          <Input.Password
+                            id="new-password"
+                            placeholder="Nhập mật khẩu mới"
+                            value={formData.newPassword}
+                            onChange={handleChangePassword}
+                          />
+                        </div>
+
+                        <div className={styles['form-item']}>
+                          <label htmlFor="confirm-password">Xác nhận mật khẩu mới</label>
+                          <Input.Password
+                            id="confirm-password"
+                            placeholder="Xác nhận mật khẩu mới"
+                            value={formData.confirmPassword}
+                            onChange={handleChangePassword}
+                          />
+                        </div>
+
+                        <div className={styles['form-actions']}>
+                          <Checkbox checked={savePassword} onChange={e => setSavePassword(e.target.checked)}>
+                            Lưu mật khẩu mới
+                          </Checkbox>
+                          <Button type="primary" htmlType="submit" loading={isLoading}>
+                            ĐỔI MẬT KHẨU
+                          </Button>
+                        </div>
+
+                        {error && (
+                          <div className={styles['error']}>
+                            {error.message}
+                            {error.detail?.password && <p>{error.detail.password}</p>}
+                            {error.detail?.new_password && <p>{error.detail.new_password}</p>}
+                          </div>
+                        )}
+
+                        {changePassWordSuccess && <div className={styles['success']}>{changePassWordMessage}</div>}
+                      </form>
+                    </div>
+                  </div>
+                </TabPane>
+              </>
+            )}
 
             <TabPane tab="Liên kết mạng xã hội" key="linksocialmedia">
               <Card className={styles['social-links-card']}>

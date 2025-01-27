@@ -11,16 +11,26 @@ const giftRequestService = {
       params: { post_id, user_req_id }
     })
   },
-  getMyRequestedGift() {
-    return this.http.get('/request_gift/me')
+  getMyRequestedGift(status) {
+    let path = '/request_gift/me'
+    if (status !== null) {
+      path += `?status=${status}`
+    }
+    return this.http.get(path)
   },
-  getReceiveRequest({ current = 1, pageSize = 10, post_id = '' }) {
+  getReceiveRequest({ current = 1, pageSize = 10, post_id = '', status, statusPotsId }) {
     let path = '/request_gift'
     const queryParams = new URLSearchParams()
 
     queryParams.append('current', current)
     queryParams.append('pageSize', pageSize)
     queryParams.append('post_id', post_id)
+    if (status) {
+      queryParams.append('status', 'pending')
+    }
+    if (statusPotsId) {
+      queryParams.append('statusPotsId', 'active')
+    }
 
     const queryString = queryParams.toString()
     if (queryString) {

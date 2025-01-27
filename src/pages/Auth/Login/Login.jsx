@@ -2,9 +2,10 @@ import React from 'react'
 import '../styles.scss'
 import { useDispatch } from 'react-redux'
 import { Form, Input, Button, Checkbox, message, Divider } from 'antd'
-import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import { UserOutlined, LockOutlined, GoogleCircleFilled, GoogleOutlined } from '@ant-design/icons'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { getCurrentUser, loginUser } from '../../../features/auth/authThunks'
+import URL_SERVER from 'config/url_server'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -44,6 +45,10 @@ const Login = () => {
         message.error(error.message || 'Đăng nhập thất bại')
       }
     }
+  }
+
+  const handleLoginGG = () => {
+    window.open(`${URL_SERVER}/auth/google`, '_self')
   }
 
   return (
@@ -101,9 +106,12 @@ const Login = () => {
           {isAdminLogin || (
             <>
               <Divider plain>hoặc</Divider>
-              <Button type="default" className="authFormButton">
-                <Link to="/register">Đăng ký ngay</Link>
+              <Button type="default" className="authFormButton" onClick={handleLoginGG}>
+                <GoogleOutlined /> Google
               </Button>
+              <p style={{ width: '100%', textAlign: 'center' }}>
+                Bạn chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+              </p>
             </>
           )}
         </Form.Item>

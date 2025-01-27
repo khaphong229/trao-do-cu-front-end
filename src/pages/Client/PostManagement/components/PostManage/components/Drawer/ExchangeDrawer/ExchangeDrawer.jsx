@@ -8,6 +8,7 @@ import {
   acceptExchangeRequest,
   rejectExchangeRequest
 } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
+import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 
 export const ExchangeDrawer = ({
   visible,
@@ -86,7 +87,7 @@ export const ExchangeDrawer = ({
       placement="right"
       onClose={onClose}
       open={visible}
-      width={'70%'}
+      width={useCheckMobileScreen ? '100%' : '70%'}
       destroyOnClose={true}
       maskClosable={true}
     >

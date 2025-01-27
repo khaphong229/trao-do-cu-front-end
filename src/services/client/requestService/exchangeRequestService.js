@@ -11,16 +11,26 @@ const exchangeRequestService = {
       params: { post_id, user_req_id }
     })
   },
-  getMyRequestedExchange() {
-    return this.http.get('/request_exchange/me')
+  getMyRequestedExchange(status) {
+    let path = '/request_exchange/me'
+    if (status !== null) {
+      path += `?status=${status}`
+    }
+    return this.http.get(path)
   },
 
-  getExchangeRequests: function ({ current = 1, pageSize = 10, post_id }) {
+  getExchangeRequests: function ({ current = 1, pageSize = 10, post_id, status, statusPotsId }) {
     let path = '/request_exchange'
     const queryParams = new URLSearchParams()
     queryParams.append('current', current)
     queryParams.append('pageSize', pageSize)
     queryParams.append('post_id', post_id)
+    if (status) {
+      queryParams.append('status', 'pending')
+    }
+    if (statusPotsId) {
+      queryParams.append('statusPotsId', 'active')
+    }
 
     const queryString = queryParams.toString()
     if (queryString) {

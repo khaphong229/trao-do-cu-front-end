@@ -120,7 +120,7 @@ export const useGiftRequest = () => {
       return
     }
 
-    const requestData = {
+    let requestData = {
       post_id: selectedPostExchange._id,
       user_req_id: user._id,
       title: data.title,
@@ -132,6 +132,10 @@ export const useGiftRequest = () => {
         facebook: user.social_media?.[0] || ''
       },
       contact_address: user?.address ? user.address : ''
+    }
+
+    if (user.social_media.length === 0) {
+      requestData = _.omit(requestData, ['contact_social_media'])
     }
 
     try {

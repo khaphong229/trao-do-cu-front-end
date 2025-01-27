@@ -8,32 +8,26 @@ import { setCreateModalVisibility, setShowTour } from 'features/client/post/post
 import withAuth from 'hooks/useAuth'
 import avtDefault from 'assets/images/logo/avtDefault.jpg'
 import { URL_SERVER_IMAGE } from 'config/url_server'
+import { UseListNotification } from 'hooks/UseListNotification'
+import { NotificationMenu } from 'constants/menus'
 
-const HeaderIcons = ({ notificationMenu, cartMenu, menu }) => {
+const HeaderIcons = ({ menu }) => {
   const dispatch = useDispatch()
   const AuthenticatedButton = withAuth(Button)
   const { isAuthenticated, user } = useSelector(state => state.auth)
+  const { loadNotifications, listNotification } = UseListNotification()
 
   return (
     <>
       <Space size="large" className={styles.contentWrapper}>
-        {/* <Dropdown
-          overlay={cartMenu}
-          trigger={['click']}
-          placement="bottomRight"
-          getPopupContainer={() => document.body}
-        >
-          <Badge count={0} size="small" color="red">
-            <HeartOutlined className={styles.Icon} />
-          </Badge>
-        </Dropdown> */}
         <Dropdown
-          overlay={notificationMenu}
+          overlay={<NotificationMenu />}
           trigger={['click']}
           placement="bottomRight"
           getPopupContainer={() => document.body}
+          onOpenChange={open => open && loadNotifications()}
         >
-          <Badge count={0} size="small" color="red">
+          <Badge count={listNotification.length} size="small" color="red">
             <BellOutlined className={styles.Icon} />
           </Badge>
         </Dropdown>
@@ -41,7 +35,7 @@ const HeaderIcons = ({ notificationMenu, cartMenu, menu }) => {
           <Space className={styles.Avatar} style={{ cursor: 'pointer', color: '#fff' }}>
             <Avatar
               className={styles.avt}
-              src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avtDefault}
+              src={user?.avatar ? (user?.isGoogle ? user.avatar : `${URL_SERVER_IMAGE}${user.avatar}`) : avtDefault}
               size={32}
             />
             {!isAuthenticated ? 'Tài khoản' : user.name}

@@ -45,7 +45,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
       status: 'active',
       type: activeSubTab !== 'all' ? activeSubTab : undefined
     }),
-    [pagination.current, pagination.pageSize, activeSubTab]
+    [activeSubTab, pagination]
   )
 
   const fetchPosts = useCallback(() => {
@@ -102,7 +102,6 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
     try {
       if (listing.type === 'exchange') {
         const response = await dispatch(getExchangeRequest(params)).unwrap()
-        console.log(response, 'oke')
 
         const requestsData = response.data?.exchangeRequests || []
         const filteredRequests = requestsData.filter(request => request.post_id?._id === listing._id)
