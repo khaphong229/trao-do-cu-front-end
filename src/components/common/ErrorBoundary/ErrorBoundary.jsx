@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Navigate } from 'react-router-dom'
+import FullScreenLoading from '../Loading'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -20,7 +21,7 @@ class ErrorBoundary extends React.Component {
       return <Navigate to="/not-found" replace />
     }
 
-    return this.props.children
+    return <Suspense fallback={<FullScreenLoading isVisible={true} />}>{this.props.children}</Suspense>
   }
 }
 

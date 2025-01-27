@@ -12,7 +12,11 @@ const exchangeRequestService = {
     })
   },
   getMyRequestedExchange(status) {
-    return this.http.get(`/request_exchange/me${status && `?status=${status}`}`)
+    let path = '/request_exchange/me'
+    if (status !== null) {
+      path += `?status=${status}`
+    }
+    return this.http.get(path)
   },
 
   getExchangeRequests: function ({ current = 1, pageSize = 10, post_id, status, statusPotsId }) {

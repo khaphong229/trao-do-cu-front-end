@@ -17,7 +17,13 @@ export const NotificationMenu = () => {
         width: 300,
         border: '1px solid #d9d9d9',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '8px'
+        borderRadius: '8px',
+        maxHeight: '400px'
+      }}
+      bodyStyle={{
+        padding: 0,
+        maxHeight: '320px',
+        overflowY: 'auto'
       }}
     >
       {listNotification.length === 0 ? (
@@ -27,14 +33,21 @@ export const NotificationMenu = () => {
           itemLayout="horizontal"
           dataSource={listNotification}
           renderItem={(item, index) => (
-            <List.Item key={index}>
-              <List.Item.Meta title={item.title} description={item.time} />
+            <List.Item style={{ padding: '10px 16px', borderBottom: '1px solid #f0f0f0' }}>
+              <List.Item.Meta title={item.title} description={item.time} style={{ margin: 0 }} />
             </List.Item>
           )}
         />
       )}
       {listNotification.length > 0 && (
-        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '10px',
+            borderTop: '1px solid #f0f0f0',
+            backgroundColor: '#fff'
+          }}
+        >
           <a href="/">Xem tất cả thông báo</a>
         </div>
       )}
@@ -54,7 +67,10 @@ export const menu = user => {
           gap: '10px'
         }}
       >
-        <Avatar size={40} src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avatar} />
+        <Avatar
+          size={40}
+          src={user?.avatar ? (user?.isGoogle ? user.avatar : `${URL_SERVER_IMAGE}${user.avatar}`) : avatar}
+        />
         <Text level={5}>{user.name || 'Tài khoản'}</Text>
       </div>
       <Divider

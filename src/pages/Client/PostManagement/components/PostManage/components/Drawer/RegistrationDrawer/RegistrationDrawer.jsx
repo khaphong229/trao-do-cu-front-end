@@ -6,6 +6,7 @@ import styles from './RegistrationDrawer.module.scss'
 import avt from 'assets/images/logo/avtDefault.jpg'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
+import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 
 export const RegistrationDrawer = ({
   visible,
@@ -85,7 +86,7 @@ export const RegistrationDrawer = ({
       closable={true}
       onClose={onClose}
       open={visible}
-      width={'70%'}
+      width={useCheckMobileScreen ? '100%' : '70%'}
       className={styles.registrationDrawer}
     >
       <Card className={styles.registrationCard}>

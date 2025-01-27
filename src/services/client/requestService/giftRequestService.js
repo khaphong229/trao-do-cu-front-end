@@ -12,7 +12,11 @@ const giftRequestService = {
     })
   },
   getMyRequestedGift(status) {
-    return this.http.get(`/request_gift/me${status && `?status=${status}`}`)
+    let path = '/request_gift/me'
+    if (status !== null) {
+      path += `?status=${status}`
+    }
+    return this.http.get(path)
   },
   getReceiveRequest({ current = 1, pageSize = 10, post_id = '', status, statusPotsId }) {
     let path = '/request_gift'

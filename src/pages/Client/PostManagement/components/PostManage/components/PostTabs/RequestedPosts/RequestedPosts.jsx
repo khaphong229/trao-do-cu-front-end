@@ -22,8 +22,8 @@ const RequestedPosts = () => {
   const exchangeRequests = useSelector(state => state.exchangeRequest.requests)
 
   useEffect(() => {
-    dispatch(getMyRequestedGift())
-    dispatch(getMyRequestedExchange())
+    dispatch(getMyRequestedGift(null))
+    dispatch(getMyRequestedExchange(null))
   }, [dispatch])
 
   const allRequests = [...giftRequests, ...exchangeRequests].sort((a, b) =>

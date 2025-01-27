@@ -35,7 +35,7 @@ const HeaderIcons = ({ menu }) => {
           <Space className={styles.Avatar} style={{ cursor: 'pointer', color: '#fff' }}>
             <Avatar
               className={styles.avt}
-              src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avtDefault}
+              src={user?.avatar ? (user?.isGoogle ? user.avatar : `${URL_SERVER_IMAGE}${user.avatar}`) : avtDefault}
               size={32}
             />
             {!isAuthenticated ? 'Tài khoản' : user.name}

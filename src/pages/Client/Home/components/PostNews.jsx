@@ -4,7 +4,7 @@ import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
 import { getPostPagination } from '../../../../features/client/post/postThunks'
-import { resetPosts, setSelectedPost } from '../../../../features/client/post/postSlice'
+import { resetPosts } from '../../../../features/client/post/postSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -19,8 +19,6 @@ import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { URL_SERVER_IMAGE } from '../../../../config/url_server'
 import { ArrowDownOutlined } from '@ant-design/icons'
-import { usePostStatus } from 'hooks/usePostStatus'
-import getPostError from 'components/feature/post/getPostError'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 import notFoundPost from 'components/feature/post/notFoundPost'
 
@@ -37,9 +35,6 @@ const PostNews = () => {
   const { posts, isError, isLoading, hasMore, query } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
-
-  const { postsWithStatus } = usePostStatus(posts, user?._id)
-  console.log(postsWithStatus)
 
   useEffect(() => {
     dispatch(resetPosts())
@@ -67,14 +62,13 @@ const PostNews = () => {
     )
   }
 
-  const goDetail = (_id, post) => {
-    dispatch(setSelectedPost(post))
+  const goDetail = _id => {
     navigate(`/post/${_id}/detail`)
   }
 
   const AuthButton = withAuth(Button)
 
-  const filteredPosts = postsWithStatus
+  const filteredPosts = posts
     ?.filter(post => !query || post.title.toLowerCase().includes(query.toLowerCase()))
     .sort((a, b) => dayjs(b.created_at).diff(dayjs(a.created_at)))
 
@@ -121,7 +115,15 @@ const PostNews = () => {
   }
 
   if (isError) {
-    return getPostError()
+    return (
+      <Row justify="start" className={styles.itemsGrid}>
+        {[...Array(8)].map((_, index) => (
+          <Col key={index} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
+            <PostCardSkeleton />
+          </Col>
+        ))}
+      </Row>
+    )
   }
 
   return (
@@ -147,7 +149,7 @@ const PostNews = () => {
                   hoverable
                   className={styles.itemCard}
                   cover={
-                    <div className={styles.imageWrapper} onClick={() => goDetail(item._id, item)}>
+                    <div className={styles.imageWrapper} onClick={() => goDetail(item._id)}>
                       <img
                         loading="lazy"
                         alt={item.title}
@@ -161,7 +163,7 @@ const PostNews = () => {
                   }
                 >
                   <div className={styles.cardContent}>
-                    <p className={styles.itemTitle} onClick={() => goDetail(item._id, item)}>
+                    <p className={styles.itemTitle} onClick={() => goDetail(item._id)}>
                       {item.title}
                     </p>
                     <p className={styles.itemDesc}>{item?.description || ''}</p>
