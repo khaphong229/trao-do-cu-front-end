@@ -6,7 +6,7 @@ import CreatePostModal from '../../CreatePost/CreatePost'
 import withAuth from 'hooks/useAuth'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
-import avt from 'assets/images/logo/avtDefault.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
@@ -16,7 +16,7 @@ import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
 import { getValidImageUrl } from 'helpers/helper'
-import imageNotFound from 'assets/images/others/imagenotfound.jpg'
+import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import PostDetailSkeleton from 'components/common/Skeleton/PostDetailSkeleton'
 
 const { Title, Text } = Typography

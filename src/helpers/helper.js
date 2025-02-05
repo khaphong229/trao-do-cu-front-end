@@ -1,4 +1,4 @@
-import imageNotFound from 'assets/images/others/imagenotfound.jpg'
+import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import { URL_SERVER_IMAGE } from '../config/url_server'
 import { isArray } from 'lodash'
 

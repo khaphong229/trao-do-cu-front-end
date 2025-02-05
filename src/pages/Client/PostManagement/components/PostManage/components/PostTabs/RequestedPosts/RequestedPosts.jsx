@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Table, Avatar, Tag, Image, Typography, Tabs } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import avt from 'assets/images/logo/avtDefault.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
 import './styles.scss'
 import { getMyRequestedGift } from 'features/client/request/giftRequest/giftRequestThunks'
 import { getMyRequestedExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetailModal from './components/PostDetailModal'
-import imgNotFound from 'assets/images/others/imagenotfound.jpg'
+import imgNotFound from 'assets/images/others/imagenotfound.webp'
 import ContactInfoDisplay from './components/ContactInfoDisplay'
 const { Text } = Typography
 

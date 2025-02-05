@@ -22,7 +22,7 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, 
       })
     }
   } catch (error) {
-    dispatch(setLoading(false))
+    // dispatch(setLoading(false))
 
     if (error?.response?.data?.status === 408) {
       return rejectWithValue({
@@ -81,7 +81,7 @@ export const updateUserProfile = createAsyncThunk(
         email: currentUser?.email || '',
         phone: currentUser?.phone || '',
         address: currentUser?.address || '',
-        social_media: currentUser?.social_media.length > 0 ? currentUser?.social_media[0] : [],
+        social_media: currentUser?.social_media.length > 0 ? [currentUser?.social_media[0]] : [],
         ...userData
       }
 

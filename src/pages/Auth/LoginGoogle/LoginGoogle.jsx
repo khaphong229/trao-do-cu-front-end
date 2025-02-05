@@ -23,7 +23,6 @@ export default function LoginGoogle() {
         }
       }
     } catch (error) {
-      console.log(error)
       message.error('Đăng nhập thất bại! Vui lòng thử lại.')
     }
   }

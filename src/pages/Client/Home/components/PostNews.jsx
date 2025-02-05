@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Card, Row, Col, Button, Avatar, Tooltip } from 'antd'
 import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
@@ -9,18 +9,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
-import avt from 'assets/images/logo/avtDefault.jpg'
-import imageNotFound from 'assets/images/others/imagenotfound.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
+import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import { getValidImageUrl } from 'helpers/helper'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
 import { ContactInfoModal } from 'pages/Client/Request/GiftRequest/components/ContactInfoModal'
 import { GiftRequestConfirmModal } from 'pages/Client/Request/GiftRequest/components/GiftRequestConfirmModal'
 import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange/FormExchange'
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
-import { URL_SERVER_IMAGE } from '../../../../config/url_server'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 import { ArrowDownOutlined } from '@ant-design/icons'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
-import notFoundPost from 'components/feature/post/notFoundPost'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -36,8 +35,7 @@ const PostNews = () => {
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
-  useEffect(() => {
-    dispatch(resetPosts())
+  const fetchPost = useCallback(() => {
     dispatch(
       getPostPagination({
         current: 1,
@@ -46,6 +44,11 @@ const PostNews = () => {
       })
     )
   }, [dispatch, query])
+
+  useEffect(() => {
+    dispatch(resetPosts())
+    fetchPost()
+  }, [fetchPost, dispatch])
   useEffect(() => {
     setIsSearchMode(!!query)
   }, [query])
@@ -114,24 +117,12 @@ const PostNews = () => {
     )
   }
 
-  if (isError) {
-    return (
-      <Row justify="start" className={styles.itemsGrid}>
-        {[...Array(8)].map((_, index) => (
-          <Col key={index} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
-            <PostCardSkeleton />
-          </Col>
-        ))}
-      </Row>
-    )
-  }
-
   return (
     <>
       <div className={styles.postWrap}>
         <span className={styles.postTitle}>{isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}</span>
 
-        {isLoading && (
+        {(isLoading || isError) && (
           <Row justify="start" className={styles.itemsGrid}>
             {[...Array(8)].map((_, index) => (
               <Col key={index} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
@@ -141,7 +132,7 @@ const PostNews = () => {
           </Row>
         )}
 
-        {filteredPosts && filteredPosts.length > 0 ? (
+        {filteredPosts && filteredPosts.length > 0 && (
           <Row justify="start" className={styles.itemsGrid}>
             {filteredPosts.map(item => (
               <Col key={item._id} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
@@ -190,8 +181,6 @@ const PostNews = () => {
               </Col>
             ))}
           </Row>
-        ) : (
-          notFoundPost()
         )}
 
         {hasMore && !isSearchMode && (

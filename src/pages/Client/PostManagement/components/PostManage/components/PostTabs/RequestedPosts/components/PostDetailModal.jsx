@@ -1,9 +1,8 @@
-import React from 'react'
 import { Modal, Avatar, Tag, Descriptions, Image, Card, Typography } from 'antd'
-import { UserOutlined, PhoneOutlined, FacebookOutlined, HomeOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import { UserOutlined, PhoneOutlined, HomeOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { URL_SERVER_IMAGE } from 'config/url_server'
-import avt from 'assets/images/logo/avtDefault.jpg'
-import imgNotFound from 'assets/images/others/imagenotfound.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
+import imgNotFound from 'assets/images/others/imagenotfound.webp'
 import '../styles.scss'
 import ContactInfoDisplay from './ContactInfoDisplay'
 

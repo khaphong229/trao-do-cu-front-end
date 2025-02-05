@@ -3,7 +3,7 @@ import { Avatar, Radio } from 'antd'
 import styles from '../scss/UserInfo.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
-import avt from 'assets/images/logo/avtDefault.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 const UserInfo = ({ ref1 }) => {
   const dispatch = useDispatch()

@@ -3,7 +3,7 @@ import { getAuthToken, removeAuthToken } from '../utils/localStorageUtils'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { getCurrentUser, logoutUser } from '../features/auth/authThunks'
-import FullScreenLoading from '../components/common/Loading'
+// import FullScreenLoading from '../components/common/Loading'
 
 export const ProtectedRoute = ({ requireAuth = true, adminOnly = false }) => {
   const dispatch = useDispatch()
@@ -27,9 +27,9 @@ export const ProtectedRoute = ({ requireAuth = true, adminOnly = false }) => {
   }, [dispatch, isAuthenticated, location.pathname])
 
   // Nếu đang loading hoặc đang chuyển trang, hiển thị loading toàn màn hình
-  if (isLoading) {
-    return <FullScreenLoading isVisible={true} />
-  }
+  // if (isLoading) {
+  //   return <FullScreenLoading isVisible={true} />
+  // }
 
   const isAuthRoute = location.pathname.includes('/login') || location.pathname.includes('/register')
 

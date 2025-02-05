@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Outlet } from 'react-router-dom'
 import RouterWithLoading from 'components/common/Loading/RouterWithLoading'
 import Admin from '../layouts/Admin'
 import DashboardUI from '../pages/Admin/Dashboard/Dashboard'
@@ -23,7 +23,8 @@ const router = createBrowserRouter([
   {
     element: (
       <ErrorBoundary>
-        <RouterWithLoading />
+        {/* <RouterWithLoading /> */}
+        <Outlet />
       </ErrorBoundary>
     ),
     errorElement: <NotFound />,

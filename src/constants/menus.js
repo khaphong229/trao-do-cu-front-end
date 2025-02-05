@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, List, Avatar, Typography, Menu, Divider } from 'antd'
-import avatar from '../assets/images/logo/avtDefault.jpg'
+import avatar from '../assets/images/logo/avtDefault.webp'
 import { menuItems } from './data'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { UseListNotification } from 'hooks/UseListNotification'

@@ -2,7 +2,7 @@ import React from 'react'
 import { Modal, Tag, Descriptions, Image, Card, Typography } from 'antd'
 import { HomeOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { URL_SERVER_IMAGE } from 'config/url_server'
-import avt from 'assets/images/logo/avtDefault.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
 import styles from './PostDetail.module.scss'
 
 const { Title, Text } = Typography

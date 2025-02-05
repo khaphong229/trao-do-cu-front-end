@@ -9,7 +9,7 @@ import {
   MailOutlined
 } from '@ant-design/icons'
 import styles from './styles.module.scss'
-import avt from '../../../../../assets/images/logo/avtDefault.jpg'
+import avt from '../../../../../assets/images/logo/avtDefault.webp'
 const initialUsers = [
   {
     _id: '1',
@@ -77,7 +77,7 @@ const initialUsers = [
 ]
 
 const UserTable = ({ onEdit, onViewDetails }) => {
-  const [data, setData] = useState(initialUsers)
+  const [setData] = useState(initialUsers)
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
@@ -107,27 +107,27 @@ const UserTable = ({ onEdit, onViewDetails }) => {
     })
   }
 
-  const handleAdd = () => {
-    const newUser = {
-      _id: Date.now().toString(),
-      avatar: null,
-      name: 'Người dùng mới',
-      email: 'newuser@example.com',
-      phone: '0000000000',
-      status: 'active',
-      gender: 'other'
-    }
-    setData(prevData => [...prevData, newUser])
-    message.success('Thêm người dùng thành công')
-  }
+  // const handleAdd = () => {
+  //   const newUser = {
+  //     _id: Date.now().toString(),
+  //     avatar: null,
+  //     name: 'Người dùng mới',
+  //     email: 'newuser@example.com',
+  //     phone: '0000000000',
+  //     status: 'active',
+  //     gender: 'other'
+  //   }
+  //   setData(prevData => [...prevData, newUser])
+  //   message.success('Thêm người dùng thành công')
+  // }
 
-  const handleEdit = user => {
-    const newName = prompt('Nhập tên mới:', user.name)
-    if (newName) {
-      setData(prevData => prevData.map(item => (item._id === user._id ? { ...item, name: newName } : item)))
-      message.success('Sửa thông tin bài đăng thành công')
-    }
-  }
+  // const handleEdit = user => {
+  //   const newName = prompt('Nhập tên mới:', user.name)
+  //   if (newName) {
+  //     setData(prevData => prevData.map(item => (item._id === user._id ? { ...item, name: newName } : item)))
+  //     message.success('Sửa thông tin bài đăng thành công')
+  //   }
+  // }
   const columns = [
     {
       title: 'Ảnh bài đăng',

@@ -93,12 +93,13 @@ export const useGiftRequest = () => {
       const { status, message: msg } = response
       if (status === 201) {
         message.success(msg)
-        dispatch(
-          updatePostStatus({
-            postId: selectedPostExchange._id,
-            isRequested: true
-          })
-        )
+        // dispatch(
+        //   updatePostStatus({
+        //     postId: selectedPostExchange._id,
+        //     isRequested: true
+        //   })
+        // )
+
         dispatch(setAcceptModalVisible(false))
       }
     } catch (error) {
@@ -143,12 +144,12 @@ export const useGiftRequest = () => {
 
       const { status, message: msg } = response
       if (status === 201) {
-        dispatch(
-          updatePostStatus({
-            postId: selectedPostExchange._id,
-            isRequested: true
-          })
-        )
+        // dispatch(
+        //   updatePostStatus({
+        //     postId: selectedPostExchange._id,
+        //     isRequested: true
+        //   })
+        // )
         message.success(msg)
         dispatch(setExchangeFormModalVisible(false))
         dispatch(resetRequestData())

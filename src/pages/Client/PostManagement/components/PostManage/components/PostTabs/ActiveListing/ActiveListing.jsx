@@ -10,6 +10,7 @@ import { getExchangeRequest } from 'features/client/request/exchangeRequest/exch
 import dayjs from 'dayjs'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetail from '../components/PostDetail/PostDetail'
+import { UnorderedListOutlined } from '@ant-design/icons'
 
 const { TabPane } = Tabs
 
