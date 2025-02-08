@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Modal, Tour, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
@@ -20,7 +20,7 @@ import FacebookLinkModal from './components/Modal/Contact'
 import styles from './scss/CreatePost.module.scss'
 import { uploadPostImages } from 'features/upload/uploadThunks'
 import CategoryModal from './components/Modal/Category'
-import _ from 'lodash'
+import omit from 'lodash/omit'
 
 const TOUR_STORAGE_KEY = 'lastTourShownTime'
 const TOUR_COOLDOWN_DAYS = 3
@@ -38,24 +38,7 @@ const CreatePostModal = () => {
   const ref5 = useRef(null)
   const ref6 = useRef(null)
 
-  useEffect(() => {
-    if (isCreateModalVisible) {
-      checkAndShowTour()
-    }
-  }, [isCreateModalVisible])
-
-  useEffect(() => {
-    if (isCreateModalVisible && user?.address) {
-      dispatch(
-        updatePostData({
-          city: user.address.split(', ').pop(),
-          specificLocation: user.address
-        })
-      )
-    }
-  }, [isCreateModalVisible, user?.address, dispatch])
-
-  const checkAndShowTour = () => {
+  const checkAndShowTour = useCallback(() => {
     const lastShownTime = localStorage.getItem(TOUR_STORAGE_KEY)
     const currentTime = new Date().getTime()
 
@@ -72,11 +55,28 @@ const CreatePostModal = () => {
         dispatch(setShowTour(false))
       }
     }
-  }
+  }, [dispatch])
 
   const handleTourClose = () => {
     dispatch(setShowTour(false))
   }
+
+  useEffect(() => {
+    if (isCreateModalVisible) {
+      checkAndShowTour()
+    }
+  }, [isCreateModalVisible, checkAndShowTour])
+
+  useEffect(() => {
+    if (isCreateModalVisible && user?.address) {
+      dispatch(
+        updatePostData({
+          city: user.address.split(', ').pop(),
+          specificLocation: user.address
+        })
+      )
+    }
+  }, [isCreateModalVisible, user?.address, dispatch])
 
   const steps = [
     {
@@ -113,11 +113,8 @@ const CreatePostModal = () => {
 
   const handleSubmit = async () => {
     try {
-      // if (dataCreatePost.category_id === null) {
-      //   _.omit(dataCreatePost, ['category_id'])
-      // }
       const response = await dispatch(
-        createPost(dataCreatePost.category_id === null ? _.omit(dataCreatePost, ['category_id']) : dataCreatePost)
+        createPost(dataCreatePost.category_id === null ? omit(dataCreatePost, ['category_id']) : dataCreatePost)
       ).unwrap()
       const { status, message: msg } = response
       if (status === 201) {

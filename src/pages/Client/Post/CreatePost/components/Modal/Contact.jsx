@@ -70,7 +70,7 @@ const ContactModal = () => {
             }
           })
           .catch(error => {
-            message.error('Đã có lỗi xảy ra. Vui lòng thử lại.')
+            message.error(error || 'Đã có lỗi xảy ra. Vui lòng thử lại.')
           })
       })
       .catch(errorInfo => {

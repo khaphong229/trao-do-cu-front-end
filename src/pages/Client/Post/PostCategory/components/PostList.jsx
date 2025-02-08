@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination } from 'antd'
 import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
@@ -20,7 +20,7 @@ import FormExchangeModal from '../../../Request/ExchangeRequest/FormExchange'
 import { setExchangeFormModalVisible } from '../../../../../features/client/request/exchangeRequest/exchangeRequestSlice'
 import notFoundPost from 'components/feature/post/notFoundPost'
 import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
-import { VIETNAMESE_CITIES } from 'constants/cityVN'
+import { locationService } from 'services/client/locationService'
 const { Text } = Typography
 
 dayjs.extend(relativeTime)
@@ -34,11 +34,26 @@ const PostList = () => {
   const [sortOrder, setSortOrder] = useState('newest')
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedCity, setSelectedCity] = useState(null)
+  const [VIETNAMESE_CITIES, SET_VIETNAMESE_CITIES] = useState(null)
 
   const dispatch = useDispatch()
   const { posts, isError, isLoading, total } = useSelector(state => state.post)
 
+  const fetchCity = useCallback(async () => {
+    try {
+      const data = await locationService.getCity()
+      if (data.data.status === 200) {
+        SET_VIETNAMESE_CITIES(data.data.data)
+      }
+    } catch (error) {
+      if (error.response.data.status === 404) {
+        console.log(error, 'okk')
+      }
+    }
+  }, [])
+
   useEffect(() => {
+    fetchCity()
     dispatch(clearPosts())
     dispatch(resetPage())
     dispatch(
@@ -49,7 +64,7 @@ const PostList = () => {
         city: selectedCity
       })
     )
-  }, [dispatch, currentPage, category_id, selectedCity])
+  }, [dispatch, currentPage, category_id, selectedCity, fetchCity])
 
   const handleTabChange = key => {
     setActiveTab(key)
@@ -182,7 +197,7 @@ const PostList = () => {
                     <span>{item.city.split(',').slice(-1)[0]}</span>
                   </div>
                   <div className={styles.User}>
-                    <div>
+                    <div className={styles.userText}>
                       <Avatar className={styles.avtUser} src={item.avatar || avt} />
                       <Text className={styles.TextUser}>{item?.user_id?.name}</Text>
                     </div>

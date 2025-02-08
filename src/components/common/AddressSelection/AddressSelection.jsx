@@ -1,38 +1,64 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Select, Input, Button, Space } from 'antd'
-import { dataVN } from 'constants/dataVN'
 import './AddressSelection.scss'
 import { FormOutlined } from '@ant-design/icons'
+import { locationService } from 'services/client/locationService'
 
 export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, onEdit }) => {
   const [selectedProvince, setSelectedProvince] = useState(null)
   const [selectedDistrict, setSelectedDistrict] = useState(null)
   const [selectedWard, setSelectedWard] = useState(null)
   const [specificAddress, setSpecificAddress] = useState('')
+  const [dataVN, setDataVN] = useState([])
+
+  const fetchProvince = useCallback(async () => {
+    try {
+      const data = await locationService.getProvince()
+      if (data.data.status === 200) {
+        setDataVN(data.data.data)
+      }
+    } catch (error) {
+      if (error.response.data.status === 404) {
+        console.log(error, 'okk')
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchProvince()
+  }, [fetchProvince])
 
   const provinces = dataVN.map(province => ({
     code: province.Code,
     name: province.FullName
   }))
 
-  const districts = selectedProvince
-    ? dataVN
-        .find(p => p.Code === selectedProvince)
-        ?.District.map(district => ({
-          code: district.Code,
-          name: district.FullName
-        })) || []
-    : []
+  const districts = useMemo(
+    () =>
+      selectedProvince
+        ? dataVN
+            .find(p => p.Code === selectedProvince)
+            ?.District.map(district => ({
+              code: district.Code,
+              name: district.FullName
+            })) || []
+        : [],
+    [dataVN, selectedProvince]
+  )
 
-  const wards = selectedDistrict
-    ? dataVN
-        .find(p => p.Code === selectedProvince)
-        ?.District.find(d => d.Code === selectedDistrict)
-        ?.Ward.map(ward => ({
-          code: ward.Code,
-          name: ward.FullName
-        })) || []
-    : []
+  const wards = useMemo(
+    () =>
+      selectedDistrict
+        ? dataVN
+            .find(p => p.Code === selectedProvince)
+            ?.District.find(d => d.Code === selectedDistrict)
+            ?.Ward.map(ward => ({
+              code: ward.Code,
+              name: ward.FullName
+            })) || []
+        : [],
+    [dataVN, selectedProvince, selectedDistrict]
+  )
 
   const filterProvinces = (input, option) => {
     return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0

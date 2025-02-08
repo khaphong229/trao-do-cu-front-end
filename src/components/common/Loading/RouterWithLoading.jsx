@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
-import FullScreenLoading from './Loading'
+import React from 'react'
+import { Outlet } from 'react-router-dom'
 
 const RouterWithLoading = () => {
   // const location = useLocation()

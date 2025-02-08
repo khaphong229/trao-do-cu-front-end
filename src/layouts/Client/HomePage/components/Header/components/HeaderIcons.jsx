@@ -8,24 +8,24 @@ import { setCreateModalVisibility, setShowTour } from 'features/client/post/post
 import withAuth from 'hooks/useAuth'
 import avtDefault from 'assets/images/logo/avtDefault.webp'
 import { URL_SERVER_IMAGE } from 'config/url_server'
-import { UseListNotification } from 'hooks/UseListNotification'
-import { NotificationMenu } from 'constants/menus'
+// import { UseListNotification } from 'hooks/UseListNotification'
+// import { NotificationMenu } from 'constants/menus'
 
 const HeaderIcons = ({ menu }) => {
   const dispatch = useDispatch()
   const AuthenticatedButton = withAuth(Button)
   const { isAuthenticated, user } = useSelector(state => state.auth)
-  const { loadNotifications, listNotification } = UseListNotification()
-
+  // const { loadNotifications, listNotification } = UseListNotification()
+  const listNotification = 0
   return (
     <>
       <Space size="large" className={styles.contentWrapper}>
         <Dropdown
-          overlay={<NotificationMenu />}
+          // overlay={<NotificationMenu />}
           trigger={['click']}
           placement="bottomRight"
           getPopupContainer={() => document.body}
-          onOpenChange={open => open && loadNotifications()}
+          // onOpenChange={open => open && loadNotifications()}
         >
           <Badge count={listNotification.length} size="small" color="red">
             <BellOutlined className={styles.Icon} />

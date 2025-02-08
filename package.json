@@ -34,9 +34,11 @@
     "redux-persist": "^6.0.0",
     "sass": "^1.81.0",
     "sass-loader": "^16.0.3",
+    "source-map-explorer": "^2.5.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "cross-env REACT_APP_BUILD_MODE=dev react-scripts start",
     "build": "cross-env REACT_APP_BUILD_MODE=production react-scripts build",
     "test": "react-scripts test",
@@ -67,6 +69,7 @@
     ]
   },
   "devDependencies": {
+    "eslint-plugin-unused-imports": "^4.1.4",
     "react-icons": "^5.4.0"
   }
 }

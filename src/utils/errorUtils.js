@@ -25,8 +25,8 @@ export const handleApiError = error => {
   }
 }
 
-export const logError = (error, context = '') => {
-  console.error(`Error in ${context}:`, error)
+export const logError = () => {
+  // console.error(`Error in ${context}:`, error)
   // Có thể tích hợp logging service như Sentry
 }
 

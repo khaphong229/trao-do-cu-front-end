@@ -8,7 +8,6 @@ import { UserInfo } from './components/UserInfor/UserInfor'
 import { ActiveListings } from './components/PostTabs/ActiveListing/ActiveListing'
 import { ExpiredListings } from './components/PostTabs/ExpiredListing/ExpriedListing'
 import RequestedPosts from './components/PostTabs/RequestedPosts'
-import { UnorderedListOutlined } from '@ant-design/icons'
 
 const { TabPane } = Tabs
 

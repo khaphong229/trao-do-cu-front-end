@@ -1,13 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {
-  changePassWord,
-  getCurrentUser,
-  loginUser,
-  logoutUser,
-  registerUser,
-  shareProfile,
-  updateUserProfile
-} from './authThunks'
+import { getCurrentUser, loginUser, logoutUser, updateUserProfile } from './authThunks'
 
 const initialState = {
   user: {},

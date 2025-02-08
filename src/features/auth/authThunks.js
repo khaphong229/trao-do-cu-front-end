@@ -2,7 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import AuthService from '../../services/authService'
 import { setAuthToken } from '../../utils/localStorageUtils'
 import { timeoutPromise } from 'utils/errorUtils'
-import { setLoading } from './authSlice'
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue, dispatch }) => {
   const { isAdmin, ...data } = credentials
