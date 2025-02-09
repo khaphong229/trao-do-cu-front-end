@@ -9,8 +9,8 @@ import {
   setSelectedPostExchange
 } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import { updatePostStatus } from 'features/client/post/postSlice'
-import _ from 'lodash'
+import omit from 'lodash/omit'
+import { updatePostRequestStatus } from 'features/client/post/postSlice'
 
 export const useGiftRequest = () => {
   const dispatch = useDispatch()
@@ -84,7 +84,7 @@ export const useGiftRequest = () => {
     }
 
     if (user.social_media.length === 0) {
-      requestData = _.omit(requestData, ['contact_social_media'])
+      requestData = omit(requestData, ['contact_social_media'])
     }
 
     try {
@@ -93,12 +93,13 @@ export const useGiftRequest = () => {
       const { status, message: msg } = response
       if (status === 201) {
         message.success(msg)
+
         dispatch(
-          updatePostStatus({
-            postId: selectedPostExchange._id,
-            isRequested: true
+          updatePostRequestStatus({
+            postId: selectedPostExchange._id
           })
         )
+
         dispatch(setAcceptModalVisible(false))
       }
     } catch (error) {
@@ -135,7 +136,7 @@ export const useGiftRequest = () => {
     }
 
     if (user.social_media.length === 0) {
-      requestData = _.omit(requestData, ['contact_social_media'])
+      requestData = omit(requestData, ['contact_social_media'])
     }
 
     try {
@@ -144,9 +145,8 @@ export const useGiftRequest = () => {
       const { status, message: msg } = response
       if (status === 201) {
         dispatch(
-          updatePostStatus({
-            postId: selectedPostExchange._id,
-            isRequested: true
+          updatePostRequestStatus({
+            postId: selectedPostExchange._id
           })
         )
         message.success(msg)
@@ -158,7 +158,6 @@ export const useGiftRequest = () => {
         Object.values(error?.detail).forEach(err => {
           message.error(err)
         })
-        // dispatch(setExchangeFormModalVisible(false))
       }
     }
   }

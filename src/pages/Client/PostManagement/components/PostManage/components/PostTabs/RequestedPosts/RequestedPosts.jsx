@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Avatar, Tag, Image, Typography, Tabs } from 'antd'
+import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Space } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import avt from 'assets/images/logo/avtDefault.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
 import './styles.scss'
 import { getMyRequestedGift } from 'features/client/request/giftRequest/giftRequestThunks'
 import { getMyRequestedExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetailModal from './components/PostDetailModal'
-import imgNotFound from 'assets/images/others/imagenotfound.jpg'
+import imgNotFound from 'assets/images/others/imagenotfound.webp'
 import ContactInfoDisplay from './components/ContactInfoDisplay'
+
 const { Text } = Typography
 
 const RequestedPosts = () => {
@@ -17,6 +18,7 @@ const RequestedPosts = () => {
   const [activeTab, setActiveTab] = useState('all')
   const [selectedPost, setSelectedPost] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const viewMode = useSelector(state => state.post.viewMode) // Get viewMode from Redux state
 
   const giftRequests = useSelector(state => state.giftRequest.requests)
   const exchangeRequests = useSelector(state => state.exchangeRequest.requests)
@@ -43,6 +45,22 @@ const RequestedPosts = () => {
     setSelectedPost(null)
   }
 
+  const getStatusTag = (postStatus, requestStatus) => {
+    let typeCheck
+    if (postStatus === 'inactive' && requestStatus === 'accepted') {
+      typeCheck = 'acp'
+    } else if (postStatus === 'inactive' && requestStatus !== 'accepted') {
+      typeCheck = 'end'
+    } else {
+      typeCheck = 'pend'
+    }
+    return (
+      <Tag color={typeCheck === 'acp' ? 'success' : typeCheck === 'end' ? 'error' : 'warning'}>
+        {typeCheck === 'acp' ? 'Đã nhận' : typeCheck === 'end' ? 'Kết thúc' : 'Chờ đồng ý'}
+      </Tag>
+    )
+  }
+
   const columns = [
     {
       title: 'Tiêu đề',
@@ -55,31 +73,14 @@ const RequestedPosts = () => {
       title: 'Trạng thái',
       key: 'status',
       width: 120,
-      render: (_, record) => {
-        let typeCheck
-        if (record.post_id.status === 'inactive' && record.status === 'accepted') {
-          typeCheck = 'acp'
-        } else if (record.post_id.status === 'inactive' && record.status !== 'accepted') {
-          typeCheck = 'end'
-        } else {
-          typeCheck = 'pend'
-        }
-        return (
-          <Tag color={typeCheck === 'acp' ? 'success' : typeCheck === 'end' ? 'error' : 'warning'}>
-            {typeCheck === 'acp' ? 'Đã nhận' : typeCheck === 'end' ? 'Kết thúc' : 'Chờ duyệt'}
-          </Tag>
-        )
-      }
+      render: (_, record) => getStatusTag(record.post_id.status, record.status)
     },
     {
       title: 'Thông tin liên hệ',
       key: 'contact',
       width: 150,
-      render: (_, record) => {
-        return <ContactInfoDisplay post={record} showInTable={true} />
-      }
+      render: (_, record) => <ContactInfoDisplay post={record} showInTable={true} />
     },
-
     {
       title: 'Chủ bài đăng',
       key: 'owner',
@@ -93,7 +94,9 @@ const RequestedPosts = () => {
           <div>
             <Text strong>{record?.post_id?.user_id?.name || 'Không xác định'}</Text>
             <br />
-            <Text type="secondary">{record?.post_id?.user_id?.email || ''}</Text>
+            <Text type="secondary">
+              {record?.post_id?.user_id?.email ? `xxxx${record?.post_id?.user_id?.email.slice(-12)}` : ''}
+            </Text>
           </div>
         </div>
       )
@@ -124,7 +127,6 @@ const RequestedPosts = () => {
         </Tag>
       )
     },
-
     {
       title: 'Mô tả',
       dataIndex: ['post_id', 'description'],
@@ -139,6 +141,57 @@ const RequestedPosts = () => {
       render: (_, record) => <Text>{record?.post_id?.specificLocation || 'Không rõ địa chỉ'}</Text>
     }
   ]
+
+  const renderCardView = requests => (
+    <Row gutter={[16, 16]} className="card-grid">
+      {requests.map(request => (
+        <Col xs={24} sm={12} md={8} lg={6} key={request.id}>
+          <Card
+            hoverable
+            className="item-card"
+            onClick={e => handlePostClick(request, e)}
+            cover={
+              <div className="image-wrapper">
+                <Image
+                  src={
+                    request?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${request.post_id.image_url[0]}` : imgNotFound
+                  }
+                  alt={request.post_id.title}
+                  style={{ height: 200, objectFit: 'cover' }}
+                  fallback={avt}
+                />
+              </div>
+            }
+          >
+            <Card.Meta
+              title={request.post_id.title}
+              description={
+                <Space direction="vertical" size="small">
+                  {getStatusTag(request.post_id.status, request.status)}
+                  <Tag color={request.post_id.type === 'exchange' ? 'green' : 'blue'}>
+                    {request.post_id.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
+                  </Tag>
+                  <Text className="desc-post" ellipsis={{ rows: 2 }}>
+                    {request.post_id.description}
+                  </Text>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Avatar
+                      src={
+                        request?.post_id?.user_id?.avatar ? `${URL_SERVER_IMAGE}${request.post_id.user_id.avatar}` : avt
+                      }
+                      size={24}
+                    />
+                    <Text strong>{request?.post_id?.user_id?.name || 'Không xác định'}</Text>
+                  </div>
+                  <ContactInfoDisplay post={request} showInTable={false} />
+                </Space>
+              }
+            />
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  )
 
   const tableProps = {
     columns,
@@ -158,26 +211,38 @@ const RequestedPosts = () => {
     {
       key: 'all',
       label: `Tất cả (${allRequests.length})`,
-      children: <Table isLoading={isLoading} {...tableProps} dataSource={allRequests} rowKey={record => record.id} />
+      children:
+        viewMode === 'table' ? (
+          <Table loading={isLoading} {...tableProps} dataSource={allRequests} rowKey={record => record.id} />
+        ) : (
+          renderCardView(allRequests)
+        )
     },
     {
       key: 'gifts',
       label: `Quà tặng (${giftRequests.length})`,
-      children: <Table isLoading={isLoading} {...tableProps} dataSource={giftRequests} rowKey={record => record.id} />
+      children:
+        viewMode === 'table' ? (
+          <Table loading={isLoading} {...tableProps} dataSource={giftRequests} rowKey={record => record.id} />
+        ) : (
+          renderCardView(giftRequests)
+        )
     },
     {
       key: 'exchanges',
       label: `Trao đổi (${exchangeRequests.length})`,
-      children: (
-        <Table isLoading={isLoading} {...tableProps} dataSource={exchangeRequests} rowKey={record => record.id} />
-      )
+      children:
+        viewMode === 'table' ? (
+          <Table loading={isLoading} {...tableProps} dataSource={exchangeRequests} rowKey={record => record.id} />
+        ) : (
+          renderCardView(exchangeRequests)
+        )
     }
   ]
 
   return (
     <>
       <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
-
       <PostDetailModal isVisible={isModalVisible} onClose={handleModalClose} post={selectedPost} />
     </>
   )

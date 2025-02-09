@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Table, Tabs, Typography, Button, Badge, Image, Space, Popconfirm, message } from 'antd'
+import { Table, Tabs, Typography, Button, Badge, Image, Space, Popconfirm, message, Row, Col, Card, Empty } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
 import { getExchangeRequest } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
@@ -11,12 +11,13 @@ import dayjs from 'dayjs'
 import styles from './Scss/ExpriedListing.module.scss'
 import getPostError from 'components/feature/post/getPostError'
 import PostDetail from '../components/PostDetail/PostDetail'
+import { Repeat2 } from 'lucide-react'
 
 const { TabPane } = Tabs
 
 export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive }) => {
   const dispatch = useDispatch()
-  const { posts = [], total = 0, isLoading, isError } = useSelector(state => state.post)
+  const { posts = [], total = 0, isLoading, isError, viewMode } = useSelector(state => state.post)
   const [selectedListing, setSelectedListing] = useState(null)
   const [visibleDrawer, setVisibleDrawer] = useState(false)
   const [visibleExchangeDrawer, setVisibleExchangeDrawer] = useState(false)
@@ -39,41 +40,52 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
     total: 0
   })
 
-  const fetchParams = useMemo(
+  const paginationRef = useMemo(
     () => ({
       current: pagination.current,
-      pageSize: pagination.pageSize,
+      pageSize: pagination.pageSize
+    }),
+    [pagination.current, pagination.pageSize]
+  )
+
+  const fetchParams = useMemo(
+    () => ({
+      current: paginationRef.current,
+      pageSize: paginationRef.pageSize,
       status: 'inactive',
       type: activeSubTab !== 'all' ? activeSubTab : undefined
     }),
-    [activeSubTab, pagination]
+    [activeSubTab, paginationRef]
   )
 
-  const fetchPosts = useCallback(() => {
-    dispatch(getPostGiftPagination(fetchParams)).then(response => {
-      if (response?.payload?.data?.data) {
-        const allPosts = response.payload.data.data
+  const fetchData = useCallback(async () => {
+    if (!isActive) return
+
+    try {
+      const response = await dispatch(getPostGiftPagination(fetchParams)).unwrap()
+      if (response?.data?.data) {
+        const allPosts = response.data.data
         setTabCounts({
-          all: response.payload.data.total || 0,
+          all: response.data.total || 0,
           gift: allPosts.filter(post => post.type === 'gift').length,
           exchange: allPosts.filter(post => post.type === 'exchange').length
         })
       }
-    })
-  }, [dispatch, fetchParams])
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+    }
+  }, [dispatch, fetchParams, isActive])
 
   useEffect(() => {
     setPagination(prev => ({
       ...prev,
-      total: total
+      total
     }))
   }, [total])
 
   useEffect(() => {
-    if (isActive) {
-      fetchPosts()
-    }
-  }, [fetchPosts, isActive, refreshKey])
+    fetchData()
+  }, [fetchData, refreshKey])
 
   const getRequests = useCallback(
     async (listing, paginationParams = null) => {
@@ -175,7 +187,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
       const { status, message: msg } = res
       if (status === 201) {
         message.success(msg)
-        fetchPosts()
+        fetchData()
       }
     } catch (error) {
       if (error.status === 404) {
@@ -258,6 +270,65 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
     }
   ]
 
+  const renderCardView = () => (
+    <Row gutter={[16, 16]} className={styles.cardGrid}>
+      {posts.map(item => (
+        <Col xs={24} sm={12} md={8} lg={6} key={item._id}>
+          <Card
+            hoverable
+            className={styles.itemCard}
+            cover={
+              <div className={styles.imageWrapper}>
+                <Image
+                  src={`${URL_SERVER_IMAGE}${item.image_url[0]}`}
+                  alt={item.title}
+                  style={{ height: 200, objectFit: 'cover' }}
+                />
+              </div>
+            }
+            actions={[
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                <Button
+                  type={item.type === 'gift' ? 'primary' : 'dashed'}
+                  onClick={() => handleViewRegistrations(item)}
+                >
+                  {item.type === 'exchange' ? 'Xem người đổi' : 'Xem người nhận'}
+                </Button>
+                <Popconfirm
+                  onConfirm={() => handleRepost(item?._id)}
+                  placement="topRight"
+                  title={'Bạn chắc chắn muốn đăng lại bài này?'}
+                  okText="OK"
+                  cancelText="Hủy"
+                >
+                  <Button>
+                    <Repeat2 />
+                  </Button>
+                </Popconfirm>
+              </div>
+            ]}
+          >
+            <Card.Meta
+              title={<span onClick={() => handlePostDetail(null, item)}>{item.title}</span>}
+              description={
+                <Space direction="vertical" size="small">
+                  <Typography.Text className={styles.descPost}>{item.description}</Typography.Text>
+                  <Badge
+                    status={item.type === 'exchange' ? 'success' : 'processing'}
+                    text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
+                  />
+                  <Typography.Text type="secondary">
+                    {dayjs(item.created_at).format('DD/MM/YYYY HH:mm')}
+                  </Typography.Text>
+                </Space>
+              }
+            />
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  )
+
   const subTabItems = [
     { key: 'all', label: 'Tất cả', count: tabCounts.all },
     { key: 'gift', label: 'Trao tặng', count: tabCounts.gift },
@@ -281,26 +352,34 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
               </span>
             }
           >
-            <Table
-              columns={columns}
-              dataSource={posts}
-              rowKey="_id"
-              pagination={{
-                ...pagination,
-                showSizeChanger: true,
-                showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
-              }}
-              onChange={handleTableChange}
-              loading={isLoading}
-              scroll={{ x: 800 }}
-              onRow={record => ({
-                onClick: e => handlePostDetail(e, record),
-                style: { cursor: 'pointer' }
-              })}
-            />
+            {viewMode === 'table' ? (
+              <Table
+                columns={columns}
+                dataSource={posts}
+                rowKey="_id"
+                pagination={{
+                  ...pagination,
+                  showSizeChanger: true,
+                  showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
+                }}
+                onChange={handleTableChange}
+                loading={isLoading}
+                scroll={{ x: 800 }}
+                onRow={record => ({
+                  onClick: e => handlePostDetail(e, record),
+                  style: { cursor: 'pointer' }
+                })}
+              />
+            ) : (
+              renderCardView()
+            )}
           </TabPane>
         ))}
       </Tabs>
+
+      {posts.length === 0 && viewMode === 'card' && (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
+      )}
 
       <RegistrationDrawer
         visible={visibleDrawer}
@@ -308,7 +387,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
         listing={selectedListing}
         receiveRequests={receiveRequests}
         refetch={getRequests}
-        onUpdateSuccess={fetchPosts}
+        onUpdateSuccess={fetchData}
         pagination={requestPagination}
         onPaginationChange={handleRequestPaginationChange}
       />
@@ -319,7 +398,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
         listing={selectedListing}
         exchangeRequests={exchangeRequests}
         refetch={getRequests}
-        onUpdateSuccess={fetchPosts}
+        onUpdateSuccess={fetchData}
         pagination={requestPagination}
         onPaginationChange={handleRequestPaginationChange}
       />

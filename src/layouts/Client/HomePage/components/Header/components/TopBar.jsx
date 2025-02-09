@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from 'antd'
-import { UserOutlined, HeartOutlined, LoginOutlined, BarsOutlined } from '@ant-design/icons'
+import { UserOutlined, LoginOutlined, BarsOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import styles from './scss/TopBar.module.scss'
 import { useSelector } from 'react-redux'

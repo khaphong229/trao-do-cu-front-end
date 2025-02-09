@@ -2,7 +2,7 @@ import axios from 'axios'
 import { getAuthToken, removeItem } from './localStorageUtils'
 import URL_SERVER from 'config/url_server'
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL
+// const BASE_URL = process.env.REACT_APP_API_BASE_URL
 
 export const createApi = () => {
   const instance = axios.create({
@@ -25,7 +25,10 @@ export const createApi = () => {
   )
 
   instance.interceptors.response.use(
-    response => response,
+    response => {
+      // console.log(response, 'axi')
+      return response
+    },
     error => {
       if (error.response && error.response.status === 401) {
         removeItem('token')

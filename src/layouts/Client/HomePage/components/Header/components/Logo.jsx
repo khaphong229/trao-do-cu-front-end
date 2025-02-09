@@ -1,15 +1,10 @@
 import React, { useEffect } from 'react'
 import { Space, Button, Dropdown, Menu } from 'antd'
-import { UnorderedListOutlined, DownOutlined, ShoppingOutlined } from '@ant-design/icons'
+import { UnorderedListOutlined, DownOutlined } from '@ant-design/icons'
 import styles from './scss/Logo.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllCategory } from 'features/client/category/categoryThunks'
-import { FaHome } from 'react-icons/fa'
-
-const iconCategories = {
-  'Bất động sản': <FaHome />
-}
 
 const renderMenuItems = (categories, navigate) =>
   categories.map(category => {

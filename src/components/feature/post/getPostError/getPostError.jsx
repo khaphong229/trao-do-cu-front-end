@@ -1,7 +1,7 @@
 import { Button, Empty, Typography } from 'antd'
 import BoxWrap from 'components/common/BoxWrap'
 import React from 'react'
-import error from 'assets/images/common/404.png'
+import error from 'assets/images/common/404.webp'
 import { ReloadOutlined } from '@ant-design/icons'
 
 export const getPostError = () => {

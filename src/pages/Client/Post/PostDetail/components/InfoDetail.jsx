@@ -6,7 +6,7 @@ import CreatePostModal from '../../CreatePost/CreatePost'
 import withAuth from 'hooks/useAuth'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
-import avt from 'assets/images/logo/avtDefault.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
@@ -16,8 +16,9 @@ import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
 import { getValidImageUrl } from 'helpers/helper'
-import imageNotFound from 'assets/images/others/imagenotfound.jpg'
+import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import PostDetailSkeleton from 'components/common/Skeleton/PostDetailSkeleton'
+import { updatePostRequestStatus } from 'features/client/post/postSlice'
 
 const { Title, Text } = Typography
 
@@ -30,10 +31,29 @@ const PostInfoDetail = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [mainImage, setMainImage] = useState(null)
   const thumbnails = Array.isArray(selectedPost?.image_url) ? selectedPost.image_url : []
-  const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
   const { isExchangeFormModalVisible } = useSelector(state => state.exchangeRequest)
   const AuthButton = withAuth(Button)
   const dispatch = useDispatch()
+
+  const {
+    handleGiftRequest: originalHandleGiftRequest,
+    handleInfoSubmit,
+    handleRequestConfirm: originalHandleRequestConfirm
+  } = useGiftRequest()
+
+  const handleRequestConfirm = async values => {
+    try {
+      await originalHandleRequestConfirm(values)
+      // Update the request status in post state after successful request
+      dispatch(
+        updatePostRequestStatus({
+          postId: selectedPost._id
+        })
+      )
+    } catch (error) {
+      // Error handling is already done in the original function
+    }
+  }
 
   if (!selectedPost) {
     return <PostDetailSkeleton />
@@ -41,7 +61,7 @@ const PostInfoDetail = () => {
 
   const handleRequest = item => {
     if (!selectedPost.isRequested) {
-      handleGiftRequest(item, item.type)
+      originalHandleGiftRequest(item, item.type)
     }
   }
 
@@ -66,6 +86,7 @@ const PostInfoDetail = () => {
         </Button>
       )
     }
+
     const isMe = selectedPost?.user_id?._id === user._id ? true : false
     return (
       <Tooltip title={isMe && 'Không thể thực hiện thao tác với bài đăng của bạn'}>

@@ -11,9 +11,9 @@ const { Text } = Typography
 const PostList = () => {
   const [likedItems, setLikedItems] = useState({})
   const dispatch = useDispatch()
-  const handleChange = value => {
-    console.log(`selected ${value}`)
-  }
+  // const handleChange = value => {
+  //   console.log(`selected ${value}`)
+  // }
   const toggleLike = id => {
     setLikedItems(prev => ({ ...prev, [id]: !prev[id] }))
   }
@@ -41,7 +41,7 @@ const PostList = () => {
           <Select
             defaultValue="newest"
             size="middle"
-            onChange={handleChange}
+            // onChange={handleChange}
             options={[
               { value: 'newest', label: 'Tin mới nhất' },
               { value: 'oldest', label: 'Tin cũ nhất' }

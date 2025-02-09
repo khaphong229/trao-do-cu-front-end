@@ -1,7 +1,7 @@
 import { Empty, Typography } from 'antd'
 import BoxWrap from 'components/common/BoxWrap'
 import React from 'react'
-import nodata from 'assets/images/common/no-data.png'
+import nodata from 'assets/images/common/no-data.webp'
 
 export const notFoundPost = () => {
   return (

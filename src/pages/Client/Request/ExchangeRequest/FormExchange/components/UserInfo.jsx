@@ -2,7 +2,7 @@ import React from 'react'
 import { Avatar } from 'antd'
 import styles from '../scss/UserInfo.module.scss'
 import { useSelector } from 'react-redux'
-import avt from 'assets/images/logo/avtDefault.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 const UserInfo = () => {
   const { requestData } = useSelector(state => state.exchangeRequest)

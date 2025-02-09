@@ -39,7 +39,9 @@ const initialState = {
   statusCache: {},
   cacheTL: 5 * 60 * 1000,
   lastCacheUpdate: null,
-  postDetail: null
+  postDetail: null,
+
+  viewMode: 'card'
 }
 
 const postSlice = createSlice({
@@ -118,9 +120,19 @@ const postSlice = createSlice({
         }
       })
     },
-    updatePostStatus: (state, action) => {
-      const { postId, isRequested } = action.payload
-      state.requestStatuses[postId] = isRequested
+    updatePostRequestStatus: (state, action) => {
+      const { postId } = action.payload
+      const post = state.posts.find(post => post._id === postId)
+      if (post) {
+        post.isRequested = true
+      }
+
+      if (state.selectedPost && state.selectedPost._id === postId) {
+        state.selectedPost.isRequested = true
+      }
+    },
+    setViewMode: (state, action) => {
+      state.viewMode = action.payload
     }
   },
 
@@ -132,7 +144,7 @@ const postSlice = createSlice({
         state.isLoadingButton = true
         state.error = null
       })
-      .addCase(createPost.fulfilled, (state, action) => {
+      .addCase(createPost.fulfilled, state => {
         state.isLoadingButton = false
         state.isCreateModalVisible = false
         state.dataCreatePost = initialState.dataCreatePost
@@ -242,7 +254,9 @@ export const {
   setRequestStatuses,
   clearExpiredCache,
   updatePostStatus,
-  setSelectedPost
+  setSelectedPost,
+  updatePostRequestStatus,
+  setViewMode
 } = postSlice.actions
 
 export default postSlice.reducer

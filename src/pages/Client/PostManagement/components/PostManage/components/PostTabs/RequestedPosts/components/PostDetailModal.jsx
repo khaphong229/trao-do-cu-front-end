@@ -1,9 +1,8 @@
-import React from 'react'
 import { Modal, Avatar, Tag, Descriptions, Image, Card, Typography } from 'antd'
-import { UserOutlined, PhoneOutlined, FacebookOutlined, HomeOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import { UserOutlined, PhoneOutlined, HomeOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { URL_SERVER_IMAGE } from 'config/url_server'
-import avt from 'assets/images/logo/avtDefault.jpg'
-import imgNotFound from 'assets/images/others/imagenotfound.jpg'
+import avt from 'assets/images/logo/avtDefault.webp'
+import imgNotFound from 'assets/images/others/imagenotfound.webp'
 import '../styles.scss'
 import ContactInfoDisplay from './ContactInfoDisplay'
 
@@ -82,7 +81,9 @@ const PostDetailModal = ({ isVisible, onClose, post }) => {
                 <Title level={4} style={{ margin: 0 }}>
                   {post.post_id.user_id?.name || 'Không xác định'}
                 </Title>
-                <Text type="secondary">{post.post_id.user_id?.email}</Text>
+                <Text type="secondary">
+                  {post.post_id.user_id?.email ? `xxxx${post?.post_id?.user_id?.email.slice(-12)}` : ''}
+                </Text>
               </div>
             </div>
           </Card>

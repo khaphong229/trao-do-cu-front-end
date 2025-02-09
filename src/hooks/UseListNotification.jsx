@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import {
@@ -15,6 +15,7 @@ export const UseListNotification = () => {
   const exchangeRequests = useSelector(state => state.exchangeRequest.requests)
   const listRequestGift = useSelector(state => state.giftRequest.posts)
   const listRequestExchange = useSelector(state => state.exchangeRequest.posts)
+  const { isAuthenticated } = useSelector(state => state.auth)
   const params = {
     current: 1,
     pageSize: 10,
@@ -22,7 +23,7 @@ export const UseListNotification = () => {
     statusPotsId: 'active'
   }
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     if (isLoaded) return
 
     try {
@@ -34,11 +35,13 @@ export const UseListNotification = () => {
     } catch (error) {
       console.error('Failed to load notifications', error)
     }
-  }
+  }, [dispatch, isLoaded, params])
 
   useEffect(() => {
-    loadNotifications()
-  }, [])
+    if (isAuthenticated) {
+      loadNotifications()
+    }
+  }, [loadNotifications, isAuthenticated])
 
   const formatTimeAgo = timestamp => {
     return moment(timestamp).fromNow()

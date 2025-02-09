@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Modal, List, Row, Col, Card, Typography, Avatar } from 'antd'
-import { EnvironmentOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons'
+import { Button, Modal, List } from 'antd'
+import { EnvironmentOutlined } from '@ant-design/icons'
 import styles from '../scss/SearchPostManagement.module.scss'
-import { getPostPagination } from '../../../../../features/client/post/postThunks'
-import { useDispatch, useSelector } from 'react-redux'
-const { Text } = Typography
+import { getPostPagination } from 'features/client/post/postThunks'
+import { useDispatch } from 'react-redux'
+
 const SearchPostArticle = () => {
   const dispatch = useDispatch()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedCity, setSelectedCity] = useState('Tp Hồ Chí Minh')
   const [tempSelectedCity, setTempSelectedCity] = useState('Tp Hồ Chí Minh')
-  const { posts, isLoading, isError } = useSelector(state => state.post)
-  const [likedItems, setLikedItems] = useState({})
   const cities = [
     'Hà Nội',
     'Hồ Chí Minh',
@@ -62,9 +60,6 @@ const SearchPostArticle = () => {
 
   const handleCityChange = city => {
     setTempSelectedCity(city)
-  }
-  const toggleLike = id => {
-    setLikedItems(prev => ({ ...prev, [id]: !prev[id] }))
   }
 
   return (

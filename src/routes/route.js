@@ -1,29 +1,30 @@
-import { createBrowserRouter } from 'react-router-dom'
-import RouterWithLoading from 'components/common/Loading/RouterWithLoading'
-import Admin from '../layouts/Admin'
-import DashboardUI from '../pages/Admin/Dashboard/Dashboard'
-import UserManagement from '../pages/Admin/User/User'
-import Login from '../pages/Auth/Login'
-import Register from '../pages/Auth/Register'
-import Home from '../pages/Client/Home'
-import LayoutClient from '../layouts/Client/HomePage'
+import { createBrowserRouter, Outlet } from 'react-router-dom'
+import Admin from 'layouts/Admin'
+import LayoutClient from 'layouts/Client/HomePage'
 import { ProtectedRoute } from './protectedRoute'
-import PostDetail from '../pages/Client/Post/PostDetail'
-import PostCategory from '../pages/Client/Post/PostCategory'
-import PostManagement from '../pages/Admin/Post'
-import PostManagementClient from 'pages/Client/PostManagement'
-import PostArticle from '../pages/Client/Post/PostArticle'
-import ProfileUser from 'pages/Client/Profile/ProfileUser'
+import { lazy, Suspense } from 'react'
 
-import ErrorBoundary from 'components/common/ErrorBoundary'
-import NotFound from '../components/common/NotFound'
-import LoginGoogle from 'pages/Auth/LoginGoogle'
+const DashboardUI = lazy(() => import('pages/Admin/Dashboard/Dashboard'))
+const UserManagement = lazy(() => import('pages/Admin/User/User'))
+const Login = lazy(() => import('pages/Auth/Login'))
+const Register = lazy(() => import('pages/Auth/Register'))
+const Home = lazy(() => import('pages/Client/Home'))
+const PostDetail = lazy(() => import('pages/Client/Post/PostDetail'))
+const PostCategory = lazy(() => import('pages/Client/Post/PostCategory'))
+const PostManagement = lazy(() => import('pages/Admin/Post'))
+const PostManagementClient = lazy(() => import('pages/Client/PostManagement'))
+const PostArticle = lazy(() => import('pages/Client/Post/PostArticle'))
+const ProfileUser = lazy(() => import('pages/Client/Profile/ProfileUser'))
+const ErrorBoundary = lazy(() => import('components/common/ErrorBoundary'))
+const NotFound = lazy(() => import('components/common/NotFound'))
+const LoginGoogle = lazy(() => import('pages/Auth/LoginGoogle'))
 
 const router = createBrowserRouter([
   {
     element: (
       <ErrorBoundary>
-        <RouterWithLoading />
+        {/* <RouterWithLoading /> */}
+        <Outlet />
       </ErrorBoundary>
     ),
     errorElement: <NotFound />,
@@ -34,51 +35,98 @@ const router = createBrowserRouter([
         children: [
           {
             path: '',
-            element: <LayoutClient />,
+            element: (
+              <Suspense>
+                <LayoutClient />
+              </Suspense>
+            ),
             children: [
               {
                 path: 'not-found',
-                element: <NotFound />
+                element: (
+                  <Suspense>
+                    <NotFound />
+                  </Suspense>
+                )
               },
               {
                 index: true,
-                element: <Home />
+                element: (
+                  <Suspense>
+                    <Home />
+                  </Suspense>
+                )
               },
               {
                 path: 'login',
-                element: <Login />
+                element: (
+                  <Suspense>
+                    <Login />
+                  </Suspense>
+                )
               },
               {
                 path: 'register',
-                element: <Register />
+                element: (
+                  <Suspense>
+                    <Register />
+                  </Suspense>
+                )
               },
               {
                 path: 'post/:id/detail',
-                element: <PostDetail />
+                element: (
+                  <Suspense>
+                    <PostDetail />
+                  </Suspense>
+                )
               },
               {
                 path: 'post/category/:category_id',
-                element: <PostCategory />
+                element: (
+                  <Suspense>
+                    <PostCategory />
+                  </Suspense>
+                )
               },
               {
                 path: 'post-article',
-                element: <PostArticle />
+                element: (
+                  <Suspense>
+                    <PostArticle />
+                  </Suspense>
+                )
               },
               {
                 element: <ProtectedRoute requireAuth={true} adminOnly={false} />,
                 children: [
                   {
                     path: 'management-post',
-                    element: <PostManagementClient />
+                    element: (
+                      <Suspense>
+                        <PostManagementClient />
+                      </Suspense>
+                    )
                   },
-                  { path: 'profile', element: <ProfileUser /> }
+                  {
+                    path: 'profile',
+                    element: (
+                      <Suspense>
+                        <ProfileUser />
+                      </Suspense>
+                    )
+                  }
                 ]
               }
             ]
           },
           {
             path: 'login-success/:id',
-            element: <LoginGoogle />
+            element: (
+              <Suspense>
+                <LoginGoogle />
+              </Suspense>
+            )
           }
         ]
       },
@@ -93,7 +141,11 @@ const router = createBrowserRouter([
             children: [
               {
                 path: 'login',
-                element: <Login />
+                element: (
+                  <Suspense>
+                    <Login />
+                  </Suspense>
+                )
               }
             ]
           },
@@ -103,19 +155,35 @@ const router = createBrowserRouter([
             element: <ProtectedRoute requireAuth={true} adminOnly={true} />,
             children: [
               {
-                element: <Admin />,
+                element: (
+                  <Suspense>
+                    <Admin />
+                  </Suspense>
+                ),
                 children: [
                   {
                     path: 'dashboard',
-                    element: <DashboardUI />
+                    element: (
+                      <Suspense>
+                        <DashboardUI />
+                      </Suspense>
+                    )
                   },
                   {
                     path: 'user',
-                    element: <UserManagement />
+                    element: (
+                      <Suspense>
+                        <UserManagement />
+                      </Suspense>
+                    )
                   },
                   {
                     path: 'post',
-                    element: <PostManagement />
+                    element: (
+                      <Suspense>
+                        <PostManagement />
+                      </Suspense>
+                    )
                   }
                 ]
               }

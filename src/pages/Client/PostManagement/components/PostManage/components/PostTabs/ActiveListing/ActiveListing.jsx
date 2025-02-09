@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Tabs, Typography, Badge, Button, Table, Image, Space } from 'antd'
+import { Tabs, Typography, Badge, Button, Table, Image, Space, Card, Row, Col, Empty } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { getPostGiftPagination } from 'features/client/post/postThunks'
@@ -10,12 +10,11 @@ import { getExchangeRequest } from 'features/client/request/exchangeRequest/exch
 import dayjs from 'dayjs'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetail from '../components/PostDetail/PostDetail'
-
 const { TabPane } = Tabs
 
 export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive }) => {
   const dispatch = useDispatch()
-  const { posts = [], total = 0, isLoading } = useSelector(state => state.post)
+  const { posts = [], total = 0, isLoading, viewMode } = useSelector(state => state.post)
   const [selectedListing, setSelectedListing] = useState(null)
   const [visibleDrawer, setVisibleDrawer] = useState(false)
   const [receiveRequests, setReceiveRequests] = useState([])
@@ -38,43 +37,54 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
     total: 0
   })
 
-  const fetchParams = useMemo(
+  const paginationRef = useMemo(
     () => ({
       current: pagination.current,
-      pageSize: pagination.pageSize,
+      pageSize: pagination.pageSize
+    }),
+    [pagination.current, pagination.pageSize]
+  )
+
+  const fetchParams = useMemo(
+    () => ({
+      current: paginationRef.current,
+      pageSize: paginationRef.pageSize,
       status: 'active',
       type: activeSubTab !== 'all' ? activeSubTab : undefined
     }),
-    [activeSubTab, pagination]
+    [activeSubTab, paginationRef]
   )
 
-  const fetchPosts = useCallback(() => {
-    dispatch(getPostGiftPagination(fetchParams)).then(response => {
-      if (response?.payload?.data?.data) {
-        const allPosts = response.payload.data.data
+  const fetchData = useCallback(async () => {
+    if (!isActive) return
+
+    try {
+      const response = await dispatch(getPostGiftPagination(fetchParams)).unwrap()
+      if (response?.data?.data) {
+        const allPosts = response.data.data
         setTabCounts({
-          all: response.payload.data.total || 0,
+          all: response.data.total || 0,
           gift: allPosts.filter(post => post.type === 'gift').length,
           exchange: allPosts.filter(post => post.type === 'exchange').length
         })
       }
-    })
-  }, [dispatch, fetchParams])
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+    }
+  }, [dispatch, fetchParams, isActive])
 
   useEffect(() => {
-    if (isActive) {
-      fetchPosts()
-    }
-  }, [fetchPosts, isActive, refreshKey])
+    fetchData()
+  }, [fetchData, refreshKey])
 
   useEffect(() => {
     setPagination(prev => ({
       ...prev,
-      total: total
+      total
     }))
   }, [total])
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = pagination => {
     setPagination(prev => ({
       ...prev,
       current: pagination.current,
@@ -244,39 +254,92 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
     }))
   }
 
+  const renderCardView = () => (
+    <Row gutter={[16, 16]} className={styles.cardGrid}>
+      {posts.map(item => (
+        <Col xs={24} sm={12} md={8} lg={6} key={item._id}>
+          <Card
+            hoverable
+            className={styles.itemCard}
+            cover={
+              <div className={styles.imageWrapper}>
+                <Image
+                  src={`${URL_SERVER_IMAGE}${item.image_url[0]}`}
+                  alt={item.title}
+                  style={{ height: 200, objectFit: 'cover' }}
+                />
+              </div>
+            }
+            actions={[
+              <Button type={item.type === 'gift' ? 'primary' : 'dashed'} onClick={() => handleViewRegistrations(item)}>
+                {item.type === 'exchange' ? 'Xem yêu cầu đổi' : 'Xem yêu cầu nhận'}
+              </Button>
+            ]}
+          >
+            <Card.Meta
+              title={<span onClick={() => handlePostDetail(null, item)}>{item.title}</span>}
+              description={
+                <Space direction="vertical" size="small">
+                  <Typography.Text className={styles.descPost}>{item.description}</Typography.Text>
+                  <Badge
+                    status={item.type === 'exchange' ? 'success' : 'processing'}
+                    text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
+                  />
+                  <Typography.Text type="secondary">
+                    {dayjs(item.created_at).format('DD/MM/YYYY HH:mm')}
+                  </Typography.Text>
+                </Space>
+              }
+            />
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  )
+
   return (
     <>
-      <Tabs activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
-        {subTabItems.map(subTab => (
-          <TabPane
-            key={subTab.key}
-            tab={
-              <span className={styles.subTabLabel}>
-                {subTab.label}
-                <span className={styles.subTabCount}>({subTab.count})</span>
-              </span>
-            }
-          >
-            <Table
-              columns={columns}
-              dataSource={posts}
-              rowKey="_id"
-              pagination={{
-                ...pagination,
-                showSizeChanger: true,
-                showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
-              }}
-              onChange={handleTableChange}
-              loading={isLoading}
-              scroll={{ x: 800 }}
-              onRow={record => ({
-                onClick: e => handlePostDetail(e, record),
-                style: { cursor: 'pointer' }
-              })}
+      <div className={styles.tabHeader}>
+        <Tabs activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
+          {subTabItems.map(subTab => (
+            <TabPane
+              key={subTab.key}
+              tab={
+                <span className={styles.subTabLabel}>
+                  {subTab.label}
+                  <span className={styles.subTabCount}>({subTab.count})</span>
+                </span>
+              }
             />
-          </TabPane>
-        ))}
-      </Tabs>
+          ))}
+        </Tabs>
+      </div>
+
+      {viewMode === 'table' ? (
+        <Table
+          columns={columns}
+          dataSource={posts}
+          rowKey="_id"
+          pagination={{
+            ...pagination,
+            showSizeChanger: true,
+            showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
+          }}
+          onChange={handleTableChange}
+          loading={isLoading}
+          scroll={{ x: 800 }}
+          onRow={record => ({
+            onClick: e => handlePostDetail(e, record),
+            style: { cursor: 'pointer' }
+          })}
+        />
+      ) : (
+        renderCardView()
+      )}
+
+      {posts.length === 0 && viewMode === 'card' && (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
+      )}
 
       <RegistrationDrawer
         visible={visibleDrawer}
@@ -284,7 +347,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         listing={selectedListing}
         receiveRequests={receiveRequests}
         refetch={getRequests}
-        onUpdateSuccess={fetchPosts}
+        onUpdateSuccess={fetchData}
         pagination={requestPagination}
         onPaginationChange={handleRequestPaginationChange}
       />
@@ -295,7 +358,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         listing={selectedListing}
         exchangeRequests={exchangeRequests}
         refetch={getRequests}
-        onUpdateSuccess={fetchPosts}
+        onUpdateSuccess={fetchData}
         pagination={requestPagination}
         onPaginationChange={handleRequestPaginationChange}
       />

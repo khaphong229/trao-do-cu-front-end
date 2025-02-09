@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import { getCurrentUser, loginGoogle } from 'features/auth/authThunks'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { setAuthToken } from 'utils/localStorageUtils'
@@ -10,7 +10,7 @@ export default function LoginGoogle() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const fetch = async () => {
+  const fetch = useCallback(async () => {
     try {
       const response = await dispatch(loginGoogle(id)).unwrap()
       const { status } = response
@@ -23,14 +23,13 @@ export default function LoginGoogle() {
         }
       }
     } catch (error) {
-      console.log(error)
       message.error('Đăng nhập thất bại! Vui lòng thử lại.')
     }
-  }
+  }, [dispatch, id, navigate])
 
   useEffect(() => {
     fetch()
-  }, [])
+  }, [fetch])
 
   return <div>Hello</div>
 }

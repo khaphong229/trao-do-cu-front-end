@@ -12,7 +12,7 @@ import {
   GoogleOutlined,
   AppleOutlined
 } from '@ant-design/icons'
-import Avatar from 'assets/images/logo/avtDefault.jpg'
+import Avatar from 'assets/images/logo/avtDefault.webp'
 import styles from '../scss/ProfileUser.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'

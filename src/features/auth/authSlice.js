@@ -1,14 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {
-  changePassWord,
-  getCurrentUser,
-  loginUser,
-  logoutUser,
-  registerUser,
-  shareProfile,
-  updateUserProfile
-} from './authThunks'
-import { uploadAvatar } from 'features/upload/uploadThunks'
+import { getCurrentUser, loginUser, logoutUser, updateUserProfile } from './authThunks'
 
 const initialState = {
   user: {},
@@ -58,15 +49,15 @@ const authSlice = createSlice({
     // Login
     builder
       .addCase(loginUser.pending, state => {
-        state.isLoading = true
+        // state.isLoading = true
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.isLoading = false
+        // state.isLoading = false
         state.isAuthenticated = true
         state.isAdmin = action.meta.arg.isAdmin || false
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.isLoading = false
+        // state.isLoading = false
         state.error = action?.payload?.message || 'Đăng nhập Không thành công. Vui lòng thử lại'
       })
 
@@ -90,30 +81,30 @@ const authSlice = createSlice({
 
     // Get Current User
     builder.addCase(getCurrentUser.pending, state => {
-      state.isLoading = true
+      // state.isLoading = true
     })
     builder.addCase(getCurrentUser.fulfilled, (state, action) => {
       state.user = action.payload.data
-      state.isLoading = false
+      // state.isLoading = false
       state.isAuthenticated = true
       state.isAdmin = action.meta.arg || false
     })
     builder.addCase(getCurrentUser.rejected, state => {
-      state.isLoading = false
+      // state.isLoading = false
     })
     //Update User
     builder.addCase(updateUserProfile.pending, state => {
-      state.isLoading = true
+      // state.isLoading = true
     })
     builder.addCase(updateUserProfile.fulfilled, (state, action) => {
-      state.isLoading = false
+      // state.isLoading = false
       state.user = {
         ...state.user,
         ...action.payload.data
       }
     })
     builder.addCase(updateUserProfile.rejected, (state, action) => {
-      state.isLoading = false
+      // state.isLoading = false
       state.error = action.payload?.message || 'Profile update failed'
     })
   }
