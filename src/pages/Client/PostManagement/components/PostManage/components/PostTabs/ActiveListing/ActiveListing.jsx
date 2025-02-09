@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Tabs, Typography, Badge, Button, Table, Image, Space, Card, Row, Col } from 'antd'
+import { Tabs, Typography, Badge, Button, Table, Image, Space, Card, Row, Col, Empty } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { getPostGiftPagination } from 'features/client/post/postThunks'
@@ -10,8 +10,6 @@ import { getExchangeRequest } from 'features/client/request/exchangeRequest/exch
 import dayjs from 'dayjs'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetail from '../components/PostDetail/PostDetail'
-import { setViewMode } from 'features/client/post/postSlice'
-import { AppstoreOutlined, TableOutlined } from '@ant-design/icons'
 const { TabPane } = Tabs
 
 export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive }) => {
@@ -39,39 +37,50 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
     total: 0
   })
 
-  const fetchParams = useMemo(
+  const paginationRef = useMemo(
     () => ({
       current: pagination.current,
-      pageSize: pagination.pageSize,
+      pageSize: pagination.pageSize
+    }),
+    [pagination.current, pagination.pageSize]
+  )
+
+  const fetchParams = useMemo(
+    () => ({
+      current: paginationRef.current,
+      pageSize: paginationRef.pageSize,
       status: 'active',
       type: activeSubTab !== 'all' ? activeSubTab : undefined
     }),
-    [activeSubTab, pagination]
+    [activeSubTab, paginationRef]
   )
 
-  const fetchPosts = useCallback(() => {
-    dispatch(getPostGiftPagination(fetchParams)).then(response => {
-      if (response?.payload?.data?.data) {
-        const allPosts = response.payload.data.data
+  const fetchData = useCallback(async () => {
+    if (!isActive) return
+
+    try {
+      const response = await dispatch(getPostGiftPagination(fetchParams)).unwrap()
+      if (response?.data?.data) {
+        const allPosts = response.data.data
         setTabCounts({
-          all: response.payload.data.total || 0,
+          all: response.data.total || 0,
           gift: allPosts.filter(post => post.type === 'gift').length,
           exchange: allPosts.filter(post => post.type === 'exchange').length
         })
       }
-    })
-  }, [dispatch, fetchParams])
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+    }
+  }, [dispatch, fetchParams, isActive])
 
   useEffect(() => {
-    if (isActive) {
-      fetchPosts()
-    }
-  }, [fetchPosts, isActive, refreshKey])
+    fetchData()
+  }, [fetchData, refreshKey])
 
   useEffect(() => {
     setPagination(prev => ({
       ...prev,
-      total: total
+      total
     }))
   }, [total])
 
@@ -253,7 +262,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
             hoverable
             className={styles.itemCard}
             cover={
-              <div className={styles.imageWrapper} onClick={() => handlePostDetail(null, item)}>
+              <div className={styles.imageWrapper}>
                 <Image
                   src={`${URL_SERVER_IMAGE}${item.image_url[0]}`}
                   alt={item.title}
@@ -268,7 +277,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
             ]}
           >
             <Card.Meta
-              title={item.title}
+              title={<span onClick={() => handlePostDetail(null, item)}>{item.title}</span>}
               description={
                 <Space direction="vertical" size="small">
                   <Typography.Text className={styles.descPost}>{item.description}</Typography.Text>
@@ -304,21 +313,6 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
             />
           ))}
         </Tabs>
-
-        <div className={styles.viewToggle}>
-          <Button.Group>
-            <Button
-              type={viewMode === 'table' ? 'primary' : 'default'}
-              icon={<TableOutlined />}
-              onClick={() => dispatch(setViewMode('table'))}
-            />
-            <Button
-              type={viewMode === 'card' ? 'primary' : 'default'}
-              icon={<AppstoreOutlined />}
-              onClick={() => dispatch(setViewMode('card'))}
-            />
-          </Button.Group>
-        </div>
       </div>
 
       {viewMode === 'table' ? (
@@ -343,13 +337,17 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         renderCardView()
       )}
 
+      {posts.length === 0 && viewMode === 'card' && (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
+      )}
+
       <RegistrationDrawer
         visible={visibleDrawer}
         onClose={() => setVisibleDrawer(false)}
         listing={selectedListing}
         receiveRequests={receiveRequests}
         refetch={getRequests}
-        onUpdateSuccess={fetchPosts}
+        onUpdateSuccess={fetchData}
         pagination={requestPagination}
         onPaginationChange={handleRequestPaginationChange}
       />
@@ -360,7 +358,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         listing={selectedListing}
         exchangeRequests={exchangeRequests}
         refetch={getRequests}
-        onUpdateSuccess={fetchPosts}
+        onUpdateSuccess={fetchData}
         pagination={requestPagination}
         onPaginationChange={handleRequestPaginationChange}
       />

@@ -58,6 +58,12 @@
     .ant-card-cover {
       height: 200px;
       overflow: hidden;
+      .ant-image {
+        width: 100%;
+      }
+    }
+    .ant-card-body {
+      padding: 16px;
     }
 
     .ant-card-meta-title {
@@ -76,5 +82,3 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-// ... your existing styles

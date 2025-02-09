@@ -1,51 +1,49 @@
 @import '../../../../../assets/scss/variables.scss';
 
 .listingManagement {
-  .listingHeader {
-    margin-bottom: 24px;
-  }
-
-  .listingTabs {
-    width: 100%;
-    min-height: 600px;
-    height: 100%;
+  .tabsContainer {
     background: $colorWhite;
     padding: 10px 20px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    min-height: 600px;
+    height: 100%;
 
-    .ant-tabs-nav {
-      margin-bottom: 10px;
-    }
+    .tabsWrapper {
+      .tabHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
 
-    .tabLabel {
-      @include flex-center;
-      gap: 4px;
+        .listingTabs {
+          flex: 1;
 
-      .tabCount {
-        color: $colorTextFooter;
-        font-size: 12px;
+          :global(.ant-tabs-nav) {
+            margin-bottom: 0;
+          }
+
+          .tabLabel {
+            @include flex-center;
+            gap: 4px;
+
+            .tabCount {
+              color: $colorTextFooter;
+              font-size: 12px;
+            }
+          }
+        }
+
+        .viewToggle {
+          margin-left: 16px;
+
+          button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+          }
+        }
       }
     }
-  }
-
-  .subTabs {
-    .ant-tabs-nav {
-      margin-bottom: 16px;
-    }
-
-    .subTabLabel {
-      @include flex-center;
-      gap: 4px;
-      font-size: 14px;
-
-      .subTabCount {
-        color: #999;
-        font-size: 12px;
-      }
-    }
-  }
-
-  .emptyState {
-    padding: 48px 0;
   }
 }

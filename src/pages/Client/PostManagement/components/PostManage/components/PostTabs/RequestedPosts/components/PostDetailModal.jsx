@@ -81,7 +81,9 @@ const PostDetailModal = ({ isVisible, onClose, post }) => {
                 <Title level={4} style={{ margin: 0 }}>
                   {post.post_id.user_id?.name || 'Không xác định'}
                 </Title>
-                <Text type="secondary">{post.post_id.user_id?.email}</Text>
+                <Text type="secondary">
+                  {post.post_id.user_id?.email ? `xxxx${post?.post_id?.user_id?.email.slice(-12)}` : ''}
+                </Text>
               </div>
             </div>
           </Card>

@@ -41,7 +41,7 @@ const initialState = {
   lastCacheUpdate: null,
   postDetail: null,
 
-  viewMode: 'table'
+  viewMode: 'card'
 }
 
 const postSlice = createSlice({
