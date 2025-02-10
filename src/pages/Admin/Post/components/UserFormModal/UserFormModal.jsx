@@ -52,8 +52,6 @@ const UserFormModal = ({ visible, isEditing, initialUser, onClose }) => {
         })
         .catch(() => message.error('Cập nhật người dùng thất bại'))
     } else {
-      // Create user
-      console.log(submitData)
       dispatch(createUser(submitData))
         .then(() => {
           message.success('Thêm người dùng thành công')

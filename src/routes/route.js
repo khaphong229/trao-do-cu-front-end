@@ -1,6 +1,6 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom'
-import Admin from 'layouts/Admin'
-import LayoutClient from 'layouts/Client/HomePage'
+import { createBrowserRouter } from 'react-router-dom'
+import AdminLayout from 'layouts/Admin'
+import ClientLayout from 'layouts/Client/HomePage'
 import { ProtectedRoute } from './protectedRoute'
 import { lazy, Suspense } from 'react'
 
@@ -23,119 +23,126 @@ const router = createBrowserRouter([
   {
     element: (
       <ErrorBoundary>
-        {/* <RouterWithLoading /> */}
-        <Outlet />
+        <ProtectedRoute requireAuth={false} adminOnly={false} />
       </ErrorBoundary>
     ),
     errorElement: <NotFound />,
     children: [
-      // Public routes (wrapped with ProtectedRoute)
       {
-        element: <ProtectedRoute requireAuth={false} adminOnly={false} />,
+        path: '/',
         children: [
           {
-            path: '',
+            index: true,
             element: (
               <Suspense>
-                <LayoutClient />
-              </Suspense>
-            ),
-            children: [
-              {
-                path: 'not-found',
-                element: (
-                  <Suspense>
-                    <NotFound />
-                  </Suspense>
-                )
-              },
-              {
-                index: true,
-                element: (
-                  <Suspense>
-                    <Home />
-                  </Suspense>
-                )
-              },
-              {
-                path: 'login',
-                element: (
-                  <Suspense>
-                    <Login />
-                  </Suspense>
-                )
-              },
-              {
-                path: 'register',
-                element: (
-                  <Suspense>
-                    <Register />
-                  </Suspense>
-                )
-              },
-              {
-                path: 'post/:id/detail',
-                element: (
-                  <Suspense>
-                    <PostDetail />
-                  </Suspense>
-                )
-              },
-              {
-                path: 'post/category/:category_id',
-                element: (
-                  <Suspense>
-                    <PostCategory />
-                  </Suspense>
-                )
-              },
-              {
-                path: 'post-article',
-                element: (
-                  <Suspense>
-                    <PostArticle />
-                  </Suspense>
-                )
-              },
-              {
-                element: <ProtectedRoute requireAuth={true} adminOnly={false} />,
-                children: [
-                  {
-                    path: 'management-post',
-                    element: (
-                      <Suspense>
-                        <PostManagementClient />
-                      </Suspense>
-                    )
-                  },
-                  {
-                    path: 'profile',
-                    element: (
-                      <Suspense>
-                        <ProfileUser />
-                      </Suspense>
-                    )
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            path: 'login-success/:id',
-            element: (
-              <Suspense>
-                <LoginGoogle />
+                <ClientLayout>
+                  <Home />
+                </ClientLayout>
               </Suspense>
             )
+          },
+          {
+            path: 'login',
+            element: (
+              <Suspense>
+                <ClientLayout>
+                  <Login />
+                </ClientLayout>
+              </Suspense>
+            )
+          },
+          {
+            path: 'register',
+            element: (
+              <Suspense>
+                <ClientLayout>
+                  <Register />
+                </ClientLayout>
+              </Suspense>
+            )
+          },
+          {
+            path: 'post/:id/detail',
+            element: (
+              <Suspense>
+                <ClientLayout>
+                  <PostDetail />
+                </ClientLayout>
+              </Suspense>
+            )
+          },
+          {
+            path: 'post/category/:category_id',
+            element: (
+              <Suspense>
+                <ClientLayout>
+                  <PostCategory />
+                </ClientLayout>
+              </Suspense>
+            )
+          },
+          {
+            path: 'post-article',
+            element: (
+              <Suspense>
+                <ClientLayout>
+                  <PostArticle />
+                </ClientLayout>
+              </Suspense>
+            )
+          },
+          // Protected Client Routes
+          {
+            element: <ProtectedRoute requireAuth={true} adminOnly={false} />,
+            children: [
+              {
+                path: 'management-post',
+                element: (
+                  <Suspense>
+                    <ClientLayout>
+                      <PostManagementClient />
+                    </ClientLayout>
+                  </Suspense>
+                )
+              },
+              {
+                path: 'profile',
+                element: (
+                  <Suspense>
+                    <ClientLayout>
+                      <ProfileUser />
+                    </ClientLayout>
+                  </Suspense>
+                )
+              }
+            ]
           }
         ]
       },
 
-      // Admin routes
+      // Special Routes
+      {
+        path: 'login-success/:id',
+        element: (
+          <Suspense>
+            <LoginGoogle />
+          </Suspense>
+        )
+      },
+      {
+        path: 'not-found',
+        element: (
+          <Suspense>
+            <NotFound />
+          </Suspense>
+        )
+      },
+
+      // Admin Routes
       {
         path: 'admin',
         children: [
-          // Admin login route
+          // Admin Login
           {
             element: <ProtectedRoute requireAuth={false} adminOnly={true} />,
             children: [
@@ -149,43 +156,39 @@ const router = createBrowserRouter([
               }
             ]
           },
-
-          // Protected admin routes
+          // Protected Admin Routes
           {
             element: <ProtectedRoute requireAuth={true} adminOnly={true} />,
             children: [
               {
+                path: 'dashboard',
                 element: (
                   <Suspense>
-                    <Admin />
+                    <AdminLayout>
+                      <DashboardUI />
+                    </AdminLayout>
                   </Suspense>
-                ),
-                children: [
-                  {
-                    path: 'dashboard',
-                    element: (
-                      <Suspense>
-                        <DashboardUI />
-                      </Suspense>
-                    )
-                  },
-                  {
-                    path: 'user',
-                    element: (
-                      <Suspense>
-                        <UserManagement />
-                      </Suspense>
-                    )
-                  },
-                  {
-                    path: 'post',
-                    element: (
-                      <Suspense>
-                        <PostManagement />
-                      </Suspense>
-                    )
-                  }
-                ]
+                )
+              },
+              {
+                path: 'user',
+                element: (
+                  <Suspense>
+                    <AdminLayout>
+                      <UserManagement />
+                    </AdminLayout>
+                  </Suspense>
+                )
+              },
+              {
+                path: 'post',
+                element: (
+                  <Suspense>
+                    <AdminLayout>
+                      <PostManagement />
+                    </AdminLayout>
+                  </Suspense>
+                )
               }
             ]
           }

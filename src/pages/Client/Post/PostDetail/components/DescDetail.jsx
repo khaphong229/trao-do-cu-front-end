@@ -23,7 +23,7 @@ const DescDetail = () => {
           </>
         )}
         {selectedPost?.user_id?.phone && (
-          <Link>{`Số điện thoại: ${selectedPost.user_id.phone.slice(0, 3)}xxxxxxx}`}</Link>
+          <Link>{`Số điện thoại: ${selectedPost.user_id.phone.slice(0, 3)}xxxxxxx`}</Link>
         )}
       </Typography>
 
