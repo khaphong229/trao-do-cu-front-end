@@ -47,7 +47,7 @@ const PostList = () => {
       }
     } catch (error) {
       if (error.response.data.status === 404) {
-        console.log(error, 'okk')
+        throw error
       }
     }
   }, [])

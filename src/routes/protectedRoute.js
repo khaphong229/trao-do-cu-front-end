@@ -7,7 +7,7 @@ import { getCurrentUser, logoutUser } from '../features/auth/authThunks'
 
 export const ProtectedRoute = ({ requireAuth = true, adminOnly = false }) => {
   const dispatch = useDispatch()
-  const { isAuthenticated, isAdmin, isLoading } = useSelector(state => state.auth)
+  const { isAuthenticated, isAdmin } = useSelector(state => state.auth)
   const location = useLocation()
 
   useEffect(() => {

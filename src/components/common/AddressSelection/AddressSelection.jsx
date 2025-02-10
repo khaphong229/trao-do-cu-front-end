@@ -19,7 +19,8 @@ export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, o
       }
     } catch (error) {
       if (error.response.data.status === 404) {
-        console.log(error, 'okk')
+        // console.log(error, 'okk')
+        throw error
       }
     }
   }, [])

@@ -26,7 +26,6 @@ export const createApi = () => {
 
   instance.interceptors.response.use(
     response => {
-      // console.log(response, 'axi')
       return response
     },
     error => {

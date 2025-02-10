@@ -9,13 +9,13 @@ import { Layout, Menu, message, Popover, theme } from 'antd'
 import styles from './styles.module.scss'
 import logo from '../../assets/images/final/logo_traodocu.png'
 import avatar from '../../assets/images/logo/avtDefault.webp'
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { removeAuthToken } from '../../utils/localStorageUtils'
 import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser } from '../../features/auth/authThunks'
 const { Header, Sider, Content } = Layout
 
-const App = () => {
+const App = ({ children }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [current, setCurrent] = useState('1')
@@ -23,7 +23,6 @@ const App = () => {
   const {
     token: { colorBgContainer, borderRadiusLG }
   } = theme.useToken()
-  // const onSearch = (value, _e, info) => console.log(info?.source, value)
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap()
@@ -48,12 +47,6 @@ const App = () => {
         }}
         breakpoint="lg"
         collapsedWidth="0"
-        onBreakpoint={broken => {
-          // console.log(broken)
-        }}
-        onCollapse={(collapsed, type) => {
-          // console.log(collapsed, type)
-        }}
       >
         <div className={styles.demoLogoVertical}>
           <img src={logo} alt="" className={styles.demoLogoImg} />
@@ -109,12 +102,6 @@ const App = () => {
           <div className={styles.headerWrap}>
             <div className={styles.headerLeft}>{/* <span className={styles.headerText}>Bảng điều khiển</span> */}</div>
             <div className={styles.headerRight}>
-              {/* <Search
-                className={styles.headerSearch}
-                placeholder="Nhập nội dung tìm kiếm"
-                allowClear
-                onSearch={onSearch}
-              /> */}
               <IoMdSettings />
               <IoNotifications />
               <Popover placement="bottomRight" title={'phong'} content={'thông tin'}>
@@ -135,7 +122,7 @@ const App = () => {
               borderRadius: borderRadiusLG
             }}
           >
-            <Outlet />
+            {children}
           </div>
         </Content>
       </Layout>

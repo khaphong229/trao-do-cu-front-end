@@ -11,9 +11,6 @@ const { Text } = Typography
 const PostList = () => {
   const [likedItems, setLikedItems] = useState({})
   const dispatch = useDispatch()
-  // const handleChange = value => {
-  //   console.log(`selected ${value}`)
-  // }
   const toggleLike = id => {
     setLikedItems(prev => ({ ...prev, [id]: !prev[id] }))
   }
