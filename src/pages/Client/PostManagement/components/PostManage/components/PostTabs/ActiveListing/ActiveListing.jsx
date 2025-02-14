@@ -69,7 +69,8 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         })
       }
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      // console.error('Error fetching posts:', error)
+      throw error
     }
   }, [dispatch, fetchParams, isActive])
 

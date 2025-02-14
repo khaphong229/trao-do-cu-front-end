@@ -1,14 +1,14 @@
 import { message } from 'antd'
 import { getCurrentUser, loginGoogle } from 'features/auth/authThunks'
-import React, { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { setAuthToken } from 'utils/localStorageUtils'
 
 export default function LoginGoogle() {
   const { id } = useParams()
-  const dispatch = useDispatch()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const fetch = useCallback(async () => {
     try {
@@ -24,12 +24,11 @@ export default function LoginGoogle() {
       }
     } catch (error) {
       message.error('Đăng nhập thất bại! Vui lòng thử lại.')
+      navigate('/login')
     }
   }, [dispatch, id, navigate])
 
   useEffect(() => {
     fetch()
   }, [fetch])
-
-  return <div>Hello</div>
 }

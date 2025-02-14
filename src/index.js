@@ -7,7 +7,7 @@ import { store } from './redux/store'
 import { RouterProvider } from 'react-router-dom'
 import router from './routes/route'
 import { ConfigProvider, Empty } from 'antd'
-import { configAntd } from './config/antd'
+import { configAntd, localeConfigAntd } from './config/antd'
 import './assets/scss/common.scss'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
@@ -15,6 +15,7 @@ root.render(
   <ConfigProvider
     renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />}
     theme={configAntd}
+    locale={localeConfigAntd}
   >
     <Provider store={store}>
       <RouterProvider router={router} />

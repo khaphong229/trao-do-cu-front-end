@@ -72,7 +72,8 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
         })
       }
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      // console.error('Error fetching posts:', error)
+      throw error
     }
   }, [dispatch, fetchParams, isActive])
 
