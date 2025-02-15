@@ -14,15 +14,26 @@ export const UseListNotification = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [allNotifications, setAllNotifications] = useState([])
+  const [lastPolledCount, setLastPolledCount] = useState(0)
   const { data: notifications, total, isLoading } = useSelector(state => state.notification.notifications)
   const { isAuthenticated } = useSelector(state => state.auth)
 
   const loadNotifications = useCallback(
-    async (page = 1) => {
+    async (page = 1, isPolling = false) => {
       if (!isAuthenticated) return
 
       try {
         const response = await dispatch(getNotificationPagination({ current: page, pageSize: 10 }))
+
+        if (isPolling) {
+          const currentUnreadCount = response.payload.data.data.filter(n => !n.isRead).length
+          if (currentUnreadCount !== lastPolledCount) {
+            setLastPolledCount(currentUnreadCount)
+            setAllNotifications(response.payload.data.data)
+          }
+          return
+        }
+
         setIsLoaded(true)
 
         const totalItems = response.payload.data.total
@@ -40,20 +51,32 @@ export const UseListNotification = () => {
         console.error('Failed to load notifications:', error)
       }
     },
-    [dispatch, isAuthenticated]
+    [dispatch, isAuthenticated, lastPolledCount]
   )
+
+  // Set up polling interval
+  useEffect(() => {
+    if (!isAuthenticated) return
+
+    const pollInterval = setInterval(() => {
+      loadNotifications(1, true)
+    }, 60000) // Poll every minute
+
+    return () => clearInterval(pollInterval)
+  }, [isAuthenticated, loadNotifications])
+
+  // Initial load
+  useEffect(() => {
+    if (isAuthenticated && !isLoaded) {
+      loadNotifications(1)
+    }
+  }, [isAuthenticated, isLoaded, loadNotifications])
 
   const loadMore = useCallback(() => {
     if (hasMore && !isLoading) {
       loadNotifications(currentPage + 1)
     }
   }, [hasMore, isLoading, currentPage, loadNotifications])
-
-  useEffect(() => {
-    if (isAuthenticated && !isLoaded) {
-      loadNotifications(1)
-    }
-  }, [isAuthenticated, isLoaded, loadNotifications])
 
   const formatTimeAgo = timestamp => {
     return moment(timestamp).locale('vi', vi).fromNow()
