@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Card, Row, Col, Button, Avatar, Tooltip } from 'antd'
+import { Card, Row, Col, Button, Avatar, Tooltip, Badge, Empty, Typography } from 'antd'
 import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
@@ -18,12 +18,12 @@ import { GiftRequestConfirmModal } from 'pages/Client/Request/GiftRequest/compon
 import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange/FormExchange'
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { URL_SERVER_IMAGE } from 'config/url_server'
-import { ArrowDownOutlined } from '@ant-design/icons'
+import { ArrowDownOutlined, GiftOutlined, LoadingOutlined, SwapOutlined } from '@ant-design/icons'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
-
+const { Title, Text, Paragraph } = Typography
 const PostNews = () => {
   const [curPage, setCurPage] = useState(1)
   const [isSearchMode, setIsSearchMode] = useState(false)
@@ -78,11 +78,21 @@ const PostNews = () => {
   const renderActionButton = item => {
     if (!user) {
       return item.type === 'gift' ? (
-        <AuthButton size="small" color="primary" variant="filled" onClick={() => handleGiftRequest(item, item.type)}>
+        <AuthButton
+          icon={<GiftOutlined />}
+          className={styles.actionButton}
+          type="primary"
+          onClick={() => handleGiftRequest(item, item.type)}
+        >
           Nhận
         </AuthButton>
       ) : (
-        <AuthButton size="small" type="primary" onClick={() => handleGiftRequest(item, item.type)}>
+        <AuthButton
+          icon={<SwapOutlined />}
+          className={styles.actionButton}
+          type="default"
+          onClick={() => handleGiftRequest(item, item.type)}
+        >
           Đổi
         </AuthButton>
       )
@@ -90,107 +100,131 @@ const PostNews = () => {
 
     if (item.isRequested) {
       return (
-        <Button size="small" disabled>
+        <Button className={styles.actionButton} disabled icon={<LoadingOutlined />}>
           Đã yêu cầu
         </Button>
       )
     }
-    const isMe = item?.user_id?._id === user._id ? true : false
-    return item.type === 'gift' ? (
-      <Tooltip title={isMe && 'Không thể thực hiện thao tác với bài đăng của bạn'}>
-        <AuthButton
-          disabled={isMe}
-          size="small"
-          color="primary"
-          variant="filled"
-          onClick={() => handleGiftRequest(item, item.type)}
-        >
-          Nhận
-        </AuthButton>
-      </Tooltip>
-    ) : (
-      <Tooltip title={isMe && 'Không thể thực hiện thao tác với bài đăng của bạn'}>
-        <AuthButton disabled={isMe} size="small" type="primary" onClick={() => handleGiftRequest(item, item.type)}>
-          Đổi
-        </AuthButton>
+
+    const isMe = item?.user_id?._id === user._id
+
+    return (
+      <Tooltip title={isMe ? 'Không thể thực hiện thao tác với bài đăng của bạn' : ''}>
+        {item.type === 'gift' ? (
+          <AuthButton
+            icon={<GiftOutlined />}
+            className={styles.actionButton}
+            type="primary"
+            disabled={isMe}
+            onClick={() => handleGiftRequest(item, item.type)}
+          >
+            Nhận
+          </AuthButton>
+        ) : (
+          <AuthButton
+            icon={<SwapOutlined />}
+            className={styles.actionButton}
+            type="default"
+            disabled={isMe}
+            onClick={() => handleGiftRequest(item, item.type)}
+          >
+            Đổi
+          </AuthButton>
+        )}
       </Tooltip>
     )
   }
-
   return (
     <>
       <div className={styles.postWrap}>
-        <span className={styles.postTitle}>{isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}</span>
+        <Title level={4} className={styles.postTitle}>
+          {isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}
+        </Title>
 
         {(isLoading || isError) && (
-          <Row justify="start" className={styles.itemsGrid}>
+          <Row gutter={[16, 16]} className={styles.itemsGrid}>
             {[...Array(8)].map((_, index) => (
-              <Col key={index} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
+              <Col key={index} xs={24} sm={12} md={8} lg={6}>
                 <PostCardSkeleton />
               </Col>
             ))}
           </Row>
         )}
 
-        {filteredPosts && filteredPosts.length > 0 && (
-          <Row justify="start" className={styles.itemsGrid}>
+        {filteredPosts && filteredPosts.length > 0 ? (
+          <Row gutter={[16, 16]} className={styles.itemsGrid}>
             {filteredPosts.map(item => (
-              <Col key={item._id} xs={12} sm={8} md={6} lg={6} className={styles.itemCol}>
-                <Card
-                  hoverable
-                  className={styles.itemCard}
-                  cover={
-                    <div className={styles.imageWrapper} onClick={() => goDetail(item._id)}>
-                      <img
-                        loading="lazy"
-                        alt={item.title}
-                        src={getValidImageUrl(item.image_url)}
-                        onError={e => {
-                          e.target.onerror = null
-                          e.target.src = imageNotFound
-                        }}
-                      />
-                    </div>
-                  }
+              <Col key={item._id} xs={24} sm={12} md={8} lg={6}>
+                <Badge.Ribbon
+                  text={item.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
+                  color={item.type === 'gift' ? 'red' : 'blue'}
                 >
-                  <div className={styles.cardContent}>
-                    <p className={styles.itemTitle} onClick={() => goDetail(item._id)}>
-                      {item.title}
-                    </p>
-                    <p className={styles.itemDesc}>{item?.description || ''}</p>
-                    <div className={styles.statusRow}>
-                      <span className={styles.status}>{item.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>
-                      {renderActionButton(item)}
-                    </div>
+                  <Card
+                    hoverable
+                    className={styles.itemCard}
+                    cover={
+                      <div className={styles.imageWrapper} onClick={() => goDetail(item._id)}>
+                        <img
+                          loading="lazy"
+                          alt={item.title}
+                          src={getValidImageUrl(item.image_url) || '/placeholder.svg'}
+                          onError={e => {
+                            e.target.onerror = null
+                            e.target.src = imageNotFound
+                          }}
+                        />
+                      </div>
+                    }
+                    actions={[renderActionButton(item)]}
+                  >
+                    <Card.Meta
+                      title={
+                        <Tooltip title={item.title}>
+                          <Text className={styles.itemTitle} onClick={() => goDetail(item._id)}>
+                            {item.title}
+                          </Text>
+                        </Tooltip>
+                      }
+                      description={
+                        <Paragraph className={styles.itemDesc} ellipsis={{ rows: 2 }}>
+                          {item?.description || ''}
+                        </Paragraph>
+                      }
+                    />
+
                     <div className={styles.locationRow}>
                       <div className={styles.userGroup}>
                         <Avatar
+                          size="small"
                           className={styles.avtUser}
                           src={item?.user_id?.avatar ? `${URL_SERVER_IMAGE}${item.user_id.avatar}` : avt}
                         />
-                        <span className={styles.time}>
+                        <Text type="secondary" className={styles.time}>
                           {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
-                        </span>
+                        </Text>
                       </div>
-                      <span className={styles.location}>
+                      <Text type="secondary" className={styles.location}>
                         {item?.city?.split('Thành phố')[1] || item?.city?.split('Tỉnh')[1]}
-                      </span>
+                      </Text>
                     </div>
-                  </div>
-                </Card>
+                  </Card>
+                </Badge.Ribbon>
               </Col>
             ))}
           </Row>
+        ) : (
+          !isLoading && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
         )}
 
         {hasMore && !isSearchMode && (
           <div className={styles.buttonWrapper}>
             <Button
+              type="primary"
+              shape="circle"
               icon={<ArrowDownOutlined />}
               onClick={handleLoadMore}
               loading={isLoading}
-              type="link"
-              className={styles.textMore}
+              className={styles.loadMoreButton}
             />
           </div>
         )}
