@@ -183,7 +183,7 @@ $transition-speed: 0.3s ease;
     justify-content: flex-end;
 
     .message-text {
-      background: #6d4fc2;
+      background: $colorMain;
       color: white;
       border-radius: 13px 13px 3px 13px;
     }

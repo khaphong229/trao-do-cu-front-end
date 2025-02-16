@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import styles from '../scss/ChatBot.module.scss'
 import { ChatForm } from 'components/ChatForm'
 import { ChatMessage } from 'components/ChatMessage'
-import chatboticon from 'assets/images/logo/chatbot-icon.png'
 const ChatBot = () => {
   const [chatHistory, setChatHistory] = useState([
     {
@@ -21,10 +20,12 @@ const ChatBot = () => {
       setChatHistory(prev => [...prev.filter(msg => msg.text !== 'Đang trả lời...'), { role: 'model', text, isError }])
     }
 
-    // Định dạng lại history để đảm bảo role hợp lệ
-    history = history.map(({ role, text }) => ({
-      role: role === 'user' ? 'user' : 'model',
-      parts: [{ text }]
+    const formattedHistory = history.map(({ role, text }) => ({
+      parts: [
+        {
+          text: role === 'user' ? `${text}` : text
+        }
+      ]
     }))
 
     const apiUrl = process.env.REACT_APP_API_URL
@@ -32,9 +33,34 @@ const ChatBot = () => {
     const requestOption = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: history })
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: `Hãy trả lời bằng tiếng Việt có dấu đầy đủ. Dựa vào lịch sử cuộc trò chuyện sau để trả lời: ${JSON.stringify(formattedHistory)}`
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024
+        },
+        safetySettings: [
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          },
+          {
+            category: 'HARM_CATEGORY_HATE_SPEECH',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          }
+        ]
+      })
     }
-
     try {
       const response = await fetch(apiUrl, requestOption)
       const data = await response.json()
