@@ -11,7 +11,7 @@ export const ChatForm = ({ setChatHistory, generateBotResponse, chatHistory }) =
     inputRef.current.value = ''
     setChatHistory(history => [...history, { role: 'user', text: userMessage }])
     setTimeout(() => {
-      setChatHistory(history => [...history, { role: 'model', text: 'Thinking...' }])
+      setChatHistory(history => [...history, { role: 'model', text: 'Đang trả lời...' }])
       generateBotResponse([...chatHistory, { role: 'user', text: userMessage }])
     }, 600)
   }
@@ -21,7 +21,7 @@ export const ChatForm = ({ setChatHistory, generateBotResponse, chatHistory }) =
       <input
         ref={inputRef}
         type="text"
-        placeholder="Please enter a message..."
+        placeholder="Vui lòng nhập câu hỏi..."
         className={styles['message-input']}
         required
       />

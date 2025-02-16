@@ -1,11 +1,10 @@
-import { Form, Input } from 'antd'
 import ChatbotIcon from 'components/common/ChatBot'
 import { companyInfo } from 'constants/companyInfo'
 import { useEffect, useRef, useState } from 'react'
 import styles from '../scss/ChatBot.module.scss'
 import { ChatForm } from 'components/ChatForm'
 import { ChatMessage } from 'components/ChatMessage'
-
+import chatboticon from 'assets/images/logo/chatbot-icon.png'
 const ChatBot = () => {
   const [chatHistory, setChatHistory] = useState([
     {
@@ -19,7 +18,7 @@ const ChatBot = () => {
 
   const generateBotResponse = async history => {
     const updateHistory = (text, isError = false) => {
-      setChatHistory(prev => [...prev.filter(msg => msg.text !== 'Thinking...'), { role: 'model', text, isError }])
+      setChatHistory(prev => [...prev.filter(msg => msg.text !== 'Đang trả lời...'), { role: 'model', text, isError }])
     }
 
     // Định dạng lại history để đảm bảo role hợp lệ
@@ -86,7 +85,7 @@ const ChatBot = () => {
         <div className={styles['chat-header']}>
           <div className={styles['header-info']}>
             <ChatbotIcon />
-            <h2 className={styles['logo-text']}>Chatbot</h2>
+            <h2 className={styles['logo-text']}>Chatbot Trao Đồ Cũ</h2>
           </div>
           <button
             style={{ fontFamily: 'Material Symbols Rounded' }}
@@ -101,7 +100,7 @@ const ChatBot = () => {
         <div className={styles['chat-body']} ref={chatBodyRef}>
           <div className={`${styles.message} ${styles['bot-message']}`}>
             <ChatbotIcon />
-            <p className={styles['message-text']}>Hey there! How can I help you today?</p>
+            <p className={styles['message-text']}>Chào bạn! Tôi có thể giúp gì bạn hôm nay?</p>
           </div>
 
           {chatHistory.map((chat, index) => (
