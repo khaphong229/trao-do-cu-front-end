@@ -18,7 +18,7 @@ import { GiftRequestConfirmModal } from 'pages/Client/Request/GiftRequest/compon
 import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange/FormExchange'
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { URL_SERVER_IMAGE } from 'config/url_server'
-import { ArrowDownOutlined, GiftOutlined, LoadingOutlined, SwapOutlined } from '@ant-design/icons'
+import { ArrowDownOutlined, GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 
 dayjs.extend(relativeTime)
@@ -100,7 +100,7 @@ const PostNews = () => {
 
     if (item.isRequested) {
       return (
-        <Button className={styles.actionButton} disabled icon={<LoadingOutlined />}>
+        <Button className={styles.actionButton} disabled>
           Đã yêu cầu
         </Button>
       )
@@ -137,12 +137,12 @@ const PostNews = () => {
   return (
     <>
       <div className={styles.postWrap}>
-        <Title level={4} className={styles.postTitle}>
+        <Title level={5} className={styles.postTitle}>
           {isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}
         </Title>
 
         {(isLoading || isError) && (
-          <Row gutter={[16, 16]} className={styles.itemsGrid}>
+          <Row gutter={[16, 0]} className={styles.itemsGrid}>
             {[...Array(8)].map((_, index) => (
               <Col key={index} xs={24} sm={12} md={8} lg={6}>
                 <PostCardSkeleton />
@@ -152,7 +152,7 @@ const PostNews = () => {
         )}
 
         {filteredPosts && filteredPosts.length > 0 ? (
-          <Row gutter={[16, 16]} className={styles.itemsGrid}>
+          <Row gutter={[16, 0]} className={styles.itemsGrid}>
             {filteredPosts.map(item => (
               <Col key={item._id} xs={24} sm={12} md={8} lg={6}>
                 <Badge.Ribbon
@@ -219,12 +219,11 @@ const PostNews = () => {
         {hasMore && !isSearchMode && (
           <div className={styles.buttonWrapper}>
             <Button
-              type="primary"
-              shape="circle"
               icon={<ArrowDownOutlined />}
               onClick={handleLoadMore}
               loading={isLoading}
-              className={styles.loadMoreButton}
+              type="link"
+              className={styles.textMore}
             />
           </div>
         )}

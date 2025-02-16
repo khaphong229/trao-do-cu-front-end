@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react'
+import React, { useRef, useCallback } from 'react'
 import { Card, List, Typography, Button, Empty, Spin, Menu, Divider, Tag, Avatar } from 'antd'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { UseListNotification } from 'hooks/UseListNotification'
