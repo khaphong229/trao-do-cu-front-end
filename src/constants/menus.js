@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import styles from './NotificationMenu.module.scss'
 import { menuItems } from './data'
 import avatar from 'assets/images/logo/avtDefault.webp'
+import { useAvatar } from 'hooks/useAvatar'
 
 const { Text } = Typography
 
@@ -124,7 +125,8 @@ export const NotificationMenu = () => {
   )
 }
 
-export const menu = user => {
+export const UserMenu = user => {
+  const { avatar } = useAvatar()
   return (
     <Menu style={{ width: 200 }}>
       <div
@@ -136,10 +138,7 @@ export const menu = user => {
           gap: '10px'
         }}
       >
-        <Avatar
-          size={40}
-          src={user?.avatar ? (user?.isGoogle ? user.avatar : `${URL_SERVER_IMAGE}${user.avatar}`) : avatar}
-        />
+        <Avatar size={40} src={avatar} />
         <Text level={5}>{user.name || 'Tài khoản'}</Text>
       </div>
       <Divider

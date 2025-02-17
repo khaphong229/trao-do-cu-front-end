@@ -6,14 +6,14 @@ import CreatePostModal from '../../../../../../pages/Client/Post/CreatePost'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCreateModalVisibility, setShowTour } from 'features/client/post/postSlice'
 import withAuth from 'hooks/useAuth'
-import avtDefault from 'assets/images/logo/avtDefault.webp'
-import { URL_SERVER_IMAGE } from 'config/url_server'
 import { UseListNotification } from 'hooks/UseListNotification'
 import { NotificationMenu } from 'constants/menus'
+import { useAvatar } from 'hooks/useAvatar'
 
 const HeaderIcons = ({ menu }) => {
   const dispatch = useDispatch()
   const AuthenticatedButton = withAuth(Button)
+  const { avatar } = useAvatar()
   const { isAuthenticated, user } = useSelector(state => state.auth)
   const { unreadCount, loadNotifications } = UseListNotification()
 
@@ -33,11 +33,7 @@ const HeaderIcons = ({ menu }) => {
         </Dropdown>
         <Dropdown overlay={menu} placement="bottomRight">
           <Space className={styles.Avatar} style={{ cursor: 'pointer', color: '#fff' }}>
-            <Avatar
-              className={styles.avt}
-              src={user?.avatar ? (user?.isGoogle ? user.avatar : `${URL_SERVER_IMAGE}${user.avatar}`) : avtDefault}
-              size={32}
-            />
+            <Avatar className={styles.avt} src={avatar} size={32} />
             {!isAuthenticated ? 'Tài khoản' : user.name}
             <DownOutlined className={styles.IconDown} />
           </Space>

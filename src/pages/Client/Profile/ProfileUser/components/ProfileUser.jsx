@@ -19,14 +19,14 @@ import dayjs from 'dayjs'
 import { uploadAvatar } from 'features/upload/uploadThunks'
 import { useEffect, useState } from 'react'
 import { changePassWord, getCurrentUser, updateUserProfile } from 'features/auth/authThunks'
-
-import { URL_SERVER_IMAGE } from 'config/url_server'
 import Title from 'antd/es/skeleton/Title'
+import { useAvatar } from 'hooks/useAvatar'
 
 const { TabPane } = Tabs
 
 const ProfilePage = () => {
   const dispatch = useDispatch()
+  const { avatar } = useAvatar()
   const {
     user: userData,
     isLoading,
@@ -159,13 +159,7 @@ const ProfilePage = () => {
           <div className={styles['profile-header']}>
             <div className={styles['avatar-container']}>
               <Image
-                src={
-                  userData?.avatar
-                    ? userData?.isGoogle
-                      ? userData.avatar
-                      : `${URL_SERVER_IMAGE}${userData.avatar}`
-                    : Avatar
-                }
+                src={avatar}
                 alt="Ảnh đại diện"
                 className={styles.avatar}
                 preview={false}

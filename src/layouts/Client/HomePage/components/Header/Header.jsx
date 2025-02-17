@@ -7,7 +7,7 @@ import HeaderIcons from './components/HeaderIcons'
 import styles from './styles.module.scss'
 
 import { categoryData } from '../../../../../constants/data'
-import { menu } from '../../../../../constants/menus'
+import { UserMenu } from '../../../../../constants/menus'
 import { useSelector } from 'react-redux'
 
 function Header() {
@@ -27,7 +27,7 @@ function Header() {
               <SearchBar />
             </Col>
             <Col className={styles.postContent}>
-              <HeaderIcons menu={menu(user)} />
+              <HeaderIcons menu={UserMenu(user)} />
             </Col>
           </Row>
         </div>
