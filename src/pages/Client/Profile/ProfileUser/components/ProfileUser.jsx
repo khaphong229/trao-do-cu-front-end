@@ -8,9 +8,7 @@ import {
   FacebookOutlined,
   TwitterOutlined,
   MailOutlined,
-  CameraOutlined,
-  GoogleOutlined,
-  AppleOutlined
+  CameraOutlined
 } from '@ant-design/icons'
 import Avatar from 'assets/images/logo/avtDefault.webp'
 import styles from '../scss/ProfileUser.module.scss'
@@ -21,10 +19,13 @@ import { useEffect, useState } from 'react'
 import { changePassWord, getCurrentUser, updateUserProfile } from 'features/auth/authThunks'
 import Title from 'antd/es/skeleton/Title'
 import { useAvatar } from 'hooks/useAvatar'
+import { useSearchParams } from 'react-router-dom'
 
 const { TabPane } = Tabs
 
 const ProfilePage = () => {
+  const [searchParams] = useSearchParams()
+
   const dispatch = useDispatch()
   const { avatar } = useAvatar()
   const {
@@ -236,7 +237,7 @@ const ProfilePage = () => {
           </div>
         </Card>
         <div className={styles['personal-info-wrapper']}>
-          <Tabs defaultActiveKey="personal">
+          <Tabs defaultActiveKey={searchParams.get('tab')}>
             <TabPane tab="Thông tin cá nhân" key="personal">
               {/* <Card className={styles.card}> */}
               <Title level={3}>Hồ sơ cá nhân</Title>
@@ -352,7 +353,7 @@ const ProfilePage = () => {
               </>
             )}
 
-            <TabPane tab="Liên kết mạng xã hội" key="linksocialmedia">
+            {/* <TabPane tab="Liên kết mạng xã hội" key="linksocialmedia">
               <Card className={styles['social-links-card']}>
                 <div className={styles['card-header']}>
                   <h2 className={styles['card-title']}>Liên kết mạng xã hội</h2>
@@ -391,7 +392,7 @@ const ProfilePage = () => {
                   Liên kết với Apple ID
                 </Button>
               </Card>
-            </TabPane>
+            </TabPane> */}
           </Tabs>
         </div>
       </div>

@@ -116,15 +116,15 @@ export const menuItems = [
     title: 'Quản lý bài đăng',
     items: [
       {
-        label: <NavigateItem to="/management-post?type=active">Đang hiển thị</NavigateItem>,
+        label: <NavigateItem to="/management-post?tab=active">Đang hiển thị</NavigateItem>,
         icon: <PlayCircleOutlined style={{ color: '#00b96b' }} />
       },
       {
-        label: <NavigateItem to="/management-post?type=expired">Đã thành công</NavigateItem>,
+        label: <NavigateItem to="/management-post?tab=expired">Đã thành công</NavigateItem>,
         icon: <CheckSquareOutlined style={{ color: '#00b96b' }} />
       },
       {
-        label: <NavigateItem to="/management-post?type=requested">Đã yêu cầu</NavigateItem>,
+        label: <NavigateItem to="/management-post?tab=requested">Đã yêu cầu</NavigateItem>,
         icon: <ArrowRightOutlined style={{ color: '#00b96b' }} />
       }
     ]
@@ -143,11 +143,11 @@ export const menuItems = [
     title: 'Tài khoản của tôi',
     items: [
       {
-        name: <NavigateItem to="/profile">Tài khoản của tôi</NavigateItem>,
+        name: <NavigateItem to="/profile?tab=personal">Tài khoản của tôi</NavigateItem>,
         icon: <UserOutlined style={{ color: '#00b96b' }} />
       },
       {
-        name: <NavigateItem to="/edit-profile">Đổi mật khẩu</NavigateItem>,
+        name: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
         icon: <LockOutlined style={{ color: '#00b96b' }} />
       },
       {

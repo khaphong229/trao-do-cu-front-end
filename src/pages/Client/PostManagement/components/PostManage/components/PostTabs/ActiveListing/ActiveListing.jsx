@@ -267,7 +267,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
                 <Image
                   src={`${URL_SERVER_IMAGE}${item.image_url[0]}`}
                   alt={item.title}
-                  style={{ height: 200, objectFit: 'cover' }}
+                  style={{ height: 200, objectFit: 'cover', borderRadius: '8px 8px 0 0' }}
                 />
               </div>
             }
