@@ -1,13 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from 'antd'
-import {
-  PictureOutlined,
-  SmileOutlined,
-  EnvironmentOutlined,
-  EllipsisOutlined,
-  TagsOutlined,
-  WhatsAppOutlined
-} from '@ant-design/icons'
+import { PictureOutlined, SmileOutlined, EnvironmentOutlined, TagsOutlined, WhatsAppOutlined } from '@ant-design/icons'
 // import { CiFacebook } from 'react-icons/ci'
 import styles from '../scss/PostToolbar.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
@@ -78,7 +71,7 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
           icon={<TagsOutlined className={styles.iconTags} />}
           onClick={() => dispatch(setCategoryModalVisibility(true))}
         />
-        <Button type="text" icon={<EllipsisOutlined className={styles.iconEllipsis} />} />
+        {/* <Button type="text" icon={<EllipsisOutlined className={styles.iconEllipsis} />} /> */}
       </div>
     </div>
   )

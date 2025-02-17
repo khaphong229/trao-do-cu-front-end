@@ -1,12 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from 'antd'
-import {
-  PictureOutlined,
-  SmileOutlined,
-  EnvironmentOutlined,
-  EllipsisOutlined,
-  WhatsAppOutlined
-} from '@ant-design/icons'
+import { PictureOutlined, SmileOutlined, EnvironmentOutlined, WhatsAppOutlined } from '@ant-design/icons'
 import styles from '../scss/PostToolbar.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import UploadCustom from 'components/common/UploadCustom'
@@ -56,7 +50,7 @@ const PostToolbar = () => {
           icon={<EnvironmentOutlined className={styles.iconEnvironment} />}
           onClick={() => dispatch(setLocationModalVisible(true))}
         />
-        <Button type="text" icon={<EllipsisOutlined className={styles.iconEllipsis} />} />
+        {/* <Button type="text" icon={<EllipsisOutlined className={styles.iconEllipsis} />} /> */}
       </div>
     </div>
   )

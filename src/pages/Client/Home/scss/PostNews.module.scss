@@ -141,7 +141,10 @@ $transition-base: all 0.3s ease;
 
   :global {
     .ant-card-body {
-      padding: 14px;
+      padding: 10px;
+    }
+    .ant-card-meta-title {
+      margin-bottom: 0px !important;
     }
     .ant-card {
       height: 100%;
@@ -176,7 +179,7 @@ $transition-base: all 0.3s ease;
       }
 
       .ant-card-body {
-        padding: 12px;
+        padding: 10px;
         display: flex;
         flex-direction: column;
         flex: 1;

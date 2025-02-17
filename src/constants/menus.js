@@ -1,11 +1,9 @@
 import React, { useRef, useCallback } from 'react'
 import { Card, List, Typography, Button, Empty, Spin, Menu, Divider, Tag, Avatar } from 'antd'
-import { URL_SERVER_IMAGE } from 'config/url_server'
 import { UseListNotification } from 'hooks/UseListNotification'
 import { Link } from 'react-router-dom'
 import styles from './NotificationMenu.module.scss'
 import { menuItems } from './data'
-import avatar from 'assets/images/logo/avtDefault.webp'
 import { useAvatar } from 'hooks/useAvatar'
 
 const { Text } = Typography

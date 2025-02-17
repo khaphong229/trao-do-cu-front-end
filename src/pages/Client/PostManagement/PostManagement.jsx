@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 
 const PostManagement = () => {
   const [searchParams] = useSearchParams()
-  const tabType = searchParams.get('type')
+  const tabType = searchParams.get('tab')
   return (
     <div className="container">
       <PostManage tabType={tabType || 'active'} />

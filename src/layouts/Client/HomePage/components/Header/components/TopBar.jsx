@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from 'antd'
-import { UserOutlined, LoginOutlined, BarsOutlined } from '@ant-design/icons'
+import { UserOutlined, LoginOutlined, BarsOutlined, HomeOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import styles from './scss/TopBar.module.scss'
 import { useSelector } from 'react-redux'
@@ -13,6 +13,9 @@ const TopBar = () => {
         <span>Chào mừng đến với TRAO ĐỒ CŨ!</span>
       </div>
       <div className={styles.topBarContent}>
+        <Button icon={<HomeOutlined />} type="text" className={styles.button}>
+          <Link to="/">Trang chủ</Link>
+        </Button>
         <Button icon={<UserOutlined />} type="text" className={styles.button}>
           <Link to="/profile">Tài khoản</Link>
         </Button>
