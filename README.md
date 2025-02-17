@@ -1,6 +1,6 @@
 # Giới thiệu Website: Trao Đồ Cũ
 
-Đây là một website sử dụng ReactJS được xây dựng với Create React App. Website cung cấp [mô tả ngắn gọn về mục đích hoặc chức năng của website, ví dụ: "nền tảng quản lý và hiển thị các liên kết rút gọn cho dịch vụ rút gọn URL"].
+Đây là một website sử dụng ReactJS được xây dựng với Create React App. Website cung cấp giải pháp trao tặng, trao đổi đồ cũ với những người có nhu cầu.
 
 ## Tính năng
 
@@ -23,13 +23,13 @@ Thực hiện các bước sau để cài đặt và chạy dự án trên máy 
 1. Clone repository:
 
    ```bash
-   git clone https://github.com/ten-cua-ban/ten-repo-cua-ban.git
+   git clone https://github.com/AxtraLab/Exchange_WEB_Front_End.git
    ```
 
 2. Di chuyển vào thư mục dự án:
 
    ```bash
-   cd ten-repo-cua-ban
+   cd Exchange_WEB_Front_End
    ```
 
 3. Cài đặt các thư viện:
