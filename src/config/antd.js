@@ -11,3 +11,14 @@ export const configAntd = {
     }
   }
 }
+
+export const localeConfigAntd = {
+  Image: {
+    preview: 'Xem ảnh',
+    back: 'Quay lại',
+    rotateRight: 'Xoay phải',
+    rotateLeft: 'Xoay trái',
+    zoomIn: 'Phóng to',
+    zoomOut: 'Thu nhỏ'
+  }
+}

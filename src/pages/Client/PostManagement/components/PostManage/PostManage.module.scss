@@ -8,6 +8,11 @@
     min-height: 600px;
     height: 100%;
 
+    @media screen and (max-width: 420px) {
+      padding: 10px;
+      min-height: auto;
+    }
+
     .tabsWrapper {
       .tabHeader {
         display: flex;
@@ -15,16 +20,45 @@
         justify-content: space-between;
         margin-bottom: 16px;
 
+        @media screen and (max-width: 420px) {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+        }
+
         .listingTabs {
           flex: 1;
 
           :global(.ant-tabs-nav) {
             margin-bottom: 0;
+
+            @media screen and (max-width: 420px) {
+              width: 100%;
+
+              :global(.ant-tabs-nav-list) {
+                width: 100%;
+                justify-content: space-between;
+              }
+
+              :global(.ant-tabs-tab) {
+                margin: 0;
+                padding: 8px 4px;
+                font-size: 14px;
+              }
+            }
           }
 
           .tabLabel {
             @include flex-center;
             gap: 4px;
+
+            @media screen and (max-width: 420px) {
+              font-size: 14px;
+
+              .tabCount {
+                font-size: 11px;
+              }
+            }
 
             .tabCount {
               color: $colorTextFooter;
@@ -35,6 +69,16 @@
 
         .viewToggle {
           margin-left: 16px;
+
+          @media screen and (max-width: 420px) {
+            margin-left: 0;
+            display: flex;
+            justify-content: flex-end;
+
+            button {
+              width: auto;
+            }
+          }
 
           button {
             display: flex;

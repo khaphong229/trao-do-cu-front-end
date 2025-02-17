@@ -3,7 +3,7 @@ import AuthService from '../../services/authService'
 import { setAuthToken } from '../../utils/localStorageUtils'
 import { timeoutPromise } from 'utils/errorUtils'
 
-export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue, dispatch }) => {
+export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
   const { isAdmin, ...data } = credentials
 
   try {
@@ -11,18 +11,16 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, 
 
     // const response = await AuthService.login(data, isAdmin)
 
-    const { status } = response.data
+    const { status } = response?.data
     if (status === 200) {
       setAuthToken(response.data.data.access_token)
-      return response.data
+      return response?.data
     } else {
       return rejectWithValue({
         message: response.data.message || 'Đăng nhập thất bại.'
       })
     }
   } catch (error) {
-    // dispatch(setLoading(false))
-
     if (error?.response?.data?.status === 408) {
       return rejectWithValue({
         message: error.response.data.message,
@@ -31,7 +29,7 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, 
     }
 
     return rejectWithValue(
-      error.response.data || {
+      error.response?.data || {
         message: 'Đăng nhập thất bại',
         status: 500
       }
@@ -64,7 +62,7 @@ export const getCurrentUser = createAsyncThunk('auth/getCurrentUser', async (isA
       return rejectWithValue({ message: 'Không tìm thấy người dùng' })
     }
 
-    return response.data
+    return response?.data
   } catch (error) {
     return rejectWithValue(error.response?.data || { message: 'Lỗi lấy tài khoản' })
   }

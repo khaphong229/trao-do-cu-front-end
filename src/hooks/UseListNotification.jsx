@@ -1,83 +1,158 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
+import vi from 'moment/locale/vi'
 import {
-  getExchangeRequest,
-  getMyRequestedExchange
-} from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import { getMyRequestedGift, getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
+  getNotificationPagination,
+  markAllNotificationsAsRead,
+  markNotificationAsRead
+} from 'features/client/notification/notificationThunks'
 
 export const UseListNotification = () => {
   const dispatch = useDispatch()
   const [isLoaded, setIsLoaded] = useState(false)
-
-  const giftRequests = useSelector(state => state.giftRequest.requests)
-  const exchangeRequests = useSelector(state => state.exchangeRequest.requests)
-  const listRequestGift = useSelector(state => state.giftRequest.posts)
-  const listRequestExchange = useSelector(state => state.exchangeRequest.posts)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [allNotifications, setAllNotifications] = useState([])
+  const [lastPolledCount, setLastPolledCount] = useState(0)
+  const { data: notifications, total, isLoading } = useSelector(state => state.notification.notifications)
   const { isAuthenticated } = useSelector(state => state.auth)
-  const params = {
-    current: 1,
-    pageSize: 10,
-    status: 'pending',
-    statusPotsId: 'active'
-  }
 
-  const loadNotifications = useCallback(async () => {
-    if (isLoaded) return
+  const loadNotifications = useCallback(
+    async (page = 1, isPolling = false) => {
+      if (!isAuthenticated) return
 
-    try {
-      await dispatch(getMyRequestedGift('accepted'))
-      await dispatch(getMyRequestedExchange('accepted'))
-      await dispatch(getReceiveRequestGift(params))
-      await dispatch(getExchangeRequest(params))
-      setIsLoaded(true)
-    } catch (error) {
-      console.error('Failed to load notifications', error)
-    }
-  }, [dispatch, isLoaded, params])
+      try {
+        const response = await dispatch(getNotificationPagination({ current: page, pageSize: 10 }))
 
+        if (isPolling) {
+          const currentUnreadCount = response.payload.data.data.filter(n => !n.isRead).length
+          if (currentUnreadCount !== lastPolledCount) {
+            setLastPolledCount(currentUnreadCount)
+            setAllNotifications(response.payload.data.data)
+          }
+          return
+        }
+
+        setIsLoaded(true)
+
+        const totalItems = response.payload.data.total
+        const loadedItems = page * 10
+        setHasMore(loadedItems < totalItems)
+
+        if (page === 1) {
+          setAllNotifications(response.payload.data.data)
+        } else {
+          setAllNotifications(prev => [...prev, ...response.payload.data.data])
+        }
+
+        setCurrentPage(page)
+      } catch (error) {
+        console.error('Failed to load notifications:', error)
+      }
+    },
+    [dispatch, isAuthenticated, lastPolledCount]
+  )
+
+  // Set up polling interval
   useEffect(() => {
-    if (isAuthenticated) {
-      loadNotifications()
+    if (!isAuthenticated) return
+
+    const pollInterval = setInterval(() => {
+      loadNotifications(1, true)
+    }, 60000) // Poll every minute
+
+    return () => clearInterval(pollInterval)
+  }, [isAuthenticated, loadNotifications])
+
+  // Initial load
+  useEffect(() => {
+    if (isAuthenticated && !isLoaded) {
+      loadNotifications(1)
     }
-  }, [loadNotifications, isAuthenticated])
+  }, [isAuthenticated, isLoaded, loadNotifications])
+
+  const loadMore = useCallback(() => {
+    if (hasMore && !isLoading) {
+      loadNotifications(currentPage + 1)
+    }
+  }, [hasMore, isLoading, currentPage, loadNotifications])
 
   const formatTimeAgo = timestamp => {
-    return moment(timestamp).fromNow()
+    return moment(timestamp).locale('vi', vi).fromNow()
   }
 
-  const MAX_NOTIFICATIONS = 10
+  const handleMarkAsRead = async notificationId => {
+    try {
+      const data = await dispatch(markNotificationAsRead(notificationId))
+      if (data.payload?.data?.isRead === true) {
+        loadNotifications(currentPage)
+      }
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error)
+    }
+  }
 
-  const listNotification = useMemo(() => {
-    const combinedNotifications = [
-      ...giftRequests.map(item => ({
-        id: item._id,
-        title: `Trạng thái bài đăng ${item?.post_id?.title} thành công`,
-        time: formatTimeAgo(item.updated_at)
-      })),
-      ...exchangeRequests.map(item => ({
-        id: item._id,
-        title: `Trạng thái bài đăng ${item?.post_id?.title} thành công`,
-        time: formatTimeAgo(item.updated_at)
-      })),
-      ...listRequestGift.map(item => ({
-        id: item._id,
-        title: `${item?.user_req_id?.name} yêu cầu ${item?.post_id?.type === 'gift' ? 'nhận' : 'đổi'} bài đăng ${item?.post_id?.title}`,
-        time: formatTimeAgo(item.updated_at)
-      })),
-      ...listRequestExchange.map(item => ({
-        id: item._id,
-        title: `${item?.user_req_id?.name} yêu cầu ${item?.post_id?.type === 'gift' ? 'nhận' : 'đổi'} bài đăng ${item?.post_id?.title}`,
-        time: formatTimeAgo(item.updated_at)
-      }))
-    ]
+  const handleMarkAllAsRead = async () => {
+    try {
+      const response = await dispatch(markAllNotificationsAsRead())
+      if (response.payload.status === 200 || response.payload.status === 201) {
+        loadNotifications(1)
+      }
+    } catch (error) {
+      console.error('Failed to mark all notifications as read:', error)
+    }
+  }
 
-    return combinedNotifications.sort((a, b) => moment(b.time) - moment(a.time)).slice(0, MAX_NOTIFICATIONS)
-  }, [giftRequests, exchangeRequests, listRequestGift, listRequestExchange])
+  const getNotificationText = typeInput => {
+    const [status, type] = typeInput.split('_')
+
+    if (status === 'request') {
+      return type === 'receive' ? 'yêu cầu nhận' : 'yêu cầu đổi'
+    } else if (status === 'approve') {
+      return type === 'receive' ? 'yêu cầu nhận' : 'yêu cầu đổi'
+    }
+    return ''
+  }
+
+  const getNotificationName = notification => {
+    const type = notification.type.split('_')[0]
+    if (type === 'request') {
+      return notification.source_id?.user_req_id?.name || 'Ẩn danh'
+    }
+    return notification.post_id.user_id?.name || 'Ẩn danh'
+  }
+
+  const formattedNotifications = useMemo(() => {
+    if (!allNotifications) return []
+
+    return allNotifications.map(notification => ({
+      id: notification._id,
+      title: getNotificationName(notification),
+      action: getNotificationText(notification.type),
+      postTitle: notification.post_id.title,
+      isApproved: notification.type.startsWith('approve'),
+      time: formatTimeAgo(notification.created_at),
+      isRead: notification.isRead,
+      postId: notification.post_id._id
+    }))
+  }, [allNotifications])
+
+  const unreadCount = useMemo(() => {
+    if (!allNotifications) return 0
+    return allNotifications.filter(notification => !notification.isRead).length
+  }, [allNotifications])
 
   return {
-    listNotification,
-    loadNotifications
+    notifications: formattedNotifications,
+    unreadCount,
+    total,
+    isLoading,
+    isLoaded,
+    hasMore,
+    loadNotifications,
+    loadMore,
+    handleMarkAsRead,
+    handleMarkAllAsRead
   }
 }

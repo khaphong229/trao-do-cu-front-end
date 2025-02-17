@@ -84,7 +84,7 @@ const authSlice = createSlice({
       // state.isLoading = true
     })
     builder.addCase(getCurrentUser.fulfilled, (state, action) => {
-      state.user = action.payload.data
+      state.user = action.payload?.data
       // state.isLoading = false
       state.isAuthenticated = true
       state.isAdmin = action.meta.arg || false

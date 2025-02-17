@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Space } from 'antd'
+import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Space, Empty } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import avt from 'assets/images/logo/avtDefault.webp'
 import './styles.scss'
@@ -243,6 +243,10 @@ const RequestedPosts = () => {
   return (
     <>
       <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
+      {allRequests.length === 0 &&
+        giftRequests.length === 0 &&
+        exchangeRequests.length === 0 &&
+        viewMode === 'card' && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />}
       <PostDetailModal isVisible={isModalVisible} onClose={handleModalClose} post={selectedPost} />
     </>
   )

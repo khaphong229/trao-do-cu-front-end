@@ -26,7 +26,13 @@ const router = createBrowserRouter([
         <ProtectedRoute requireAuth={false} adminOnly={false} />
       </ErrorBoundary>
     ),
-    errorElement: <NotFound />,
+    errorElement: (
+      <Suspense>
+        <ClientLayout>
+          <NotFound />
+        </ClientLayout>
+      </Suspense>
+    ),
     children: [
       {
         path: '/',

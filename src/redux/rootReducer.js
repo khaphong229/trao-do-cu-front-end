@@ -6,6 +6,7 @@ import postReducer from '../features/client/post/postSlice'
 import categoryReducer from '../features/client/category/categorySlice'
 import giftRequestReducer from '../features/client/request/giftRequest/giftRequestSlice'
 import exchangeRequestReducer from 'features/client/request/exchangeRequest/exchangeRequestSlice'
+import notificationReducer from 'features/client/notification/notificationSlice'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
   post: postReducer,
   category: categoryReducer,
   giftRequest: giftRequestReducer,
-  exchangeRequest: exchangeRequestReducer
+  exchangeRequest: exchangeRequestReducer,
+  notification: notificationReducer
 })
 
 export default rootReducer

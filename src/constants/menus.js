@@ -1,61 +1,132 @@
-import React from 'react'
-import { Card, List, Avatar, Typography, Menu, Divider } from 'antd'
-import avatar from '../assets/images/logo/avtDefault.webp'
-import { menuItems } from './data'
+import React, { useRef, useCallback } from 'react'
+import { Card, List, Typography, Button, Empty, Spin, Menu, Divider, Tag, Avatar } from 'antd'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { UseListNotification } from 'hooks/UseListNotification'
+import { Link } from 'react-router-dom'
+import styles from './NotificationMenu.module.scss'
+import { menuItems } from './data'
+import avatar from 'assets/images/logo/avtDefault.webp'
+import { useAvatar } from 'hooks/useAvatar'
 
 const { Text } = Typography
 
+const NotificationItem = ({ notification, onClick }) => {
+  let content
+  if (notification.isApproved) {
+    content = (
+      <>
+        <span>{notification.title} </span>
+        <Tag color="success">đồng ý</Tag>
+        <span>
+          {notification.action} "{notification.postTitle}" của bạn.
+        </span>
+      </>
+    )
+  } else {
+    content = (
+      <span>
+        {notification.title} {notification.action} "{notification.postTitle}".
+      </span>
+    )
+  }
+
+  return (
+    <List.Item className={`${styles.notificationItem} ${!notification.isRead ? styles.unread : ''}`} onClick={onClick}>
+      <Link className={styles.notifiHref}>
+        <List.Item.Meta
+          title={<Text className={styles.itemTitle}>{content}</Text>}
+          description={<Text type="secondary">{notification.time}</Text>}
+        />
+      </Link>
+    </List.Item>
+  )
+}
+
 export const NotificationMenu = () => {
-  const { listNotification } = UseListNotification()
+  const { notifications, isLoading, hasMore, handleMarkAsRead, handleMarkAllAsRead, loadMore } = UseListNotification()
+
+  const observerRef = useRef(null)
+  const lastElementRef = useRef(null)
+
+  const handleObserver = useCallback(
+    entries => {
+      const target = entries[0]
+      if (target.isIntersecting && hasMore && !isLoading) {
+        loadMore()
+      }
+    },
+    [hasMore, isLoading, loadMore]
+  )
+
+  React.useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: '20px',
+      threshold: 0.1
+    }
+
+    observerRef.current = new IntersectionObserver(handleObserver, options)
+
+    if (lastElementRef.current) {
+      observerRef.current.observe(lastElementRef.current)
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+      }
+    }
+  }, [handleObserver])
+
+  React.useEffect(() => {
+    if (lastElementRef.current) {
+      observerRef.current.observe(lastElementRef.current)
+    }
+  }, [notifications])
 
   return (
     <Card
-      title="Thông báo"
-      style={{
-        width: 300,
-        border: '1px solid #d9d9d9',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '8px',
-        maxHeight: '400px'
-      }}
-      bodyStyle={{
-        padding: 0,
-        maxHeight: '320px',
-        overflowY: 'auto'
-      }}
-    >
-      {listNotification.length === 0 ? (
-        <div style={{ textAlign: 'center', color: 'gray', padding: '20px' }}>Không có thông báo mới</div>
-      ) : (
-        <List
-          itemLayout="horizontal"
-          dataSource={listNotification}
-          renderItem={(item, index) => (
-            <List.Item style={{ padding: '10px 16px', borderBottom: '1px solid #f0f0f0' }}>
-              <List.Item.Meta title={item.title} description={item.time} style={{ margin: 0 }} />
-            </List.Item>
+      className={styles.notificationCard}
+      title={
+        <div className={styles.cardHeader}>
+          <span>Thông báo</span>
+          {notifications.length > 0 && (
+            <Button type="link" onClick={handleMarkAllAsRead}>
+              Đánh dấu tất cả đã đọc
+            </Button>
           )}
-        />
-      )}
-      {listNotification.length > 0 && (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '10px',
-            borderTop: '1px solid #f0f0f0',
-            backgroundColor: '#fff'
-          }}
-        >
-          <a href="/">Xem tất cả thông báo</a>
+        </div>
+      }
+    >
+      {isLoading && notifications.length === 0 ? (
+        <div className={styles.loadingContainer}>
+          <Spin />
+        </div>
+      ) : notifications.length === 0 ? (
+        <Empty description="Không có thông báo mới" className={styles.emptyState} />
+      ) : (
+        <div className={styles.notificationList}>
+          <List
+            dataSource={notifications}
+            renderItem={(notification, index) => (
+              <div ref={index === notifications.length - 1 ? lastElementRef : null}>
+                <NotificationItem notification={notification} onClick={() => handleMarkAsRead(notification.id)} />
+              </div>
+            )}
+          />
+          {isLoading && (
+            <div className={styles.loadingMore}>
+              <Spin size="small" />
+            </div>
+          )}
         </div>
       )}
     </Card>
   )
 }
 
-export const menu = user => {
+export const UserMenu = user => {
+  const { avatar } = useAvatar()
   return (
     <Menu style={{ width: 200 }}>
       <div
@@ -67,10 +138,7 @@ export const menu = user => {
           gap: '10px'
         }}
       >
-        <Avatar
-          size={40}
-          src={user?.avatar ? (user?.isGoogle ? user.avatar : `${URL_SERVER_IMAGE}${user.avatar}`) : avatar}
-        />
+        <Avatar size={40} src={avatar} />
         <Text level={5}>{user.name || 'Tài khoản'}</Text>
       </div>
       <Divider
