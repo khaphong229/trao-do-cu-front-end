@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from 'antd'
+import { Button, Tooltip } from 'antd'
 import {
   PictureOutlined,
   SmileOutlined,
@@ -54,29 +54,27 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
           maxCount={5 - (dataCreatePost.image_url?.length || 0)}
           disabled={dataCreatePost.image_url?.length >= 5}
         />
-        <Button
-          ref={ref4}
-          type="text"
-          icon={<WhatsAppOutlined className={styles.customIcon} />}
-          onClick={() => dispatch(setSocialLinkModalVisibility(true))}
-        />
-        <Button
-          type="text"
-          icon={<SmileOutlined className={styles.iconSmile} />}
-          onClick={() => dispatch(setShowEmoji(!isShowEmoji))}
-        />
-        <Button
-          ref={ref5}
-          type="text"
-          icon={<EnvironmentOutlined className={styles.iconEnvironment} />}
-          onClick={() => dispatch(setLocationModalVisibility(true))}
-        />
-        <Button
-          ref={ref6}
-          type="text"
-          icon={<AppstoreOutlined className={styles.iconCategory} />}
-          onClick={() => dispatch(setCategoryModalVisibility(true))}
-        />
+        <Button ref={ref4} type="text" onClick={() => dispatch(setSocialLinkModalVisibility(true))}>
+          <Tooltip title="Liên kết mạng xã hội" placement="top">
+            <WhatsAppOutlined className={styles.customIcon} />
+          </Tooltip>
+        </Button>
+        <Button type="text" onClick={() => dispatch(setShowEmoji(!isShowEmoji))}>
+          <Tooltip title="Emoji" placement="top">
+            <SmileOutlined className={styles.iconSmile} />
+          </Tooltip>
+        </Button>
+        <Button ref={ref5} type="text" onClick={() => dispatch(setLocationModalVisibility(true))}>
+          <Tooltip title="Thêm vị trí" placement="top">
+            <EnvironmentOutlined className={styles.iconEnvironment} />
+          </Tooltip>
+        </Button>
+        <Button ref={ref6} type="text" onClick={() => dispatch(setCategoryModalVisibility(true))}>
+          <Tooltip title="Chọn danh mục" placement="top">
+            <AppstoreOutlined className={styles.iconCategory} />
+          </Tooltip>
+        </Button>
+
         {/* <Button type="text" icon={<EllipsisOutlined className={styles.iconEllipsis} />} /> */}
       </div>
     </div>
