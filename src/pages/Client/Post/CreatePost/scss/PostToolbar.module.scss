@@ -60,12 +60,11 @@
   }
 }
 
-.iconCategory {
-  color: #1890ff; // Màu chính của Ant Design
-  font-size: 20px; // Hoặc kích thước phù hợp với thiết kế của bạn
-  
+.iconTags {
+  transition: color 0.3s ease;
+
   &:hover {
-    color: #40a9ff; // Màu khi hover
+    color: $colorRed !important;
   }
 }
 
@@ -82,5 +81,78 @@
   transition: color 0.3s ease;
   &:hover {
     color: #40a9ff;
+  }
+}
+
+// Mobile styles
+.mobilePostTools {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  margin: 10px 0;
+
+  .mobileToolsText {
+    font-size: 14px;
+    color: #65676b;
+    margin-bottom: 12px;
+    padding: 0 15px;
+  }
+
+  .mobileToolsButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  .mobileToolItem {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: #e8e8e8;
+    }
+  }
+
+  .mobileIconWrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    
+    .iconPicture,
+    .iconSmile,
+    .iconEnvironment,
+    .iconCategory,
+    .customIcon {
+      font-size: 20px;
+      color: #4d4d4d;
+      margin-right: 12px;
+    }
+    
+    .iconLabel {
+      font-size: 14px;
+      color: #4d4d4d;
+      font-weight: 500;
+    }
+  }
+}
+
+// Hide mobile version on desktop and desktop version on mobile
+@media (max-width: 768px) {
+  .postTools {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobilePostTools {
+    display: none;
   }
 }
