@@ -20,6 +20,7 @@ import { setExchangeFormModalVisible } from 'features/client/request/exchangeReq
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { ArrowDownOutlined, GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
+import { FaMapMarkerAlt } from 'react-icons/fa'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -203,9 +204,18 @@ const PostNews = () => {
                           {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
                         </Text>
                       </div>
-                      <Text type="secondary" className={styles.location}>
-                        {item?.city?.split('Thành phố')[1] || item?.city?.split('Tỉnh')[1]}
-                      </Text>
+                      {item?.city && (item.city.includes('Thành phố') || item.city.includes('Tỉnh')) ? (
+                        <Text type="secondary" className={styles.location}>
+                          <FaMapMarkerAlt style={{ marginRight: 4, fontSize: '14px' }} />
+                          {item.city.split('Thành phố')[1] || item.city.split('Tỉnh')[1]}
+                        </Text>
+                      ) : (
+                        item?.city && (
+                          <Text type="secondary" className={styles.location}>
+                            {item.city.split('Thành phố')[1] || item.city.split('Tỉnh')[1]}
+                          </Text>
+                        )
+                      )}
                     </div>
                   </Card>
                 </Badge.Ribbon>

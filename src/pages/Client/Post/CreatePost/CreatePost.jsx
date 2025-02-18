@@ -192,7 +192,7 @@ const CreatePostModal = () => {
           className={styles.postButton}
           onClick={handleSubmit}
           loading={isLoadingButton}
-          disabled={!dataCreatePost.title.trim() || dataCreatePost.image_url.length === 0}
+          disabled={!dataCreatePost.title.trim()}
         >
           Đăng
         </Button>

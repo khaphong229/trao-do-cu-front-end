@@ -20,6 +20,7 @@ export const RegistrationDrawer = ({
   const dispatch = useDispatch()
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const isMobile = useCheckMobileScreen()
 
   const sortedRequests = React.useMemo(() => {
     if (!receiveRequests) return []
@@ -86,7 +87,7 @@ export const RegistrationDrawer = ({
       closable={true}
       onClose={onClose}
       open={visible}
-      width={useCheckMobileScreen ? '100%' : '70%'}
+      width={isMobile ? '100%' : '70%'}
       className={styles.registrationDrawer}
     >
       <Card className={styles.registrationCard}>

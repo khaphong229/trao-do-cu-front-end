@@ -60,11 +60,12 @@
   }
 }
 
-.iconTags {
-  transition: color 0.3s ease;
-
+.iconCategory {
+  color: #1890ff; // Màu chính của Ant Design
+  font-size: 20px; // Hoặc kích thước phù hợp với thiết kế của bạn
+  
   &:hover {
-    color: $colorRed !important;
+    color: #40a9ff; // Màu khi hover
   }
 }
 
