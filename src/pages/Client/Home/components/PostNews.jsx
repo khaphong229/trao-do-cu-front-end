@@ -32,7 +32,7 @@ const PostNews = () => {
   const navigate = useNavigate()
 
   const { isExchangeFormModalVisible } = useSelector(state => state.exchangeRequest)
-  const { posts, isError, isLoading, hasMore, query, sortOrder } = useSelector(state => state.post)
+  const { posts, isError, isLoading, hasMore, query, sortOrder, cityFilter } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
@@ -73,7 +73,11 @@ const PostNews = () => {
   const AuthButton = withAuth(Button)
 
   const filteredPosts = posts
-    ?.filter(post => !query || post.title.toLowerCase().includes(query.toLowerCase())) // Lọc bài đăng theo tìm kiếm
+    ?.filter(
+      post =>
+        (!query || post.title.toLowerCase().includes(query.toLowerCase())) && // Lọc theo từ khóa
+        (!cityFilter || post.city === cityFilter) // Lọc theo thành phố nếu có chọn
+    )
     .sort(
       (a, b) =>
         sortOrder === 'newest'
