@@ -41,7 +41,8 @@ const initialState = {
   lastCacheUpdate: null,
   postDetail: null,
 
-  viewMode: 'card'
+  viewMode: 'card',
+  sortOrder: 'newest'
 }
 
 const postSlice = createSlice({
@@ -133,6 +134,9 @@ const postSlice = createSlice({
     },
     setViewMode: (state, action) => {
       state.viewMode = action.payload
+    },
+    setSortOrder: (state, action) => {
+      state.sortOrder = action.payload // Cập nhật giá trị sắp xếp
     }
   },
 
@@ -256,7 +260,8 @@ export const {
   updatePostStatus,
   setSelectedPost,
   updatePostRequestStatus,
-  setViewMode
+  setViewMode,
+  setSortOrder
 } = postSlice.actions
 
 export default postSlice.reducer

@@ -32,7 +32,7 @@ const PostNews = () => {
   const navigate = useNavigate()
 
   const { isExchangeFormModalVisible } = useSelector(state => state.exchangeRequest)
-  const { posts, isError, isLoading, hasMore, query } = useSelector(state => state.post)
+  const { posts, isError, isLoading, hasMore, query, sortOrder } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
@@ -73,8 +73,13 @@ const PostNews = () => {
   const AuthButton = withAuth(Button)
 
   const filteredPosts = posts
-    ?.filter(post => !query || post.title.toLowerCase().includes(query.toLowerCase()))
-    .sort((a, b) => dayjs(b.created_at).diff(dayjs(a.created_at)))
+    ?.filter(post => !query || post.title.toLowerCase().includes(query.toLowerCase())) // Lọc bài đăng theo tìm kiếm
+    .sort(
+      (a, b) =>
+        sortOrder === 'newest'
+          ? dayjs(b.created_at).diff(dayjs(a.created_at)) // Sắp xếp mới -> cũ
+          : dayjs(a.created_at).diff(dayjs(b.created_at)) // Sắp xếp cũ -> mới
+    )
 
   const renderActionButton = item => {
     if (!user) {

@@ -2,6 +2,21 @@
   position: relative;
   width: 100%;
 
+  .input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .filters {
+    display: flex;
+    gap: 10px;
+  }
+
+  .select {
+    width: 120px;
+  }
+
   .input-wrapper {
     position: relative;
 
@@ -33,7 +48,7 @@
   .suggestions {
     position: absolute;
     width: 100%;
-    max-width: 600px;
+    max-width: 400px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     margin-top: 0.25rem;
@@ -64,14 +79,21 @@
       text-align: center;
     }
   }
-}
 
-@media screen and (max-width: '796px') {
-  .input-wrapper {
-    position: relative;
+  @media screen and (max-width: '796px') {
+    .input-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .input-wrapper {
+      width: 100%;
+    }
 
-    .input {
-      width: 100% !important;
+    .filters {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
     }
   }
 }
