@@ -50,9 +50,18 @@ $transition-base: all 0.3s ease;
   }
 }
 
+.postHeader{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
 // Post Title
 .postTitle {
-  margin-top: 0px;
+  margin-top: 10px;
+  flex-grow: 1;
   margin-bottom: 20px !important;
   position: relative;
   color: $color-text-primary;

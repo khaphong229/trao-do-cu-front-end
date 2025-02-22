@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Card, Row, Col, Button, Avatar, Tooltip, Badge, Empty, Typography } from 'antd'
+import { Card, Row, Col, Button, Avatar, Tooltip, Badge, Empty, Typography, Select } from 'antd'
 import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
 import { getPostPagination } from 'features/client/post/postThunks'
-import { resetPosts } from 'features/client/post/postSlice'
+import { resetPosts, setCityFilter, setSortOrder } from 'features/client/post/postSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -21,13 +21,17 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import { ArrowDownOutlined, GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 import { FaMapMarkerAlt } from 'react-icons/fa'
+import { locationService } from 'services/client/locationService'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
 const { Title, Text, Paragraph } = Typography
+const { Option } = Select
 const PostNews = () => {
   const [curPage, setCurPage] = useState(1)
   const [isSearchMode, setIsSearchMode] = useState(false)
+  const [selectedCity, setSelectedCity] = useState(null)
+  const [VIETNAMESE_CITIES, SET_VIETNAMESE_CITIES] = useState(null)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -35,6 +39,23 @@ const PostNews = () => {
   const { posts, isError, isLoading, hasMore, query, sortOrder, cityFilter } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
+
+  const fetchCity = useCallback(async () => {
+    try {
+      const data = await locationService.getCity()
+      if (data.data.status === 200) {
+        SET_VIETNAMESE_CITIES(data.data.data)
+      }
+    } catch (error) {
+      if (error.response.data.status === 404) {
+        throw error
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchCity()
+  }, [fetchCity])
 
   const fetchPost = useCallback(() => {
     dispatch(
@@ -144,12 +165,42 @@ const PostNews = () => {
       </Tooltip>
     )
   }
+  const handleSortChange = value => {
+    dispatch(setSortOrder(value)) // ✅ Chỉ cập nhật sortOrder
+  }
+
+  const handleCityChange = value => {
+    setSelectedCity(value)
+    dispatch(setCityFilter(value)) // ✅ Chuyển setCityFilter vào đây
+  }
+  const filterProvinces = (input, option) => {
+    return option.label.toLowerCase().includes(input.toLowerCase())
+  }
   return (
     <>
       <div className={styles.postWrap}>
-        <Title level={5} className={styles.postTitle}>
-          {isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}
-        </Title>
+        <div className={styles.postHeader}>
+          <Title level={5} className={styles.postTitle}>
+            {isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}
+          </Title>
+          <div>
+            <Select value={sortOrder} onChange={handleSortChange} style={{ marginRight: '10px' }}>
+              <Option value="newest">Bài đăng mới nhất</Option>
+              <Option value="oldest">Bài đăng cũ nhất</Option>
+            </Select>
+            <Select
+              showSearch
+              style={{ width: 150 }}
+              placeholder="Chọn thành phố"
+              value={selectedCity}
+              optionFilterProp="children"
+              filterOption={filterProvinces}
+              onChange={handleCityChange}
+              options={VIETNAMESE_CITIES} // ✅ Sửa lỗi options
+              allowClear
+            />
+          </div>
+        </div>
 
         {(isLoading || isError) && (
           <Row gutter={[16, 0]} className={styles.itemsGrid}>
