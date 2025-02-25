@@ -99,10 +99,12 @@ const router = createBrowserRouter([
             )
           },
           {
-            path: 'usersurvey',
+            path: 'survey',
             element: (
               <Suspense>
-                <UserSurvey />
+                <ClientLayout>
+                  <UserSurvey />
+                </ClientLayout>
               </Suspense>
             )
           },
