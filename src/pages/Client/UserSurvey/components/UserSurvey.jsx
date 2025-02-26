@@ -1,29 +1,57 @@
 import { useEffect, useState } from 'react'
-import { Button, Card } from 'antd'
+import { Button, Card, message } from 'antd'
 import styles from '../scss/UserSurvey.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllCategory } from 'features/client/category/categoryThunks'
-import { CheckCircle } from 'lucide-react' // Assuming you're using lucide-react
+import { CheckCircle } from 'lucide-react'
+import { updateSurvey } from 'features/client/Survey/surveyThunks'
 
 export default function SurveyForm() {
   const [selectedTags, setSelectedTags] = useState([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const { survey } = useSelector(state => state.survey)
   const { categories: cate } = useSelector(state => state.category)
 
+  // Lấy danh mục từ API nếu chưa có dữ liệu
   useEffect(() => {
     if (cate.length === 0) {
       dispatch(getAllCategory())
     }
   }, [dispatch, cate.length])
 
-  // Use categories directly without assigning random colors
+  // Load danh mục đã chọn từ survey vào state
+  useEffect(() => {
+    if (survey.data?.interests?.length > 0 && cate.length > 0) {
+      const userSelectedCategories = survey.data.interests
+        .map(item => {
+          // Trích xuất ID thực sự từ đối tượng hoặc dùng trực tiếp nếu là string
+          const categoryId =
+            typeof item.category_id === 'object' && item.category_id._id ? item.category_id._id : item.category_id
+
+          const foundCategory = cate.find(c => c._id === categoryId)
+          return foundCategory
+            ? {
+                category_id: foundCategory._id,
+                category_name: foundCategory.name
+              }
+            : null
+        })
+        .filter(cat => cat !== null)
+
+      setSelectedTags(userSelectedCategories)
+    }
+  }, [survey.data, cate])
+
+  // Danh sách danh mục hiển thị
   const categories = cate.map(itemCate => ({
     category_id: itemCate._id,
-    name: itemCate.name
+    category_name: itemCate.name
   }))
 
+  // Lấy icon theo danh mục
   const getCategoryIcon = categoryName => {
     const iconMap = {
       'Bất động sản': '🏠',
@@ -38,24 +66,66 @@ export default function SurveyForm() {
       'Giải trí, thể thao': '🤾',
       'Tất cả': '✔️'
     }
-
     return iconMap[categoryName] || '📦'
   }
 
-  const handleTagSelect = cate => {
-    const isSelected = selectedTags.some(tag => tag.category_id === cate.category_id)
+  // Chọn/bỏ chọn danh mục
+  const handleTagSelect = category => {
+    setSelectedTags(prev =>
+      prev.some(tag => tag.category_id === category.category_id)
+        ? prev.filter(tag => tag.category_id !== category.category_id)
+        : [...prev, category]
+    )
+  }
 
-    if (isSelected) {
-      setSelectedTags(selectedTags.filter(tag => tag.category_id !== cate.category_id))
-    } else {
-      setSelectedTags([...selectedTags, cate])
+  // Xử lý gửi lên API - cách tiếp cận hoàn toàn mới
+  const handleSubmit = async () => {
+    if (selectedTags.length === 0) {
+      message.warning('Vui lòng chọn ít nhất một danh mục')
+      return
+    }
+
+    try {
+      setIsSubmitting(true)
+
+      // Tạo mảng interests với format đơn giản nhất có thể
+      const interests = selectedTags.map(tag => ({
+        category_id: tag.category_id,
+        category_name: tag.category_name,
+        selected_at: new Date().toISOString()
+      }))
+
+      console.log('🚀 Dữ liệu trước khi gửi:', interests)
+
+      // Kiểm tra cấu trúc dữ liệu interests để debug
+      console.log('📊 Kiểm tra cấu trúc:')
+      interests.forEach((item, index) => {
+        console.log(`- Item ${index}:`)
+        console.log(`  category_id type: ${typeof item.category_id}`)
+        console.log(`  category_id value: ${item.category_id}`)
+      })
+
+      // Tạo payload theo cấu trúc mới
+      const payload = {
+        interests: interests
+      }
+
+      const result = await dispatch(updateSurvey(payload)).unwrap()
+
+      if (result) {
+        message.success('Đã lưu sở thích của bạn thành công!')
+        navigate('/')
+      }
+    } catch (error) {
+      message.error('Có lỗi xảy ra khi lưu sở thích: ' + (error?.message || 'Không xác định'))
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   return (
     <div className={styles.survey}>
       <div className={styles.survey__container}>
-        {/* Left Column - Survey Info */}
         <div className={styles.survey__info}>
           <h1 className={styles['survey__info-title']}>Khám phá sở thích của bạn</h1>
           <p className={styles['survey__info-subtitle']}>Tìm kiếm sản phẩm phù hợp dựa trên sở thích cá nhân</p>
@@ -67,21 +137,9 @@ export default function SurveyForm() {
             </p>
             <p>Hãy chọn những danh mục bạn quan tâm nhất để bắt đầu hành trình khám phá!</p>
           </div>
-          {/* Placeholder for an illustration or image */}
-          <div className={styles['survey__info-image-container']}>{/* You could add an image here */}</div>
         </div>
 
-        {/* Right Column - Survey Form */}
         <Card className={styles.survey__card}>
-          {/* <div className={styles.survey__header}>
-            <div className={styles['survey__header-content']}>
-              <h2 className={styles.survey__title}>Khảo sát người dùng</h2>
-              <p className={styles.survey__subtitle}>
-                Hãy chia sẻ thông tin để chúng tôi có thể tìm kiếm người cùng sở thích với bạn
-              </p>
-            </div>
-          </div> */}
-
           <div className={styles['survey__step-content']}>
             <div className={styles.survey__field}>
               <label className={styles.survey__label}>
@@ -91,16 +149,12 @@ export default function SurveyForm() {
               <div className={styles.survey__categories}>
                 {categories.map(category => (
                   <div
-                    key={category.category_id || category.name}
-                    className={`${styles.survey__category} ${
-                      selectedTags.some(tag => tag.category_id === category.category_id)
-                        ? styles['survey__category--selected']
-                        : ''
-                    }`}
+                    key={category.category_id}
+                    className={`${styles.survey__category} ${selectedTags.some(tag => tag.category_id === category.category_id) ? styles['survey__category--selected'] : ''}`}
                     onClick={() => handleTagSelect(category)}
                   >
-                    <span className={styles['survey__category-icon']}>{getCategoryIcon(category.name)}</span>
-                    <span className={styles['survey__category-name']}>{category.name}</span>
+                    <span className={styles['survey__category-icon']}>{getCategoryIcon(category.category_name)}</span>
+                    <span className={styles['survey__category-name']}>{category.category_name}</span>
                     <CheckCircle size={14} className={styles['survey__category-check']} />
                   </div>
                 ))}
@@ -109,21 +163,10 @@ export default function SurveyForm() {
           </div>
 
           <div className={styles.survey__actions}>
-            <Button
-              className={`${styles.survey__button} ${styles['survey__button--back']}`}
-              onClick={() => navigate('/')}
-              danger={true}
-            >
+            <Button onClick={() => navigate('/')} danger={true}>
               Bỏ qua
             </Button>
-            <Button
-              type="primary"
-              className={`${styles.survey__button} ${styles['survey__button--next']}`}
-              onClick={() => {
-                navigate('/')
-              }}
-              disabled={selectedTags.length === 0}
-            >
+            <Button type="primary" onClick={handleSubmit} disabled={selectedTags.length === 0} loading={isSubmitting}>
               Hoàn thành
             </Button>
           </div>
