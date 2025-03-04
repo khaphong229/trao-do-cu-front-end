@@ -30,7 +30,8 @@ const Login = () => {
         const responseGetUser = await dispatch(getCurrentUser(isAdminLogin)).unwrap()
         if (responseGetUser) {
           message.success('Đăng nhập thành công')
-          navigate(isAdminLogin ? '/admin/dashboard' : '/')
+          const isSurvey = responseGetUser?.data?.isSurveyed
+          navigate(isAdminLogin ? '/admin/dashboard' : isSurvey ? '/' : '/survey')
         }
       }
     } catch (error) {

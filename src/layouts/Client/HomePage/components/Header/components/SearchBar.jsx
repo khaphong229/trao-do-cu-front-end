@@ -1,65 +1,78 @@
-import React, { useState, useEffect } from 'react'
-
+import React, { useState, useEffect, useRef } from 'react'
 import { Search } from 'lucide-react'
-
 import { useDispatch, useSelector } from 'react-redux'
 import { searchPost, resetSearch } from '../../../../../../features/client/post/postSlice'
 import styles from './scss/SearchBar.module.scss'
 import { Card, Input } from 'antd'
+
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const dispatch = useDispatch()
 
-  // Giả sử bạn có một selector để lấy danh sách bài đăng
-  const posts = useSelector(state => state.post.posts)
+  const dispatch = useDispatch()
+  const { posts } = useSelector(state => state.post)
+
+  const searchRef = useRef(null)
 
   useEffect(() => {
-    // Reset search khi component unmount
     return () => {
       dispatch(resetSearch())
     }
   }, [dispatch])
 
-  // Xử lý tìm kiếm real-time khi người dùng gõ
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (searchTerm.trim()) {
         dispatch(searchPost(searchTerm.trim()))
       }
-    }, 300) // Delay 300ms để tránh gọi API quá nhiều
+    }, 300)
 
     return () => clearTimeout(delayDebounce)
   }, [searchTerm, dispatch])
 
-  // Lọc suggestions dựa trên searchTerm
   const getSuggestions = () => {
     if (!searchTerm) return []
-    return posts.filter(post => post.title.toLowerCase().includes(searchTerm.toLowerCase())).slice(0, 5) // Giới hạn 5 gợi ý
+
+    let filteredPosts = posts.filter(post => post.title.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    return filteredPosts.slice(0, 5)
   }
+
   const handleInputChange = e => {
     const value = e.target.value
-    setSearchTerm(value) // Cập nhật nội dung tìm kiếm
+    setSearchTerm(value)
+    setShowSuggestions(true)
     if (value.trim() === '') {
-      dispatch(resetSearch()) // Xóa kết quả tìm kiếm nếu không có từ khóa
+      dispatch(resetSearch())
     }
   }
 
-  return (
-    <div className={styles['search-bar']}>
-      <div className={styles['input-wrapper']}>
-        <Input
-          type="text"
-          placeholder="Tìm kiếm bài đăng..."
-          value={searchTerm}
-          onChange={handleInputChange}
-          onFocus={() => setShowSuggestions(true)}
-          className={styles['input']}
-        />
-        <Search className={styles['search-icon']} />
-      </div>
+  // Xử lý click ra ngoài input để đóng gợi ý
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
 
-      {/* Phần hiển thị gợi ý */}
+  return (
+    <div className={styles['search-bar']} ref={searchRef}>
+      <div className={styles['input-container']}>
+        <div className={styles['input-wrapper']}>
+          <Input
+            type="text"
+            placeholder="Tìm kiếm bài đăng..."
+            value={searchTerm}
+            onChange={handleInputChange}
+            onFocus={() => setShowSuggestions(true)}
+            className={styles['input']}
+          />
+          <Search className={styles['search-icon']} />
+        </div>
+      </div>
       {showSuggestions && searchTerm && (
         <Card className={styles['suggestions']}>
           {getSuggestions().map((post, index) => (

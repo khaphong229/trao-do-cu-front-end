@@ -18,8 +18,9 @@ export default function LoginGoogle() {
         setAuthToken(response.data.access_token)
         const responseGetUser = await dispatch(getCurrentUser(false)).unwrap()
         if (responseGetUser) {
+          const isSurvey = responseGetUser?.data?.isSurveyed
           message.success('Đăng nhập thành công')
-          navigate('/')
+          navigate(isSurvey ? '/' : '/survey')
         }
       }
     } catch (error) {

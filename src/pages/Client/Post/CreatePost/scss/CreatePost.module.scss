@@ -1,6 +1,36 @@
 @import '../../../../../assets/scss/variables.scss';
 
 .createPostModal {
+  // Make modal take full screen on mobile
+  @media (max-width: 768px) {
+    :global(.ant-modal) {
+      width: 100% !important;
+      max-width: 100%;
+      margin: 0;
+      top: 0;
+      padding-bottom: 0;
+
+      :global(.ant-modal-content) {
+        border-radius: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      :global(.ant-modal-body) {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      :global(.ant-modal-close) {
+        top: 10px;
+        right: 10px;
+      }
+    }
+  }
+
   .modalHeader {
     border-bottom: 1px solid #e8e8e8;
     padding: 12px 24px;
@@ -9,6 +39,10 @@
       text-align: center;
       font-weight: bold;
       font-size: 20px;
+
+      @media (max-width: 768px) {
+        font-size: 18px;
+      }
     }
   }
 
@@ -20,6 +54,12 @@
     &:disabled {
       background: #e4e6eb;
       color: #bcc0c4;
+    }
+
+    @media (max-width: 768px) {
+      height: 42px;
+      border-radius: 4px;
+      margin-top: 10px;
     }
   }
 }

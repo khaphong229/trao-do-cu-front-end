@@ -2,6 +2,21 @@
   position: relative;
   width: 100%;
 
+  .input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .filters {
+    display: flex;
+    gap: 10px;
+  }
+
+  .select {
+    width: 120px;
+  }
+
   .input-wrapper {
     position: relative;
 
@@ -12,6 +27,10 @@
       border: 1px solid #e5e7eb;
       border-radius: 4px;
       font-size: 14px;
+
+      @media (max-width: 797px) {
+        width: 100%;
+      }
 
       &:focus {
         outline: none;
@@ -64,14 +83,21 @@
       text-align: center;
     }
   }
-}
 
-@media screen and (max-width: '796px') {
-  .input-wrapper {
-    position: relative;
+  @media screen and (max-width: '796px') {
+    .input-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
 
-    .input {
-      width: 100% !important;
+    .input-wrapper {
+      width: 100%;
+    }
+
+    .filters {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
     }
   }
 }

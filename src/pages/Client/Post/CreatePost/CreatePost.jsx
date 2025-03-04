@@ -30,6 +30,7 @@ const CreatePostModal = () => {
   const [errorPost, setErrorPost] = useState(null)
   const { user } = useSelector(state => state.auth)
   const { dataCreatePost, isCreateModalVisible, isLoadingButton, isShowTour } = useSelector(state => state.post)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
 
   const ref1 = useRef(null)
   const ref2 = useRef(null)
@@ -166,7 +167,9 @@ const CreatePostModal = () => {
         footer={null}
         closeIcon={<CloseOutlined />}
         className={styles.createPostModal}
-        width={600}
+        width={isMobile ? '100%' : 600}
+        style={isMobile ? { top: 0 } : {}}
+        bodyStyle={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
       >
         <UserInfoSection ref1={ref1} />
 
@@ -178,21 +181,15 @@ const CreatePostModal = () => {
           setUploadedImages={handleImageUpload}
         />
 
-        <PostToolbar
-          ref3={ref3}
-          ref4={ref4}
-          ref5={ref5}
-          ref6={ref6}
-          uploadedImages={dataCreatePost.image_url}
-          setUploadedImages={handleImageUpload}
-        />
+        <PostToolbar ref3={ref3} ref4={ref4} ref5={ref5} ref6={ref6} />
 
         <Button
           type="primary"
           className={styles.postButton}
           onClick={handleSubmit}
           loading={isLoadingButton}
-          disabled={!dataCreatePost.title.trim() || dataCreatePost.image_url.length === 0}
+          disabled={!dataCreatePost.title.trim()}
+          style={isMobile ? { marginTop: 'auto' } : {}}
         >
           Đăng
         </Button>

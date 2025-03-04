@@ -18,6 +18,7 @@ const ProfileUser = lazy(() => import('pages/Client/Profile/ProfileUser'))
 const ErrorBoundary = lazy(() => import('components/common/ErrorBoundary'))
 const NotFound = lazy(() => import('components/common/NotFound'))
 const LoginGoogle = lazy(() => import('pages/Auth/LoginGoogle'))
+const UserSurvey = lazy(() => import('pages/Client/UserSurvey/UserSurvey'))
 
 const router = createBrowserRouter([
   {
@@ -93,6 +94,16 @@ const router = createBrowserRouter([
               <Suspense>
                 <ClientLayout>
                   <PostArticle />
+                </ClientLayout>
+              </Suspense>
+            )
+          },
+          {
+            path: 'survey',
+            element: (
+              <Suspense>
+                <ClientLayout>
+                  <UserSurvey />
                 </ClientLayout>
               </Suspense>
             )

@@ -41,7 +41,9 @@ const initialState = {
   lastCacheUpdate: null,
   postDetail: null,
 
-  viewMode: 'card'
+  viewMode: 'card',
+  sortOrder: 'newest',
+  cityFilter: null // Thêm state lưu thành phố đang lọc
 }
 
 const postSlice = createSlice({
@@ -133,6 +135,12 @@ const postSlice = createSlice({
     },
     setViewMode: (state, action) => {
       state.viewMode = action.payload
+    },
+    setSortOrder: (state, action) => {
+      state.sortOrder = action.payload // Cập nhật giá trị sắp xếp
+    },
+    setCityFilter: (state, action) => {
+      state.cityFilter = action.payload
     }
   },
 
@@ -256,7 +264,9 @@ export const {
   updatePostStatus,
   setSelectedPost,
   updatePostRequestStatus,
-  setViewMode
+  setViewMode,
+  setSortOrder,
+  setCityFilter
 } = postSlice.actions
 
 export default postSlice.reducer
