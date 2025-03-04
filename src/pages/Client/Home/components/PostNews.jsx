@@ -40,6 +40,8 @@ const PostNews = () => {
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
+  const pageSizeContanst = 16
+
   const fetchCity = useCallback(async () => {
     try {
       const data = await locationService.getCity()
@@ -61,7 +63,7 @@ const PostNews = () => {
     dispatch(
       getPostPagination({
         current: 1,
-        pageSize: 8,
+        pageSize: pageSizeContanst,
         query
       })
     )
@@ -81,7 +83,7 @@ const PostNews = () => {
     dispatch(
       getPostPagination({
         current: nextPage,
-        pageSize: 8,
+        pageSize: pageSizeContanst,
         query
       })
     )

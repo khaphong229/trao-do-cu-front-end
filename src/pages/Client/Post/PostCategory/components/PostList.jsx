@@ -92,10 +92,12 @@ const PostList = () => {
     setCurrentPage(page)
   }
 
-  const filteredPosts = posts.filter(post => {
-    if (activeTab === 'all') return true
-    return post.type === activeTab
-  })
+  const filteredPosts = posts
+    .map(post => post._doc)
+    .filter(post => {
+      if (activeTab === 'all') return true
+      return post.type === activeTab
+    })
 
   const sortedPosts = filteredPosts.sort((a, b) => {
     if (sortOrder === 'newest') {
@@ -194,7 +196,7 @@ const PostList = () => {
                       {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
                     </span>
                     <span> • </span>
-                    <span>{item.city.split(',').slice(-1)[0]}</span>
+                    <span>{item.city?.split(',')?.slice(-1)[0] || ''}</span>
                   </div>
                   <div className={styles.User}>
                     <div className={styles.userText}>
