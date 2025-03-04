@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getAllCategory } from 'features/client/category/categoryThunks'
 import { CheckCircle } from 'lucide-react'
 import { updateSurvey } from 'features/client/Survey/surveyThunks'
+import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 
 export default function SurveyForm() {
   const [selectedTags, setSelectedTags] = useState([])
@@ -14,7 +15,7 @@ export default function SurveyForm() {
   const dispatch = useDispatch()
   const { survey } = useSelector(state => state.survey)
   const { categories: cate } = useSelector(state => state.category)
-
+  const isMobile = useCheckMobileScreen()
   // Lấy danh mục từ API nếu chưa có dữ liệu
   useEffect(() => {
     if (cate.length === 0) {
@@ -95,16 +96,6 @@ export default function SurveyForm() {
         selected_at: new Date().toISOString()
       }))
 
-      console.log('🚀 Dữ liệu trước khi gửi:', interests)
-
-      // Kiểm tra cấu trúc dữ liệu interests để debug
-      console.log('📊 Kiểm tra cấu trúc:')
-      interests.forEach((item, index) => {
-        console.log(`- Item ${index}:`)
-        console.log(`  category_id type: ${typeof item.category_id}`)
-        console.log(`  category_id value: ${item.category_id}`)
-      })
-
       // Tạo payload theo cấu trúc mới
       const payload = {
         interests: interests
@@ -129,14 +120,16 @@ export default function SurveyForm() {
         <div className={styles.survey__info}>
           <h1 className={styles['survey__info-title']}>Khám phá sở thích của bạn</h1>
           <p className={styles['survey__info-subtitle']}>Tìm kiếm sản phẩm phù hợp dựa trên sở thích cá nhân</p>
-          <div className={styles['survey__info-description']}>
-            <p>
-              Chào mừng bạn đến với khảo sát người dùng của chúng tôi. Bằng cách chia sẻ sở thích của bạn, chúng tôi có
-              thể giúp bạn kết nối với những người có cùng mối quan tâm và tìm kiếm sản phẩm phù hợp nhất với nhu cầu
-              của bạn.
-            </p>
-            <p>Hãy chọn những danh mục bạn quan tâm nhất để bắt đầu hành trình khám phá!</p>
-          </div>
+          {!isMobile && (
+            <div className={styles['survey__info-description']}>
+              <p>
+                Chào mừng bạn đến với khảo sát người dùng của chúng tôi. Bằng cách chia sẻ sở thích của bạn, chúng tôi
+                có thể giúp bạn kết nối với những người có cùng mối quan tâm và tìm kiếm sản phẩm phù hợp nhất với nhu
+                cầu của bạn.
+              </p>
+              <p>Hãy chọn những danh mục bạn quan tâm nhất để bắt đầu hành trình khám phá!</p>
+            </div>
+          )}
         </div>
 
         <Card className={styles.survey__card}>

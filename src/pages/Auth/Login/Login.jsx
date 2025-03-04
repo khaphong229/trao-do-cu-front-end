@@ -30,6 +30,27 @@ const Login = () => {
         const responseGetUser = await dispatch(getCurrentUser(isAdminLogin)).unwrap()
         if (responseGetUser) {
           message.success('Đăng nhập thành công')
+
+          // if (isAdminLogin) {
+          //   navigate('/admin/dashboard')
+          // } else {
+          //   // const lastSurveyAccess = localStorage.getItem('lastSurveyAccess')
+          //   // const currentDate = new Date().getTime()
+
+          //   // if (!lastSurveyAccess) {
+          //   //   localStorage.setItem('lastSurveyAccess', currentDate.toString())
+          //   //   navigate('/survey')
+          //   // } else {
+          //   //   const daysPassed = (currentDate - parseInt(lastSurveyAccess)) / (1000 * 60 * 60 * 24)
+
+          //   //   if (daysPassed >= 10) {
+          //   //     localStorage.setItem('lastSurveyAccess', currentDate.toString())
+          //   //     navigate('/survey')
+          //   //   } else {
+          //   //     navigate('/')
+          //   //   }
+          //   // }
+          // }
           navigate(isAdminLogin ? '/admin/dashboard' : '/survey')
         }
       }

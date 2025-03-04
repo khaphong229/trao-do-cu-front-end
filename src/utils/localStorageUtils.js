@@ -1,4 +1,5 @@
 const AUTH_TOKEN_STORE_KEY = 'token'
+const INTERACTION_USER = 'interactionUser'
 
 export const removeAuthToken = () => {
   return localStorage.removeItem(AUTH_TOKEN_STORE_KEY)
@@ -22,4 +23,28 @@ export const removeToken = tokenKey => {
 
 export const hasAuthToken = () => {
   return !!getAuthToken()
+}
+
+export const setInteractionUser = interactions => {
+  try {
+    const interactionsString = JSON.stringify(interactions)
+    localStorage.setItem('interactionUser', interactionsString)
+  } catch (error) {
+    console.error('Error saving interactions to localStorage:', error)
+  }
+}
+
+export const getInteractionUser = () => {
+  try {
+    const interactionsString = localStorage.getItem('interactionUser')
+
+    return interactionsString ? JSON.parse(interactionsString) : []
+  } catch (error) {
+    console.error('Error retrieving interactions from localStorage:', error)
+    return []
+  }
+}
+
+export const removeInteractionUser = () => {
+  localStorage.removeItem(INTERACTION_USER)
 }

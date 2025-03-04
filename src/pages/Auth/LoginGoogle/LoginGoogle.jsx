@@ -19,7 +19,7 @@ export default function LoginGoogle() {
         const responseGetUser = await dispatch(getCurrentUser(false)).unwrap()
         if (responseGetUser) {
           message.success('Đăng nhập thành công')
-          navigate('/')
+          navigate('/survey')
         }
       }
     } catch (error) {

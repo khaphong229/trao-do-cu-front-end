@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Row, Col, Image, Typography, Divider, Avatar, Tooltip } from 'antd'
 import { ClockCircleOutlined, EnvironmentOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
 import styles from './../scss/PostInfoDetail.module.scss'
@@ -19,6 +19,7 @@ import { getValidImageUrl } from 'helpers/helper'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import PostDetailSkeleton from 'components/common/Skeleton/PostDetailSkeleton'
 import { updatePostRequestStatus } from 'features/client/post/postSlice'
+import useInteraction from 'hooks/useInteraction'
 
 const { Title, Text } = Typography
 
@@ -35,11 +36,18 @@ const PostInfoDetail = () => {
   const AuthButton = withAuth(Button)
   const dispatch = useDispatch()
 
+  const { batchClick } = useInteraction()
   const {
     handleGiftRequest: originalHandleGiftRequest,
     handleInfoSubmit,
     handleRequestConfirm: originalHandleRequestConfirm
   } = useGiftRequest()
+
+  useEffect(() => {
+    if (selectedPost && selectedPost.category_id) {
+      batchClick(selectedPost.category_id || '')
+    }
+  }, [selectedPost, batchClick])
 
   const handleRequestConfirm = async values => {
     try {

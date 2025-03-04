@@ -11,17 +11,20 @@ import {
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import omit from 'lodash/omit'
 import { updatePostRequestStatus } from 'features/client/post/postSlice'
+import useInteraction from 'hooks/useInteraction'
 
 export const useGiftRequest = () => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const selectedPostExchange = useSelector(state => state.exchangeRequest?.selectedPostExchange) || null
-  // const [selectedPost, setSelectedPost] = useState(null)
+  const { batchClick } = useInteraction()
+
   const checkUserContactInfo = () => {
     return (user?.phone || (user?.social_media && user?.social_media?.length > 0)) && user?.address
   }
 
   const handleGiftRequest = (post, type) => {
+    batchClick(post.category_id || '')
     // setSelectedPost(post)
     dispatch(setSelectedPostExchange(post))
     if (!checkUserContactInfo()) {
@@ -68,6 +71,8 @@ export const useGiftRequest = () => {
   }
 
   const handleRequestConfirm = async values => {
+    batchClick(selectedPostExchange.category_id || '')
+
     if (!selectedPostExchange) return
 
     let requestData = {
@@ -120,6 +125,8 @@ export const useGiftRequest = () => {
       message.error('Không tìm thấy bài viết được chọn')
       return
     }
+
+    batchClick(selectedPostExchange.category_id || '')
 
     let requestData = {
       post_id: selectedPostExchange._id,

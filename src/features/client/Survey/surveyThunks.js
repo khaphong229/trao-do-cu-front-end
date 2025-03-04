@@ -25,13 +25,9 @@ export const updateSurvey = createAsyncThunk('survey/updateSurvey', async (data,
       })
     }
 
-    // Log dữ liệu đã xử lý
-    console.log('🚀 Dữ liệu đã xử lý:', JSON.stringify(processedData, null, 2))
-
     const response = await surveyService.updateSurvey(processedData)
     return response.data
   } catch (error) {
-    console.error('❌ Lỗi API:', error.response?.data || error.message)
     return rejectWithValue(error.response?.data || 'Lỗi không xác định')
   }
 })

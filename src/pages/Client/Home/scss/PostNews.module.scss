@@ -38,7 +38,7 @@ $transition-base: all 0.3s ease;
 // Main Container
 .postWrap {
   background: $color-white;
-  padding: 20px 10px;
+  padding: 10px;
   margin: 0;
 
   @include mobile {
@@ -50,11 +50,11 @@ $transition-base: all 0.3s ease;
   }
 }
 
-.postHeader{
+.postHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
 }
 

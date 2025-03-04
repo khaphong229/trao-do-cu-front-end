@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Search } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { searchPost, resetSearch } from '../../../../../../features/client/post/postSlice'
 import styles from './scss/SearchBar.module.scss'
-import { Card, Input, Select } from 'antd'
+import { Card, Input } from 'antd'
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState('')
