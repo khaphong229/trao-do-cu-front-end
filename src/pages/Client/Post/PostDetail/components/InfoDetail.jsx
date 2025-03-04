@@ -119,7 +119,8 @@ const PostInfoDetail = () => {
             src={getValidImageUrl(thumbnails)}
             alt="post main"
             width="100%"
-            style={{ cursor: 'pointer' }}
+            height={400}
+            style={{ cursor: 'pointer', objectFit: 'cover' }}
             onError={e => {
               e.target.onerror = null
               e.target.src = imageNotFound
@@ -136,9 +137,11 @@ const PostInfoDetail = () => {
                   }}
                   alt={`image ${index + 1}`}
                   width="100%"
+                  height={100}
                   style={{
                     border: mainImage === imageUrl ? '2px solid #1890ff' : '',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    objectFit: 'cover'
                   }}
                   onClick={() => setMainImage(imageUrl)}
                 />

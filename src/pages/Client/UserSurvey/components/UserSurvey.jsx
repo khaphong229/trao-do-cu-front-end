@@ -7,6 +7,8 @@ import { getAllCategory } from 'features/client/category/categoryThunks'
 import { CheckCircle } from 'lucide-react'
 import { updateSurvey } from 'features/client/Survey/surveyThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
+import { getCategories } from 'utils/localStorageUtils'
+import { setCategory } from 'features/client/category/categorySlice'
 
 export default function SurveyForm() {
   const [selectedTags, setSelectedTags] = useState([])
@@ -16,22 +18,22 @@ export default function SurveyForm() {
   const { survey } = useSelector(state => state.survey)
   const { categories: cate } = useSelector(state => state.category)
   const isMobile = useCheckMobileScreen()
-  // Lấy danh mục từ API nếu chưa có dữ liệu
-  useEffect(() => {
-    if (cate.length === 0) {
-      dispatch(getAllCategory())
-    }
-  }, [dispatch, cate.length])
 
-  // Load danh mục đã chọn từ survey vào state
+  useEffect(() => {
+    const categoriesLocal = getCategories()
+    if (categoriesLocal.length === 0) {
+      dispatch(getAllCategory())
+    } else {
+      dispatch(setCategory(categoriesLocal))
+    }
+  }, [dispatch])
+
   useEffect(() => {
     if (survey.data?.interests?.length > 0 && cate.length > 0) {
       const userSelectedCategories = survey.data.interests
         .map(item => {
-          // Trích xuất ID thực sự từ đối tượng hoặc dùng trực tiếp nếu là string
           const categoryId =
             typeof item.category_id === 'object' && item.category_id._id ? item.category_id._id : item.category_id
-
           const foundCategory = cate.find(c => c._id === categoryId)
           return foundCategory
             ? {
@@ -44,7 +46,7 @@ export default function SurveyForm() {
 
       setSelectedTags(userSelectedCategories)
     }
-  }, [survey.data, cate])
+  }, [survey.data?.interests, cate])
 
   // Danh sách danh mục hiển thị
   const categories = cate.map(itemCate => ({
@@ -55,7 +57,6 @@ export default function SurveyForm() {
   // Lấy icon theo danh mục
   const getCategoryIcon = categoryName => {
     const iconMap = {
-      'Bất động sản': '🏠',
       'Xe cộ': '🛵',
       'Đồ điện tử': '📱',
       'Đồ gia dụng, nội thất, cây cảnh': '🖼',
@@ -65,6 +66,7 @@ export default function SurveyForm() {
       'Thú cưng': '🐶',
       'Đồ ăn, thực phẩm': '🍕',
       'Giải trí, thể thao': '🤾',
+      'Học tập': '📝',
       'Tất cả': '✔️'
     }
     return iconMap[categoryName] || '📦'

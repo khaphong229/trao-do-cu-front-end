@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Space, Button, Dropdown, Menu } from 'antd'
 import { UnorderedListOutlined, DownOutlined } from '@ant-design/icons'
 import styles from './scss/Logo.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllCategory } from 'features/client/category/categoryThunks'
+import { getCategories, setCategories } from 'utils/localStorageUtils'
+import { setCategory } from 'features/client/category/categorySlice'
 
 const renderMenuItems = (categories, navigate) =>
   categories.map(category => {
@@ -56,12 +58,24 @@ const Logo = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { categories } = useSelector(state => state.category)
+  const prevCategoriesRef = useRef() // Lưu giá trị trước đó của categories
 
   useEffect(() => {
-    if (categories.length === 0) {
+    const categoriesLocal = getCategories()
+    if (categoriesLocal.length === 0) {
       dispatch(getAllCategory())
+    } else {
+      dispatch(setCategory(categoriesLocal))
     }
-  }, [dispatch, categories.length])
+  }, [dispatch])
+
+  useEffect(() => {
+    // Kiểm tra nếu categories thay đổi so với giá trị trước đó
+    if (prevCategoriesRef.current !== categories) {
+      setCategories(categories) // Lưu vào localStorage
+      prevCategoriesRef.current = categories // Cập nhật giá trị tham chiếu
+    }
+  }, [categories]) // Phụ thuộc vào categories
 
   const goHome = () => {
     navigate('/')

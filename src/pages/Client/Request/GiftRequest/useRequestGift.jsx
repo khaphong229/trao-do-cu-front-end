@@ -12,6 +12,7 @@ import { requestExchange } from 'features/client/request/exchangeRequest/exchang
 import omit from 'lodash/omit'
 import { updatePostRequestStatus } from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
+const isObject = require('lodash/isObject')
 
 export const useGiftRequest = () => {
   const dispatch = useDispatch()
@@ -24,7 +25,7 @@ export const useGiftRequest = () => {
   }
 
   const handleGiftRequest = (post, type) => {
-    batchClick(post.category_id || '')
+    batchClick(isObject(post.category_id) ? post.category_id._id : post.category_id)
     // setSelectedPost(post)
     dispatch(setSelectedPostExchange(post))
     if (!checkUserContactInfo()) {
@@ -71,7 +72,7 @@ export const useGiftRequest = () => {
   }
 
   const handleRequestConfirm = async values => {
-    batchClick(selectedPostExchange.category_id || '')
+    batchClick(selectedPostExchange.category_id._id || '')
 
     if (!selectedPostExchange) return
 
@@ -126,7 +127,7 @@ export const useGiftRequest = () => {
       return
     }
 
-    batchClick(selectedPostExchange.category_id || '')
+    batchClick(selectedPostExchange.category_id._id || '')
 
     let requestData = {
       post_id: selectedPostExchange._id,

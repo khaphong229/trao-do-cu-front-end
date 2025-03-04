@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Card, Row, Col, Button, Avatar, Tooltip, Badge, Empty, Typography, Select } from 'antd'
+import { Card, Row, Col, Button, Avatar, Tooltip, Badge, Typography, Select } from 'antd'
 import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
@@ -214,7 +214,7 @@ const PostNews = () => {
           </Row>
         )}
 
-        {filteredPosts && filteredPosts.length > 0 ? (
+        {filteredPosts && filteredPosts.length > 0 && (
           <Row gutter={[16, 0]} className={styles.itemsGrid}>
             {filteredPosts.map(item => (
               <Col key={item._id} xs={24} sm={12} md={8} lg={6}>
@@ -284,8 +284,9 @@ const PostNews = () => {
               </Col>
             ))}
           </Row>
-        ) : (
-          !isLoading && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
+          // ) : (
+          //   !isLoading && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
+          // )}
         )}
 
         {hasMore && !isSearchMode && (

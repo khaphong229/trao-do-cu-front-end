@@ -28,6 +28,10 @@
       border-radius: 4px;
       font-size: 14px;
 
+      @media (max-width: 797px) {
+        width: 100%;
+      }
+
       &:focus {
         outline: none;
         border-color: #d1d5db;

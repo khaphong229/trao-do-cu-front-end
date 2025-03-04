@@ -93,7 +93,13 @@ const PostList = () => {
   }
 
   const filteredPosts = posts
-    .map(post => post._doc)
+    .map(post => {
+      if (category_id !== 'all') {
+        return post._doc
+      } else {
+        return post
+      }
+    })
     .filter(post => {
       if (activeTab === 'all') return true
       return post.type === activeTab
@@ -167,7 +173,7 @@ const PostList = () => {
       ) : sortedPosts.length > 0 ? (
         <Row gutter={[8, 8]}>
           {sortedPosts.map(item => (
-            <Col xs={24} sm={12} key={item.id}>
+            <Col xs={24} sm={12} key={item?.id}>
               <Card
                 className={styles.Card}
                 hoverable
@@ -175,44 +181,44 @@ const PostList = () => {
                   <div className={styles.imageWrapper}>
                     <img
                       loading="lazy"
-                      alt={item.title}
-                      src={getValidImageUrl(item.image_url)}
+                      alt={item?.title || ''}
+                      src={getValidImageUrl(item?.image_url)}
                       onError={e => {
                         e.target.onerror = null
                         e.target.src = imageNotFound
                       }}
-                      onClick={() => goDetail(item._id)}
+                      onClick={() => goDetail(item?._id)}
                     />
                   </div>
                 }
               >
                 <div className={styles.Container}>
-                  <Text strong onClick={() => goDetail(item._id)} className={styles.title}>
-                    {item.title}
+                  <Text strong onClick={() => goDetail(item?._id)} className={styles.title}>
+                    {item?.title}
                   </Text>
-                  <span className={styles.status}>{item.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>
+                  <span className={styles.status}>{item?.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>
                   <div className={styles.TimeRole}>
                     <span className={styles.time}>
-                      {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
+                      {dayjs(item?.created_at).isValid() ? dayjs(item?.created_at).fromNow() : 'Không rõ thời gian'}
                     </span>
                     <span> • </span>
-                    <span>{item.city?.split(',')?.slice(-1)[0] || ''}</span>
+                    <span>{item?.city?.split(',')?.slice(-1)[0] || ''}</span>
                   </div>
                   <div className={styles.User}>
                     <div className={styles.userText}>
-                      <Avatar className={styles.avtUser} src={item.avatar || avt} />
+                      <Avatar className={styles.avtUser} src={item?.avatar || avt} />
                       <Text className={styles.TextUser}>{item?.user_id?.name}</Text>
                     </div>
-                    {item.type === 'gift' ? (
+                    {item?.type === 'gift' ? (
                       <AuthButton
                         color="primary"
                         variant="filled"
                         size="middle"
                         className={styles.ButtonChat}
                         onClick={() => handleRequest(item)}
-                        disabled={item.isRequested}
+                        disabled={item?.isRequested}
                       >
-                        {item.isRequested ? 'Đã yêu cầu' : 'Nhận'}
+                        {item?.isRequested ? 'Đã yêu cầu' : 'Nhận'}
                       </AuthButton>
                     ) : (
                       <AuthButton
@@ -220,9 +226,9 @@ const PostList = () => {
                         size="middle"
                         className={styles.ButtonChat}
                         onClick={() => handleRequest(item)}
-                        disabled={item.isRequested}
+                        disabled={item?.isRequested}
                       >
-                        {item.isRequested ? 'Đã yêu cầu' : 'Đổi'}
+                        {item?.isRequested ? 'Đã yêu cầu' : 'Đổi'}
                       </AuthButton>
                     )}
                   </div>

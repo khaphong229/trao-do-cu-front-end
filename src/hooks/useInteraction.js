@@ -44,6 +44,7 @@ const useInteraction = () => {
   }, [interactions.length, requestInteraction])
 
   const batchClick = useCallback(categoryId => {
+    if (categoryId === null) return
     const now = getDatetimeNow()
     const newObj = { category: categoryId, time_event: now, event_type: 'click' }
 
