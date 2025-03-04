@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllCategory } from 'features/client/category/categoryThunks'
 import { CheckCircle } from 'lucide-react'
-import { updateSurvey } from 'features/client/Survey/surveyThunks'
+import { updateSurvey, updateSurveyStatus } from 'features/client/Survey/surveyThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getCategories } from 'utils/localStorageUtils'
 import { setCategory } from 'features/client/category/categorySlice'
@@ -107,6 +107,7 @@ export default function SurveyForm() {
 
       if (result) {
         message.success('Đã lưu sở thích của bạn thành công!')
+        dispatch(updateSurveyStatus())
         navigate('/')
       }
     } catch (error) {

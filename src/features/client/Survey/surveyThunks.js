@@ -31,3 +31,12 @@ export const updateSurvey = createAsyncThunk('survey/updateSurvey', async (data,
     return rejectWithValue(error.response?.data || 'Lỗi không xác định')
   }
 })
+
+export const updateSurveyStatus = createAsyncThunk('survey/updateSurveyStatus', async (_, { rejectWithValue }) => {
+  try {
+    const response = await surveyService.updateSurveyStatus()
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response?.data || 'Lỗi không xác định')
+  }
+})
