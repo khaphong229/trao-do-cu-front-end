@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
-import avt from 'assets/images/logo/avtDefault.webp'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import { getValidImageUrl } from 'helpers/helper'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
@@ -17,12 +16,11 @@ import { ContactInfoModal } from 'pages/Client/Request/GiftRequest/components/Co
 import { GiftRequestConfirmModal } from 'pages/Client/Request/GiftRequest/components/GiftRequestConfirmModal'
 import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange/FormExchange'
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
-import { URL_SERVER_IMAGE } from 'config/url_server'
 import { ArrowDownOutlined, GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 import { FaMapMarkerAlt } from 'react-icons/fa'
 import { locationService } from 'services/client/locationService'
-import { getAvatarPost, useAvatar } from 'hooks/useAvatar'
+import { getAvatarPost } from 'hooks/useAvatar'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -244,16 +242,20 @@ const PostNews = () => {
                     <Card.Meta
                       title={
                         <Tooltip title={item.title}>
-                          <Text className={styles.itemTitle} onClick={() => goDetail(item._id)}>
+                          <Paragraph
+                            className={styles.itemTitle}
+                            onClick={() => goDetail(item._id)}
+                            ellipsis={{ rows: 2 }}
+                          >
                             {item.title}
-                          </Text>
+                          </Paragraph>
                         </Tooltip>
                       }
-                      description={
-                        <Paragraph className={styles.itemDesc} ellipsis={{ rows: 2 }}>
-                          {item?.description || ''}
-                        </Paragraph>
-                      }
+                      // description={
+                      //   <Paragraph className={styles.itemDesc} ellipsis={{ rows: 2 }}>
+                      //     {item?.description || ''}
+                      //   </Paragraph>
+                      // }
                     />
 
                     <div className={styles.locationRow}>

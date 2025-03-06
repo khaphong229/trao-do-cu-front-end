@@ -48,7 +48,7 @@ export const UseListNotification = () => {
 
         setCurrentPage(page)
       } catch (error) {
-        console.error('Failed to load notifications:', error)
+        // console.error('Failed to load notifications:', error)
       }
     },
     [dispatch, isAuthenticated, lastPolledCount]
@@ -89,7 +89,7 @@ export const UseListNotification = () => {
         loadNotifications(currentPage)
       }
     } catch (error) {
-      console.error('Failed to mark notification as read:', error)
+      // console.error('Failed to mark notification as read:', error)
     }
   }
 
@@ -100,7 +100,7 @@ export const UseListNotification = () => {
         loadNotifications(1)
       }
     } catch (error) {
-      console.error('Failed to mark all notifications as read:', error)
+      // console.error('Failed to mark all notifications as read:', error)
     }
   }
 

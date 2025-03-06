@@ -1,8 +1,8 @@
 import React, { lazy } from 'react'
 import Categories from './components/Categories'
 import TopSales from './components/Banner'
-import ChatBot from './components/ChatBot'
-// import PostNews from './components/PostNews'
+// import ChatBot from './components/ChatBot'
+
 const PostNews = lazy(() => import('./components/PostNews'))
 const Home = () => {
   return (
@@ -10,7 +10,7 @@ const Home = () => {
       <TopSales />
       <Categories />
       <PostNews />
-      <ChatBot />
+      {/* <ChatBot /> */}
     </div>
   )
 }

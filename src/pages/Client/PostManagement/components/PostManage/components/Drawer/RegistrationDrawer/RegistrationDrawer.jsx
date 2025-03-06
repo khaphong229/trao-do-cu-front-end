@@ -3,7 +3,6 @@ import { Drawer, Card, List, Avatar, Button, message, Badge, Descriptions, Image
 import { UserOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './RegistrationDrawer.module.scss'
-import avt from 'assets/images/logo/avtDefault.webp'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'

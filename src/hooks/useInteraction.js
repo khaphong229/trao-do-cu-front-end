@@ -32,7 +32,7 @@ const useInteraction = () => {
         setInteractions([])
       }
     } catch (error) {
-      console.error('Failed to save interactions:', error)
+      // console.error('Failed to save interactions:', error)
     }
   }, [interactions, user, dispatch])
 

@@ -15,8 +15,8 @@ const PostContent = ({ ref2, errorPost, setErrorPost }) => {
   const { isShowEmoji, dataCreatePost } = useSelector(state => state.post)
 
   const handleEmojiClick = emojiObject => {
-    const updatedDescription = (dataCreatePost.description || '') + emojiObject.emoji
-    dispatch(updatePostData({ description: updatedDescription }))
+    const updatedDescription = (dataCreatePost.title || '') + emojiObject.emoji
+    dispatch(updatePostData({ title: updatedDescription }))
   }
 
   const handleRemoveFile = indexToRemove => {
@@ -66,20 +66,26 @@ const PostContent = ({ ref2, errorPost, setErrorPost }) => {
   return (
     <div className={styles.contentWrapper}>
       <div className={styles.titleWrap} ref={ref2}>
-        <Input
+        <TextArea
           status={errorPost?.title ? 'error' : ''}
           variant={errorPost?.title ? 'outlined' : 'borderless'}
-          placeholder={errorPost?.title ? errorPost.title : 'Nhập tiêu đề bài đăng *'}
+          autoSize={{ minRows: 3, maxRows: 8 }}
+          placeholder={
+            errorPost?.title ? errorPost.title : `${user.name} ơi, bạn đang muốn trao đổi hay cho đi gì thế?`
+          }
           value={dataCreatePost.title}
           onChange={e => {
             dispatch(updatePostData({ title: e.target.value }))
             setErrorPost(null)
           }}
           style={{ width: '100%', borderRadius: '0' }}
+          ref={el => {
+            setTimeout(() => el?.focus(), 0)
+          }}
         />
       </div>
 
-      <div className={styles.postContent}>
+      {/* <div className={styles.postContent}>
         <TextArea
           placeholder={`${user.name} ơi, bạn đang muốn trao đổi hay cho đi gì thế?`}
           autoSize={{ minRows: 3, maxRows: 8 }}
@@ -87,7 +93,7 @@ const PostContent = ({ ref2, errorPost, setErrorPost }) => {
           value={dataCreatePost.description}
           onChange={e => dispatch(updatePostData({ description: e.target.value }))}
         />
-      </div>
+      </div> */}
 
       {dataCreatePost.image_url && dataCreatePost.image_url.length > 0 && (
         <div className={styles.uploadedFiles}>

@@ -30,7 +30,7 @@ const CreatePostModal = () => {
   const [errorPost, setErrorPost] = useState(null)
   const { user } = useSelector(state => state.auth)
   const { dataCreatePost, isCreateModalVisible, isLoadingButton, isShowTour } = useSelector(state => state.post)
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+  const [isMobile] = useState(window.innerWidth <= 768)
 
   const ref1 = useRef(null)
   const ref2 = useRef(null)
@@ -86,8 +86,8 @@ const CreatePostModal = () => {
       target: () => ref1.current
     },
     {
-      title: 'Tiêu đề',
-      description: 'Nhập tiêu đề bài đăng.',
+      title: 'Nội dung',
+      description: 'Nhập nội dung bài đăng.',
       target: () => ref2.current
     },
     {
@@ -188,7 +188,7 @@ const CreatePostModal = () => {
           className={styles.postButton}
           onClick={handleSubmit}
           loading={isLoadingButton}
-          disabled={!dataCreatePost.title.trim()}
+          // disabled={!dataCreatePost.title.trim()}
           style={isMobile ? { marginTop: 'auto' } : {}}
         >
           Đăng
