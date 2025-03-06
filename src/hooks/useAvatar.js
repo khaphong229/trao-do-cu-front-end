@@ -19,3 +19,15 @@ export const useAvatar = () => {
 
   return { avatar: getAvatar() }
 }
+
+export const getAvatarPost = user => {
+  if (user?.avatar) {
+    if (user?.isGoogle) {
+      return user.avatar.includes('lh3.googleusercontent.com') ? user.avatar : `${URL_SERVER_IMAGE}${user.avatar}`
+    } else {
+      return `${URL_SERVER_IMAGE}${user.avatar}`
+    }
+  } else {
+    return avtDefault
+  }
+}

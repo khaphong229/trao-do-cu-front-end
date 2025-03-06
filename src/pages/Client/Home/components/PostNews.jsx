@@ -22,6 +22,7 @@ import { ArrowDownOutlined, GiftOutlined, SwapOutlined } from '@ant-design/icons
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 import { FaMapMarkerAlt } from 'react-icons/fa'
 import { locationService } from 'services/client/locationService'
+import { getAvatarPost, useAvatar } from 'hooks/useAvatar'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -257,11 +258,7 @@ const PostNews = () => {
 
                     <div className={styles.locationRow}>
                       <div className={styles.userGroup}>
-                        <Avatar
-                          size="small"
-                          className={styles.avtUser}
-                          src={item?.user_id?.avatar ? `${URL_SERVER_IMAGE}${item.user_id.avatar}` : avt}
-                        />
+                        <Avatar size="small" className={styles.avtUser} src={getAvatarPost(item?.user_id)} />
                         <Text type="secondary" className={styles.time}>
                           {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
                         </Text>

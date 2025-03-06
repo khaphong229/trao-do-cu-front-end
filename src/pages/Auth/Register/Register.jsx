@@ -38,19 +38,19 @@ const Register = () => {
       <Form className="authForm" form={form} name="register" layout="vertical" onFinish={onFinish} scrollToFirstError>
         <Form.Item
           name="name"
-          label="Tên tài khoản"
+          label="Họ và tên"
           rules={[
             {
               required: true,
-              message: 'Vui lòng nhập tên tài khoản!'
+              message: 'Vui lòng nhập Họ và tên!'
             },
             {
               min: 6,
-              message: 'Tên tài khoản tối thiểu 6 kí tự.'
+              message: 'Họ và tên tối thiểu 6 kí tự.'
             },
             {
               max: 255,
-              message: 'Tên tài khoản tối đa 255 kí tự.'
+              message: 'Họ và tên tối đa 255 kí tự.'
             }
           ]}
         >

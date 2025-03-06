@@ -308,7 +308,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
               tab={
                 <span className={styles.subTabLabel}>
                   {subTab.label}
-                  <span className={styles.subTabCount}>({subTab.count})</span>
+                  {/* <span className={styles.subTabCount}>({subTab.count})</span> */}
                 </span>
               }
             />

@@ -7,6 +7,7 @@ import avt from 'assets/images/logo/avtDefault.webp'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
+import { getAvatarPost } from 'hooks/useAvatar'
 
 export const RegistrationDrawer = ({
   visible,
@@ -118,11 +119,7 @@ export const RegistrationDrawer = ({
           <div className={styles.requestItem}>
             <div className={styles.requestHeader}>
               <div className={styles.userInfo}>
-                <Avatar
-                  src={request.user_req_id?.avatar ? `${URL_SERVER_IMAGE}${request.user_req_id?.avatar}` : avt}
-                  icon={<UserOutlined />}
-                  size={40}
-                />
+                <Avatar src={getAvatarPost(request.user_req_id)} icon={<UserOutlined />} size={40} />
                 <span className={styles.userName}>{request.user_req_id?.name || 'Không xác định'}</span>
               </div>
               <Badge

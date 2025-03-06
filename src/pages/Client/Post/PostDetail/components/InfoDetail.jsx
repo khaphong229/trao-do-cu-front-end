@@ -20,6 +20,7 @@ import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import PostDetailSkeleton from 'components/common/Skeleton/PostDetailSkeleton'
 import { updatePostRequestStatus } from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
+import { getAvatarPost } from 'hooks/useAvatar'
 
 const { Title, Text } = Typography
 
@@ -186,11 +187,7 @@ const PostInfoDetail = () => {
           <Divider />
           <div className={styles.SellerInfo}>
             <div className={styles.InfoName}>
-              <Avatar
-                className={styles.avtUser}
-                src={selectedPost.user_id?.avatar ? `${URL_SERVER_IMAGE}${selectedPost.user_id.avatar}` : avt}
-                icon={<UserOutlined />}
-              />
+              <Avatar className={styles.avtUser} src={getAvatarPost(selectedPost?.user_id)} icon={<UserOutlined />} />
               <div>
                 <Text className={styles.TextName}>{selectedPost?.user_id?.name || 'Người dùng'}</Text>
                 <Text className={styles.TextStatus}>
