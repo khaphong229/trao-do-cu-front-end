@@ -88,6 +88,19 @@ const CreatePostModal = () => {
     }
   }, [isCreateModalVisible, user?.address, dispatch])
 
+  useEffect(() => {
+    if (isCreateModalVisible && user) {
+      dispatch(
+        updatePostData({
+          city: user.address?.split(', ').pop() || '',
+          specificLocation: user.address || '',
+          phone: user.phone || '',
+          facebookLink: user.facebookLink || ''
+        })
+      )
+    }
+  }, [isCreateModalVisible, user, dispatch])
+
   // Clear form errors when modal closes
   useEffect(() => {
     if (!isCreateModalVisible) {
@@ -129,6 +142,17 @@ const CreatePostModal = () => {
     }
   ]
 
+  // Kiểm tra tính hợp lệ của số điện thoại Việt Nam
+  const isValidVietnamesePhone = phone => {
+    // Kiểm tra định dạng số điện thoại Việt Nam
+    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/
+    return phoneRegex.test(phone)
+  }
+  const isValidFacebookLink = link => {
+    const facebookRegex = /(?:http(?:s)?:\/\/)?(?:www\.)?facebook.com\/.+/g
+    return facebookRegex.test(link)
+  }
+
   const validateForm = () => {
     const errors = {}
 
@@ -141,10 +165,19 @@ const CreatePostModal = () => {
     if (!dataCreatePost.image_url || dataCreatePost.image_url.length === 0) {
       errors.image_url = 'Vui lòng tải lên ít nhất một hình ảnh'
     }
-    // Kiểm tra Facebook link nếu có
-    if (!dataCreatePost.facebookLink) {
-      errors.facebookLink = 'Vui lòng nhập liên kết Facebook hoặc số điện thoại'
+
+    // Kiểm tra thông tin liên hệ
+    if (!dataCreatePost.phone) {
+      errors.phone = 'Vui lòng nhập số điện thoại liên hệ'
+    } else if (!isValidVietnamesePhone(dataCreatePost.phone)) {
+      errors.phone = 'Số điện thoại không hợp lệ'
     }
+
+    // Kiểm tra Facebook link nếu có
+    if (dataCreatePost.facebookLink && !isValidFacebookLink(dataCreatePost.facebookLink)) {
+      errors.facebookLink = 'Liên kết Facebook không hợp lệ'
+    }
+
     // Kiểm tra địa chỉ
     if (!dataCreatePost.specificLocation) {
       errors.specificLocation = 'Vui lòng thêm địa chỉ'
@@ -167,29 +200,34 @@ const CreatePostModal = () => {
       titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.image_url) {
       imageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    } else if (errors.phone) {
+      phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    } else if (errors.facebookLink) {
+      facebookRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.specificLocation || errors.city) {
       locationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.category_id) {
       categoryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    } else if (errors.facebookLink || errors.phone) {
-      facebookRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }
 
   const handleSubmit = async () => {
+    // Validate form first
     const errors = validateForm()
     setFormErrors(errors)
 
+    // Set errorPost for backward compatibility
     if (Object.keys(errors).length > 0) {
       setErrorPost(errors)
     } else {
       setErrorPost(null)
     }
 
+    // If there are errors, display them and stop submission
     if (Object.keys(errors).length > 0) {
+      // Show error message for the first error
       message.error(Object.values(errors)[0])
-
+      // Scroll to the first error field
       scrollToFirstError(errors)
       return
     }
@@ -206,6 +244,7 @@ const CreatePostModal = () => {
       }
     } catch (error) {
       if (error.status === 400) {
+        // Map backend errors to form fields
         const newErrors = {}
 
         Object.entries(error.detail).forEach(([field, msg]) => {
@@ -217,15 +256,17 @@ const CreatePostModal = () => {
             message.error('Vui lòng thêm địa chỉ')
           } else if (field === 'image_url') {
             message.error('Vui lòng tải lên ít nhất một hình ảnh')
-          } else if (field === 'phone' && field === 'facebookLink') {
-            message.error('Liên kết Facebook hoặc số điện thoại không hợp lệ')
+          } else if (field === 'phone') {
+            message.error('Vui lòng nhập số điện thoại hợp lệ')
+          } else if (field === 'facebookLink') {
+            message.error('Vui lòng nhập liên kết Facebook hợp lệ')
           } else {
             message.error(msg)
           }
         })
 
         setFormErrors(newErrors)
-        setErrorPost(error?.detail)
+        setErrorPost(error?.detail) // Set errorPost for backward compatibility
         scrollToFirstError(newErrors)
       }
     }
@@ -235,6 +276,7 @@ const CreatePostModal = () => {
     try {
       await dispatch(uploadPostImages(files)).unwrap()
 
+      // Clear image error if it exists
       if (formErrors.image_url) {
         setFormErrors(prev => {
           const newErrors = { ...prev }
@@ -251,6 +293,7 @@ const CreatePostModal = () => {
     } catch (error) {
       message.error('Tải ảnh thất bại')
 
+      // Set image error
       setFormErrors(prev => ({
         ...prev,
         image_url: 'Tải ảnh thất bại'
@@ -263,9 +306,12 @@ const CreatePostModal = () => {
     }
   }
 
+  // Handler to clear error when field is updated
   const handleFieldChange = (field, value) => {
+    // Update the post data
     dispatch(updatePostData({ [field]: value }))
 
+    // Clear the error for this field if it exists
     if (formErrors[field]) {
       setFormErrors(prev => {
         const newErrors = { ...prev }
@@ -273,6 +319,7 @@ const CreatePostModal = () => {
         return newErrors
       })
 
+      // Also update errorPost for backward compatibility
       if (errorPost && errorPost[field]) {
         const newErrorPost = { ...errorPost }
         delete newErrorPost[field]
@@ -347,6 +394,7 @@ const CreatePostModal = () => {
       <FacebookLinkModal
         facebookLink={dataCreatePost.facebookLink || ''}
         setFacebookLink={facebookLink => handleFieldChange('facebookLink', facebookLink)}
+        error={formErrors.facebookLink}
       />
 
       <CategoryModal
