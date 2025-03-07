@@ -9,7 +9,7 @@ import { URL_SERVER_IMAGE } from '../../../../../../config/url_server'
 
 const { TextArea } = Input
 
-const PostContent = () => {
+const PostContent = ({ errorPost, setErrorPost }) => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const { isShowEmoji, requestData } = useSelector(state => state.exchangeRequest)
@@ -66,24 +66,34 @@ const PostContent = () => {
   return (
     <div className={styles.contentWrapper}>
       <div className={styles.titleWrap}>
-        <Input
-          variant="borderless"
-          placeholder="Nhập tiêu đề"
+        <TextArea
+          status={errorPost?.title ? 'error' : ''}
+          variant={errorPost?.title ? 'outlined' : 'borderless'}
+          autoSize={{ minRows: 3, maxRows: 8 }}
+          placeholder={
+            errorPost?.title ? errorPost.title : `${user.name} ơi, hãy điền nội dung mô tả đồ bạn muốn đổi nhé!`
+          }
           value={requestData.title}
-          onChange={e => dispatch(updateRequestData({ title: e.target.value }))}
-          style={{ width: '100%' }}
+          onChange={e => {
+            dispatch(updateRequestData({ title: e.target.value }))
+            setErrorPost(null)
+          }}
+          style={{ width: '100%', borderRadius: '0' }}
+          ref={el => {
+            setTimeout(() => el?.focus(), 0)
+          }}
         />
       </div>
 
-      <div className={styles.postContent}>
-        <TextArea
+      {/* <div className={styles.postContent}>
+        <Input
           placeholder={`${user.name} ơi, hãy điền nội dung mô tả đồ bạn muốn đổi nhé!`}
           autoSize={{ minRows: 3, maxRows: 8 }}
           bordered={false}
           value={requestData.description}
           onChange={e => dispatch(updateRequestData({ description: e.target.value }))}
         />
-      </div>
+      </div> */}
 
       {requestData.image_url && requestData.image_url.length > 0 && (
         <div className={styles.uploadedFiles}>

@@ -73,11 +73,12 @@ const ProfilePage = () => {
   const handleUpdateMe = async () => {
     try {
       const response = await dispatch(updateUserProfile(formData)).unwrap()
+      console.log('response', response)
       if (response.status === 201) {
         message.success(response.message)
       }
     } catch (error) {
-      message.error('Cập nhật thông tin thất bại')
+      message.error('Cập nhật thông tin thất bại', error.message)
     }
   }
 

@@ -1,10 +1,14 @@
 import React from 'react'
 import { Carousel } from 'antd'
 import styles from '../scss/Topsales.module.scss'
-import banner1 from 'assets/images/banner/banner1.webp'
-import banner3 from 'assets/images/banner/banner3.webp'
-import banner5 from 'assets/images/banner/banner5.webp'
-import banner6 from 'assets/images/banner/banner6.webp'
+import banner1 from 'assets/images/Banner2/1.webp'
+import banner2 from 'assets/images/Banner2/2.webp'
+import banner3 from 'assets/images/Banner2/3.webp'
+import banner4 from 'assets/images/Banner2/4.webp'
+import banner5 from 'assets/images/Banner2/5.webp'
+import banner6 from 'assets/images/Banner2/6.webp'
+import banner7 from 'assets/images/Banner2/7.webp'
+import banner8 from 'assets/images/Banner2/8.webp'
 
 const Banner = () => {
   return (
@@ -15,14 +19,26 @@ const Banner = () => {
         </div>
 
         <div>
-          <img src={banner3} alt="Banner 2" className={styles.bannerCarousel} />
+          <img src={banner2} alt="Banner 2" className={styles.bannerCarousel} />
         </div>
 
         <div>
-          <img src={banner5} alt="Banner 2" className={styles.bannerCarousel} />
+          <img src={banner3} alt="Banner 3" className={styles.bannerCarousel} />
         </div>
         <div>
-          <img src={banner6} alt="Banner 2" className={styles.bannerCarousel} />
+          <img src={banner4} alt="Banner 4" className={styles.bannerCarousel} />
+        </div>
+        <div>
+          <img src={banner5} alt="Banner 5" className={styles.bannerCarousel} />
+        </div>
+        <div>
+          <img src={banner6} alt="Banner 6" className={styles.bannerCarousel} />
+        </div>
+        <div>
+          <img src={banner7} alt="Banner 7" className={styles.bannerCarousel} />
+        </div>
+        <div>
+          <img src={banner8} alt="Banner 8" className={styles.bannerCarousel} />
         </div>
       </Carousel>
     </div>

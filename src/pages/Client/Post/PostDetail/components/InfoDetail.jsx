@@ -19,6 +19,7 @@ import PostDetailSkeleton from 'components/common/Skeleton/PostDetailSkeleton'
 import { updatePostRequestStatus } from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
 import { getAvatarPost } from 'hooks/useAvatar'
+import ModalContactDetail from './Modal/ModalContactDetail/ModalContactDetail'
 
 const { Title, Text } = Typography
 
@@ -28,6 +29,7 @@ dayjs.locale('vi')
 const PostInfoDetail = () => {
   const { selectedPost } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
+  const [contactModalVisible, setContactModalVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [mainImage, setMainImage] = useState(null)
   const thumbnails = Array.isArray(selectedPost?.image_url) ? selectedPost.image_url : []
@@ -109,6 +111,15 @@ const PostInfoDetail = () => {
       </Tooltip>
     )
   }
+  // Hiển thị modal khi click vào nút
+  const showContactModal = () => {
+    setContactModalVisible(true)
+  }
+
+  // Đóng modal
+  const handleCloseModal = () => {
+    setContactModalVisible(false)
+  }
 
   return (
     <div className={styles.ContentWrap}>
@@ -175,12 +186,13 @@ const PostInfoDetail = () => {
 
           <Row className={styles.rowGive} gutter={15}>
             <Col span={12}>
-              <Button type="default" size="large" className={styles.ButtonNumber}>
+              <Button type="default" size="large" className={styles.ButtonNumber} onClick={showContactModal}>
                 Thông tin liên hệ
               </Button>
             </Col>
             <Col span={12}>{renderActionButton(selectedPost)}</Col>
           </Row>
+          <ModalContactDetail visible={contactModalVisible} onClose={handleCloseModal} />
 
           <Divider />
           <div className={styles.SellerInfo}>

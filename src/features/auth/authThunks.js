@@ -89,6 +89,7 @@ export const updateUserProfile = createAsyncThunk(
       }
       return response.data
     } catch (error) {
+      console.log('error', error.response)
       return rejectWithValue(error.response?.data || { message: 'Failed to update profile' })
     }
   }
