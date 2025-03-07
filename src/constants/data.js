@@ -10,7 +10,8 @@ import {
   TagsOutlined
 } from '@ant-design/icons'
 import { message } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { removeAuthToken } from 'utils/localStorageUtils'
 
 export const categoryData = [
@@ -56,9 +57,20 @@ export const handleLogout = () => {
 
 export const NavigateItem = ({ to, children, ...props }) => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [activeTab, setActiveTab] = useState('')
+
+  // Theo dõi URL thay đổi và cập nhật state
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    setActiveTab(params.get('tab') || '')
+  }, [location])
 
   const handleClick = () => {
-    navigate(to)
+    const targetTab = new URLSearchParams(to.split('?')[1]).get('tab')
+    if (activeTab !== targetTab || location.pathname !== to.split('?')[0]) {
+      navigate(to)
+    }
   }
 
   return (

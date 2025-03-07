@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination } from 'antd'
+import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
@@ -77,6 +78,19 @@ const PostList = () => {
       })
     )
   }, [dispatch, currentPage, category_id, selectedCity, fetchCity])
+
+  useEffect(() => {
+    if (posts.length === 0 && !isLoading) {
+      dispatch(
+        getPostPagination({
+          current: currentPage,
+          pageSize: 10,
+          category_id: category_id !== 'all' ? category_id : null,
+          city: selectedCity
+        })
+      )
+    }
+  }, [dispatch, currentPage, category_id, selectedCity, posts.length, isLoading])
 
   const handleTabChange = key => {
     setActiveTab(key)
