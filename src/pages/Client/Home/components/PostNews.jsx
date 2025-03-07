@@ -38,19 +38,25 @@ const PostNews = () => {
   const { posts, isError, isLoading, hasMore, query, sortOrder, cityFilter } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
-  const { survey } = useSelector(state => state.survey)
 
   const pageSizeContanst = 8
 
   const fetchCity = useCallback(async () => {
-    try {
-      const data = await locationService.getCity()
-      if (data.data.status === 200) {
-        SET_VIETNAMESE_CITIES(data.data.data)
-      }
-    } catch (error) {
-      if (error.response.data.status === 404) {
-        throw error
+    const cachedCities = localStorage.getItem('vietnameseCities')
+
+    if (cachedCities) {
+      SET_VIETNAMESE_CITIES(JSON.parse(cachedCities))
+    } else {
+      try {
+        const data = await locationService.getCity()
+        if (data.data.status === 200) {
+          SET_VIETNAMESE_CITIES(data.data.data)
+          localStorage.setItem('vietnameseCities', JSON.stringify(data.data.data))
+        }
+      } catch (error) {
+        if (error.response?.data?.status === 404) {
+          throw error
+        }
       }
     }
   }, [])
@@ -95,29 +101,17 @@ const PostNews = () => {
 
   const AuthButton = withAuth(Button)
 
-  const filteredPosts = posts
-    ?.filter(
-      post =>
-        (!query || post.title.toLowerCase().includes(query.toLowerCase())) && // Lọc theo từ khóa
-        (!cityFilter || post.city === cityFilter) // Lọc theo thành phố nếu có chọn
-    )
-    .sort((a, b) => {
-      const userInterests = survey.data?.interests?.map(interest => interest.category_id) || []
-
-      // Fixed code: Check if category_id is an object and extract _id properly
-      const aPriority =
-        a.category_id && typeof a.category_id === 'object' ? (userInterests.includes(a.category_id._id) ? 1 : 0) : 0
-      const bPriority =
-        b.category_id && typeof b.category_id === 'object' ? (userInterests.includes(b.category_id._id) ? 1 : 0) : 0
-
-      if (aPriority !== bPriority) {
-        return bPriority - aPriority // Ưu tiên bài đăng theo sở thích người dùng
-      }
-
-      return sortOrder === 'newest'
-        ? dayjs(b.created_at).diff(dayjs(a.created_at)) // Sắp xếp mới -> cũ
-        : dayjs(a.created_at).diff(dayjs(b.created_at)) // Sắp xếp cũ -> mới
-    })
+  const filteredPosts = posts?.filter(
+    post =>
+      (!query || post.title.toLowerCase().includes(query.toLowerCase())) && // Lọc theo từ khóa
+      (!cityFilter || post.city === cityFilter) // Lọc theo thành phố nếu có chọn
+  )
+  // .sort(
+  //   (a, b) =>
+  //     sortOrder === 'newest'
+  //       ? dayjs(b.created_at).diff(dayjs(a.created_at)) // Sắp xếp mới -> cũ
+  //       : dayjs(a.created_at).diff(dayjs(b.created_at)) // Sắp xếp cũ -> mới
+  // )
 
   const renderActionButton = item => {
     if (!user) {
@@ -197,10 +191,10 @@ const PostNews = () => {
             {isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}
           </Title>
           <div>
-            <Select value={sortOrder} onChange={handleSortChange} style={{ marginRight: '10px' }}>
+            {/* <Select value={sortOrder} onChange={handleSortChange} style={{ marginRight: '10px' }}>
               <Option value="newest">Bài đăng mới nhất</Option>
               <Option value="oldest">Bài đăng cũ nhất</Option>
-            </Select>
+            </Select> */}
             <Select
               showSearch
               style={{ width: 150 }}

@@ -23,7 +23,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
 
   useEffect(() => {
     if (user && isInfoModalVisible) {
-      const existingFacebook = user.social_media?.[0]
+      const existingFacebook = user.social_media?.facebook
       const existingPhone = user.phone
 
       const initialMethod = existingPhone ? 'phone' : 'social_media'
@@ -45,6 +45,8 @@ export const ContactInfoModal = ({ onSubmit }) => {
   }
 
   const handleSubmit = async values => {
+    console.log(values, 'ok')
+
     try {
       setAddressTouched(true)
 
@@ -54,9 +56,15 @@ export const ContactInfoModal = ({ onSubmit }) => {
       }
 
       const submissionData = {
-        ...values,
-        address: fullAddress
+        address: fullAddress,
+        social_media: {
+          facebook: values.social_media || '',
+          zalo: user?.social_media?.zalo || '',
+          instagram: user?.social_media?.instagram || ''
+        }
       }
+
+      console.log(submissionData)
 
       await onSubmit(submissionData)
       dispatch(setInfoModalVisible(false))

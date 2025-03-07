@@ -21,7 +21,7 @@ export const useGiftRequest = () => {
   const { batchClick } = useInteraction()
 
   const checkUserContactInfo = () => {
-    return (user?.phone || (user?.social_media && user?.social_media?.length > 0)) && user?.address
+    return (user?.phone || user?.social_media?.facebook) && user?.address
   }
 
   const handleGiftRequest = (post, type) => {
@@ -51,7 +51,7 @@ export const useGiftRequest = () => {
         dataUserUpdate.phone = values.phone
         dataUserUpdate.social_media = user.social_media || []
       } else {
-        dataUserUpdate.social_media = [values.social_media]
+        dataUserUpdate.social_media = values.social_media
         dataUserUpdate.phone = user.phone || ''
       }
 

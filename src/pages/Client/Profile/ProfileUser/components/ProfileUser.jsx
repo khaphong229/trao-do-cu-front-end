@@ -73,7 +73,6 @@ const ProfilePage = () => {
   const handleUpdateMe = async () => {
     try {
       const response = await dispatch(updateUserProfile(formData)).unwrap()
-      console.log('response', response)
       if (response.status === 201) {
         message.success(response.message)
       }

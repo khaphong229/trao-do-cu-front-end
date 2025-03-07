@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
 import avt from 'assets/images/logo/avtDefault.webp'
 import { URL_SERVER_IMAGE } from 'config/url_server'
-const UserInfo = ({ ref1 }) => {
+const UserInfo = ({ title, ref1 }) => {
   const dispatch = useDispatch()
   const { dataCreatePost } = useSelector(state => state.post)
   const { selectedCategory } = useSelector(state => state.category)
@@ -23,15 +23,17 @@ const UserInfo = ({ ref1 }) => {
             )}
           </div>
         </div>
-        <Radio.Group
-          ref={ref1}
-          value={dataCreatePost.type}
-          onChange={e => dispatch(updatePostData({ type: e.target.value }))}
-          style={{ marginLeft: 10 }}
-        >
-          <Radio value="gift">Trao Tặng</Radio>
-          <Radio value="exchange">Trao Đổi</Radio>
-        </Radio.Group>
+        {title !== 'Biểu mẫu trao đổi' && (
+          <Radio.Group
+            ref={ref1}
+            value={dataCreatePost.type}
+            onChange={e => dispatch(updatePostData({ type: e.target.value }))}
+            style={{ marginLeft: 10 }}
+          >
+            <Radio value="gift">Trao Tặng</Radio>
+            <Radio value="exchange">Trao Đổi</Radio>
+          </Radio.Group>
+        )}
       </div>
     </div>
   )

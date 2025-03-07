@@ -4,7 +4,7 @@ import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import { useSelector, useDispatch } from 'react-redux'
-import { getPostPagination } from '../../../../../features/client/post/postThunks'
+import { getPostCategory, getPostPagination } from '../../../../../features/client/post/postThunks'
 import { resetPage, clearPosts } from '../../../../../features/client/post/postSlice'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -21,6 +21,8 @@ import { setExchangeFormModalVisible } from '../../../../../features/client/requ
 import notFoundPost from 'components/feature/post/notFoundPost'
 import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
 import { locationService } from 'services/client/locationService'
+import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
+
 const { Text } = Typography
 
 dayjs.extend(relativeTime)
@@ -40,24 +42,34 @@ const PostList = () => {
   const { posts, isError, isLoading, total } = useSelector(state => state.post)
 
   const fetchCity = useCallback(async () => {
-    try {
-      const data = await locationService.getCity()
-      if (data.data.status === 200) {
-        SET_VIETNAMESE_CITIES(data.data.data)
-      }
-    } catch (error) {
-      if (error.response.data.status === 404) {
-        throw error
+    const cachedCities = localStorage.getItem('vietnameseCities')
+
+    if (cachedCities) {
+      SET_VIETNAMESE_CITIES(JSON.parse(cachedCities))
+    } else {
+      try {
+        const data = await locationService.getCity()
+        if (data.data.status === 200) {
+          SET_VIETNAMESE_CITIES(data.data.data)
+          localStorage.setItem('vietnameseCities', JSON.stringify(data.data.data))
+        }
+      } catch (error) {
+        if (error.response?.data?.status === 404) {
+          throw error
+        }
       }
     }
   }, [])
 
   useEffect(() => {
     fetchCity()
+  }, [fetchCity])
+
+  useEffect(() => {
     dispatch(clearPosts())
     dispatch(resetPage())
     dispatch(
-      getPostPagination({
+      getPostCategory({
         current: currentPage,
         pageSize: 10,
         category_id: category_id !== 'all' ? category_id : null,
@@ -69,7 +81,7 @@ const PostList = () => {
   const handleTabChange = key => {
     setActiveTab(key)
     dispatch(
-      getPostPagination({
+      getPostCategory({
         current: 1,
         pageSize: 10,
         category_id: category_id ? category_id : null,
@@ -203,9 +215,8 @@ const PostList = () => {
                     </div>
                     {item?.type === 'gift' ? (
                       <AuthButton
-                        color="primary"
-                        variant="filled"
-                        size="middle"
+                        icon={<GiftOutlined />}
+                        type="primary"
                         className={styles.ButtonChat}
                         onClick={() => handleRequest(item)}
                         disabled={item?.isRequested}
@@ -214,8 +225,8 @@ const PostList = () => {
                       </AuthButton>
                     ) : (
                       <AuthButton
-                        type="primary"
-                        size="middle"
+                        icon={<SwapOutlined />}
+                        type="default"
                         className={styles.ButtonChat}
                         onClick={() => handleRequest(item)}
                         disabled={item?.isRequested}

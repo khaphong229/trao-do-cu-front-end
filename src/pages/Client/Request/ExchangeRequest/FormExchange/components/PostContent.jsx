@@ -9,7 +9,7 @@ import { URL_SERVER_IMAGE } from '../../../../../../config/url_server'
 
 const { TextArea } = Input
 
-const PostContent = ({ errorPost, setErrorPost }) => {
+const PostContent = ({ errorPost, setErrorPost, uploadedImages }) => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const { isShowEmoji, requestData } = useSelector(state => state.exchangeRequest)
@@ -35,9 +35,9 @@ const PostContent = ({ errorPost, setErrorPost }) => {
   }
 
   const renderPreview = (file, index) => {
-    const fileUrl = `${URL_SERVER_IMAGE}${file}`
+    const fileUrl = typeof file === 'string' ? `${URL_SERVER_IMAGE}${file}` : URL.createObjectURL(file)
 
-    if (isVideoFile(file)) {
+    if (isVideoFile(typeof file === 'string' ? file : file.name)) {
       return (
         <div key={index} className={styles.filePreviewContainer}>
           <div className={styles.videoWrapper}>
@@ -76,7 +76,7 @@ const PostContent = ({ errorPost, setErrorPost }) => {
           value={requestData.title}
           onChange={e => {
             dispatch(updateRequestData({ title: e.target.value }))
-            setErrorPost(null)
+            setErrorPost(prev => (prev ? { ...prev, title: null } : null))
           }}
           style={{ width: '100%', borderRadius: '0' }}
           ref={el => {
@@ -84,16 +84,6 @@ const PostContent = ({ errorPost, setErrorPost }) => {
           }}
         />
       </div>
-
-      {/* <div className={styles.postContent}>
-        <Input
-          placeholder={`${user.name} ơi, hãy điền nội dung mô tả đồ bạn muốn đổi nhé!`}
-          autoSize={{ minRows: 3, maxRows: 8 }}
-          bordered={false}
-          value={requestData.description}
-          onChange={e => dispatch(updateRequestData({ description: e.target.value }))}
-        />
-      </div> */}
 
       {requestData.image_url && requestData.image_url.length > 0 && (
         <div className={styles.uploadedFiles}>

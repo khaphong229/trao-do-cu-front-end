@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { uploadPostImages } from '../../upload/uploadThunks'
-import { createPost, getPostGiftPagination, getPostId, getPostPagination } from './postThunks'
+import { createPost, getPostCategory, getPostGiftPagination, getPostId, getPostPagination } from './postThunks'
 
 const initialState = {
   // create post initial state
@@ -203,6 +203,36 @@ const postSlice = createSlice({
         state.total = action.payload?.data?.total || 0
       })
       .addCase(getPostPagination.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
+      })
+
+      .addCase(getPostCategory.pending, state => {
+        state.isLoading = true
+        state.isError = null
+      })
+      .addCase(getPostCategory.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isError = null
+
+        const newPosts = action.payload?.data?.data || []
+        const currentPage = action.payload?.data?.current || 1
+
+        if (currentPage === 1) {
+          state.posts = newPosts
+        } else {
+          const existingPostIds = new Map(state.posts.map(post => [post._id, true]))
+
+          const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
+
+          state.posts = [...state.posts, ...uniqueNewPosts]
+        }
+
+        state.hasMore = newPosts.length === action.payload?.data?.limit
+        state.current = currentPage
+        state.total = action.payload?.data?.total || 0
+      })
+      .addCase(getPostCategory.rejected, (state, action) => {
         state.isLoading = false
         state.isError = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
       })

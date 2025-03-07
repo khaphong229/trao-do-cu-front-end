@@ -3,7 +3,6 @@ import { Card, List, Typography, Button, Empty, Spin, Menu, Divider, Tag, Avatar
 import { UseListNotification } from 'hooks/UseListNotification'
 import { Link } from 'react-router-dom'
 import styles from './NotificationMenu.module.scss'
-import { menuItems } from './data'
 import { useAvatar } from 'hooks/useAvatar'
 import { useMenuItems } from 'components/common/DropdownAccount/DropdownAccount'
 
@@ -102,7 +101,11 @@ export const NotificationMenu = () => {
           <Spin />
         </div>
       ) : notifications.length === 0 ? (
-        <Empty description="Không có thông báo mới" className={styles.emptyState} />
+        <Empty
+          description="Không có thông báo mới"
+          className={styles.emptyState}
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
       ) : (
         <div className={styles.notificationList}>
           <List

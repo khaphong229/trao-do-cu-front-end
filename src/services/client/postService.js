@@ -85,6 +85,31 @@ const postService = {
   },
   rePost(data) {
     return this.http.post('/posts/repost', data)
+  },
+
+  getPostCategoryApi(
+    params = {
+      current: 1,
+      pageSize: 8,
+      type: 'gift',
+      status: 'active',
+      category_id: null,
+      city: null
+    }
+  ) {
+    const { current, pageSize, type, status, category_id, city } = params
+    let path = '/posts/category'
+    const queryParams = new URLSearchParams()
+
+    queryParams.append('current', current)
+    queryParams.append('pageSize', pageSize)
+    if (type) queryParams.append('type', type)
+    if (status) queryParams.append('status', status)
+    if (category_id) queryParams.append('category_id', category_id)
+    if (city) queryParams.append('city', city)
+
+    path += `?${queryParams.toString()}`
+    return this.http.get(path)
   }
 }
 
