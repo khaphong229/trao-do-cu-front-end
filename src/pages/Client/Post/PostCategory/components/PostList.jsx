@@ -92,18 +92,10 @@ const PostList = () => {
     setCurrentPage(page)
   }
 
-  const filteredPosts = posts
-    .map(post => {
-      if (category_id !== 'all') {
-        return post._doc
-      } else {
-        return post
-      }
-    })
-    .filter(post => {
-      if (activeTab === 'all') return true
-      return post.type === activeTab
-    })
+  const filteredPosts = posts.filter(post => {
+    if (activeTab === 'all') return true
+    return post.type === activeTab
+  })
 
   const sortedPosts = filteredPosts.sort((a, b) => {
     if (sortOrder === 'newest') {

@@ -40,7 +40,7 @@ const PostNews = () => {
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
   const { survey } = useSelector(state => state.survey)
 
-  const pageSizeContanst = 16
+  const pageSizeContanst = 8
 
   const fetchCity = useCallback(async () => {
     try {

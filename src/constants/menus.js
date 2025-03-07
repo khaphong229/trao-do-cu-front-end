@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import styles from './NotificationMenu.module.scss'
 import { menuItems } from './data'
 import { useAvatar } from 'hooks/useAvatar'
+import { useMenuItems } from 'components/common/DropdownAccount/DropdownAccount'
 
 const { Text } = Typography
 
@@ -144,7 +145,7 @@ export const UserMenu = user => {
           margin: '10px'
         }}
       />
-      {menuItems.map((section, index) => (
+      {useMenuItems().map((section, index) => (
         <Menu.ItemGroup key={index} title={section.title}>
           {section.items.map((item, i) => (
             <Menu.Item key={`${index}-${i}`} icon={item.icon}>

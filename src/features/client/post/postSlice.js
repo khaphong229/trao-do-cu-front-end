@@ -1,6 +1,6 @@
+import { createSlice } from '@reduxjs/toolkit'
 import { uploadPostImages } from '../../upload/uploadThunks'
 import { createPost, getPostGiftPagination, getPostId, getPostPagination } from './postThunks'
-import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   // create post initial state
@@ -50,6 +50,7 @@ const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
+    // Your existing reducers...
     setSelectedPost: (state, action) => {
       state.postDetail = action.payload
     },
@@ -175,7 +176,7 @@ const postSlice = createSlice({
         state.error = action.payload
       })
 
-      ///get post reducers
+      ///get post reducers - FIX HERE
       .addCase(getPostPagination.pending, state => {
         state.isLoading = true
         state.isError = null
@@ -190,10 +191,11 @@ const postSlice = createSlice({
         if (currentPage === 1) {
           state.posts = newPosts
         } else {
-          const uniquePosts = newPosts.filter(
-            newPost => !state.posts.some(existingPost => existingPost._id === newPost._id)
-          )
-          state.posts = [...state.posts, ...uniquePosts]
+          const existingPostIds = new Map(state.posts.map(post => [post._id, true]))
+
+          const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
+
+          state.posts = [...state.posts, ...uniqueNewPosts]
         }
 
         state.hasMore = newPosts.length === action.payload?.data?.limit

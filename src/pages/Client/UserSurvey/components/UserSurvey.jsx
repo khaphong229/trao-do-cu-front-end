@@ -81,6 +81,11 @@ export default function SurveyForm() {
     )
   }
 
+  const handleSkip = () => {
+    dispatch(updateSurveyStatus())
+    navigate('/')
+  }
+
   // Xử lý gửi lên API - cách tiếp cận hoàn toàn mới
   const handleSubmit = async () => {
     if (selectedTags.length === 0) {
@@ -159,7 +164,7 @@ export default function SurveyForm() {
           </div>
 
           <div className={styles.survey__actions}>
-            <Button onClick={() => navigate('/')} danger={true}>
+            <Button onClick={handleSkip} danger={true}>
               Bỏ qua
             </Button>
             <Button type="primary" onClick={handleSubmit} disabled={selectedTags.length === 0} loading={isSubmitting}>

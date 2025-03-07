@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Avatar, Typography, Divider, Space } from 'antd'
-import { PhoneOutlined, MailOutlined, HomeOutlined, CalendarOutlined } from '@ant-design/icons'
+import { PhoneOutlined, CalendarOutlined } from '@ant-design/icons'
 import styles from '../../../scss/ModalContactDetail.module.scss' // Import file SCSS
 import { useSelector } from 'react-redux'
 import dayjs from 'dayjs'
