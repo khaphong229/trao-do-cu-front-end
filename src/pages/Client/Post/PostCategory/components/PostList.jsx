@@ -22,7 +22,6 @@ import { setExchangeFormModalVisible } from '../../../../../features/client/requ
 import notFoundPost from 'components/feature/post/notFoundPost'
 import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
 import { locationService } from 'services/client/locationService'
-import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
 
 const { Text } = Typography
 
