@@ -17,11 +17,12 @@ import {
   setCategoryModalVisible
 } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 
-const PostToolbar = () => {
+const PostToolbar = ({ phoneRef, facebookRef, locationRef, categoryRef, errors, onChange }) => {
   const { isShowEmoji, requestData } = useSelector(state => state.exchangeRequest)
   const dispatch = useDispatch()
   const [fileList, setFileList] = useState([])
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768)
@@ -33,6 +34,17 @@ const PostToolbar = () => {
     }
   }, [])
 
+  const handleFileChange = ({ fileList }) => {
+    setFileList(fileList)
+    // Extract the actual file objects and pass them to parent component for upload
+    const files = fileList.filter(file => file.originFileObj).map(file => file.originFileObj)
+
+    if (files.length > 0) {
+      // Call the parent component's upload handler
+      onChange('files', files)
+    }
+  }
+
   const uploadButton = (
     <Button
       type="text"
@@ -40,37 +52,43 @@ const PostToolbar = () => {
       disabled={requestData.image_url?.length >= 5}
     />
   )
+
   const icons = [
     {
       tooltip: 'Ảnh/Video',
       icon: <PictureOutlined className={styles.iconPicture} />,
       isUpload: true,
       onClick: null,
-      disabled: requestData.image_url?.length >= 5
+      disabled: requestData.image_url?.length >= 5,
+      ref: null
     },
     {
       tooltip: 'Liên kết mạng xã hội',
       icon: <WhatsAppOutlined className={styles.customIcon} />,
       isUpload: false,
-      onClick: () => dispatch(setSocialLinkModalVisible(true))
+      onClick: () => dispatch(setSocialLinkModalVisible(true)),
+      ref: facebookRef
     },
     {
       tooltip: 'Emoji',
       icon: <SmileOutlined className={styles.iconSmile} />,
       isUpload: false,
-      onClick: () => dispatch(setShowEmoji(!isShowEmoji))
+      onClick: () => dispatch(setShowEmoji(!isShowEmoji)),
+      ref: null
     },
     {
       tooltip: 'Thêm vị trí',
       icon: <EnvironmentOutlined className={styles.iconEnvironment} />,
       isUpload: false,
-      onClick: () => dispatch(setLocationModalVisible(true))
+      onClick: () => dispatch(setLocationModalVisible(true)),
+      ref: locationRef
     },
     {
       tooltip: 'Chọn danh mục',
       icon: <AppstoreOutlined className={styles.iconCategory} />,
       isUpload: false,
-      onClick: () => dispatch(setCategoryModalVisible(true))
+      onClick: () => dispatch(setCategoryModalVisible(true)),
+      ref: categoryRef
     }
   ]
 
@@ -84,7 +102,7 @@ const PostToolbar = () => {
               <UploadCustom
                 key={index}
                 fileList={fileList}
-                setFileList={({ fileList }) => setFileList(fileList)}
+                setFileList={handleFileChange}
                 uploadButton={uploadButton}
                 maxCount={5 - (requestData.image_url?.length || 0)}
                 disabled={item.disabled}
@@ -114,7 +132,7 @@ const PostToolbar = () => {
               <div className={styles.mobileToolItem} key={index}>
                 <UploadCustom
                   fileList={fileList}
-                  setFileList={({ fileList }) => setFileList(fileList)}
+                  setFileList={handleFileChange}
                   uploadButton={
                     <div className={styles.mobileIconWrapper}>
                       {item.icon}

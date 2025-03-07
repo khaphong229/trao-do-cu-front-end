@@ -18,7 +18,6 @@ import styles from './scss/CreatePost.module.scss'
 import { useGiftRequest } from '../../GiftRequest/useRequestGift'
 import { uploadPostImages } from 'features/upload/uploadThunks'
 import CategoryModal from './components/Modal/Category'
-import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 
 const FormExchangeModal = () => {
   const dispatch = useDispatch()
@@ -55,46 +54,67 @@ const FormExchangeModal = () => {
     }
   }, [isExchangeFormModalVisible, user?.address, dispatch])
 
+  // Kiểm tra tính hợp lệ của số điện thoại Việt Nam
+  const isValidVietnamesePhone = phone => {
+    // Kiểm tra định dạng số điện thoại Việt Nam
+    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/
+    return phoneRegex.test(phone)
+  }
+  const isValidFacebookLink = link => {
+    const facebookRegex = /(?:http(?:s)?:\/\/)?(?:www\.)?facebook.com\/.+/g
+    return facebookRegex.test(link)
+  }
+
   const validateForm = () => {
     const errors = {}
 
     // Check required fields
     if (!requestData.title || !requestData.title.trim()) {
-      errors.title = 'Vui lòng nhập tiêu đề bài trao đổi của bạn'
-      return errors // Chỉ trả về lỗi tiêu đề nếu có
+      errors.title = 'Vui lòng nhập tiêu đề bài đăng'
     }
 
-    // Sau khi tiêu đề đã hợp lệ, kiểm tra hình ảnh
+    // Kiểm tra hình ảnh
     if (!requestData.image_url || requestData.image_url.length === 0) {
-      errors.image_url = 'Vui lòng tải lên ít nhất một hình ảnh cho bài đăng trao đổi của bạn'
-      return errors // Chỉ trả về lỗi hình ảnh nếu có
+      errors.image_url = 'Vui lòng tải lên ít nhất một hình ảnh'
     }
 
-    // Sau khi hình ảnh đã hợp lệ, kiểm tra địa chỉ
+    // Kiểm tra thông tin liên hệ
+    if (!requestData.phone) {
+      errors.phone = 'Vui lòng nhập số điện thoại liên hệ'
+    } else if (!isValidVietnamesePhone(requestData.phone)) {
+      errors.phone = 'Số điện thoại không hợp lệ'
+    }
+
+    // Kiểm tra Facebook link nếu có
+    if (requestData.facebookLink && !isValidFacebookLink(requestData.facebookLink)) {
+      errors.facebookLink = 'Liên kết Facebook không hợp lệ'
+    }
+
+    // Kiểm tra địa chỉ
     if (!requestData.specificLocation) {
       errors.specificLocation = 'Vui lòng thêm địa chỉ'
-      return errors
     }
 
     if (!requestData.city) {
       errors.city = 'Vui lòng thêm thành phố'
-      return errors
     }
 
-    // Sau khi địa chỉ đã hợp lệ, kiểm tra danh mục
+    // Kiểm tra danh mục
     if (!requestData.category_id) {
       errors.category_id = 'Vui lòng chọn danh mục cho món đồ'
-      return errors
     }
 
     return errors
   }
-
   const scrollToFirstError = errors => {
-    if (errors.title) {
+    if (errors.title || errors.content) {
       titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.image_url) {
       imageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    } else if (errors.phone) {
+      phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    } else if (errors.facebookLink) {
+      facebookRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.specificLocation || errors.city) {
       locationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.category_id) {
@@ -117,23 +137,46 @@ const FormExchangeModal = () => {
         if (errorPost && errorPost.image_url) {
           const newErrorPost = { ...errorPost }
           delete newErrorPost.image_url
-          setErrorPost(Object.keys(newErrorPost).length > 0 ? newErrorPost : {})
+          setErrorPost(Object.keys(newErrorPost).length > 0 ? newErrorPost : null)
         }
       }
     } catch (error) {
-      message.error({
-        content: 'Tải ảnh thất bại',
-        duration: 4
-      })
+      message.error('Tải ảnh thất bại')
 
       // Set image error
       setFormErrors(prev => ({
         ...prev,
         image_url: 'Tải ảnh thất bại'
       }))
+
+      setErrorPost(prev => ({
+        ...(prev || {}),
+        image_url: 'Tải ảnh thất bại'
+      }))
     }
   }
 
+  // Handler to clear error when field is updated
+  const handleFieldChange = (field, value) => {
+    // Update the post data
+    dispatch(updateRequestData({ [field]: value }))
+
+    // Clear the error for this field if it exists
+    if (formErrors[field]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[field]
+        return newErrors
+      })
+
+      // Also update errorPost for backward compatibility
+      if (errorPost && errorPost[field]) {
+        const newErrorPost = { ...errorPost }
+        delete newErrorPost[field]
+        setErrorPost(Object.keys(newErrorPost).length > 0 ? newErrorPost : null)
+      }
+    }
+  }
   const handleSubmit = async () => {
     // Validate form before submitting
     const errors = validateForm()
@@ -200,27 +243,6 @@ const FormExchangeModal = () => {
         scrollToFirstError(newErrors)
       } else {
         message.error('Đã xảy ra lỗi khi tạo bài đăng. Vui lòng thử lại sau.')
-      }
-    }
-  }
-
-  const handleFieldChange = (field, value) => {
-    // Update the post data
-    dispatch(updateRequestData({ [field]: value }))
-
-    // Clear the error for this field if it exists
-    if (formErrors[field]) {
-      setFormErrors(prev => {
-        const newErrors = { ...prev }
-        delete newErrors[field]
-        return newErrors
-      })
-
-      // Also update errorPost for backward compatibility
-      if (errorPost && errorPost[field]) {
-        const newErrorPost = { ...errorPost }
-        delete newErrorPost[field]
-        setErrorPost(Object.keys(newErrorPost).length > 0 ? newErrorPost : {})
       }
     }
   }
