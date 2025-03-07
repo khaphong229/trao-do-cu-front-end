@@ -6,7 +6,6 @@ import banner2 from 'assets/images/Banner2/2.webp'
 import banner3 from 'assets/images/Banner2/3.webp'
 import banner4 from 'assets/images/Banner2/4.webp'
 import banner5 from 'assets/images/Banner2/5.webp'
-import banner6 from 'assets/images/Banner2/6.webp'
 import banner7 from 'assets/images/Banner2/7.webp'
 import banner8 from 'assets/images/Banner2/8.webp'
 
@@ -30,9 +29,6 @@ const Banner = () => {
         </div>
         <div>
           <img src={banner5} alt="Banner 5" className={styles.bannerCarousel} />
-        </div>
-        <div>
-          <img src={banner6} alt="Banner 6" className={styles.bannerCarousel} />
         </div>
         <div>
           <img src={banner7} alt="Banner 7" className={styles.bannerCarousel} />

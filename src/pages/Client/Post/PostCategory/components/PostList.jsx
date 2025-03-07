@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination } from 'antd'
+import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
@@ -65,6 +66,19 @@ const PostList = () => {
       })
     )
   }, [dispatch, currentPage, category_id, selectedCity, fetchCity])
+
+  useEffect(() => {
+    if (posts.length === 0 && !isLoading) {
+      dispatch(
+        getPostPagination({
+          current: currentPage,
+          pageSize: 10,
+          category_id: category_id !== 'all' ? category_id : null,
+          city: selectedCity
+        })
+      )
+    }
+  }, [dispatch, currentPage, category_id, selectedCity, posts.length, isLoading])
 
   const handleTabChange = key => {
     setActiveTab(key)
@@ -211,10 +225,10 @@ const PostList = () => {
                     </div>
                     {item?.type === 'gift' ? (
                       <AuthButton
-                        color="primary"
+                        icon={<GiftOutlined />}
+                        type="primary"
                         variant="filled"
-                        size="middle"
-                        className={styles.ButtonChat}
+                        className={styles.actionButton}
                         onClick={() => handleRequest(item)}
                         disabled={item?.isRequested}
                       >
@@ -222,9 +236,10 @@ const PostList = () => {
                       </AuthButton>
                     ) : (
                       <AuthButton
-                        type="primary"
+                        icon={<SwapOutlined />}
                         size="middle"
-                        className={styles.ButtonChat}
+                        type="default"
+                        className={styles.actionButton}
                         onClick={() => handleRequest(item)}
                         disabled={item?.isRequested}
                       >

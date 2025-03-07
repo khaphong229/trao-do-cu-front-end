@@ -90,12 +90,13 @@ const CreatePostModal = () => {
 
   useEffect(() => {
     if (isCreateModalVisible && user) {
+      console.log('user', user)
       dispatch(
         updatePostData({
           city: user.address?.split(', ').pop() || '',
           specificLocation: user.address || '',
           phone: user.phone || '',
-          facebookLink: user.facebookLink || ''
+          facebookLink: user?.facebookLink ?? ''
         })
       )
     }
@@ -174,8 +175,11 @@ const CreatePostModal = () => {
     }
 
     // Kiểm tra Facebook link nếu có
-    if (dataCreatePost.facebookLink && !isValidFacebookLink(dataCreatePost.facebookLink)) {
-      errors.facebookLink = 'Liên kết Facebook không hợp lệ'
+    if (
+      dataCreatePost.contact_social_media.facebook &&
+      !isValidFacebookLink(dataCreatePost.contact_social_media.facebook)
+    ) {
+      errors.contact_social_media.facebook = 'Liên kết Facebook không hợp lệ'
     }
 
     // Kiểm tra địa chỉ
@@ -202,7 +206,7 @@ const CreatePostModal = () => {
       imageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.phone) {
       phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    } else if (errors.facebookLink) {
+    } else if (errors.contact_social_media.facebookLink) {
       facebookRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.specificLocation || errors.city) {
       locationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -309,20 +313,32 @@ const CreatePostModal = () => {
   // Handler to clear error when field is updated
   const handleFieldChange = (field, value) => {
     // Update the post data
-    dispatch(updatePostData({ [field]: value }))
+    if (field === 'facebookLink') {
+      dispatch(updatePostData({ contact_social_media: { ...dataCreatePost.contact_social_media, facebook: value } }))
+    } else {
+      dispatch(updatePostData({ [field]: value }))
+    }
 
     // Clear the error for this field if it exists
-    if (formErrors[field]) {
+    if (formErrors[field] || (field === 'facebookLink' && formErrors.contact_social_media?.facebook)) {
       setFormErrors(prev => {
         const newErrors = { ...prev }
-        delete newErrors[field]
+        if (field === 'facebookLink') {
+          delete newErrors.contact_social_media?.facebook
+        } else {
+          delete newErrors[field]
+        }
         return newErrors
       })
 
       // Also update errorPost for backward compatibility
-      if (errorPost && errorPost[field]) {
+      if (errorPost && (errorPost[field] || (field === 'facebookLink' && errorPost.contact_social_media?.facebook))) {
         const newErrorPost = { ...errorPost }
-        delete newErrorPost[field]
+        if (field === 'facebookLink') {
+          delete newErrorPost.contact_social_media?.facebook
+        } else {
+          delete newErrorPost[field]
+        }
         setErrorPost(Object.keys(newErrorPost).length > 0 ? newErrorPost : null)
       }
     }
@@ -392,9 +408,9 @@ const CreatePostModal = () => {
       />
 
       <FacebookLinkModal
-        facebookLink={dataCreatePost.facebookLink || ''}
+        facebookLink={dataCreatePost.contact_social_media.facebook || ''}
         setFacebookLink={facebookLink => handleFieldChange('facebookLink', facebookLink)}
-        error={formErrors.facebookLink}
+        error={formErrors.contact_social_media?.facebook}
       />
 
       <CategoryModal

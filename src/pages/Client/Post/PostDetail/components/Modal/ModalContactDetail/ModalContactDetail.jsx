@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Avatar, Typography, Divider, Space } from 'antd'
-import { PhoneOutlined, MailOutlined, HomeOutlined, CalendarOutlined } from '@ant-design/icons'
+import { PhoneOutlined, MailOutlined, HomeOutlined, CalendarOutlined, UserOutlined } from '@ant-design/icons'
 import styles from '../../../scss/ModalContactDetail.module.scss' // Import file SCSS
 import { useSelector } from 'react-redux'
 import dayjs from 'dayjs'
@@ -21,7 +21,12 @@ const ModalContactDetail = ({ visible, onClose }) => {
         <div className={styles.contactModalContent}>
           {/* Thông tin người đăng bài */}
           <div className={styles.authorSection}>
-            <Avatar size={64} src={getAvatarPost(selectedPost?.user_id)} className={styles.avatar} />
+            <Avatar
+              size={64}
+              src={getAvatarPost(selectedPost?.user_id)}
+              icon={<UserOutlined />}
+              className={styles.avatar}
+            />
             <div className={styles.userInfo}>
               <Title level={4} style={{ margin: 0 }}>
                 {selectedPost?.user_id?.name || 'Người dùng'}

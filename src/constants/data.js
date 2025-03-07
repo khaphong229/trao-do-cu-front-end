@@ -16,7 +16,8 @@ import {
   UserOutlined
 } from '@ant-design/icons'
 import { message } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { removeAuthToken } from 'utils/localStorageUtils'
 
 export const categoryData = [
@@ -96,12 +97,22 @@ const handleLogout = () => {
   message.success('Đăng xuất thành công!')
   window.location.reload()
 }
-
 const NavigateItem = ({ to, children, ...props }) => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [activeTab, setActiveTab] = useState('')
+
+  // Theo dõi URL thay đổi và cập nhật state
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    setActiveTab(params.get('tab') || '')
+  }, [location])
 
   const handleClick = () => {
-    navigate(to)
+    const targetTab = new URLSearchParams(to.split('?')[1]).get('tab')
+    if (activeTab !== targetTab || location.pathname !== to.split('?')[0]) {
+      navigate(to)
+    }
   }
 
   return (
@@ -143,15 +154,19 @@ export const menuItems = [
     title: 'Tài khoản của tôi',
     items: [
       {
-        name: <NavigateItem to="/profile?tab=personal">Tài khoản của tôi</NavigateItem>,
+        label: <NavigateItem to="/profile?tab=personal">Tài khoản của tôi</NavigateItem>,
         icon: <UserOutlined style={{ color: '#00b96b' }} />
       },
       {
-        name: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
+        label: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
         icon: <LockOutlined style={{ color: '#00b96b' }} />
       },
       {
-        label: <span onClick={() => handleLogout()}>Đăng xuất</span>,
+        label: (
+          <span style={{ display: 'block', width: '100%' }} onClick={handleLogout}>
+            Đăng xuất
+          </span>
+        ),
         icon: <LogoutOutlined style={{ color: '#00b96b' }} />
       }
     ]

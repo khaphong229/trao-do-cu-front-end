@@ -1,5 +1,41 @@
 @import '../../../../../assets/scss/variables.scss';
 
+// Variables
+$color-main: #37c5a0;
+$color-white: #ffffff;
+$color-text-primary: rgba(0, 0, 0, 0.85);
+$color-text-secondary: rgba(0, 0, 0, 0.45);
+$color-border: #f0f0f0;
+$box-shadow-base: 0 1px 3px rgba(0, 0, 0, 0.1);
+$box-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+$border-radius-base: 8px;
+$transition-base: all 0.3s ease;
+
+// Responsive Breakpoints
+@mixin desktop {
+  @media (min-width: 1200px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 768px) and (max-width: 1199px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin small-mobile {
+  @media (max-width: 480px) {
+    @content;
+  }
+}
+
 .contentWrap {
   background: $colorWhite;
   padding: 10px;
@@ -107,11 +143,53 @@
   margin-left: 8px;
 }
 
-.ButtonChat {
-  width: 100px;
-  text-align: center;
-}
+// Action Button
+.actionButton {
+  width: 50%;
+  height: 36px;
+  border-radius: 18px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: $transition-base;
 
+  @include mobile {
+    height: 30px;
+    font-size: 12px;
+    border-radius: 15px;
+  }
+
+  &[type='primary'] {
+    background: $color-main;
+    border-color: $color-main;
+
+    &:hover {
+      background: darken($color-main, 10%);
+      border-color: darken($color-main, 10%);
+    }
+  }
+
+  &[type='default'] {
+    color: $color-main;
+    border-color: $color-main;
+
+    &:hover {
+      color: darken($color-main, 10%);
+      border-color: darken($color-main, 10%);
+      background: rgba($color-main, 0.1);
+    }
+  }
+
+  &[disabled] {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: rgba(0, 0, 0, 0.25);
+
+    &:hover {
+      background: #f5f5f5;
+      border-color: #d9d9d9;
+    }
+  }
+}
 .pagination {
   margin-top: 20px;
   margin-bottom: 10px;
