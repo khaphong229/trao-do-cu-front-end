@@ -21,7 +21,7 @@ import useInteraction from 'hooks/useInteraction'
 import { getAvatarPost } from 'hooks/useAvatar'
 import ModalContactDetail from './Modal/ModalContactDetail/ModalContactDetail'
 
-const { Title, Text } = Typography
+const { Title, Text, Paragraph } = Typography
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -32,6 +32,7 @@ const PostInfoDetail = () => {
   const [contactModalVisible, setContactModalVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [mainImage, setMainImage] = useState(null)
+  const [expandTitle, setExpandTitle] = useState(false)
   const thumbnails = Array.isArray(selectedPost?.image_url) ? selectedPost.image_url : []
   const { isExchangeFormModalVisible } = useSelector(state => state.exchangeRequest)
   const AuthButton = withAuth(Button)
@@ -121,6 +122,34 @@ const PostInfoDetail = () => {
     setContactModalVisible(false)
   }
 
+  // Xử lý hiển thị tiêu đề với chức năng xem thêm
+  const renderTitle = () => {
+    const title = selectedPost.title || 'Không có tiêu đề'
+    const isTitleLong = title.length > 50 // Giới hạn 50 ký tự cho tiêu đề
+
+    return (
+      <div className={styles.titleContainer}>
+        {expandTitle || !isTitleLong ? (
+          <Title level={4} className={styles.postTitle}>
+            {title}
+            {isTitleLong && (
+              <Button type="link" size="small" onClick={() => setExpandTitle(false)} className={styles.showLessButton}>
+                Thu gọn
+              </Button>
+            )}
+          </Title>
+        ) : (
+          <Title level={4} className={styles.postTitle}>
+            {title.substring(0, 50)}...
+            <Button type="link" size="small" onClick={() => setExpandTitle(true)} className={styles.expandButton}>
+              Xem thêm
+            </Button>
+          </Title>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className={styles.ContentWrap}>
       <Row gutter={32}>
@@ -161,9 +190,7 @@ const PostInfoDetail = () => {
         </Col>
 
         <Col xs={24} md={12}>
-          <Title level={4} className={styles.postTitle}>
-            {selectedPost.title || 'Không có tiêu đề'}
-          </Title>
+          {renderTitle()}
           <Title level={3} className={styles.statusText}>
             {selectedPost.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
           </Title>

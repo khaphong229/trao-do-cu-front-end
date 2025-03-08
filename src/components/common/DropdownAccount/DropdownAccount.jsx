@@ -18,15 +18,18 @@ export const useMenuItems = () => {
       items: [
         {
           label: <NavigateItem to="/management-post?tab=active">Đang hiển thị</NavigateItem>,
-          icon: <PlayCircleOutlined style={{ color: '#00b96b' }} />
+          icon: <PlayCircleOutlined style={{ color: '#00b96b' }} />,
+          key: 'active'
         },
         {
           label: <NavigateItem to="/management-post?tab=expired">Đã thành công</NavigateItem>,
-          icon: <CheckSquareOutlined style={{ color: '#00b96b' }} />
+          icon: <CheckSquareOutlined style={{ color: '#00b96b' }} />,
+          key: 'expired'
         },
         {
           label: <NavigateItem to="/management-post?tab=requested">Đã yêu cầu</NavigateItem>,
-          icon: <ArrowRightOutlined style={{ color: '#00b96b' }} />
+          icon: <ArrowRightOutlined style={{ color: '#00b96b' }} />,
+          key: 'requested'
         }
       ]
     },
@@ -34,18 +37,21 @@ export const useMenuItems = () => {
       title: 'Tài khoản của tôi',
       items: [
         {
-          name: <NavigateItem to="/profile?tab=personal">Tài khoản của tôi</NavigateItem>,
-          icon: <UserOutlined style={{ color: '#00b96b' }} />
+          label: <NavigateItem to="/profile?tab=personal">Tài khoản của tôi</NavigateItem>,
+          icon: <UserOutlined style={{ color: '#00b96b' }} />,
+          key: 'personal'
         },
         {
-          name: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
-          icon: <LockOutlined style={{ color: '#00b96b' }} />
+          label: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
+          icon: <LockOutlined style={{ color: '#00b96b' }} />,
+          key: 'security'
         },
         ...(isAuthenticated
           ? [
               {
                 label: <span onClick={() => handleLogout()}>Đăng xuất</span>,
-                icon: <LogoutOutlined style={{ color: '#00b96b' }} />
+                icon: <LogoutOutlined style={{ color: '#00b96b' }} />,
+                key: 'logout'
               }
             ]
           : [])
@@ -53,3 +59,14 @@ export const useMenuItems = () => {
     }
   ]
 }
+
+// Assuming this is what NavigateItem might look like if it's not already defined
+// If NavigateItem is already defined elsewhere, you can omit this
+// export const NavigateItem = ({ to, children }) => {
+//   const navigate = useNavigate();
+//   return (
+//     <span onClick={() => navigate(to)}>
+//       {children}
+//     </span>
+//   );
+// };
