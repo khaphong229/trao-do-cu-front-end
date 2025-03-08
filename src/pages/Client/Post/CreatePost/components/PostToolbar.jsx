@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Tooltip } from 'antd'
 import {
   PictureOutlined,
@@ -7,20 +7,22 @@ import {
   WhatsAppOutlined,
   AppstoreOutlined
 } from '@ant-design/icons'
-// import { CiFacebook } from 'react-icons/ci';
 import styles from '../scss/PostToolbar.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
+import UploadCustom from 'components/common/UploadCustom'
 import {
-  setCategoryModalVisibility,
   setLocationModalVisibility,
   setShowEmoji,
-  setSocialLinkModalVisibility
-  // updatePostData
-} from '../../../../../features/client/post/postSlice'
-import UploadCustom from '../../../../../components/common/UploadCustom' // Adjust the import path as needed
+  setSocialLinkModalVisibility,
+  setCategoryModalVisibility
+} from 'features/client/post/postSlice'
 
-const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
-  const { isShowEmoji, dataCreatePost } = useSelector(state => state.post)
+const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRef, categoryRef, imageRef }) => {
+  const { isShowEmoji, dataCreatePost, requestData } = useSelector(state => ({
+    isShowEmoji: state.post.isShowEmoji || state.exchangeRequest.isShowEmoji,
+    dataCreatePost: state.post.dataCreatePost || {},
+    requestData: state.exchangeRequest.requestData || {}
+  }))
   const dispatch = useDispatch()
   const [fileList, setFileList] = useState([])
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
@@ -36,27 +38,28 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
+  const maxImages = 5 - (dataCreatePost.image_url?.length || requestData.image_url?.length || 0)
 
   const uploadButton = (
     <Button
-      ref={ref3}
+      ref={ref3 || imageRef}
       type="text"
       icon={<PictureOutlined className={styles.iconPicture} />}
-      disabled={dataCreatePost.image_url?.length >= 5}
+      disabled={maxImages <= 0}
     />
   )
 
   const icons = [
     {
-      ref: ref3,
+      ref: imageRef || ref3,
       tooltip: 'Ảnh/Video',
       icon: <PictureOutlined className={styles.iconPicture} />,
       isUpload: true,
       onClick: null,
-      disabled: dataCreatePost.image_url?.length >= 5
+      disabled: maxImages <= 0
     },
     {
-      ref: ref4,
+      ref: facebookRef || ref4,
       tooltip: 'Liên kết mạng xã hội',
       icon: <WhatsAppOutlined className={styles.customIcon} />,
       isUpload: false,
@@ -70,14 +73,14 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
       onClick: () => dispatch(setShowEmoji(!isShowEmoji))
     },
     {
-      ref: ref5,
+      ref: locationRef || ref5,
       tooltip: 'Thêm vị trí',
       icon: <EnvironmentOutlined className={styles.iconEnvironment} />,
       isUpload: false,
       onClick: () => dispatch(setLocationModalVisibility(true))
     },
     {
-      ref: ref6,
+      ref: categoryRef || ref6,
       tooltip: 'Chọn danh mục',
       icon: <AppstoreOutlined className={styles.iconCategory} />,
       isUpload: false,
@@ -98,7 +101,7 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
                 fileList={fileList}
                 setFileList={({ fileList }) => setFileList(fileList)}
                 uploadButton={uploadButton}
-                maxCount={5 - (dataCreatePost.image_url?.length || 0)}
+                maxCount={maxImages}
                 disabled={item.disabled}
               />
             )
@@ -133,7 +136,7 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
                       <span className={styles.iconLabel}>{item.tooltip}</span>
                     </div>
                   }
-                  maxCount={5 - (dataCreatePost.image_url?.length || 0)}
+                  maxCount={maxImages}
                   disabled={item.disabled}
                 />
               </div>

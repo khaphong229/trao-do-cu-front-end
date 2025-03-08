@@ -13,7 +13,7 @@ const initialState = {
     city: '',
     image_url: [],
     category_id: null,
-    contact_social_media: {
+    social_media: {
       facebook: '',
       instagram: '',
       zalo: ''

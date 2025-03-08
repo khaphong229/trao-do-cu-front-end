@@ -20,8 +20,8 @@ const PostForm = ({
   user,
   onSubmit,
   formUtils,
-  submitButtonText = 'Đăng',
-  tourRef = {},
+  submitButtonText,
+  tourRef = {}, // Add default value
   showTour = false,
   tourSteps = [],
   onTourClose = () => {}
@@ -54,12 +54,12 @@ const PostForm = ({
         width={isMobile ? '90%' : 600}
         bodyStyle={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
       >
-        <UserInfoSection title={title} ref1={tourRef.ref1} errors={formErrors} />
+        <UserInfoSection title={title} ref1={tourRef.ref1 || null} errors={formErrors} />
 
         <PostContentEditor
           errorPost={errorPost}
           setErrorPost={setErrorPost}
-          ref2={tourRef.ref2}
+          ref2={tourRef.ref2 || null}
           titleRef={titleRef}
           imageRef={imageRef}
           uploadedImages={formData.image_url}
@@ -69,10 +69,10 @@ const PostForm = ({
         />
 
         <PostToolbar
-          ref3={tourRef.ref3}
-          ref4={tourRef.ref4}
-          ref5={tourRef.ref5}
-          ref6={tourRef.ref6}
+          ref3={tourRef.ref3 || null}
+          ref4={tourRef.ref4 || null}
+          ref5={tourRef.ref5 || null}
+          ref6={tourRef.ref6 || null}
           phoneRef={phoneRef}
           facebookRef={facebookRef}
           locationRef={locationRef}
@@ -99,7 +99,7 @@ const PostForm = ({
       />
 
       <ContactInfoModal
-        facebookLink={formData.facebookLink || ''}
+        facebookLink={formData.social_media?.facebook || ''}
         setFacebookLink={facebookLink => handleFieldChange('facebookLink', facebookLink)}
         error={formErrors.facebookLink}
       />

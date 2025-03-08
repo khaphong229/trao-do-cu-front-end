@@ -42,7 +42,7 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
           city: user.address.split(', ').pop(),
           specificLocation: user.address,
           phone: user.phone || '',
-          facebookLink: user.facebookLink || ''
+          facebookLink: user.social_media?.facebook || '' // Use optional chaining here
         })
       )
     }
@@ -72,16 +72,28 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
       errors.image_url = 'Vui lòng tải lên ít nhất một hình ảnh'
     }
 
-    // Check phone
-    if (!formData.phone) {
-      errors.phone = 'Vui lòng nhập số điện thoại liên hệ'
-    } else if (!isValidVietnamesePhone(formData.phone)) {
-      errors.phone = 'Số điện thoại không hợp lệ'
-    }
+    // Make sure at least one contact method is provided
+    const hasPhone = formData.phone && isValidVietnamesePhone(formData.phone)
+    const hasFacebook = formData.social_media?.facebook && isValidFacebookLink(formData.social_media?.facebook)
 
-    // Check Facebook link if provided
-    if (formData.facebookLink && !isValidFacebookLink(formData.facebookLink)) {
-      errors.facebookLink = 'Liên kết Facebook không hợp lệ'
+    if (!hasPhone && !hasFacebook) {
+      // Only show phone error if there's no valid Facebook link
+      errors.phone = 'Vui lòng nhập số điện thoại hoặc liên kết Facebook'
+    } else {
+      // If phone is provided but invalid
+      if (formData.phone && !hasPhone) {
+        errors.phone = 'Số điện thoại không hợp lệ'
+      }
+
+      // Initialize social_media errors object if it doesn't exist
+      if (!errors.social_media) {
+        errors.social_media = {}
+      }
+
+      // If Facebook link is provided but invalid
+      if (formData.social_media?.facebook && !hasFacebook) {
+        errors.social_media.facebook = 'Liên kết Facebook không hợp lệ'
+      }
     }
 
     // Check address
@@ -100,7 +112,6 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
 
     return errors
   }
-
   const scrollToFirstError = errors => {
     if (errors.title || errors.content) {
       titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -108,7 +119,7 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
       imageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.phone) {
       phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    } else if (errors.facebookLink) {
+    } else if (errors.social_media?.facebook) {
       facebookRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.specificLocation || errors.city) {
       locationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -126,7 +137,7 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
     // If there are errors, display them and stop submission
     if (Object.keys(errors).length > 0) {
       // Show error message for the first error
-      message.error(Object.values(errors)[0])
+      message.error(String(Object.values(errors)[0])) // Ensure the message is a string
       // Scroll to the first error field
       scrollToFirstError(errors)
       return
@@ -155,7 +166,7 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
             } else if (field === 'facebookLink') {
               message.error('Vui lòng nhập liên kết Facebook hợp lệ')
             } else {
-              message.error(msg)
+              message.error(String(msg)) // Ensure the message is a string
             }
             hasDisplayedError = true
           }
