@@ -1,6 +1,5 @@
 import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message, Checkbox, Input, Select } from 'antd'
 import {
-  ShareAltOutlined,
   MessageOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,

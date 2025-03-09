@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Modal, Tour } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
 import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 
@@ -97,7 +97,7 @@ const PostForm = ({
         closeIcon={<CloseOutlined />}
         className={styles.createPostModal}
         width={isMobile ? '90%' : 600}
-        style={isMobile ? { top: 0 } : {}}
+        // style={isMobile ? { top: 0 } : {}}
         bodyStyle={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
       >
         <UserInfoSection contentType={contentType} ref1={tourRef.ref1} errors={formErrors} />
@@ -167,7 +167,7 @@ const PostForm = ({
           steps={tourSteps.map(step => ({
             title: step.title,
             description: step.description,
-            target: () => step.ref.current // Ensure ref is correctly used
+            target: () => step.ref?.current
           }))}
         />
       )}

@@ -37,9 +37,9 @@ const PostList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedCity, setSelectedCity] = useState(null)
   const [VIETNAMESE_CITIES, SET_VIETNAMESE_CITIES] = useState(null)
-  const [isInitialLoad, setIsInitialLoad] = useState(true)
-
+  const [expandedTitles, setExpandedTitles] = useState({})
   const dispatch = useDispatch()
+  const { user } = useSelector(state => state.auth)
   const { posts, isError, isLoading, total } = useSelector(state => state.post)
 
   const fetchCity = useCallback(async () => {
@@ -62,40 +62,52 @@ const PostList = () => {
     }
   }, [])
 
-  // Load cities only once
   useEffect(() => {
     fetchCity()
-  }, [])
+  }, [fetchCity])
 
-  // Main data fetching logic combined into a single effect
   useEffect(() => {
-    // Reset and fetch initial data
     dispatch(clearPosts())
     dispatch(resetPage())
-
     dispatch(
       getPostCategory({
         current: currentPage,
         pageSize: 10,
         category_id: category_id !== 'all' ? category_id : null,
-        type: activeTab === 'all' ? null : activeTab,
         city: selectedCity
       })
     )
+  }, [dispatch, currentPage, category_id, selectedCity, fetchCity])
 
-    setIsInitialLoad(false)
-  }, [dispatch, currentPage, category_id, selectedCity, activeTab])
-
-  // Removed the redundant useEffect that was causing duplicate API calls
+  useEffect(() => {
+    if (posts.length === 0 && !isLoading) {
+      dispatch(
+        getPostPagination({
+          current: currentPage,
+          pageSize: 10,
+          category_id: category_id !== 'all' ? category_id : null,
+          city: selectedCity
+        })
+      )
+    }
+  }, [dispatch, currentPage, category_id, selectedCity, posts.length, isLoading])
 
   const handleTabChange = key => {
     setActiveTab(key)
-    setCurrentPage(1) // Reset to first page when changing tab
+    dispatch(
+      getPostCategory({
+        current: 1,
+        pageSize: 10,
+        category_id: category_id ? category_id : null,
+        type: key === 'all' ? null : key,
+        city: selectedCity
+      })
+    )
   }
 
   const handleCityChange = value => {
     setSelectedCity(value)
-    setCurrentPage(1) // Reset to first page when changing city
+    setCurrentPage(1)
   }
 
   const handleSortChange = value => {
@@ -139,6 +151,36 @@ const PostList = () => {
       ...prev,
       [postId]: !prev[postId]
     }))
+  }
+
+  const renderButton = item => {
+    const isMe = item?.user_id?._id === user._id
+    if (item?.type === 'gift') {
+      return (
+        <AuthButton
+          icon={<GiftOutlined />}
+          type="primary"
+          className={styles.ButtonChat}
+          onClick={() => handleRequest(item)}
+          disabled={item?.isRequested || isMe}
+        >
+          {item?.isRequested ? 'Đã yêu cầu' : 'Nhận'}
+        </AuthButton>
+      )
+    } else if (item?.type === 'exchange') {
+      return (
+        <AuthButton
+          icon={<SwapOutlined />}
+          type="default"
+          className={styles.ButtonChat}
+          onClick={() => handleRequest(item)}
+          disabled={item?.isRequested || isMe}
+        >
+          {item?.isRequested ? 'Đã yêu cầu' : 'Đổi'}
+        </AuthButton>
+      )
+    }
+    return null
   }
 
   const renderTitle = post => {
@@ -195,7 +237,7 @@ const PostList = () => {
     <div className={styles.contentWrap}>
       <div className={styles.topContent}>
         <div className={styles.Tabs}>
-          <Tabs activeKey={activeTab} tabBarStyle={{ margin: 0 }} onChange={handleTabChange}>
+          <Tabs defaultActiveKey="all" tabBarStyle={{ margin: 0 }} onChange={handleTabChange}>
             <TabPane tab="Tất cả" key="all" />
             <TabPane tab="Trao tặng" key="gift" />
             <TabPane tab="Trao đổi" key="exchange" />
@@ -214,7 +256,7 @@ const PostList = () => {
             allowClear
           />
           <Select
-            value={sortOrder}
+            defaultValue="newest"
             style={{ width: 120 }}
             size="middle"
             onChange={handleSortChange}
@@ -236,7 +278,7 @@ const PostList = () => {
       ) : sortedPosts.length > 0 ? (
         <Row gutter={[8, 8]}>
           {sortedPosts.map(item => (
-            <Col xs={24} sm={12} key={item?._id || item?.id}>
+            <Col xs={24} sm={12} key={item?.id}>
               <Card
                 className={styles.Card}
                 hoverable
@@ -270,27 +312,8 @@ const PostList = () => {
                       <Avatar className={styles.avtUser} src={item?.avatar || avt} />
                       <Text className={styles.TextUser}>{item?.user_id?.name}</Text>
                     </div>
-                    {item?.type === 'gift' ? (
-                      <AuthButton
-                        icon={<GiftOutlined />}
-                        type="primary"
-                        className={styles.ButtonChat}
-                        onClick={() => handleRequest(item)}
-                        disabled={item?.isRequested}
-                      >
-                        {item?.isRequested ? 'Đã yêu cầu' : 'Nhận'}
-                      </AuthButton>
-                    ) : (
-                      <AuthButton
-                        icon={<SwapOutlined />}
-                        type="default"
-                        className={styles.ButtonChat}
-                        onClick={() => handleRequest(item)}
-                        disabled={item?.isRequested}
-                      >
-                        {item?.isRequested ? 'Đã yêu cầu' : 'Đổi'}
-                      </AuthButton>
-                    )}
+
+                    {renderButton(item)}
                   </div>
                 </div>
               </Card>

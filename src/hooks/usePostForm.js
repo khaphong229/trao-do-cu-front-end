@@ -23,10 +23,8 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     }
   }, [isModalVisible])
 
-  // Set user data when modal opens
   useEffect(() => {
-    if (isModalVisible && user?.address) {
-      // Only update if these fields aren't already set
+    if (isModalVisible) {
       const addressParts = user.address.split(', ')
       const city = addressParts.pop()
 
@@ -55,7 +53,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
 
       dispatch(updateData(dataExisting))
     }
-  }, [isModalVisible, user?.address, type, updateData, dispatch])
+  }, [isModalVisible, user?.address, type, updateData, dispatch, user.phone, user.social_media?.facebook])
 
   const validateForm = () => {
     const errors = {}
@@ -105,16 +103,12 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
   }
 
   const handleSubmit = async () => {
-    // Validate form first, but only for the required fields (title and image)
     const errors = validateForm()
     setFormErrors(errors)
     setErrorPost(Object.keys(errors).length > 0 ? errors : null)
 
-    // If there are errors, display them and stop submission
     if (Object.keys(errors).length > 0) {
-      // Show error message for the first error
       message.error(String(Object.values(errors)[0]))
-      // Scroll to the first error field
       scrollToFirstError(errors)
       return
     }
@@ -123,7 +117,6 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
       await validateSubmit(formData)
     } catch (error) {
       if (error.status === 400) {
-        // Map backend errors to form fields
         const newErrors = {}
         let hasDisplayedError = false
 
@@ -140,7 +133,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
         setErrorPost(error?.detail || error?.data)
         scrollToFirstError(newErrors)
       } else {
-        message.error('Đã xảy ra lỗi. Vui lòng thử lại sau.')
+        // console.error('Đã xảy ra lỗi. Vui lòng thử lại sau.')
       }
     }
   }

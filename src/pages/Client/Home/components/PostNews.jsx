@@ -4,7 +4,7 @@ import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
 import { getPostPagination } from 'features/client/post/postThunks'
-import { resetPosts, setCityFilter, setSortOrder } from 'features/client/post/postSlice'
+import { resetPosts, setCityFilter } from 'features/client/post/postSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -25,7 +25,6 @@ import { getAvatarPost } from 'hooks/useAvatar'
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
 const { Title, Text, Paragraph } = Typography
-const { Option } = Select
 const PostNews = () => {
   const [curPage, setCurPage] = useState(1)
   const [isSearchMode, setIsSearchMode] = useState(false)
@@ -35,7 +34,7 @@ const PostNews = () => {
   const navigate = useNavigate()
 
   const { isExchangeFormModalVisible } = useSelector(state => state.exchangeRequest)
-  const { posts, isError, isLoading, hasMore, query, sortOrder, cityFilter } = useSelector(state => state.post)
+  const { posts, isError, isLoading, hasMore, query, cityFilter } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
@@ -172,13 +171,13 @@ const PostNews = () => {
       </Tooltip>
     )
   }
-  const handleSortChange = value => {
-    dispatch(setSortOrder(value)) // ✅ Chỉ cập nhật sortOrder
-  }
+  // const handleSortChange = value => {
+  //   dispatch(setSortOrder(value))
+  // }
 
   const handleCityChange = value => {
     setSelectedCity(value)
-    dispatch(setCityFilter(value)) // ✅ Chuyển setCityFilter vào đây
+    dispatch(setCityFilter(value))
   }
   const filterProvinces = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase())

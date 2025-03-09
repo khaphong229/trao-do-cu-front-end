@@ -8,14 +8,16 @@ import { getAllCategory } from 'features/client/category/categoryThunks'
 import { getCategories, setCategories } from 'utils/localStorageUtils'
 import { setCategory } from 'features/client/category/categorySlice'
 
-// Separate click handler for menu items
-const handleMenuItemClick = (e, category, navigate) => {
+// Modified to pass parentId as a parameter when handling child items
+const handleMenuItemClick = (e, category, navigate, parentId) => {
   e.domEvent.stopPropagation()
-  navigate(`/post/category/${category.id === '67c6c5ecf83ba5fb6ecfaa0e' ? 'all' : category.id}`)
+  // Use parentId if it exists (meaning this is a child category), otherwise use category's own id
+  const navigateId = parentId || category.id
+  navigate(`/post/category/${navigateId === '67c6c5ecf83ba5fb6ecfaa0e' ? 'all' : navigateId}`)
 }
 
-// Recursive function with separate handlers for parent and child items
-const renderMenuItems = (categories, navigate) =>
+// Modified recursive function to track parent IDs for children
+const renderMenuItems = (categories, navigate, parentId = null) =>
   categories?.map(category => {
     if (category.children && category.children.length > 0) {
       return (
@@ -32,8 +34,8 @@ const renderMenuItems = (categories, navigate) =>
             navigate(`/post/category/${category.id === '67c6c5ecf83ba5fb6ecfaa0e' ? 'all' : category.id}`)
           }}
         >
-          {/* Recursively render children as separate menu items */}
-          {renderMenuItems(category.children, navigate)}
+          {/* Pass current category's ID as parentId to all children */}
+          {renderMenuItems(category.children, navigate, category.id)}
         </Menu.SubMenu>
       )
     }
@@ -42,7 +44,7 @@ const renderMenuItems = (categories, navigate) =>
         key={category.id || category.title}
         icon={category.icon}
         className={styles.SubMenu}
-        onClick={e => handleMenuItemClick(e, category, navigate)}
+        onClick={e => handleMenuItemClick(e, category, navigate, parentId)}
       >
         {category.title}
       </Menu.Item>

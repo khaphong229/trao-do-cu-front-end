@@ -135,6 +135,8 @@ export const useGiftRequest = () => {
   }
 
   const handleExchangeConfirm = async data => {
+    console.log(data)
+
     if (!selectedPostExchange) {
       message.error('Không tìm thấy bài viết được chọn')
       return
@@ -151,13 +153,11 @@ export const useGiftRequest = () => {
       image_url: data.image_url,
       contact_phone: user?.phone ? user.phone : '',
       contact_social_media: {
-        facebook: user.social_media?.[0] || ''
+        facebook: user.social_media?.facebook,
+        zalo: '',
+        instagram: ''
       },
       contact_address: user?.address ? user.address : ''
-    }
-
-    if (user.social_media.length === 0) {
-      requestData = omit(requestData, ['contact_social_media'])
     }
 
     try {

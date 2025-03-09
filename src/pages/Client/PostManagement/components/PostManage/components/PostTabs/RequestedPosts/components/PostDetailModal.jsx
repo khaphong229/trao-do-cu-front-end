@@ -5,6 +5,7 @@ import avt from 'assets/images/logo/avtDefault.webp'
 import imgNotFound from 'assets/images/others/imagenotfound.webp'
 import '../styles.scss'
 import ContactInfoDisplay from './ContactInfoDisplay'
+import { getAvatarPost } from 'hooks/useAvatar'
 
 const { Title, Text } = Typography
 
@@ -76,7 +77,7 @@ const PostDetailModal = ({ isVisible, onClose, post }) => {
             style={{ marginBottom: '16px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <Avatar src={`${URL_SERVER_IMAGE}${post.post_id.user_id?.avatar}` || avt} size={40} />
+              <Avatar src={getAvatarPost(post.post_id.user_id)} size={40} />
               <div>
                 <Title level={4} style={{ margin: 0 }}>
                   {post.post_id.user_id?.name || 'Không xác định'}

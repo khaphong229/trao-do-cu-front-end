@@ -104,7 +104,7 @@ const PostToolbar = ({
     />
   )
 
-  const icons = [
+  let icons = [
     {
       ref: imageToolRef || imageRef,
       tooltip: 'Ảnh/Video',
@@ -133,15 +133,18 @@ const PostToolbar = ({
       icon: <EnvironmentOutlined className={styles.iconEnvironment} />,
       isUpload: false,
       onClick: () => dispatch(setLocationModalVisibility(true))
-    },
-    {
+    }
+  ]
+
+  if (contentType === 'post') {
+    icons.push({
       ref: categoryToolRef || categoryRef,
       tooltip: 'Chọn danh mục',
       icon: <AppstoreOutlined className={styles.iconCategory} />,
       isUpload: false,
       onClick: () => dispatch(setCategoryModalVisibility(true))
-    }
-  ]
+    })
+  }
 
   const renderDesktopToolbar = () => (
     <div className={styles.postTools}>
