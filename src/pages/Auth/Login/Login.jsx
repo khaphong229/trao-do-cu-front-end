@@ -94,10 +94,10 @@ const Login = () => {
           <Form.Item name="remember" valuePropName="checked" noStyle>
             <Checkbox>Ghi nhớ</Checkbox>
           </Form.Item>
-          {/* 
+
           <Link className="loginFormForgot" to="/">
             Quên mật khẩu
-          </Link> */}
+          </Link>
         </Form.Item>
 
         <Form.Item>

@@ -24,7 +24,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
   }, [isModalVisible])
 
   useEffect(() => {
-    if (isModalVisible) {
+    if (isModalVisible && user?.address) {
       const addressParts = user.address.split(', ')
       const city = addressParts.pop()
 

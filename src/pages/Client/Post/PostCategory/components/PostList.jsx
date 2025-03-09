@@ -5,7 +5,7 @@ import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import { useSelector, useDispatch } from 'react-redux'
-import { getPostCategory, getPostPagination } from '../../../../../features/client/post/postThunks'
+import { getPostCategory } from '../../../../../features/client/post/postThunks'
 import { resetPage, clearPosts } from '../../../../../features/client/post/postSlice'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -42,6 +42,7 @@ const PostList = () => {
   const { user } = useSelector(state => state.auth)
   const { posts, isError, isLoading, total } = useSelector(state => state.post)
 
+  // Fetch city data only once
   const fetchCity = useCallback(async () => {
     const cachedCities = localStorage.getItem('vietnameseCities')
 
@@ -66,48 +67,36 @@ const PostList = () => {
     fetchCity()
   }, [fetchCity])
 
+  // Optimized useEffect to fetch posts data
   useEffect(() => {
+    // Reset state and fetch new data when filter params change
     dispatch(clearPosts())
     dispatch(resetPage())
-    dispatch(
-      getPostCategory({
-        current: currentPage,
-        pageSize: 10,
-        category_id: category_id !== 'all' ? category_id : null,
-        city: selectedCity
-      })
-    )
-  }, [dispatch, currentPage, category_id, selectedCity, fetchCity])
 
-  useEffect(() => {
-    if (posts.length === 0 && !isLoading) {
-      dispatch(
-        getPostPagination({
-          current: currentPage,
-          pageSize: 10,
-          category_id: category_id !== 'all' ? category_id : null,
-          city: selectedCity
-        })
-      )
+    // Define fetch parameters
+    const params = {
+      current: currentPage,
+      pageSize: 10,
+      category_id: category_id !== 'all' ? category_id : null,
+      city: selectedCity,
+      type: activeTab === 'all' ? null : activeTab
     }
-  }, [dispatch, currentPage, category_id, selectedCity, posts.length, isLoading])
+
+    // Single API call to fetch posts
+    dispatch(getPostCategory(params))
+
+    // Using the pagination API is not needed here since getPostCategory already fetches the data
+    // This eliminates the duplicate API calls
+  }, [dispatch, currentPage, category_id, selectedCity, activeTab])
 
   const handleTabChange = key => {
     setActiveTab(key)
-    dispatch(
-      getPostCategory({
-        current: 1,
-        pageSize: 10,
-        category_id: category_id ? category_id : null,
-        type: key === 'all' ? null : key,
-        city: selectedCity
-      })
-    )
+    setCurrentPage(1) // Reset to first page when changing tabs
   }
 
   const handleCityChange = value => {
     setSelectedCity(value)
-    setCurrentPage(1)
+    setCurrentPage(1) // Reset to first page when changing city
   }
 
   const handleSortChange = value => {
@@ -237,7 +226,7 @@ const PostList = () => {
     <div className={styles.contentWrap}>
       <div className={styles.topContent}>
         <div className={styles.Tabs}>
-          <Tabs defaultActiveKey="all" tabBarStyle={{ margin: 0 }} onChange={handleTabChange}>
+          <Tabs activeKey={activeTab} tabBarStyle={{ margin: 0 }} onChange={handleTabChange}>
             <TabPane tab="Tất cả" key="all" />
             <TabPane tab="Trao tặng" key="gift" />
             <TabPane tab="Trao đổi" key="exchange" />
@@ -256,7 +245,7 @@ const PostList = () => {
             allowClear
           />
           <Select
-            defaultValue="newest"
+            value={sortOrder}
             style={{ width: 120 }}
             size="middle"
             onChange={handleSortChange}
@@ -278,7 +267,7 @@ const PostList = () => {
       ) : sortedPosts.length > 0 ? (
         <Row gutter={[8, 8]}>
           {sortedPosts.map(item => (
-            <Col xs={24} sm={12} key={item?.id}>
+            <Col xs={24} sm={12} key={item?._id || item?.id}>
               <Card
                 className={styles.Card}
                 hoverable

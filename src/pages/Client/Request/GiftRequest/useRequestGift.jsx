@@ -9,7 +9,6 @@ import {
   setSelectedPostExchange
 } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import omit from 'lodash/omit'
 import { updatePostRequestStatus } from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
 const isObject = require('lodash/isObject')
@@ -85,9 +84,12 @@ export const useGiftRequest = () => {
   }
 
   const handleRequestConfirm = async values => {
-    batchClick(selectedPostExchange.category_id._id || '')
+    console.log(values)
 
-    if (!selectedPostExchange) return
+    if (!selectedPostExchange) {
+      message.error('Không tìm thấy bài viết được chọn')
+      return
+    }
 
     let requestData = {
       post_id: selectedPostExchange._id,
@@ -95,15 +97,17 @@ export const useGiftRequest = () => {
       reason_receive: values.reason_receive === undefined ? '' : values.reason_receive,
       status: 'pending',
       contact_phone: user?.phone ? user.phone : '',
-      contact_social_media: {
-        facebook: user.social_media?.facebook
-      },
       contact_address: user?.address ? user.address : '',
       contact_name: user.name
     }
 
-    if (user.social_media.length === 0) {
-      requestData = omit(requestData, ['contact_social_media'])
+    if (user?.social_media?.facebook) {
+      requestData = {
+        ...requestData,
+        contact_social_media: {
+          facebook: user?.social_media?.facebook
+        }
+      }
     }
 
     try {
@@ -130,19 +134,14 @@ export const useGiftRequest = () => {
           message.error(msg || 'Có lỗi xảy ra khi gửi yêu cầu')
         }
       }
-      dispatch(setAcceptModalVisible(false))
     }
   }
 
   const handleExchangeConfirm = async data => {
-    console.log(data)
-
     if (!selectedPostExchange) {
       message.error('Không tìm thấy bài viết được chọn')
       return
     }
-
-    batchClick(selectedPostExchange.category_id._id || '')
 
     let requestData = {
       post_id: selectedPostExchange._id,

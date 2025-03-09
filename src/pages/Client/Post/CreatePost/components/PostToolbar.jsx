@@ -148,7 +148,9 @@ const PostToolbar = ({
 
   const renderDesktopToolbar = () => (
     <div className={styles.postTools}>
-      <div className={styles.toolsText}>Thêm vào bài đăng của bạn</div>
+      <div className={styles.toolsText}>
+        {contentType === 'post' ? 'Thêm vào bài đăng của bạn' : 'Thêm vào biểu mẫu của bạn'}
+      </div>
       <div className={styles.toolsButtons}>
         {icons.map((item, index) => {
           if (item.isUpload) {
@@ -179,7 +181,9 @@ const PostToolbar = ({
 
   const renderMobileToolbar = () => (
     <div className={styles.mobilePostTools}>
-      <div className={styles.mobileToolsText}>Thêm vào bài đăng của bạn</div>
+      <div className={styles.mobileToolsText}>
+        {contentType === 'post' ? 'Thêm vào bài đăng của bạn' : 'Thêm vào biểu mẫu của bạn'}
+      </div>
       <div className={styles.mobileToolsButtons}>
         {icons.map((item, index) => {
           if (item.isUpload) {
