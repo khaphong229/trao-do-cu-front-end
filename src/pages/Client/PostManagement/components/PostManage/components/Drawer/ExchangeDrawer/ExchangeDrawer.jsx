@@ -9,6 +9,7 @@ import {
   rejectExchangeRequest
 } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
+import { getAvatarPost } from 'hooks/useAvatar'
 
 export const ExchangeDrawer = ({
   visible,
@@ -22,6 +23,7 @@ export const ExchangeDrawer = ({
   const dispatch = useDispatch()
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const isMobile = useCheckMobileScreen()
 
   const sortedRequests = useMemo(() => {
     if (!exchangeRequests) return []
@@ -87,7 +89,7 @@ export const ExchangeDrawer = ({
       placement="right"
       onClose={onClose}
       open={visible}
-      width={useCheckMobileScreen ? '100%' : '70%'}
+      width={isMobile ? '100%' : '70%'}
       destroyOnClose={true}
       maskClosable={true}
     >
@@ -115,10 +117,7 @@ export const ExchangeDrawer = ({
         renderItem={request => (
           <Card className={styles.requestCard} key={request._id}>
             <div className={styles.userInfo}>
-              <Avatar
-                src={request.user_req_id?.avatar && `${URL_SERVER_IMAGE}${request.user_req_id?.avatar}`}
-                icon={<UserOutlined />}
-              />
+              <Avatar src={getAvatarPost(request.user_req_id)} icon={<UserOutlined />} />
               <Space>
                 <span>{request.user_req_id?.name}</span>
                 {request.status === 'accepted' && <Badge status="success" text="Đã chấp nhận" />}

@@ -1,6 +1,5 @@
 import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message, Checkbox, Input, Select } from 'antd'
 import {
-  ShareAltOutlined,
   MessageOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
@@ -19,15 +18,17 @@ import { useEffect, useState } from 'react'
 import { changePassWord, getCurrentUser, updateUserProfile } from 'features/auth/authThunks'
 import Title from 'antd/es/skeleton/Title'
 import { useAvatar } from 'hooks/useAvatar'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 
 const { TabPane } = Tabs
 
 const ProfilePage = () => {
   const [searchParams] = useSearchParams()
-
+  const navigate = useNavigate()
+  const activeTab = searchParams.get('tab') || 'personal'
   const dispatch = useDispatch()
   const { avatar } = useAvatar()
+
   const {
     user: userData,
     isLoading,
@@ -36,16 +37,18 @@ const ProfilePage = () => {
     changePassWordMessage
   } = useSelector(state => state.auth)
   const [uploading, setUploading] = useState(false)
-  const [avatarUrl, setAvatarUrl] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     gender: '',
+    phone: '',
+    address: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   })
   const [savePassword, setSavePassword] = useState(false)
+
   useEffect(() => {
     if (userData) {
       setFormData({
@@ -77,7 +80,7 @@ const ProfilePage = () => {
         message.success(response.message)
       }
     } catch (error) {
-      message.error('Cập nhật thông tin thất bại')
+      message.error('Cập nhật thông tin thất bại', error.message)
     }
   }
 
@@ -108,16 +111,6 @@ const ProfilePage = () => {
       })
   }
 
-  useEffect(() => {
-    if (avatarUrl) {
-      const img = new Image()
-      img.src = avatarUrl
-      img.onload = () => {
-        setAvatarUrl(prevUrl => prevUrl)
-      }
-    }
-  }, [avatarUrl])
-
   const handleCustomUpload = async options => {
     const { file, onSuccess, onError } = options
     try {
@@ -143,7 +136,6 @@ const ProfilePage = () => {
         throw new Error('Upload response không hợp lệ')
       }
     } catch (error) {
-      // message.error(error.message === 'Bad Request' && 'Đã xảy ra lỗi khi upload ảnh')
       Object.values(error.detail).forEach(err => {
         message.error(err)
       })
@@ -151,6 +143,11 @@ const ProfilePage = () => {
     } finally {
       setUploading(false)
     }
+  }
+
+  const handleTabChange = activeKey => {
+    // Update URL when tab changes
+    navigate(`/profile?tab=${activeKey}`)
   }
 
   return (
@@ -186,16 +183,12 @@ const ProfilePage = () => {
             </div>
             <div className={styles['profile-info']}>
               <h1>{userData?.name ? userData.name : 'Tài khoản'}</h1>
-              {/* <p className="text-muted">Chưa có đánh giá</p> */}
-              {/* <div className={styles.followers}>
-                Người theo dõi: <strong>0</strong> • Đang theo dõi: <strong>0</strong>
-              </div> */}
             </div>
-            <div className={styles['button-group']}>
+            {/* <div className={styles['button-group']}>
               <Button type="primary" icon={<ShareAltOutlined />} disabled>
                 Chia sẻ trang của bạn
               </Button>
-            </div>
+            </div> */}
           </div>
         </Card>
 
@@ -211,7 +204,7 @@ const ProfilePage = () => {
               <Badge className={styles.badge}>
                 <ClockCircleOutlined />{' '}
                 {`Đã tham gia: ${
-                  dayjs(userData.created_at).isValid() ? dayjs(userData.created_at).fromNow() : 'Không rõ thời gian'
+                  dayjs(userData?.created_at).isValid() ? dayjs(userData.created_at).fromNow() : 'Không rõ thời gian'
                 }`}
               </Badge>
             </Tooltip>
@@ -237,13 +230,12 @@ const ProfilePage = () => {
           </div>
         </Card>
         <div className={styles['personal-info-wrapper']}>
-          <Tabs defaultActiveKey={searchParams.get('tab')}>
+          <Tabs activeKey={activeTab} onChange={handleTabChange}>
             <TabPane tab="Thông tin cá nhân" key="personal">
-              {/* <Card className={styles.card}> */}
               <Title level={3}>Hồ sơ cá nhân</Title>
               <div className={styles['form-group']}>
-                <label htmlFor="fullname">Họ và tên</label>
-                <Input id="fullname" value={formData.name} onChange={handleInputChange} />
+                <label htmlFor="name">Họ và tên</label>
+                <Input id="name" value={formData.name} onChange={handleInputChange} />
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="phone">Số điện thoại</label>
@@ -285,118 +277,75 @@ const ProfilePage = () => {
                   Thay đổi
                 </Button>
               </div>
-              {/* </Card> */}
             </TabPane>
 
             {!userData?.isGoogle && (
-              <>
-                <TabPane tab="Thay đổi mật khẩu" key="security">
-                  <div className={styles['form-design-layout']}>
-                    <div className={styles['form-design-content']}>
-                      <div className={styles['form-design-header']}>
-                        <h2>Thay đổi mật khẩu</h2>
+              <TabPane tab="Thay đổi mật khẩu" key="security">
+                <div className={styles['form-design-layout']}>
+                  <div className={styles['form-design-content']}>
+                    <div className={styles['form-design-header']}>
+                      <h2>Thay đổi mật khẩu</h2>
+                    </div>
+
+                    <form onSubmit={handleSubmitPassword} className={styles['form-design']}>
+                      <div className={styles['form-item']}>
+                        <label htmlFor="current-password">Mật khẩu hiện tại</label>
+                        <Input.Password
+                          id="current-password"
+                          placeholder="Nhập mật khẩu hiện tại"
+                          value={formData.currentPassword}
+                          onChange={handleChangePassword}
+                        />
                       </div>
 
-                      <form onSubmit={handleSubmitPassword} className={styles['form-design']}>
-                        <div className={styles['form-item']}>
-                          <label htmlFor="current-password">Mật khẩu hiện tại</label>
-                          <Input.Password
-                            id="current-password"
-                            placeholder="Nhập mật khẩu hiện tại"
-                            value={formData.currentPassword}
-                            onChange={handleChangePassword}
-                          />
+                      <div className={styles['form-item']}>
+                        <label htmlFor="new-password">Mật khẩu mới</label>
+                        <Input.Password
+                          id="new-password"
+                          placeholder="Nhập mật khẩu mới"
+                          value={formData.newPassword}
+                          onChange={handleChangePassword}
+                        />
+                      </div>
+
+                      <div className={styles['form-item']}>
+                        <label htmlFor="confirm-password">Xác nhận mật khẩu mới</label>
+                        <Input.Password
+                          id="confirm-password"
+                          placeholder="Xác nhận mật khẩu mới"
+                          value={formData.confirmPassword}
+                          onChange={handleChangePassword}
+                        />
+                      </div>
+
+                      <div className={styles['form-actions']}>
+                        <Checkbox checked={savePassword} onChange={e => setSavePassword(e.target.checked)}>
+                          Lưu mật khẩu mới
+                        </Checkbox>
+                        <Button type="primary" htmlType="submit" loading={isLoading}>
+                          ĐỔI MẬT KHẨU
+                        </Button>
+                      </div>
+
+                      {error && (
+                        <div className={styles['error']}>
+                          {error.message}
+                          {error.detail?.password && <p>{error.detail.password}</p>}
+                          {error.detail?.new_password && <p>{error.detail.new_password}</p>}
                         </div>
+                      )}
 
-                        <div className={styles['form-item']}>
-                          <label htmlFor="new-password">Mật khẩu mới</label>
-                          <Input.Password
-                            id="new-password"
-                            placeholder="Nhập mật khẩu mới"
-                            value={formData.newPassword}
-                            onChange={handleChangePassword}
-                          />
-                        </div>
-
-                        <div className={styles['form-item']}>
-                          <label htmlFor="confirm-password">Xác nhận mật khẩu mới</label>
-                          <Input.Password
-                            id="confirm-password"
-                            placeholder="Xác nhận mật khẩu mới"
-                            value={formData.confirmPassword}
-                            onChange={handleChangePassword}
-                          />
-                        </div>
-
-                        <div className={styles['form-actions']}>
-                          <Checkbox checked={savePassword} onChange={e => setSavePassword(e.target.checked)}>
-                            Lưu mật khẩu mới
-                          </Checkbox>
-                          <Button type="primary" htmlType="submit" loading={isLoading}>
-                            ĐỔI MẬT KHẨU
-                          </Button>
-                        </div>
-
-                        {error && (
-                          <div className={styles['error']}>
-                            {error.message}
-                            {error.detail?.password && <p>{error.detail.password}</p>}
-                            {error.detail?.new_password && <p>{error.detail.new_password}</p>}
-                          </div>
-                        )}
-
-                        {changePassWordSuccess && <div className={styles['success']}>{changePassWordMessage}</div>}
-                      </form>
-                    </div>
+                      {changePassWordSuccess && <div className={styles['success']}>{changePassWordMessage}</div>}
+                    </form>
                   </div>
-                </TabPane>
-              </>
-            )}
-
-            {/* <TabPane tab="Liên kết mạng xã hội" key="linksocialmedia">
-              <Card className={styles['social-links-card']}>
-                <div className={styles['card-header']}>
-                  <h2 className={styles['card-title']}>Liên kết mạng xã hội</h2>
-                  <p className={styles['description']}>
-                    Những thông tin dưới đây chỉ mang tính xác thực. Người dùng khác sẽ không thể thấy thông tin này.
-                  </p>
                 </div>
-                <Button
-                  type="primary"
-                  icon={<FacebookOutlined />}
-                  className={styles['link-button']}
-                  size="large"
-                  shape="round"
-                  block
-                >
-                  Liên kết với Facebook
-                </Button>
-                <Button
-                  type="primary"
-                  icon={<GoogleOutlined />}
-                  className={styles['link-button']}
-                  size="large"
-                  shape="round"
-                  block
-                >
-                  Đăng nhập với Google
-                </Button>
-                <Button
-                  type="primary"
-                  icon={<AppleOutlined />}
-                  className={styles['link-button']}
-                  size="large"
-                  shape="round"
-                  block
-                >
-                  Liên kết với Apple ID
-                </Button>
-              </Card>
-            </TabPane> */}
+              </TabPane>
+            )}
           </Tabs>
         </div>
       </div>
     </main>
   )
 }
+
 export default ProfilePage

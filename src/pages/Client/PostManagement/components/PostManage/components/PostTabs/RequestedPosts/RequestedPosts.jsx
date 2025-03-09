@@ -210,7 +210,7 @@ const RequestedPosts = () => {
   const tabItems = [
     {
       key: 'all',
-      label: `Tất cả (${allRequests.length})`,
+      label: `Tất cả`,
       children:
         viewMode === 'table' ? (
           <Table loading={isLoading} {...tableProps} dataSource={allRequests} rowKey={record => record.id} />
@@ -220,7 +220,7 @@ const RequestedPosts = () => {
     },
     {
       key: 'gifts',
-      label: `Quà tặng (${giftRequests.length})`,
+      label: `Trao tặng`,
       children:
         viewMode === 'table' ? (
           <Table loading={isLoading} {...tableProps} dataSource={giftRequests} rowKey={record => record.id} />
@@ -230,7 +230,7 @@ const RequestedPosts = () => {
     },
     {
       key: 'exchanges',
-      label: `Trao đổi (${exchangeRequests.length})`,
+      label: `Trao đổi`,
       children:
         viewMode === 'table' ? (
           <Table loading={isLoading} {...tableProps} dataSource={exchangeRequests} rowKey={record => record.id} />

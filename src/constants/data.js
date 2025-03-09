@@ -1,22 +1,17 @@
 import {
-  ArrowRightOutlined,
   CameraOutlined,
   CarOutlined,
-  CheckSquareOutlined,
   HomeOutlined,
   LaptopOutlined,
-  LockOutlined,
-  LogoutOutlined,
   MobileOutlined,
-  PlayCircleOutlined,
   ShoppingOutlined,
   SkinOutlined,
   SolutionOutlined,
-  TagsOutlined,
-  UserOutlined
+  TagsOutlined
 } from '@ant-design/icons'
 import { message } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { removeAuthToken } from 'utils/localStorageUtils'
 
 export const categoryData = [
@@ -53,55 +48,29 @@ export const categoryData = [
     ]
   }
 ]
-export const notifications = [
-  {
-    title: 'John Doe liked your post',
-    time: '5 mins ago'
-  },
-  {
-    title: 'Moo Doe liked your cover image',
-    time: '7 mins ago'
-  },
-  {
-    title: 'Lee Doe commented on your video',
-    time: '10 mins ago'
-  }
-]
-export const cartItems = [
-  {
-    id: 1,
-    name: 'Điện thoại iPhone 14',
-    price: 25000000,
-    image: 'https://via.placeholder.com/50',
-    quantity: 2
-  },
-  {
-    id: 2,
-    name: 'Laptop MacBook Pro',
-    price: 45000000,
-    image: 'https://via.placeholder.com/50',
-    quantity: 1
-  },
-  {
-    id: 3,
-    name: 'Máy ảnh Sony Alpha',
-    price: 20000000,
-    image: 'https://via.placeholder.com/50',
-    quantity: 3
-  }
-]
 
-const handleLogout = () => {
+export const handleLogout = () => {
   removeAuthToken()
   message.success('Đăng xuất thành công!')
   window.location.reload()
 }
 
-const NavigateItem = ({ to, children, ...props }) => {
+export const NavigateItem = ({ to, children, ...props }) => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [activeTab, setActiveTab] = useState('')
+
+  // Theo dõi URL thay đổi và cập nhật state
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    setActiveTab(params.get('tab') || '')
+  }, [location])
 
   const handleClick = () => {
-    navigate(to)
+    const targetTab = new URLSearchParams(to.split('?')[1]).get('tab')
+    if (activeTab !== targetTab || location.pathname !== to.split('?')[0]) {
+      navigate(to)
+    }
   }
 
   return (
@@ -110,50 +79,3 @@ const NavigateItem = ({ to, children, ...props }) => {
     </span>
   )
 }
-
-export const menuItems = [
-  {
-    title: 'Quản lý bài đăng',
-    items: [
-      {
-        label: <NavigateItem to="/management-post?tab=active">Đang hiển thị</NavigateItem>,
-        icon: <PlayCircleOutlined style={{ color: '#00b96b' }} />
-      },
-      {
-        label: <NavigateItem to="/management-post?tab=expired">Đã thành công</NavigateItem>,
-        icon: <CheckSquareOutlined style={{ color: '#00b96b' }} />
-      },
-      {
-        label: <NavigateItem to="/management-post?tab=requested">Đã yêu cầu</NavigateItem>,
-        icon: <ArrowRightOutlined style={{ color: '#00b96b' }} />
-      }
-    ]
-  },
-  // {
-  //   title: 'Tiện ích',
-  //   items: [
-  //     {
-  //       name: 'Bài đăng yêu thích',
-  //       icon: <HeartOutlined style={{ color: '#ff4d4f' }} />
-  //     }
-  //   ]
-  // },
-
-  {
-    title: 'Tài khoản của tôi',
-    items: [
-      {
-        name: <NavigateItem to="/profile?tab=personal">Tài khoản của tôi</NavigateItem>,
-        icon: <UserOutlined style={{ color: '#00b96b' }} />
-      },
-      {
-        name: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
-        icon: <LockOutlined style={{ color: '#00b96b' }} />
-      },
-      {
-        label: <span onClick={() => handleLogout()}>Đăng xuất</span>,
-        icon: <LogoutOutlined style={{ color: '#00b96b' }} />
-      }
-    ]
-  }
-]

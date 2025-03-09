@@ -23,9 +23,9 @@ function AppFooter() {
               </div>
               <Text className={styles.text}>Địa chỉ: 122, Hoàng Quốc Việt, Cầu Giấy, Hà Nội.</Text>
               <Text className={styles.text}>
-                <MailOutlined /> Email: traodocu@gmail.com
+                <MailOutlined /> Email: axtralab.ptit@gmail.com
               </Text>
-              <Text className={styles.text}>Hotline: 1900 1819</Text>
+              {/* <Text className={styles.text}>Hotline: 1900 1819</Text> */}
             </div>
           </Col>
 

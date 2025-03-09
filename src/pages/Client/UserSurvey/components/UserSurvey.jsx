@@ -81,6 +81,11 @@ export default function SurveyForm() {
     )
   }
 
+  const handleSkip = () => {
+    dispatch(updateSurveyStatus())
+    navigate('/')
+  }
+
   // Xử lý gửi lên API - cách tiếp cận hoàn toàn mới
   const handleSubmit = async () => {
     if (selectedTags.length === 0) {
@@ -143,7 +148,7 @@ export default function SurveyForm() {
                 <span className={styles['survey__label-hint']}>Chọn một hoặc nhiều danh mục</span>
               </label>
               <div className={styles.survey__categories}>
-                {categories.map(category => (
+                {categories?.map(category => (
                   <div
                     key={category.category_id}
                     className={`${styles.survey__category} ${selectedTags.some(tag => tag.category_id === category.category_id) ? styles['survey__category--selected'] : ''}`}
@@ -159,7 +164,7 @@ export default function SurveyForm() {
           </div>
 
           <div className={styles.survey__actions}>
-            <Button onClick={() => navigate('/')} danger={true}>
+            <Button onClick={handleSkip} danger={true}>
               Bỏ qua
             </Button>
             <Button type="primary" onClick={handleSubmit} disabled={selectedTags.length === 0} loading={isSubmitting}>

@@ -98,3 +98,22 @@
   border-color: #e0e0e0;
   border-radius: 16px;
 }
+
+.titleContainer {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.postTitle {
+  margin-bottom: 8px !important;
+  word-break: break-word;
+}
+
+.expandButton,
+.showLessButton {
+  padding: 0 4px;
+  margin-left: 4px;
+  font-size: 14px;
+  font-weight: normal;
+  height: auto;
+}

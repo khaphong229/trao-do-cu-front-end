@@ -32,7 +32,7 @@ const useInteraction = () => {
         setInteractions([])
       }
     } catch (error) {
-      console.error('Failed to save interactions:', error)
+      // console.error('Failed to save interactions:', error)
     }
   }, [interactions, user, dispatch])
 
@@ -44,7 +44,7 @@ const useInteraction = () => {
   }, [interactions.length, requestInteraction])
 
   const batchClick = useCallback(categoryId => {
-    if (categoryId === null) return
+    if (categoryId === null || categoryId === '') return
     const now = getDatetimeNow()
     const newObj = { category: categoryId, time_event: now, event_type: 'click' }
 

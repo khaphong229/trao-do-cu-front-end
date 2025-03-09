@@ -1,6 +1,6 @@
-import { uploadPostImages } from '../../upload/uploadThunks'
-import { createPost, getPostGiftPagination, getPostId, getPostPagination } from './postThunks'
 import { createSlice } from '@reduxjs/toolkit'
+import { uploadPostImages } from '../../upload/uploadThunks'
+import { createPost, getPostCategory, getPostGiftPagination, getPostId, getPostPagination } from './postThunks'
 
 const initialState = {
   // create post initial state
@@ -12,7 +12,13 @@ const initialState = {
     specificLocation: '',
     city: '',
     image_url: [],
-    category_id: null
+    category_id: null,
+    contact_phone: '',
+    contact_social_media: {
+      facebook: '',
+      instagram: '',
+      zalo: ''
+    }
   },
   isShowTour: false,
   isLoadingModal: false,
@@ -50,6 +56,7 @@ const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
+    // Your existing reducers...
     setSelectedPost: (state, action) => {
       state.postDetail = action.payload
     },
@@ -175,7 +182,7 @@ const postSlice = createSlice({
         state.error = action.payload
       })
 
-      ///get post reducers
+      ///get post reducers - FIX HERE
       .addCase(getPostPagination.pending, state => {
         state.isLoading = true
         state.isError = null
@@ -190,10 +197,11 @@ const postSlice = createSlice({
         if (currentPage === 1) {
           state.posts = newPosts
         } else {
-          const uniquePosts = newPosts.filter(
-            newPost => !state.posts.some(existingPost => existingPost._id === newPost._id)
-          )
-          state.posts = [...state.posts, ...uniquePosts]
+          const existingPostIds = new Map(state.posts.map(post => [post._id, true]))
+
+          const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
+
+          state.posts = [...state.posts, ...uniqueNewPosts]
         }
 
         state.hasMore = newPosts.length === action.payload?.data?.limit
@@ -201,6 +209,36 @@ const postSlice = createSlice({
         state.total = action.payload?.data?.total || 0
       })
       .addCase(getPostPagination.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
+      })
+
+      .addCase(getPostCategory.pending, state => {
+        state.isLoading = true
+        state.isError = null
+      })
+      .addCase(getPostCategory.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isError = null
+
+        const newPosts = action.payload?.data?.data || []
+        const currentPage = action.payload?.data?.current || 1
+
+        if (currentPage === 1) {
+          state.posts = newPosts
+        } else {
+          const existingPostIds = new Map(state.posts.map(post => [post._id, true]))
+
+          const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
+
+          state.posts = [...state.posts, ...uniqueNewPosts]
+        }
+
+        state.hasMore = newPosts.length === action.payload?.data?.limit
+        state.current = currentPage
+        state.total = action.payload?.data?.total || 0
+      })
+      .addCase(getPostCategory.rejected, (state, action) => {
         state.isLoading = false
         state.isError = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
       })

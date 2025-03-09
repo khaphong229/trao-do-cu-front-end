@@ -23,7 +23,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
 
   useEffect(() => {
     if (user && isInfoModalVisible) {
-      const existingFacebook = user.social_media?.[0]
+      const existingFacebook = user.social_media?.facebook
       const existingPhone = user.phone
 
       const initialMethod = existingPhone ? 'phone' : 'social_media'
@@ -53,9 +53,13 @@ export const ContactInfoModal = ({ onSubmit }) => {
         return
       }
 
+      // Luôn bao gồm cả phone và social_media trong dữ liệu gửi đi,
+      // bất kể phương thức liên hệ được chọn là gì
       const submissionData = {
         ...values,
-        address: fullAddress
+        address: fullAddress,
+        phone: values.phone || '', // Luôn gửi phone nếu có
+        social_media: values.social_media || '' // Luôn gửi social_media nếu có
       }
 
       await onSubmit(submissionData)
@@ -77,8 +81,8 @@ export const ContactInfoModal = ({ onSubmit }) => {
       <Form form={form} onFinish={handleSubmit} layout="vertical">
         <Form.Item
           name="contact_method"
-          label={<Tooltip title="Tùy chọn 1 trong 2 cách thức liên hệ">Phương thức liên hệ</Tooltip>}
-          rules={[{ required: true, message: 'Vui lòng chọn phương thức liên hệ' }]}
+          label={<Tooltip title="Tùy chọn 1 trong 2 cách thức liên hệ chính">Phương thức liên hệ chính</Tooltip>}
+          rules={[{ required: true, message: 'Vui lòng chọn phương thức liên hệ chính' }]}
         >
           <Radio.Group onChange={e => setContactMethod(e.target.value)}>
             <Radio value="phone">Số điện thoại</Radio>
@@ -86,17 +90,32 @@ export const ContactInfoModal = ({ onSubmit }) => {
           </Radio.Group>
         </Form.Item>
 
-        {contactMethod === 'phone' && (
-          <Form.Item name="phone" label="Số điện thoại">
-            <Input placeholder="Nhập số điện thoại của bạn" />
-          </Form.Item>
-        )}
+        {/* Hiển thị cả hai trường nhưng chỉ yêu cầu bắt buộc cho phương thức được chọn */}
+        <Form.Item
+          name="phone"
+          label="Số điện thoại"
+          rules={[
+            {
+              required: contactMethod === 'phone',
+              message: 'Vui lòng nhập số điện thoại của bạn'
+            }
+          ]}
+        >
+          <Input placeholder="Nhập số điện thoại của bạn" />
+        </Form.Item>
 
-        {contactMethod === 'social_media' && (
-          <Form.Item name="social_media" label="Link mạng xã hội Facebook">
-            <Input placeholder="Nhập link mạng xã hội của bạn" />
-          </Form.Item>
-        )}
+        <Form.Item
+          name="social_media"
+          label="Link mạng xã hội Facebook"
+          rules={[
+            {
+              required: contactMethod === 'social_media',
+              message: 'Vui lòng nhập link mạng xã hội của bạn'
+            }
+          ]}
+        >
+          <Input placeholder="Nhập link mạng xã hội của bạn" />
+        </Form.Item>
 
         <Form.Item
           label="Địa chỉ"

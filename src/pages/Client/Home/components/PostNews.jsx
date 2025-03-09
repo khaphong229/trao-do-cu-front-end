@@ -4,12 +4,11 @@ import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
 import { getPostPagination } from 'features/client/post/postThunks'
-import { resetPosts, setCityFilter, setSortOrder } from 'features/client/post/postSlice'
+import { resetPosts, setCityFilter } from 'features/client/post/postSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
-import avt from 'assets/images/logo/avtDefault.webp'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import { getValidImageUrl } from 'helpers/helper'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
@@ -17,16 +16,15 @@ import { ContactInfoModal } from 'pages/Client/Request/GiftRequest/components/Co
 import { GiftRequestConfirmModal } from 'pages/Client/Request/GiftRequest/components/GiftRequestConfirmModal'
 import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange/FormExchange'
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
-import { URL_SERVER_IMAGE } from 'config/url_server'
 import { ArrowDownOutlined, GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 import { FaMapMarkerAlt } from 'react-icons/fa'
 import { locationService } from 'services/client/locationService'
+import { getAvatarPost } from 'hooks/useAvatar'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
 const { Title, Text, Paragraph } = Typography
-const { Option } = Select
 const PostNews = () => {
   const [curPage, setCurPage] = useState(1)
   const [isSearchMode, setIsSearchMode] = useState(false)
@@ -36,21 +34,28 @@ const PostNews = () => {
   const navigate = useNavigate()
 
   const { isExchangeFormModalVisible } = useSelector(state => state.exchangeRequest)
-  const { posts, isError, isLoading, hasMore, query, sortOrder, cityFilter } = useSelector(state => state.post)
+  const { posts, isError, isLoading, hasMore, query, cityFilter } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
-  const pageSizeContanst = 16
+  const pageSizeContanst = 8
 
   const fetchCity = useCallback(async () => {
-    try {
-      const data = await locationService.getCity()
-      if (data.data.status === 200) {
-        SET_VIETNAMESE_CITIES(data.data.data)
-      }
-    } catch (error) {
-      if (error.response.data.status === 404) {
-        throw error
+    const cachedCities = localStorage.getItem('vietnameseCities')
+
+    if (cachedCities) {
+      SET_VIETNAMESE_CITIES(JSON.parse(cachedCities))
+    } else {
+      try {
+        const data = await locationService.getCity()
+        if (data.data.status === 200) {
+          SET_VIETNAMESE_CITIES(data.data.data)
+          localStorage.setItem('vietnameseCities', JSON.stringify(data.data.data))
+        }
+      } catch (error) {
+        if (error.response?.data?.status === 404) {
+          throw error
+        }
       }
     }
   }, [])
@@ -95,18 +100,17 @@ const PostNews = () => {
 
   const AuthButton = withAuth(Button)
 
-  const filteredPosts = posts
-    ?.filter(
-      post =>
-        (!query || post.title.toLowerCase().includes(query.toLowerCase())) && // Lọc theo từ khóa
-        (!cityFilter || post.city === cityFilter) // Lọc theo thành phố nếu có chọn
-    )
-    .sort(
-      (a, b) =>
-        sortOrder === 'newest'
-          ? dayjs(b.created_at).diff(dayjs(a.created_at)) // Sắp xếp mới -> cũ
-          : dayjs(a.created_at).diff(dayjs(b.created_at)) // Sắp xếp cũ -> mới
-    )
+  const filteredPosts = posts?.filter(
+    post =>
+      (!query || post.title.toLowerCase().includes(query.toLowerCase())) && // Lọc theo từ khóa
+      (!cityFilter || post.city === cityFilter) // Lọc theo thành phố nếu có chọn
+  )
+  // .sort(
+  //   (a, b) =>
+  //     sortOrder === 'newest'
+  //       ? dayjs(b.created_at).diff(dayjs(a.created_at)) // Sắp xếp mới -> cũ
+  //       : dayjs(a.created_at).diff(dayjs(b.created_at)) // Sắp xếp cũ -> mới
+  // )
 
   const renderActionButton = item => {
     if (!user) {
@@ -167,13 +171,13 @@ const PostNews = () => {
       </Tooltip>
     )
   }
-  const handleSortChange = value => {
-    dispatch(setSortOrder(value)) // ✅ Chỉ cập nhật sortOrder
-  }
+  // const handleSortChange = value => {
+  //   dispatch(setSortOrder(value))
+  // }
 
   const handleCityChange = value => {
     setSelectedCity(value)
-    dispatch(setCityFilter(value)) // ✅ Chuyển setCityFilter vào đây
+    dispatch(setCityFilter(value))
   }
   const filterProvinces = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase())
@@ -186,10 +190,10 @@ const PostNews = () => {
             {isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}
           </Title>
           <div>
-            <Select value={sortOrder} onChange={handleSortChange} style={{ marginRight: '10px' }}>
+            {/* <Select value={sortOrder} onChange={handleSortChange} style={{ marginRight: '10px' }}>
               <Option value="newest">Bài đăng mới nhất</Option>
               <Option value="oldest">Bài đăng cũ nhất</Option>
-            </Select>
+            </Select> */}
             <Select
               showSearch
               style={{ width: 150 }}
@@ -243,25 +247,25 @@ const PostNews = () => {
                     <Card.Meta
                       title={
                         <Tooltip title={item.title}>
-                          <Text className={styles.itemTitle} onClick={() => goDetail(item._id)}>
+                          <Paragraph
+                            className={styles.itemTitle}
+                            onClick={() => goDetail(item._id)}
+                            ellipsis={{ rows: 2 }}
+                          >
                             {item.title}
-                          </Text>
+                          </Paragraph>
                         </Tooltip>
                       }
-                      description={
-                        <Paragraph className={styles.itemDesc} ellipsis={{ rows: 2 }}>
-                          {item?.description || ''}
-                        </Paragraph>
-                      }
+                      // description={
+                      //   <Paragraph className={styles.itemDesc} ellipsis={{ rows: 2 }}>
+                      //     {item?.description || ''}
+                      //   </Paragraph>
+                      // }
                     />
 
                     <div className={styles.locationRow}>
                       <div className={styles.userGroup}>
-                        <Avatar
-                          size="small"
-                          className={styles.avtUser}
-                          src={item?.user_id?.avatar ? `${URL_SERVER_IMAGE}${item.user_id.avatar}` : avt}
-                        />
+                        <Avatar size="small" className={styles.avtUser} src={getAvatarPost(item?.user_id)} />
                         <Text type="secondary" className={styles.time}>
                           {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
                         </Text>

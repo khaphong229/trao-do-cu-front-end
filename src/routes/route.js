@@ -150,7 +150,9 @@ const router = createBrowserRouter([
         path: 'not-found',
         element: (
           <Suspense>
-            <NotFound />
+            <ClientLayout>
+              <NotFound />
+            </ClientLayout>
           </Suspense>
         )
       },

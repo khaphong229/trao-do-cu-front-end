@@ -9,7 +9,7 @@ import { URL_SERVER_IMAGE } from '../../../../../../config/url_server'
 
 const { TextArea } = Input
 
-const PostContent = () => {
+const PostContent = ({ errorPost, setErrorPost, uploadedImages }) => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const { isShowEmoji, requestData } = useSelector(state => state.exchangeRequest)
@@ -35,9 +35,9 @@ const PostContent = () => {
   }
 
   const renderPreview = (file, index) => {
-    const fileUrl = `${URL_SERVER_IMAGE}${file}`
+    const fileUrl = typeof file === 'string' ? `${URL_SERVER_IMAGE}${file}` : URL.createObjectURL(file)
 
-    if (isVideoFile(file)) {
+    if (isVideoFile(typeof file === 'string' ? file : file.name)) {
       return (
         <div key={index} className={styles.filePreviewContainer}>
           <div className={styles.videoWrapper}>
@@ -66,22 +66,22 @@ const PostContent = () => {
   return (
     <div className={styles.contentWrapper}>
       <div className={styles.titleWrap}>
-        <Input
-          variant="borderless"
-          placeholder="Nhập tiêu đề"
-          value={requestData.title}
-          onChange={e => dispatch(updateRequestData({ title: e.target.value }))}
-          style={{ width: '100%' }}
-        />
-      </div>
-
-      <div className={styles.postContent}>
         <TextArea
-          placeholder={`${user.name} ơi, hãy điền nội dung mô tả đồ bạn muốn đổi nhé!`}
+          status={errorPost?.title ? 'error' : ''}
+          variant={errorPost?.title ? 'outlined' : 'borderless'}
           autoSize={{ minRows: 3, maxRows: 8 }}
-          bordered={false}
-          value={requestData.description}
-          onChange={e => dispatch(updateRequestData({ description: e.target.value }))}
+          placeholder={
+            errorPost?.title ? errorPost.title : `${user.name} ơi, hãy điền nội dung mô tả đồ bạn muốn đổi nhé!`
+          }
+          value={requestData.title}
+          onChange={e => {
+            dispatch(updateRequestData({ title: e.target.value }))
+            setErrorPost(prev => (prev ? { ...prev, title: null } : null))
+          }}
+          style={{ width: '100%', borderRadius: '0' }}
+          ref={el => {
+            setTimeout(() => el?.focus(), 0)
+          }}
         />
       </div>
 

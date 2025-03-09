@@ -30,7 +30,7 @@ export const setInteractionUser = interactions => {
     const interactionsString = JSON.stringify(interactions)
     localStorage.setItem('interactionUser', interactionsString)
   } catch (error) {
-    console.error('Error saving interactions to localStorage:', error)
+    // console.error('Error saving interactions to localStorage:', error)
   }
 }
 
@@ -39,7 +39,7 @@ export const getInteractionUser = () => {
     const interactionsString = localStorage.getItem('interactionUser')
     return interactionsString ? JSON.parse(interactionsString) : []
   } catch (error) {
-    console.error('Error retrieving interactions from localStorage:', error)
+    // console.error('Error retrieving interactions from localStorage:', error)
     return []
   }
 }
@@ -53,7 +53,7 @@ export const setCategories = categories => {
     const categoriesString = JSON.stringify(categories)
     localStorage.setItem('categories', categoriesString)
   } catch (error) {
-    console.error(error)
+    // console.error(error)
   }
 }
 
@@ -62,7 +62,7 @@ export const getCategories = () => {
     const categoriesString = localStorage.getItem('categories')
     return categoriesString ? JSON.parse(categoriesString) : []
   } catch (error) {
-    console.error(error)
+    // console.error(error)
     return []
   }
 }

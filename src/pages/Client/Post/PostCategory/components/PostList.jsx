@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination } from 'antd'
+import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import { useSelector, useDispatch } from 'react-redux'
-import { getPostPagination } from '../../../../../features/client/post/postThunks'
+import { getPostCategory } from '../../../../../features/client/post/postThunks'
 import { resetPage, clearPosts } from '../../../../../features/client/post/postSlice'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -21,6 +22,7 @@ import { setExchangeFormModalVisible } from '../../../../../features/client/requ
 import notFoundPost from 'components/feature/post/notFoundPost'
 import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
 import { locationService } from 'services/client/locationService'
+
 const { Text } = Typography
 
 dayjs.extend(relativeTime)
@@ -35,53 +37,66 @@ const PostList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedCity, setSelectedCity] = useState(null)
   const [VIETNAMESE_CITIES, SET_VIETNAMESE_CITIES] = useState(null)
-
+  const [expandedTitles, setExpandedTitles] = useState({})
   const dispatch = useDispatch()
+  const { user } = useSelector(state => state.auth)
   const { posts, isError, isLoading, total } = useSelector(state => state.post)
 
+  // Fetch city data only once
   const fetchCity = useCallback(async () => {
-    try {
-      const data = await locationService.getCity()
-      if (data.data.status === 200) {
-        SET_VIETNAMESE_CITIES(data.data.data)
-      }
-    } catch (error) {
-      if (error.response.data.status === 404) {
-        throw error
+    const cachedCities = localStorage.getItem('vietnameseCities')
+
+    if (cachedCities) {
+      SET_VIETNAMESE_CITIES(JSON.parse(cachedCities))
+    } else {
+      try {
+        const data = await locationService.getCity()
+        if (data.data.status === 200) {
+          SET_VIETNAMESE_CITIES(data.data.data)
+          localStorage.setItem('vietnameseCities', JSON.stringify(data.data.data))
+        }
+      } catch (error) {
+        if (error.response?.data?.status === 404) {
+          throw error
+        }
       }
     }
   }, [])
 
   useEffect(() => {
     fetchCity()
+  }, [fetchCity])
+
+  // Optimized useEffect to fetch posts data
+  useEffect(() => {
+    // Reset state and fetch new data when filter params change
     dispatch(clearPosts())
     dispatch(resetPage())
-    dispatch(
-      getPostPagination({
-        current: currentPage,
-        pageSize: 10,
-        category_id: category_id !== 'all' ? category_id : null,
-        city: selectedCity
-      })
-    )
-  }, [dispatch, currentPage, category_id, selectedCity, fetchCity])
+
+    // Define fetch parameters
+    const params = {
+      current: currentPage,
+      pageSize: 10,
+      category_id: category_id !== 'all' ? category_id : null,
+      city: selectedCity,
+      type: activeTab === 'all' ? null : activeTab
+    }
+
+    // Single API call to fetch posts
+    dispatch(getPostCategory(params))
+
+    // Using the pagination API is not needed here since getPostCategory already fetches the data
+    // This eliminates the duplicate API calls
+  }, [dispatch, currentPage, category_id, selectedCity, activeTab])
 
   const handleTabChange = key => {
     setActiveTab(key)
-    dispatch(
-      getPostPagination({
-        current: 1,
-        pageSize: 10,
-        category_id: category_id ? category_id : null,
-        type: key === 'all' ? null : key,
-        city: selectedCity
-      })
-    )
+    setCurrentPage(1) // Reset to first page when changing tabs
   }
 
   const handleCityChange = value => {
     setSelectedCity(value)
-    setCurrentPage(1)
+    setCurrentPage(1) // Reset to first page when changing city
   }
 
   const handleSortChange = value => {
@@ -92,18 +107,10 @@ const PostList = () => {
     setCurrentPage(page)
   }
 
-  const filteredPosts = posts
-    .map(post => {
-      if (category_id !== 'all') {
-        return post._doc
-      } else {
-        return post
-      }
-    })
-    .filter(post => {
-      if (activeTab === 'all') return true
-      return post.type === activeTab
-    })
+  const filteredPosts = posts.filter(post => {
+    if (activeTab === 'all') return true
+    return post.type === activeTab
+  })
 
   const sortedPosts = filteredPosts.sort((a, b) => {
     if (sortOrder === 'newest') {
@@ -128,11 +135,98 @@ const PostList = () => {
     return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
   }
 
+  const toggleTitleExpand = postId => {
+    setExpandedTitles(prev => ({
+      ...prev,
+      [postId]: !prev[postId]
+    }))
+  }
+
+  const renderButton = item => {
+    const isMe = item?.user_id?._id === user._id
+    if (item?.type === 'gift') {
+      return (
+        <AuthButton
+          icon={<GiftOutlined />}
+          type="primary"
+          className={styles.ButtonChat}
+          onClick={() => handleRequest(item)}
+          disabled={item?.isRequested || isMe}
+        >
+          {item?.isRequested ? 'Đã yêu cầu' : 'Nhận'}
+        </AuthButton>
+      )
+    } else if (item?.type === 'exchange') {
+      return (
+        <AuthButton
+          icon={<SwapOutlined />}
+          type="default"
+          className={styles.ButtonChat}
+          onClick={() => handleRequest(item)}
+          disabled={item?.isRequested || isMe}
+        >
+          {item?.isRequested ? 'Đã yêu cầu' : 'Đổi'}
+        </AuthButton>
+      )
+    }
+    return null
+  }
+
+  const renderTitle = post => {
+    if (!post?.title) return <Text strong>Không có tiêu đề</Text>
+
+    const title = post.title
+    const isTitleLong = title.length > 50 // Giới hạn 50 ký tự cho tiêu đề
+    const isExpanded = expandedTitles[post._id]
+
+    if (!isTitleLong || isExpanded) {
+      return (
+        <div className={styles.titleContainer}>
+          <Text strong onClick={() => goDetail(post?._id)} className={styles.title}>
+            {title}
+          </Text>
+          {isTitleLong && (
+            <Button
+              type="link"
+              size="small"
+              onClick={e => {
+                e.stopPropagation()
+                toggleTitleExpand(post._id)
+              }}
+              className={styles.showLessButton}
+            >
+              Thu gọn
+            </Button>
+          )}
+        </div>
+      )
+    } else {
+      return (
+        <div className={styles.titleContainer}>
+          <Text strong onClick={() => goDetail(post?._id)} className={styles.title}>
+            {title.substring(0, 50)}...
+          </Text>
+          <Button
+            type="link"
+            size="small"
+            onClick={e => {
+              e.stopPropagation()
+              toggleTitleExpand(post._id)
+            }}
+            className={styles.expandButton}
+          >
+            Xem thêm
+          </Button>
+        </div>
+      )
+    }
+  }
+
   return (
     <div className={styles.contentWrap}>
       <div className={styles.topContent}>
         <div className={styles.Tabs}>
-          <Tabs defaultActiveKey="all" tabBarStyle={{ margin: 0 }} onChange={handleTabChange}>
+          <Tabs activeKey={activeTab} tabBarStyle={{ margin: 0 }} onChange={handleTabChange}>
             <TabPane tab="Tất cả" key="all" />
             <TabPane tab="Trao tặng" key="gift" />
             <TabPane tab="Trao đổi" key="exchange" />
@@ -151,7 +245,7 @@ const PostList = () => {
             allowClear
           />
           <Select
-            defaultValue="newest"
+            value={sortOrder}
             style={{ width: 120 }}
             size="middle"
             onChange={handleSortChange}
@@ -173,7 +267,7 @@ const PostList = () => {
       ) : sortedPosts.length > 0 ? (
         <Row gutter={[8, 8]}>
           {sortedPosts.map(item => (
-            <Col xs={24} sm={12} key={item?.id}>
+            <Col xs={24} sm={12} key={item?._id || item?.id}>
               <Card
                 className={styles.Card}
                 hoverable
@@ -193,9 +287,7 @@ const PostList = () => {
                 }
               >
                 <div className={styles.Container}>
-                  <Text strong onClick={() => goDetail(item?._id)} className={styles.title}>
-                    {item?.title}
-                  </Text>
+                  {renderTitle(item)}
                   <span className={styles.status}>{item?.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>
                   <div className={styles.TimeRole}>
                     <span className={styles.time}>
@@ -209,28 +301,8 @@ const PostList = () => {
                       <Avatar className={styles.avtUser} src={item?.avatar || avt} />
                       <Text className={styles.TextUser}>{item?.user_id?.name}</Text>
                     </div>
-                    {item?.type === 'gift' ? (
-                      <AuthButton
-                        color="primary"
-                        variant="filled"
-                        size="middle"
-                        className={styles.ButtonChat}
-                        onClick={() => handleRequest(item)}
-                        disabled={item?.isRequested}
-                      >
-                        {item?.isRequested ? 'Đã yêu cầu' : 'Nhận'}
-                      </AuthButton>
-                    ) : (
-                      <AuthButton
-                        type="primary"
-                        size="middle"
-                        className={styles.ButtonChat}
-                        onClick={() => handleRequest(item)}
-                        disabled={item?.isRequested}
-                      >
-                        {item?.isRequested ? 'Đã yêu cầu' : 'Đổi'}
-                      </AuthButton>
-                    )}
+
+                    {renderButton(item)}
                   </div>
                 </div>
               </Card>

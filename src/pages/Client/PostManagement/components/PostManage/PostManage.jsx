@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Tabs } from 'antd'
 import styles from './PostManage.module.scss'
 import CreatePostModal from 'pages/Client/Post/CreatePost/CreatePost'
@@ -20,6 +20,10 @@ export const PostManage = ({ tabType }) => {
   const [activeTab, setActiveTab] = useState(tabType)
   const [activeSubTab, setActiveSubTab] = useState('all')
   const [tabRefreshKey, setTabRefreshKey] = useState(0)
+
+  useEffect(() => {
+    setActiveTab(tabType)
+  }, [tabType])
 
   const handleTabChange = newTab => {
     if (newTab !== activeTab) {

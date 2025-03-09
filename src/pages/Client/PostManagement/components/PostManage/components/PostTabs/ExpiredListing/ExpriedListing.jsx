@@ -349,7 +349,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
             tab={
               <span className={styles.subTabLabel}>
                 {subTab.label}
-                <span className={styles.subTabCount}>({subTab.count})</span>
+                {/* <span className={styles.subTabCount}>({subTab.count})</span> */}
               </span>
             }
           >

@@ -78,10 +78,10 @@ export const updateUserProfile = createAsyncThunk(
         email: currentUser?.email || '',
         phone: currentUser?.phone || '',
         address: currentUser?.address || '',
-        social_media: currentUser?.social_media.length > 0 ? [currentUser?.social_media[0]] : [],
+        // Remove social_media if not required
+        ...(currentUser?.social_media?.length > 0 && { social_media: [currentUser?.social_media[0]] }),
         ...userData
       }
-
       const response = await AuthService.updateProfile(payload)
 
       if (response.status === 201) {
@@ -89,6 +89,7 @@ export const updateUserProfile = createAsyncThunk(
       }
       return response.data
     } catch (error) {
+      console.log('error', error.response)
       return rejectWithValue(error.response?.data || { message: 'Failed to update profile' })
     }
   }

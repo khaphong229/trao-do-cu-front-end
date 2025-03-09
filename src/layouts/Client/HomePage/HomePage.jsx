@@ -3,6 +3,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import styles from './styles.module.scss'
 import BackToTopButton from 'components/common/BackToTopButton'
+import ScrollToTop from 'components/common/ScrollToTop'
 const HomePage = ({ children }) => {
   return (
     <>
@@ -12,6 +13,7 @@ const HomePage = ({ children }) => {
         <Footer />
       </div>
       <BackToTopButton />
+      <ScrollToTop />
     </>
   )
 }

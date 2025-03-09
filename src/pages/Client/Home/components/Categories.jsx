@@ -34,12 +34,32 @@ const imgCategory = [
 
 const dataDefaultCategory = [
   {
-    category_id: '67852bd46ee1505482c72513',
-    title: 'Xe cộ'
+    category_id: '67c6c553f83ba5fb6ecfa97a',
+    title: 'Học tập'
   },
   {
     category_id: '67852bfc6ee1505482c7252c',
     title: 'Đồ điện tử'
+  },
+  {
+    category_id: '67852bd46ee1505482c72513',
+    title: 'Xe cộ'
+  },
+  {
+    category_id: '67852d2a6ee1505482c725ce',
+    title: 'Thời trang'
+  },
+  {
+    category_id: '67852e346ee1505482c72679',
+    title: 'Đồ ăn, thực phẩm'
+  },
+  {
+    category_id: '67852d736ee1505482c725fe',
+    title: 'Thú cưng'
+  },
+  {
+    category_id: '67852e9c6ee1505482c726cc',
+    title: 'Giải trí, thể thao'
   },
   {
     category_id: '67852c896ee1505482c72562',
@@ -52,26 +72,6 @@ const dataDefaultCategory = [
   {
     category_id: '67852d086ee1505482c725ae',
     title: 'Mẹ và bé'
-  },
-  {
-    category_id: '67852d2a6ee1505482c725ce',
-    title: 'Thời trang'
-  },
-  {
-    category_id: '67852d736ee1505482c725fe',
-    title: 'Thú cưng'
-  },
-  {
-    category_id: '67852e346ee1505482c72679',
-    title: 'Đồ ăn, thực phẩm'
-  },
-  {
-    category_id: '67852e9c6ee1505482c726cc',
-    title: 'Giải trí, thể thao'
-  },
-  {
-    category_id: '67c6c553f83ba5fb6ecfa97a',
-    title: 'Học tập'
   }
 ]
 

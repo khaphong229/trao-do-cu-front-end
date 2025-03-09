@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Tooltip } from 'antd'
 import {
   PictureOutlined,
@@ -7,25 +7,52 @@ import {
   WhatsAppOutlined,
   AppstoreOutlined
 } from '@ant-design/icons'
-// import { CiFacebook } from 'react-icons/ci';
 import styles from '../scss/PostToolbar.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
+import UploadCustom from 'components/common/UploadCustom'
 import {
-  setCategoryModalVisibility,
   setLocationModalVisibility,
-  setShowEmoji,
-  setSocialLinkModalVisibility
-  // updatePostData
-} from '../../../../../features/client/post/postSlice'
-import UploadCustom from '../../../../../components/common/UploadCustom' // Adjust the import path as needed
+  setShowEmoji as setPostShowEmoji,
+  setSocialLinkModalVisibility,
+  setCategoryModalVisibility
+} from 'features/client/post/postSlice'
+import { setShowEmoji as setExchangeShowEmoji } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
+import { updatePostData } from 'features/client/post/postSlice'
+import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 
-const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
-  const { isShowEmoji, dataCreatePost } = useSelector(state => state.post)
+const PostToolbar = ({
+  contentType,
+  onChange,
+  phoneRef,
+  facebookRef,
+  locationRef,
+  categoryRef,
+  imageRef,
+  // New tour-specific refs
+  imageToolRef,
+  socialLinkToolRef,
+  locationToolRef,
+  categoryToolRef
+}) => {
   const dispatch = useDispatch()
+
+  const { isShowEmoji, imageUrls } = useSelector(state => {
+    if (contentType === 'exchange') {
+      return {
+        isShowEmoji: state.exchangeRequest.isShowEmoji || false,
+        imageUrls: state.exchangeRequest.requestData?.image_url || []
+      }
+    } else {
+      return {
+        isShowEmoji: state.post.isShowEmoji || false,
+        imageUrls: state.post.dataCreatePost?.image_url || []
+      }
+    }
+  })
+
   const [fileList, setFileList] = useState([])
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768)
@@ -37,26 +64,57 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
     }
   }, [])
 
+  const maxImages = 5 - (imageUrls?.length || 0)
+
+  // Handle successful upload
+  const handleUploadSuccess = uploadedUrls => {
+    if (contentType === 'exchange') {
+      dispatch(
+        updateRequestData({
+          image_url: [...(imageUrls || []), ...uploadedUrls]
+        })
+      )
+    } else {
+      dispatch(
+        updatePostData({
+          image_url: [...(imageUrls || []), ...uploadedUrls]
+        })
+      )
+    }
+  }
+
+  const handleFileUpload = ({ fileList }) => {
+    setFileList(fileList)
+  }
+
+  const toggleEmojiPicker = () => {
+    if (contentType === 'exchange') {
+      dispatch(setExchangeShowEmoji(!isShowEmoji))
+    } else {
+      dispatch(setPostShowEmoji(!isShowEmoji))
+    }
+  }
+
   const uploadButton = (
     <Button
-      ref={ref3}
+      ref={imageToolRef || imageRef}
       type="text"
       icon={<PictureOutlined className={styles.iconPicture} />}
-      disabled={dataCreatePost.image_url?.length >= 5}
+      disabled={maxImages <= 0}
     />
   )
 
-  const icons = [
+  let icons = [
     {
-      ref: ref3,
+      ref: imageToolRef || imageRef,
       tooltip: 'Ảnh/Video',
       icon: <PictureOutlined className={styles.iconPicture} />,
       isUpload: true,
       onClick: null,
-      disabled: dataCreatePost.image_url?.length >= 5
+      disabled: maxImages <= 0
     },
     {
-      ref: ref4,
+      ref: socialLinkToolRef || facebookRef,
       tooltip: 'Liên kết mạng xã hội',
       icon: <WhatsAppOutlined className={styles.customIcon} />,
       isUpload: false,
@@ -67,28 +125,32 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
       tooltip: 'Emoji',
       icon: <SmileOutlined className={styles.iconSmile} />,
       isUpload: false,
-      onClick: () => dispatch(setShowEmoji(!isShowEmoji))
+      onClick: toggleEmojiPicker
     },
     {
-      ref: ref5,
+      ref: locationToolRef || locationRef,
       tooltip: 'Thêm vị trí',
       icon: <EnvironmentOutlined className={styles.iconEnvironment} />,
       isUpload: false,
       onClick: () => dispatch(setLocationModalVisibility(true))
-    },
-    {
-      ref: ref6,
+    }
+  ]
+
+  if (contentType === 'post') {
+    icons.push({
+      ref: categoryToolRef || categoryRef,
       tooltip: 'Chọn danh mục',
       icon: <AppstoreOutlined className={styles.iconCategory} />,
       isUpload: false,
       onClick: () => dispatch(setCategoryModalVisibility(true))
-    }
-  ]
+    })
+  }
 
-  // Desktop version
   const renderDesktopToolbar = () => (
     <div className={styles.postTools}>
-      <div className={styles.toolsText}>Thêm vào bài đăng của bạn</div>
+      <div className={styles.toolsText}>
+        {contentType === 'post' ? 'Thêm vào bài đăng của bạn' : 'Thêm vào biểu mẫu của bạn'}
+      </div>
       <div className={styles.toolsButtons}>
         {icons.map((item, index) => {
           if (item.isUpload) {
@@ -96,10 +158,12 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
               <UploadCustom
                 key={index}
                 fileList={fileList}
-                setFileList={({ fileList }) => setFileList(fileList)}
+                setFileList={handleFileUpload}
                 uploadButton={uploadButton}
-                maxCount={5 - (dataCreatePost.image_url?.length || 0)}
+                maxCount={maxImages}
                 disabled={item.disabled}
+                type={contentType === 'exchange' ? 'exchange' : 'post'}
+                onUploadSuccess={handleUploadSuccess}
               />
             )
           }
@@ -115,10 +179,11 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
     </div>
   )
 
-  // Mobile version
   const renderMobileToolbar = () => (
     <div className={styles.mobilePostTools}>
-      <div className={styles.mobileToolsText}>Thêm vào bài đăng của bạn</div>
+      <div className={styles.mobileToolsText}>
+        {contentType === 'post' ? 'Thêm vào bài đăng của bạn' : 'Thêm vào biểu mẫu của bạn'}
+      </div>
       <div className={styles.mobileToolsButtons}>
         {icons.map((item, index) => {
           if (item.isUpload) {
@@ -126,15 +191,17 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6 }) => {
               <div className={styles.mobileToolItem} key={index}>
                 <UploadCustom
                   fileList={fileList}
-                  setFileList={({ fileList }) => setFileList(fileList)}
+                  setFileList={handleFileUpload}
                   uploadButton={
-                    <div className={styles.mobileIconWrapper}>
+                    <div className={styles.mobileIconWrapper} ref={item.ref}>
                       {item.icon}
                       <span className={styles.iconLabel}>{item.tooltip}</span>
                     </div>
                   }
-                  maxCount={5 - (dataCreatePost.image_url?.length || 0)}
+                  maxCount={maxImages}
                   disabled={item.disabled}
+                  type={contentType === 'exchange' ? 'exchange' : 'post'}
+                  onUploadSuccess={handleUploadSuccess}
                 />
               </div>
             )

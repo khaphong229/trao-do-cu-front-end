@@ -97,14 +97,13 @@
     font-size: 14px;
     color: #65676b;
     margin-bottom: 12px;
-    padding: 0 15px;
   }
 
   .mobileToolsButtons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 0 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    gap: 10px;
   }
 
   .mobileToolItem {
@@ -115,6 +114,18 @@
     background-color: #f5f5f5;
     cursor: pointer;
     transition: background-color 0.2s ease;
+
+    &:nth-child(2) {
+      grid-column: 2 / span 2;
+    }
+
+    &:nth-child(4) {
+      grid-column: 2 / span 2;
+    }
+
+    &:nth-child(5) {
+      grid-column: 1 / span 3;
+    }
 
     &:hover {
       background-color: #e8e8e8;

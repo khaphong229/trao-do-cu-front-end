@@ -9,7 +9,6 @@ import {
   setSelectedPostExchange
 } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import omit from 'lodash/omit'
 import { updatePostRequestStatus } from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
 const isObject = require('lodash/isObject')
@@ -21,7 +20,7 @@ export const useGiftRequest = () => {
   const { batchClick } = useInteraction()
 
   const checkUserContactInfo = () => {
-    return (user?.phone || (user?.social_media && user?.social_media?.length > 0)) && user?.address
+    return (user?.phone || user?.social_media?.facebook) && user?.address
   }
 
   const handleGiftRequest = (post, type) => {
@@ -47,12 +46,23 @@ export const useGiftRequest = () => {
         address: values.address
       }
 
+      // Xử lý trường hợp người dùng điền cả số điện thoại và mạng xã hội
       if (values.contact_method === 'phone') {
+        // Nếu chọn phone làm phương thức chính, nhưng vẫn giữ thông tin social_media nếu có
         dataUserUpdate.phone = values.phone
-        dataUserUpdate.social_media = user.social_media || []
+        dataUserUpdate.social_media = {
+          facebook: values.social_media || user.social_media?.facebook || '',
+          zalo: user.social_media?.zalo || '',
+          instagram: user.social_media?.instagram || ''
+        }
       } else {
-        dataUserUpdate.social_media = [values.social_media]
-        dataUserUpdate.phone = user.phone || ''
+        // Nếu chọn social_media làm phương thức chính, nhưng vẫn giữ thông tin phone nếu có
+        dataUserUpdate.social_media = {
+          facebook: values.social_media || '',
+          zalo: user.social_media?.zalo || '',
+          instagram: user.social_media?.instagram || ''
+        }
+        dataUserUpdate.phone = values.phone || user.phone || ''
       }
 
       const response = await dispatch(updateUserProfile(dataUserUpdate)).unwrap()
@@ -60,10 +70,12 @@ export const useGiftRequest = () => {
       if (status === 201) {
         message.success(msg)
         dispatch(setInfoModalVisible(false))
-        if (selectedPostExchange.type === 'gift') {
-          dispatch(setAcceptModalVisible(true))
-        } else {
-          dispatch(setExchangeFormModalVisible(true))
+        if (selectedPostExchange) {
+          if (selectedPostExchange.type === 'gift') {
+            dispatch(setAcceptModalVisible(true))
+          } else {
+            dispatch(setExchangeFormModalVisible(true))
+          }
         }
       }
     } catch (error) {
@@ -72,9 +84,12 @@ export const useGiftRequest = () => {
   }
 
   const handleRequestConfirm = async values => {
-    batchClick(selectedPostExchange.category_id._id || '')
+    console.log(values)
 
-    if (!selectedPostExchange) return
+    if (!selectedPostExchange) {
+      message.error('Không tìm thấy bài viết được chọn')
+      return
+    }
 
     let requestData = {
       post_id: selectedPostExchange._id,
@@ -82,15 +97,17 @@ export const useGiftRequest = () => {
       reason_receive: values.reason_receive === undefined ? '' : values.reason_receive,
       status: 'pending',
       contact_phone: user?.phone ? user.phone : '',
-      contact_social_media: {
-        facebook: user.social_media?.[0] || ''
-      },
       contact_address: user?.address ? user.address : '',
       contact_name: user.name
     }
 
-    if (user.social_media.length === 0) {
-      requestData = omit(requestData, ['contact_social_media'])
+    if (user?.social_media?.facebook) {
+      requestData = {
+        ...requestData,
+        contact_social_media: {
+          facebook: user?.social_media?.facebook
+        }
+      }
     }
 
     try {
@@ -117,7 +134,6 @@ export const useGiftRequest = () => {
           message.error(msg || 'Có lỗi xảy ra khi gửi yêu cầu')
         }
       }
-      dispatch(setAcceptModalVisible(false))
     }
   }
 
@@ -126,8 +142,6 @@ export const useGiftRequest = () => {
       message.error('Không tìm thấy bài viết được chọn')
       return
     }
-
-    batchClick(selectedPostExchange.category_id._id || '')
 
     let requestData = {
       post_id: selectedPostExchange._id,
@@ -138,13 +152,11 @@ export const useGiftRequest = () => {
       image_url: data.image_url,
       contact_phone: user?.phone ? user.phone : '',
       contact_social_media: {
-        facebook: user.social_media?.[0] || ''
+        facebook: user.social_media?.facebook,
+        zalo: '',
+        instagram: ''
       },
       contact_address: user?.address ? user.address : ''
-    }
-
-    if (user.social_media.length === 0) {
-      requestData = omit(requestData, ['contact_social_media'])
     }
 
     try {
