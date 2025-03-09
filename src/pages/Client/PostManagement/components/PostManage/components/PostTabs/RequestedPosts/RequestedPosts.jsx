@@ -33,7 +33,7 @@ const RequestedPosts = () => {
   )
 
   const handlePostClick = (post, e) => {
-    if (e?.target?.closest('.ant-image') || e?.target?.closest('.ant-btn') || e?.target?.closest('a')) {
+    if (e?.target?.closest('.ant-btn') || e?.target?.closest('a')) {
       return
     }
     setSelectedPost(post)
@@ -111,9 +111,8 @@ const RequestedPosts = () => {
           alt="Post image"
           style={{ width: 100, height: 100, objectFit: 'cover' }}
           fallback={avt}
-          preview={{
-            mask: null
-          }}
+          preview={false} // Disable image preview
+          onClick={e => handlePostClick(record, e)} // Handle click event to open post details
         />
       )
     },
@@ -159,6 +158,8 @@ const RequestedPosts = () => {
                   alt={request.post_id.title}
                   style={{ height: 200, objectFit: 'cover' }}
                   fallback={avt}
+                  preview={false} // Disable image preview
+                  onClick={e => handlePostClick(request, e)} // Handle click event to open post details
                 />
               </div>
             }
