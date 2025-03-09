@@ -160,7 +160,17 @@ const PostForm = ({
         error={formErrors.category_id}
       />
 
-      {showTour && tourSteps.length > 0 && <Tour open={showTour} onClose={onTourClose} steps={tourSteps} />}
+      {showTour && tourSteps.length > 0 && (
+        <Tour
+          open={showTour}
+          onClose={onTourClose}
+          steps={tourSteps.map(step => ({
+            title: step.title,
+            description: step.description,
+            target: () => step.ref.current // Ensure ref is correctly used
+          }))}
+        />
+      )}
     </>
   )
 }

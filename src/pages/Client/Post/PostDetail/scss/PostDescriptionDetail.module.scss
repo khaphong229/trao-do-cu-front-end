@@ -19,3 +19,22 @@
     font-size: 14px;
   }
 }
+
+
+.titleContainer, .descriptionContainer {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.expandButton, .showLessButton {
+  padding: 0 4px;
+  margin-left: 4px;
+  font-size: 14px;
+  height: auto;
+  display: inline-block;
+}
+
+.descriptionContainer {
+  word-break: break-word;
+  line-height: 1.5;
+}

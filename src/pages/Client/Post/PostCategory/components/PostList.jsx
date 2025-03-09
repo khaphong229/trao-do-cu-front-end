@@ -134,6 +134,63 @@ const PostList = () => {
     return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
   }
 
+  const toggleTitleExpand = postId => {
+    setExpandedTitles(prev => ({
+      ...prev,
+      [postId]: !prev[postId]
+    }))
+  }
+
+  const renderTitle = post => {
+    if (!post?.title) return <Text strong>Không có tiêu đề</Text>
+
+    const title = post.title
+    const isTitleLong = title.length > 50 // Giới hạn 50 ký tự cho tiêu đề
+    const isExpanded = expandedTitles[post._id]
+
+    if (!isTitleLong || isExpanded) {
+      return (
+        <div className={styles.titleContainer}>
+          <Text strong onClick={() => goDetail(post?._id)} className={styles.title}>
+            {title}
+          </Text>
+          {isTitleLong && (
+            <Button
+              type="link"
+              size="small"
+              onClick={e => {
+                e.stopPropagation()
+                toggleTitleExpand(post._id)
+              }}
+              className={styles.showLessButton}
+            >
+              Thu gọn
+            </Button>
+          )}
+        </div>
+      )
+    } else {
+      return (
+        <div className={styles.titleContainer}>
+          <Text strong onClick={() => goDetail(post?._id)} className={styles.title}>
+            {title.substring(0, 50)}...
+          </Text>
+          <Button
+            type="link"
+            size="small"
+            onClick={e => {
+              e.stopPropagation()
+              toggleTitleExpand(post._id)
+            }}
+            className={styles.expandButton}
+          >
+            Xem thêm
+          </Button>
+        </div>
+      )
+    }
+  }
+
   return (
     <div className={styles.contentWrap}>
       <div className={styles.topContent}>
@@ -199,9 +256,7 @@ const PostList = () => {
                 }
               >
                 <div className={styles.Container}>
-                  <Text strong onClick={() => goDetail(item?._id)} className={styles.title}>
-                    {item?.title}
-                  </Text>
+                  {renderTitle(item)}
                   <span className={styles.status}>{item?.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>
                   <div className={styles.TimeRole}>
                     <span className={styles.time}>

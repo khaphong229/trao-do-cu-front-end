@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import { getAvatarPost } from 'hooks/useAvatar'
+import { Link } from 'react-router-dom'
 
 const { Title, Text } = Typography
 dayjs.extend(relativeTime)
@@ -54,7 +55,9 @@ const ModalContactDetail = ({ visible, onClose }) => {
             <div className={styles.contactItem}>
               <PhoneOutlined className={styles.icon} />
               <span className={styles.label}>Số điện thoại:</span>
-              <span className={styles.value}>{selectedPost?.user_id?.phone}</span>
+              <span className={styles.value}>
+                {selectedPost?.user_id?.phone && <Link>{` ${selectedPost.user_id.phone.slice(0, 3)}xxxxxxx`}</Link>}
+              </span>
             </div>
           </div>
         </div>
