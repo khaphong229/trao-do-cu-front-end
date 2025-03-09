@@ -12,22 +12,47 @@ import { useDispatch, useSelector } from 'react-redux'
 import UploadCustom from 'components/common/UploadCustom'
 import {
   setLocationModalVisibility,
-  setShowEmoji,
+  setShowEmoji as setPostShowEmoji,
   setSocialLinkModalVisibility,
   setCategoryModalVisibility
 } from 'features/client/post/postSlice'
+import { setShowEmoji as setExchangeShowEmoji } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
+import { updatePostData } from 'features/client/post/postSlice'
+import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 
-const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRef, categoryRef, imageRef }) => {
-  const { isShowEmoji, dataCreatePost, requestData } = useSelector(state => ({
-    isShowEmoji: state.post.isShowEmoji || state.exchangeRequest.isShowEmoji,
-    dataCreatePost: state.post.dataCreatePost || {},
-    requestData: state.exchangeRequest.requestData || {}
-  }))
+const PostToolbar = ({
+  contentType,
+  onChange,
+  phoneRef,
+  facebookRef,
+  locationRef,
+  categoryRef,
+  imageRef,
+  // New tour-specific refs
+  imageToolRef,
+  socialLinkToolRef,
+  locationToolRef,
+  categoryToolRef
+}) => {
   const dispatch = useDispatch()
+
+  const { isShowEmoji, imageUrls } = useSelector(state => {
+    if (contentType === 'exchange') {
+      return {
+        isShowEmoji: state.exchangeRequest.isShowEmoji || false,
+        imageUrls: state.exchangeRequest.requestData?.image_url || []
+      }
+    } else {
+      return {
+        isShowEmoji: state.post.isShowEmoji || false,
+        imageUrls: state.post.dataCreatePost?.image_url || []
+      }
+    }
+  })
+
   const [fileList, setFileList] = useState([])
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768)
@@ -38,11 +63,41 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRe
       window.removeEventListener('resize', handleResize)
     }
   }, [])
-  const maxImages = 5 - (dataCreatePost.image_url?.length || requestData.image_url?.length || 0)
+
+  const maxImages = 5 - (imageUrls?.length || 0)
+
+  // Handle successful upload
+  const handleUploadSuccess = uploadedUrls => {
+    if (contentType === 'exchange') {
+      dispatch(
+        updateRequestData({
+          image_url: [...(imageUrls || []), ...uploadedUrls]
+        })
+      )
+    } else {
+      dispatch(
+        updatePostData({
+          image_url: [...(imageUrls || []), ...uploadedUrls]
+        })
+      )
+    }
+  }
+
+  const handleFileUpload = ({ fileList }) => {
+    setFileList(fileList)
+  }
+
+  const toggleEmojiPicker = () => {
+    if (contentType === 'exchange') {
+      dispatch(setExchangeShowEmoji(!isShowEmoji))
+    } else {
+      dispatch(setPostShowEmoji(!isShowEmoji))
+    }
+  }
 
   const uploadButton = (
     <Button
-      ref={ref3 || imageRef}
+      ref={imageToolRef || imageRef}
       type="text"
       icon={<PictureOutlined className={styles.iconPicture} />}
       disabled={maxImages <= 0}
@@ -51,7 +106,7 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRe
 
   const icons = [
     {
-      ref: imageRef || ref3,
+      ref: imageToolRef || imageRef,
       tooltip: 'Ảnh/Video',
       icon: <PictureOutlined className={styles.iconPicture} />,
       isUpload: true,
@@ -59,7 +114,7 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRe
       disabled: maxImages <= 0
     },
     {
-      ref: facebookRef || ref4,
+      ref: socialLinkToolRef || facebookRef,
       tooltip: 'Liên kết mạng xã hội',
       icon: <WhatsAppOutlined className={styles.customIcon} />,
       isUpload: false,
@@ -70,17 +125,17 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRe
       tooltip: 'Emoji',
       icon: <SmileOutlined className={styles.iconSmile} />,
       isUpload: false,
-      onClick: () => dispatch(setShowEmoji(!isShowEmoji))
+      onClick: toggleEmojiPicker
     },
     {
-      ref: locationRef || ref5,
+      ref: locationToolRef || locationRef,
       tooltip: 'Thêm vị trí',
       icon: <EnvironmentOutlined className={styles.iconEnvironment} />,
       isUpload: false,
       onClick: () => dispatch(setLocationModalVisibility(true))
     },
     {
-      ref: categoryRef || ref6,
+      ref: categoryToolRef || categoryRef,
       tooltip: 'Chọn danh mục',
       icon: <AppstoreOutlined className={styles.iconCategory} />,
       isUpload: false,
@@ -88,7 +143,6 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRe
     }
   ]
 
-  // Desktop version
   const renderDesktopToolbar = () => (
     <div className={styles.postTools}>
       <div className={styles.toolsText}>Thêm vào bài đăng của bạn</div>
@@ -99,10 +153,12 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRe
               <UploadCustom
                 key={index}
                 fileList={fileList}
-                setFileList={({ fileList }) => setFileList(fileList)}
+                setFileList={handleFileUpload}
                 uploadButton={uploadButton}
                 maxCount={maxImages}
                 disabled={item.disabled}
+                type={contentType === 'exchange' ? 'exchange' : 'post'}
+                onUploadSuccess={handleUploadSuccess}
               />
             )
           }
@@ -118,7 +174,6 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRe
     </div>
   )
 
-  // Mobile version
   const renderMobileToolbar = () => (
     <div className={styles.mobilePostTools}>
       <div className={styles.mobileToolsText}>Thêm vào bài đăng của bạn</div>
@@ -129,15 +184,17 @@ const PostToolbar = ({ ref3, ref4, ref5, ref6, phoneRef, facebookRef, locationRe
               <div className={styles.mobileToolItem} key={index}>
                 <UploadCustom
                   fileList={fileList}
-                  setFileList={({ fileList }) => setFileList(fileList)}
+                  setFileList={handleFileUpload}
                   uploadButton={
-                    <div className={styles.mobileIconWrapper}>
+                    <div className={styles.mobileIconWrapper} ref={item.ref}>
                       {item.icon}
                       <span className={styles.iconLabel}>{item.tooltip}</span>
                     </div>
                   }
                   maxCount={maxImages}
                   disabled={item.disabled}
+                  type={contentType === 'exchange' ? 'exchange' : 'post'}
+                  onUploadSuccess={handleUploadSuccess}
                 />
               </div>
             )

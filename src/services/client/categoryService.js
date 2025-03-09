@@ -4,7 +4,7 @@ const categoryService = {
   http: createApi(),
 
   getAllCategory() {
-    return this.http.get('/posts/category')
+    return this.http.get('/admin/category')
   }
 }
 

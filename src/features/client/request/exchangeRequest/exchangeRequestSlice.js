@@ -19,7 +19,11 @@ const initialState = {
     status: 'pending',
     image_url: [],
     contact_phone: '',
-    contact_social_media: [],
+    contact_social_media: {
+      facebook: '',
+      instagram: '',
+      zalo: ''
+    },
     contact_address: ''
   },
   selectedPostExchange: null,

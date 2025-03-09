@@ -12,14 +12,20 @@ export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, o
   const [dataVN, setDataVN] = useState([])
 
   const fetchProvince = useCallback(async () => {
+    const cachedData = localStorage.getItem('provinceData')
+
+    if (cachedData) {
+      setDataVN(JSON.parse(cachedData))
+      return
+    }
     try {
       const data = await locationService.getProvince()
       if (data.data.status === 200) {
         setDataVN(data.data.data)
+        localStorage.setItem('provinceData', JSON.stringify(data.data.data))
       }
     } catch (error) {
-      if (error.response.data.status === 404) {
-        // console.log(error, 'okk')
+      if (error.response?.data?.status === 404) {
         throw error
       }
     }

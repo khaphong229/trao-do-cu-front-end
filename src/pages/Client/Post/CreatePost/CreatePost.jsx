@@ -21,12 +21,12 @@ const CreatePostModal = () => {
   const { user } = useSelector(state => state.auth)
   const { dataCreatePost, isCreateModalVisible, isLoadingButton, isShowTour } = useSelector(state => state.post)
 
-  const ref1 = useRef(null)
-  const ref2 = useRef(null)
-  const ref3 = useRef(null)
-  const ref4 = useRef(null)
-  const ref5 = useRef(null)
-  const ref6 = useRef(null)
+  const userInfoRef = useRef(null)
+  const contentRef = useRef(null)
+  const imageRef = useRef(null)
+  const socialLinkRef = useRef(null)
+  const locationRef = useRef(null)
+  const categoryRef = useRef(null)
 
   const validateSubmit = async formData => {
     const response = await dispatch(
@@ -43,6 +43,7 @@ const CreatePostModal = () => {
   }
 
   const formUtils = usePostForm({
+    type: 'post',
     updateData: updatePostData,
     validateSubmit,
     formData: dataCreatePost,
@@ -82,32 +83,32 @@ const CreatePostModal = () => {
     {
       title: 'Trao tặng/ Trao đổi',
       description: 'Chọn chế độ cần thực hiện.',
-      target: () => ref1.current
+      target: () => userInfoRef.current
     },
     {
       title: 'Nội dung',
       description: 'Nhập nội dung bài đăng.',
-      target: () => ref2.current
+      target: () => contentRef.current
     },
     {
       title: 'Ảnh, Video',
       description: 'Tải lên ảnh, video.',
-      target: () => ref3.current
+      target: () => imageRef.current
     },
     {
       title: 'Thông tin liên hệ',
       description: 'Nhập thông tin liên hệ.',
-      target: () => ref4.current
+      target: () => socialLinkRef.current
     },
     {
       title: 'Địa điểm',
       description: 'Nhập địa điểm của bạn.',
-      target: () => ref5.current
+      target: () => locationRef.current
     },
     {
       title: 'Danh mục',
       description: 'Nhập danh mục theo đồ của bạn.',
-      target: () => ref6.current
+      target: () => categoryRef.current
     }
   ]
 
@@ -121,9 +122,24 @@ const CreatePostModal = () => {
       isMobile={isMobile}
       user={user}
       onSubmit={formUtils.handleSubmit}
-      formUtils={formUtils}
+      formUtils={{
+        ...formUtils,
+        userInfoRef,
+        contentRef,
+        imageRef,
+        socialLinkRef,
+        locationRef,
+        categoryRef
+      }}
       submitButtonText="Đăng"
-      tourRef={{ ref1, ref2, ref3, ref4, ref5, ref6 }}
+      tourRef={{
+        ref1: userInfoRef,
+        ref2: contentRef,
+        ref3: imageRef,
+        ref4: socialLinkRef,
+        ref5: locationRef,
+        ref6: categoryRef
+      }}
       showTour={isShowTour}
       tourSteps={steps}
       onTourClose={() => dispatch(setShowTour(false))}

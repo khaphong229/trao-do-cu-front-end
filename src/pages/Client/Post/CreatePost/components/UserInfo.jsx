@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
 import avt from 'assets/images/logo/avtDefault.webp'
 import { URL_SERVER_IMAGE } from 'config/url_server'
-const UserInfo = ({ title, ref1 }) => {
+const UserInfo = ({ contentType, ref1 }) => {
   const dispatch = useDispatch()
   const { dataCreatePost } = useSelector(state => state.post)
   const { selectedCategory } = useSelector(state => state.category)
@@ -19,11 +19,11 @@ const UserInfo = ({ title, ref1 }) => {
           <div className={styles.infoMore}>
             {dataCreatePost.city && <span className={styles.cityText}>{dataCreatePost.city}</span>}
             {dataCreatePost.category_id && (
-              <span className={styles.categoryText}>{` - ${selectedCategory.title}`}</span>
+              <span className={styles.categoryText}>{` - ${selectedCategory?.title || ''}`}</span>
             )}
           </div>
         </div>
-        {title !== 'Biểu mẫu trao đổi' && (
+        {contentType === 'post' && (
           <Radio.Group
             ref={ref1}
             value={dataCreatePost.type}

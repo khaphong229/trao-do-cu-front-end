@@ -47,12 +47,23 @@ export const useGiftRequest = () => {
         address: values.address
       }
 
+      // Xử lý trường hợp người dùng điền cả số điện thoại và mạng xã hội
       if (values.contact_method === 'phone') {
+        // Nếu chọn phone làm phương thức chính, nhưng vẫn giữ thông tin social_media nếu có
         dataUserUpdate.phone = values.phone
-        dataUserUpdate.social_media = user.social_media || []
+        dataUserUpdate.social_media = {
+          facebook: values.social_media || user.social_media?.facebook || '',
+          zalo: user.social_media?.zalo || '',
+          instagram: user.social_media?.instagram || ''
+        }
       } else {
-        dataUserUpdate.social_media = values.social_media
-        dataUserUpdate.phone = user.phone || ''
+        // Nếu chọn social_media làm phương thức chính, nhưng vẫn giữ thông tin phone nếu có
+        dataUserUpdate.social_media = {
+          facebook: values.social_media || '',
+          zalo: user.social_media?.zalo || '',
+          instagram: user.social_media?.instagram || ''
+        }
+        dataUserUpdate.phone = values.phone || user.phone || ''
       }
 
       const response = await dispatch(updateUserProfile(dataUserUpdate)).unwrap()
@@ -60,10 +71,12 @@ export const useGiftRequest = () => {
       if (status === 201) {
         message.success(msg)
         dispatch(setInfoModalVisible(false))
-        if (selectedPostExchange.type === 'gift') {
-          dispatch(setAcceptModalVisible(true))
-        } else {
-          dispatch(setExchangeFormModalVisible(true))
+        if (selectedPostExchange) {
+          if (selectedPostExchange.type === 'gift') {
+            dispatch(setAcceptModalVisible(true))
+          } else {
+            dispatch(setExchangeFormModalVisible(true))
+          }
         }
       }
     } catch (error) {
@@ -83,7 +96,7 @@ export const useGiftRequest = () => {
       status: 'pending',
       contact_phone: user?.phone ? user.phone : '',
       contact_social_media: {
-        facebook: user.social_media?.[0] || ''
+        facebook: user.social_media?.facebook
       },
       contact_address: user?.address ? user.address : '',
       contact_name: user.name

@@ -1,6 +1,9 @@
 import React from 'react'
 import { Button, Modal, Tour } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
+import { useDispatch, useSelector } from 'react-redux'
+import { updatePostData } from 'features/client/post/postSlice'
+import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 
 import UserInfoSection from 'pages/Client/Post/CreatePost/components/UserInfo'
 import PostContentEditor from 'pages/Client/Post/CreatePost/components/PostContent'
@@ -10,6 +13,7 @@ import { ContactInfoModal } from 'pages/Client/Post/CreatePost/components/Modal/
 import CategoryModal from 'pages/Client/Post/CreatePost/components/Modal/Category'
 
 import styles from 'pages/Client/Post/CreatePost/scss/CreatePost.module.scss'
+import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
 
 const PostForm = ({
   title,
@@ -21,11 +25,12 @@ const PostForm = ({
   onSubmit,
   formUtils,
   submitButtonText,
-  tourRef = {}, // Add default value
+  tourRef = {},
   showTour = false,
   tourSteps = [],
   onTourClose = () => {}
 }) => {
+  const dispatch = useDispatch()
   const {
     errorPost,
     setErrorPost,
@@ -36,11 +41,51 @@ const PostForm = ({
     phoneRef,
     facebookRef,
     locationRef,
-    categoryRef,
-    handleFieldChange,
-    handleImageUpload,
-    handleLocationChange
+    categoryRef
   } = formUtils
+
+  const safeFormData = formData || {}
+
+  const isExchangeForm = title === 'Biểu mẫu trao đổi'
+  const contentType = isExchangeForm ? 'exchange' : 'post'
+
+  const handleFieldChange = (field, value) => {
+    if (isExchangeForm) {
+      dispatch(updateRequestData({ [field]: value }))
+    } else {
+      dispatch(updatePostData({ [field]: value }))
+    }
+
+    if (formErrors && formErrors[field]) {
+      const newErrors = { ...formErrors }
+      delete newErrors[field]
+      formUtils.setFormErrors && formUtils.setFormErrors(newErrors)
+    }
+  }
+
+  const handleImageUpload = images => {
+    if (isExchangeForm) {
+      dispatch(updateRequestData({ image_url: images }))
+    } else {
+      dispatch(updatePostData({ image_url: images }))
+    }
+  }
+
+  const handleLocationChange = location => {
+    if (isExchangeForm) {
+      dispatch(updateRequestData({ specificLocation: location }))
+    } else {
+      dispatch(updatePostData({ specificLocation: location }))
+    }
+
+    if (formErrors && formErrors.specificLocation) {
+      const newErrors = { ...formErrors }
+      delete newErrors.specificLocation
+      formUtils.setFormErrors && formUtils.setFormErrors(newErrors)
+    }
+  }
+
+  const { handleInfoSubmit } = useGiftRequest()
 
   return (
     <>
@@ -52,33 +97,37 @@ const PostForm = ({
         closeIcon={<CloseOutlined />}
         className={styles.createPostModal}
         width={isMobile ? '90%' : 600}
+        style={isMobile ? { top: 0 } : {}}
         bodyStyle={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
       >
-        <UserInfoSection title={title} ref1={tourRef.ref1 || null} errors={formErrors} />
+        <UserInfoSection contentType={contentType} ref1={tourRef.ref1} errors={formErrors} />
 
         <PostContentEditor
+          contentType={contentType}
           errorPost={errorPost}
           setErrorPost={setErrorPost}
-          ref2={tourRef.ref2 || null}
           titleRef={titleRef}
           imageRef={imageRef}
-          uploadedImages={formData.image_url}
+          uploadedImages={safeFormData.image_url || []}
           setUploadedImages={handleImageUpload}
           onChange={handleFieldChange}
           errors={formErrors}
+          ref2={tourRef.ref2}
         />
 
         <PostToolbar
-          ref3={tourRef.ref3 || null}
-          ref4={tourRef.ref4 || null}
-          ref5={tourRef.ref5 || null}
-          ref6={tourRef.ref6 || null}
+          contentType={contentType}
           phoneRef={phoneRef}
           facebookRef={facebookRef}
           locationRef={locationRef}
           categoryRef={categoryRef}
+          imageRef={imageRef}
           errors={formErrors}
           onChange={handleFieldChange}
+          imageToolRef={tourRef.ref3}
+          socialLinkToolRef={tourRef.ref4}
+          locationToolRef={tourRef.ref5}
+          categoryToolRef={tourRef.ref6}
         />
 
         <Button
@@ -93,19 +142,20 @@ const PostForm = ({
       </Modal>
 
       <LocationModal
-        location={formData.specificLocation || user?.address}
+        location={safeFormData.specificLocation || user?.address || ''}
         setLocation={handleLocationChange}
         error={formErrors.specificLocation}
       />
 
       <ContactInfoModal
-        facebookLink={formData.social_media?.facebook || ''}
+        onSubmit={handleInfoSubmit}
+        facebookLink={safeFormData.facebookLink || ''}
         setFacebookLink={facebookLink => handleFieldChange('facebookLink', facebookLink)}
         error={formErrors.facebookLink}
       />
 
       <CategoryModal
-        categoryId={formData.category_id}
+        categoryId={safeFormData.category_id}
         setCategory={categoryId => handleFieldChange('category_id', categoryId)}
         error={formErrors.category_id}
       />

@@ -42,6 +42,9 @@ export const getPostPagination = createAsyncThunk(
 export const getPostCategory = createAsyncThunk(
   'post/getPostCategory',
   async ({ current, pageSize, category_id = null, type = null, city = null }, { rejectWithValue }) => {
+    if (category_id === 'all') {
+      category_id = null
+    }
     try {
       const response = await postService.getPostCategoryApi({
         current,

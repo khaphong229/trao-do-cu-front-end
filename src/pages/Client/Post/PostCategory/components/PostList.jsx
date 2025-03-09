@@ -37,6 +37,7 @@ const PostList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedCity, setSelectedCity] = useState(null)
   const [VIETNAMESE_CITIES, SET_VIETNAMESE_CITIES] = useState(null)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   const dispatch = useDispatch()
   const { posts, isError, isLoading, total } = useSelector(state => state.post)
@@ -61,52 +62,40 @@ const PostList = () => {
     }
   }, [])
 
+  // Load cities only once
   useEffect(() => {
     fetchCity()
-  }, [fetchCity])
+  }, [])
 
+  // Main data fetching logic combined into a single effect
   useEffect(() => {
+    // Reset and fetch initial data
     dispatch(clearPosts())
     dispatch(resetPage())
+
     dispatch(
       getPostCategory({
         current: currentPage,
         pageSize: 10,
         category_id: category_id !== 'all' ? category_id : null,
+        type: activeTab === 'all' ? null : activeTab,
         city: selectedCity
       })
     )
-  }, [dispatch, currentPage, category_id, selectedCity, fetchCity])
 
-  useEffect(() => {
-    if (posts.length === 0 && !isLoading) {
-      dispatch(
-        getPostPagination({
-          current: currentPage,
-          pageSize: 10,
-          category_id: category_id !== 'all' ? category_id : null,
-          city: selectedCity
-        })
-      )
-    }
-  }, [dispatch, currentPage, category_id, selectedCity, posts.length, isLoading])
+    setIsInitialLoad(false)
+  }, [dispatch, currentPage, category_id, selectedCity, activeTab])
+
+  // Removed the redundant useEffect that was causing duplicate API calls
 
   const handleTabChange = key => {
     setActiveTab(key)
-    dispatch(
-      getPostCategory({
-        current: 1,
-        pageSize: 10,
-        category_id: category_id ? category_id : null,
-        type: key === 'all' ? null : key,
-        city: selectedCity
-      })
-    )
+    setCurrentPage(1) // Reset to first page when changing tab
   }
 
   const handleCityChange = value => {
     setSelectedCity(value)
-    setCurrentPage(1)
+    setCurrentPage(1) // Reset to first page when changing city
   }
 
   const handleSortChange = value => {
@@ -149,7 +138,7 @@ const PostList = () => {
     <div className={styles.contentWrap}>
       <div className={styles.topContent}>
         <div className={styles.Tabs}>
-          <Tabs defaultActiveKey="all" tabBarStyle={{ margin: 0 }} onChange={handleTabChange}>
+          <Tabs activeKey={activeTab} tabBarStyle={{ margin: 0 }} onChange={handleTabChange}>
             <TabPane tab="Tất cả" key="all" />
             <TabPane tab="Trao tặng" key="gift" />
             <TabPane tab="Trao đổi" key="exchange" />
@@ -168,7 +157,7 @@ const PostList = () => {
             allowClear
           />
           <Select
-            defaultValue="newest"
+            value={sortOrder}
             style={{ width: 120 }}
             size="middle"
             onChange={handleSortChange}
@@ -190,7 +179,7 @@ const PostList = () => {
       ) : sortedPosts.length > 0 ? (
         <Row gutter={[8, 8]}>
           {sortedPosts.map(item => (
-            <Col xs={24} sm={12} key={item?.id}>
+            <Col xs={24} sm={12} key={item?._id || item?.id}>
               <Card
                 className={styles.Card}
                 hoverable

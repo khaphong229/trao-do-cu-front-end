@@ -2,18 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { message } from 'antd'
 import { uploadPostImages } from 'features/upload/uploadThunks'
 
-/**
- * Custom hook for handling post form logic
- * @param {Object} options - Configuration options
- * @param {Function} options.updateData - Function to update form data
- * @param {Function} options.validateSubmit - Function to handle form submission
- * @param {Object} options.formData - Current form data
- * @param {Object} options.user - Current user data
- * @param {boolean} options.isModalVisible - Is the modal visible
- * @param {Function} options.dispatch - Redux dispatch function
- * @returns {Object} Form handlers and state
- */
-export const usePostForm = ({ updateData, validateSubmit, formData, user, isModalVisible, dispatch }) => {
+export const usePostForm = ({ type, updateData, validateSubmit, formData, user, isModalVisible, dispatch }) => {
   const [errorPost, setErrorPost] = useState(null)
   const [formErrors, setFormErrors] = useState({})
   const [isMobile] = useState(window.innerWidth <= 768)
@@ -37,83 +26,70 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
   // Set user data when modal opens
   useEffect(() => {
     if (isModalVisible && user?.address) {
-      dispatch(
-        updateData({
-          city: user.address.split(', ').pop(),
-          specificLocation: user.address,
-          phone: user.phone || '',
-          facebookLink: user.social_media?.facebook || '' // Use optional chaining here
-        })
-      )
+      // Only update if these fields aren't already set
+      const addressParts = user.address.split(', ')
+      const city = addressParts.pop()
+
+      let dataExisting = {
+        contact_phone: user.phone || '',
+        contact_social_media: {
+          facebook: user.social_media?.facebook || '',
+          zalo: '',
+          instagram: ''
+        }
+      }
+
+      if (type === 'post') {
+        dataExisting = {
+          ...dataExisting,
+          city,
+          specificLocation: user.address
+        }
+      } else {
+        dataExisting = {
+          ...dataExisting,
+          city,
+          contact_address: user.address
+        }
+      }
+
+      dispatch(updateData(dataExisting))
     }
-  }, [isModalVisible, user, dispatch, updateData])
-
-  // Form validation functions
-  const isValidVietnamesePhone = phone => {
-    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/
-    return phoneRegex.test(phone)
-  }
-
-  const isValidFacebookLink = link => {
-    const facebookRegex = /(?:http(?:s)?:\/\/)?(?:www\.)?facebook.com\/.+/g
-    return facebookRegex.test(link)
-  }
+  }, [isModalVisible, user?.address, type, updateData, dispatch])
 
   const validateForm = () => {
     const errors = {}
 
-    // Check required fields
+    // Only check title and images as required
     if (!formData.title || !formData.title.trim()) {
       errors.title = 'Vui lòng nhập tiêu đề bài đăng'
     }
 
-    // Check images
     if (!formData.image_url || formData.image_url.length === 0) {
       errors.image_url = 'Vui lòng tải lên ít nhất một hình ảnh'
     }
 
-    // Make sure at least one contact method is provided
-    const hasPhone = formData.phone && isValidVietnamesePhone(formData.phone)
-    const hasFacebook = formData.social_media?.facebook && isValidFacebookLink(formData.social_media?.facebook)
+    if (type === 'post') {
+      if (!formData.category_id) {
+        errors.category_id = 'Vui lòng nhập danh mục'
+      }
+    }
 
-    if (!hasPhone && !hasFacebook) {
-      // Only show phone error if there's no valid Facebook link
-      errors.phone = 'Vui lòng nhập số điện thoại hoặc liên kết Facebook'
+    if (type === 'post') {
+      if (!formData.specificLocation) {
+        errors.specificLocation = 'Vui lòng nhập địa chỉ'
+      }
     } else {
-      // If phone is provided but invalid
-      if (formData.phone && !hasPhone) {
-        errors.phone = 'Số điện thoại không hợp lệ'
+      if (!formData.contact_address) {
+        errors.contact_address = 'Vui lòng nhập địa chỉ'
       }
-
-      // Initialize social_media errors object if it doesn't exist
-      if (!errors.social_media) {
-        errors.social_media = {}
-      }
-
-      // If Facebook link is provided but invalid
-      if (formData.social_media?.facebook && !hasFacebook) {
-        errors.social_media.facebook = 'Liên kết Facebook không hợp lệ'
-      }
-    }
-
-    // Check address
-    if (!formData.specificLocation) {
-      errors.specificLocation = 'Vui lòng thêm địa chỉ'
-    }
-
-    if (!formData.city) {
-      errors.city = 'Vui lòng thêm thành phố'
-    }
-
-    // Check category
-    if (!formData.category_id) {
-      errors.category_id = 'Vui lòng chọn danh mục cho món đồ'
     }
 
     return errors
   }
+
   const scrollToFirstError = errors => {
-    if (errors.title || errors.content) {
+    if (errors.title) {
       titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } else if (errors.image_url) {
       imageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -129,7 +105,7 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
   }
 
   const handleSubmit = async () => {
-    // Validate form first
+    // Validate form first, but only for the required fields (title and image)
     const errors = validateForm()
     setFormErrors(errors)
     setErrorPost(Object.keys(errors).length > 0 ? errors : null)
@@ -137,7 +113,7 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
     // If there are errors, display them and stop submission
     if (Object.keys(errors).length > 0) {
       // Show error message for the first error
-      message.error(String(Object.values(errors)[0])) // Ensure the message is a string
+      message.error(String(Object.values(errors)[0]))
       // Scroll to the first error field
       scrollToFirstError(errors)
       return
@@ -155,19 +131,7 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
           newErrors[field] = msg
 
           if (!hasDisplayedError) {
-            if (field === 'category_id') {
-              message.error('Vui lòng chọn danh mục cho món đồ!')
-            } else if (field === 'specificLocation' || field === 'city') {
-              message.error('Vui lòng thêm địa chỉ')
-            } else if (field === 'image_url') {
-              message.error('Vui lòng tải lên ít nhất một hình ảnh')
-            } else if (field === 'phone') {
-              message.error('Vui lòng nhập số điện thoại hợp lệ')
-            } else if (field === 'facebookLink') {
-              message.error('Vui lòng nhập liên kết Facebook hợp lệ')
-            } else {
-              message.error(String(msg)) // Ensure the message is a string
-            }
+            message.error(String(msg))
             hasDisplayedError = true
           }
         })
@@ -183,7 +147,20 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
 
   const handleImageUpload = async files => {
     try {
-      await dispatch(uploadPostImages(files)).unwrap()
+      // Upload the images and get the URLs back
+      const uploadedUrls = await dispatch(uploadPostImages(files)).unwrap()
+
+      // Check if the result is in the expected format (array of strings)
+      if (Array.isArray(uploadedUrls) && uploadedUrls.length > 0) {
+        // Update form data with the new image URLs
+        if (formData.image_url && Array.isArray(formData.image_url)) {
+          // Add new URLs to existing ones
+          dispatch(updateData({ image_url: [...formData.image_url, ...uploadedUrls] }))
+        } else {
+          // Set new URLs
+          dispatch(updateData({ image_url: uploadedUrls }))
+        }
+      }
 
       // Clear image error if it exists
       if (formErrors.image_url) {
@@ -218,7 +195,7 @@ export const usePostForm = ({ updateData, validateSubmit, formData, user, isModa
   // Handler to clear error when field is updated
   const handleFieldChange = (field, value) => {
     // Update the post data
-    dispatch(updateData({ [field]: value }))
+    updateData({ [field]: value })
 
     // Clear the error for this field if it exists
     if (formErrors[field]) {

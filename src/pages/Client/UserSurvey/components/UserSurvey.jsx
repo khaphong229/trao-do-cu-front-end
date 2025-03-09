@@ -148,7 +148,7 @@ export default function SurveyForm() {
                 <span className={styles['survey__label-hint']}>Chọn một hoặc nhiều danh mục</span>
               </label>
               <div className={styles.survey__categories}>
-                {categories.map(category => (
+                {categories?.map(category => (
                   <div
                     key={category.category_id}
                     className={`${styles.survey__category} ${selectedTags.some(tag => tag.category_id === category.category_id) ? styles['survey__category--selected'] : ''}`}

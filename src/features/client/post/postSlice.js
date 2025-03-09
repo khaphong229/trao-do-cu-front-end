@@ -13,7 +13,8 @@ const initialState = {
     city: '',
     image_url: [],
     category_id: null,
-    social_media: {
+    contact_phone: '',
+    contact_social_media: {
       facebook: '',
       instagram: '',
       zalo: ''
@@ -82,16 +83,9 @@ const postSlice = createSlice({
       state.isShowContactDetailModalVisible = action.payload
     },
     updatePostData: (state, action) => {
-      if (action.payload.contact_social_media) {
-        state.dataCreatePost.contact_social_media = {
-          ...state.dataCreatePost.contact_social_media,
-          ...action.payload.contact_social_media
-        }
-      } else {
-        state.dataCreatePost = {
-          ...state.dataCreatePost,
-          ...action.payload
-        }
+      state.dataCreatePost = {
+        ...state.dataCreatePost,
+        ...action.payload
       }
     },
     resetPostData: state => {

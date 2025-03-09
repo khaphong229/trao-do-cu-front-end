@@ -8,37 +8,49 @@ import { getAllCategory } from 'features/client/category/categoryThunks'
 import { getCategories, setCategories } from 'utils/localStorageUtils'
 import { setCategory } from 'features/client/category/categorySlice'
 
-const renderMenuItems = (categories, navigate) =>
-  categories.map(category => {
-    const handleClick = () => {
-      navigate(`/post/category/${category.id}`)
-    }
+// Separate click handler for menu items
+const handleMenuItemClick = (e, category, navigate) => {
+  e.domEvent.stopPropagation()
+  navigate(`/post/category/${category.id === '67c6c5ecf83ba5fb6ecfaa0e' ? 'all' : category.id}`)
+}
 
+// Recursive function with separate handlers for parent and child items
+const renderMenuItems = (categories, navigate) =>
+  categories?.map(category => {
     if (category.children && category.children.length > 0) {
       return (
         <Menu.SubMenu
-          key={category.title}
+          key={category.id || category.title}
           title={
-            <Space onClick={handleClick} style={{ width: '100%' }}>
-              {category.icon}
-              {category.title}
-            </Space>
+            <span>
+              {category.icon} {category.title}
+            </span>
           }
           className={styles.SubMenu}
+          onTitleClick={e => {
+            e.domEvent.stopPropagation()
+            navigate(`/post/category/${category.id === '67c6c5ecf83ba5fb6ecfaa0e' ? 'all' : category.id}`)
+          }}
         >
+          {/* Recursively render children as separate menu items */}
           {renderMenuItems(category.children, navigate)}
         </Menu.SubMenu>
       )
     }
     return (
-      <Menu.Item key={category.title} icon={category.icon} className={styles.SubMenu} onClick={handleClick}>
+      <Menu.Item
+        key={category.id || category.title}
+        icon={category.icon}
+        className={styles.SubMenu}
+        onClick={e => handleMenuItemClick(e, category, navigate)}
+      >
         {category.title}
       </Menu.Item>
     )
   })
 
 const handleDataCategory = categories => {
-  return categories.map(category => {
+  return categories?.map(category => {
     const formattedCategory = {
       id: category._id,
       title: category.name,
@@ -59,13 +71,18 @@ const Logo = () => {
   const dispatch = useDispatch()
   const { categories } = useSelector(state => state.category)
   const prevCategoriesRef = useRef() // Lưu giá trị trước đó của categories
+  const categoriesInitialized = useRef(false)
 
   useEffect(() => {
-    const categoriesLocal = getCategories()
-    if (categoriesLocal.length === 0) {
-      dispatch(getAllCategory())
-    } else {
-      dispatch(setCategory(categoriesLocal))
+    // Only run this effect once
+    if (!categoriesInitialized.current) {
+      const categoriesLocal = getCategories()
+      if (categoriesLocal.length === 0) {
+        dispatch(getAllCategory())
+      } else {
+        dispatch(setCategory(categoriesLocal))
+      }
+      categoriesInitialized.current = true
     }
   }, [dispatch])
 

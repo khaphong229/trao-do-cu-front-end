@@ -14,7 +14,7 @@ export const uploadExchangeImages = createAsyncThunk(
   'exchangeRequest/uploadExchangeImages',
   async (file, { rejectWithValue }) => {
     try {
-      const response = await UploadService.uploadImage(file)
+      const response = await UploadService.uploadImage(file, 'exchange')
       return response.data
     } catch (error) {
       return rejectWithValue(error.response.data || { message: 'Tải ảnh thất bại' })

@@ -339,21 +339,44 @@ const FormExchangeModal = () => {
   const { user } = useSelector(state => state.auth)
   const { handleExchangeConfirm } = useGiftRequest()
 
+  // Modified validateSubmit function that only checks title and images
   const validateSubmit = async formData => {
-    const response = await handleExchangeConfirm(formData)
-    console.log(response)
+    // Simple validation before submission
+    const errors = {}
 
-    const { status, message: msg } = response
-    if (status === 201) {
-      message.success(msg)
-      dispatch(setExchangeFormModalVisible(false))
+    // Only check title and images as required
+    if (!formData.title || !formData.title.trim()) {
+      errors.title = 'Vui lòng nhập tiêu đề bài đăng'
+      message.error(errors.title)
+      return Promise.reject({ status: 400, detail: errors })
     }
 
-    return response
+    if (!formData.image_url || formData.image_url.length === 0) {
+      errors.image_url = 'Vui lòng tải lên ít nhất một hình ảnh'
+      message.error(errors.image_url)
+      return Promise.reject({ status: 400, detail: errors })
+    }
+
+    try {
+      // If basic validation passes, proceed with API call
+      const response = await handleExchangeConfirm(formData)
+
+      const { status, message: msg } = response
+      if (status === 201) {
+        message.success(msg)
+        dispatch(setExchangeFormModalVisible(false))
+      }
+
+      return response
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 
+  // Use the hook with requestData instead of dataCreatePost
   const formUtils = usePostForm({
-    updateData: updateRequestData,
+    type: 'exchange',
+    updateData: updateRequestData, // Proper function to update data
     validateSubmit,
     formData: requestData,
     user,
