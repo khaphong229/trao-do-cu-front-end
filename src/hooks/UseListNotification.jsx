@@ -127,14 +127,14 @@ export const UseListNotification = () => {
     if (!allNotifications) return []
 
     return allNotifications.map(notification => ({
-      id: notification._id,
+      id: notification?._id,
       title: getNotificationName(notification),
-      action: getNotificationText(notification.type),
-      postTitle: notification.post_id.title,
-      isApproved: notification.type.startsWith('approve'),
+      action: getNotificationText(notification?.type),
+      postTitle: notification.post_id?.title || 'không có tiêu đề',
+      isApproved: notification?.type.startsWith('approve'),
       time: formatTimeAgo(notification.created_at),
       isRead: notification.isRead,
-      postId: notification.post_id._id
+      postId: notification.post_id?._id
     }))
   }, [allNotifications])
 

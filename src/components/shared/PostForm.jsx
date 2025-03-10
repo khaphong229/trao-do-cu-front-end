@@ -97,8 +97,7 @@ const PostForm = ({
         closeIcon={<CloseOutlined />}
         className={styles.createPostModal}
         width={isMobile ? '90%' : 600}
-        // style={isMobile ? { top: 0 } : {}}
-        bodyStyle={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
+        style={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
       >
         <UserInfoSection contentType={contentType} ref1={tourRef.ref1} errors={formErrors} />
 

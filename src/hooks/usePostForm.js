@@ -66,13 +66,6 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     if (!formData.image_url || formData.image_url.length === 0) {
       errors.image_url = 'Vui lòng tải lên ít nhất một hình ảnh'
     }
-
-    if (type === 'post') {
-      if (!formData.category_id) {
-        errors.category_id = 'Vui lòng nhập danh mục'
-      }
-    }
-
     if (type === 'post') {
       if (!formData.specificLocation) {
         errors.specificLocation = 'Vui lòng nhập địa chỉ'
@@ -80,6 +73,12 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     } else {
       if (!formData.contact_address) {
         errors.contact_address = 'Vui lòng nhập địa chỉ'
+      }
+    }
+
+    if (type === 'post') {
+      if (!formData.category_id) {
+        errors.category_id = 'Vui lòng nhập danh mục'
       }
     }
 
