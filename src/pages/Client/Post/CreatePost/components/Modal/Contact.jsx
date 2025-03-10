@@ -53,7 +53,9 @@ export const ContactInfoModal = ({ onSubmit }) => {
       } else {
         message.error('Có lỗi xảy ra khi cập nhật thông tin: onSubmit is not a function')
       }
-    } catch (error) {}
+    } catch (error) {
+      message.error('Có lỗi xảy ra khi cập nhật thông tin')
+    }
   }
 
   const handleCancel = () => {

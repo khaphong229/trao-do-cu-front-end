@@ -53,13 +53,22 @@ export const ContactInfoModal = ({ onSubmit }) => {
         return
       }
 
-      // Luôn bao gồm cả phone và social_media trong dữ liệu gửi đi,
-      // bất kể phương thức liên hệ được chọn là gì
+      // Chỉ gửi thông tin của phương thức liên hệ được chọn
       const submissionData = {
         ...values,
-        address: fullAddress,
-        phone: values.phone || '', // Luôn gửi phone nếu có
-        social_media: values.social_media || '' // Luôn gửi social_media nếu có
+        address: fullAddress
+      }
+
+      if (values.contact_method === 'phone') {
+        submissionData.phone = values.phone
+        submissionData.social_media = user.social_media || {}
+      } else {
+        submissionData.social_media = {
+          facebook: values.social_media,
+          zalo: user.social_media?.zalo || '',
+          instagram: user.social_media?.instagram || ''
+        }
+        submissionData.phone = user.phone || ''
       }
 
       await onSubmit(submissionData)
@@ -90,32 +99,37 @@ export const ContactInfoModal = ({ onSubmit }) => {
           </Radio.Group>
         </Form.Item>
 
-        {/* Hiển thị cả hai trường nhưng chỉ yêu cầu bắt buộc cho phương thức được chọn */}
-        <Form.Item
-          name="phone"
-          label="Số điện thoại"
-          rules={[
-            {
-              required: contactMethod === 'phone',
-              message: 'Vui lòng nhập số điện thoại của bạn'
-            }
-          ]}
-        >
-          <Input placeholder="Nhập số điện thoại của bạn" />
-        </Form.Item>
+        {/* Hiển thị trường số điện thoại nếu chọn phương thức liên hệ là phone */}
+        {contactMethod === 'phone' && (
+          <Form.Item
+            name="phone"
+            label="Số điện thoại"
+            rules={[
+              {
+                required: true,
+                message: 'Vui lòng nhập số điện thoại của bạn'
+              }
+            ]}
+          >
+            <Input placeholder="Nhập số điện thoại của bạn" />
+          </Form.Item>
+        )}
 
-        <Form.Item
-          name="social_media"
-          label="Link mạng xã hội Facebook"
-          rules={[
-            {
-              required: contactMethod === 'social_media',
-              message: 'Vui lòng nhập link mạng xã hội của bạn'
-            }
-          ]}
-        >
-          <Input placeholder="Nhập link mạng xã hội của bạn" />
-        </Form.Item>
+        {/* Hiển thị trường link Facebook nếu chọn phương thức liên hệ là social_media */}
+        {contactMethod === 'social_media' && (
+          <Form.Item
+            name="social_media"
+            label="Link mạng xã hội Facebook"
+            rules={[
+              {
+                required: true,
+                message: 'Vui lòng nhập link mạng xã hội của bạn'
+              }
+            ]}
+          >
+            <Input placeholder="Nhập link mạng xã hội của bạn" />
+          </Form.Item>
+        )}
 
         <Form.Item
           label="Địa chỉ"

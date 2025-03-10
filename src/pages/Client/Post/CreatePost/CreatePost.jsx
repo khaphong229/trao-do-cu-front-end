@@ -113,37 +113,39 @@ const CreatePostModal = () => {
   ]
 
   return (
-    <PostForm
-      title="Tạo bài đăng"
-      isVisible={isCreateModalVisible}
-      onCancel={() => dispatch(setCreateModalVisibility(false))}
-      formData={dataCreatePost}
-      isLoading={isLoadingButton}
-      isMobile={isMobile}
-      user={user}
-      onSubmit={formUtils.handleSubmit}
-      formUtils={{
-        ...formUtils,
-        userInfoRef,
-        contentRef,
-        imageRef,
-        socialLinkRef,
-        locationRef,
-        categoryRef
-      }}
-      submitButtonText="Đăng"
-      tourRef={{
-        ref1: userInfoRef,
-        ref2: contentRef,
-        ref3: imageRef,
-        ref4: socialLinkRef,
-        ref5: locationRef,
-        ref6: categoryRef
-      }}
-      showTour={isShowTour}
-      tourSteps={steps}
-      onTourClose={() => dispatch(setShowTour(false))}
-    />
+    <>
+      <PostForm
+        title="Tạo bài đăng"
+        isVisible={isCreateModalVisible}
+        onCancel={() => dispatch(setCreateModalVisibility(false))}
+        formData={dataCreatePost}
+        isLoading={isLoadingButton}
+        isMobile={isMobile}
+        user={user}
+        onSubmit={formUtils.handleSubmit}
+        formUtils={{
+          ...formUtils,
+          userInfoRef,
+          contentRef,
+          imageRef,
+          socialLinkRef,
+          locationRef,
+          categoryRef
+        }}
+        submitButtonText="Đăng"
+        tourRef={{
+          ref1: userInfoRef,
+          ref2: contentRef,
+          ref3: imageRef,
+          ref4: socialLinkRef,
+          ref5: locationRef,
+          ref6: categoryRef
+        }}
+        showTour={isShowTour}
+        tourSteps={steps}
+        onTourClose={() => dispatch(setShowTour(false))}
+      />
+    </>
   )
 }
 

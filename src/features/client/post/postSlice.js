@@ -56,10 +56,6 @@ const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
-    // Your existing reducers...
-    setSelectedPost: (state, action) => {
-      state.postDetail = action.payload
-    },
     //create post action
     setCreateModalVisibility: (state, action) => {
       state.isCreateModalVisible = action.payload

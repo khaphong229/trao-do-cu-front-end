@@ -62,7 +62,6 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     if (!formData.title || !formData.title.trim()) {
       errors.title = 'Vui lòng nhập tiêu đề bài đăng'
     }
-
     if (!formData.image_url || formData.image_url.length === 0) {
       errors.image_url = 'Vui lòng tải lên ít nhất một hình ảnh'
     }
@@ -81,7 +80,6 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
         errors.category_id = 'Vui lòng nhập danh mục'
       }
     }
-
     return errors
   }
 

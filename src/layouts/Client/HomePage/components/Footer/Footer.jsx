@@ -21,7 +21,7 @@ function AppFooter() {
                   TRAO ĐỒ CŨ
                 </span>
               </div>
-              <Text className={styles.text}>Địa chỉ: 122, Hoàng Quốc Việt, Cầu Giấy, Hà Nội.</Text>
+              <Text className={styles.text}>Địa chỉ: 122 Hoàng Quốc Việt, Cầu Giấy, Hà Nội.</Text>
               <Text className={styles.text}>
                 <MailOutlined /> Email: axtralab.ptit@gmail.com
               </Text>
