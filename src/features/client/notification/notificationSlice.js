@@ -8,7 +8,8 @@ const initialState = {
     current: 1,
     isLoading: false,
     error: null
-  }
+  },
+  isVisibleSuccessPopup: false
 }
 
 const notificationSlice = createSlice({
@@ -25,6 +26,9 @@ const notificationSlice = createSlice({
       state.notifications.data.forEach(notification => {
         notification.isRead = true
       })
+    },
+    setVisibleSuccessPopup: (state, action) => {
+      state.isVisibleSuccessPopup = action.payload
     }
   },
   extraReducers: builder => {
@@ -46,5 +50,5 @@ const notificationSlice = createSlice({
   }
 })
 
-export const { markNotificationAsRead, markAllNotificationsAsRead } = notificationSlice.actions
+export const { markNotificationAsRead, markAllNotificationsAsRead, setVisibleSuccessPopup } = notificationSlice.actions
 export default notificationSlice.reducer

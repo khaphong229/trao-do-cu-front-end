@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from 'react'
-import { Card, List, Typography, Button, Empty, Spin, Menu, Divider, Tag, Avatar } from 'antd'
+import { Card, List, Typography, Button, Empty, Spin, Menu, Divider, Avatar } from 'antd'
 import { UseListNotification } from 'hooks/UseListNotification'
 import { Link } from 'react-router-dom'
 import styles from './NotificationMenu.module.scss'
@@ -13,18 +13,15 @@ const NotificationItem = ({ notification, onClick }) => {
   if (notification.isApproved) {
     content = (
       <>
-        <span>{notification.title} </span>
-        <Tag color="success">đồng ý</Tag>
-        <span>
-          {notification.action} "{notification.postTitle}" của bạn.
-        </span>
+        {notification.title} <span style={{ color: 'green' }}>đồng ý</span> <strong>{notification.action}</strong> "
+        {notification.postTitle}" của bạn.
       </>
     )
   } else {
     content = (
-      <span>
-        {notification.title} {notification.action} "{notification.postTitle}".
-      </span>
+      <>
+        {notification.title} <strong>{notification.action}</strong> "{notification.postTitle}".
+      </>
     )
   }
 

@@ -17,7 +17,7 @@ const HeaderIcons = ({ menu }) => {
   const { avatar } = useAvatar()
   const { isAuthenticated, user } = useSelector(state => state.auth)
   const { unreadCount, loadNotifications } = UseListNotification()
-  const { isInfoModalVisible } = useSelector(state => state.giftRequest)
+
   const checkUserContactInfo = () => {
     return (user?.phone || user?.social_media?.facebook) && user?.address
   }

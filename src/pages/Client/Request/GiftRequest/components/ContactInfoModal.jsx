@@ -63,7 +63,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
         }
       }
 
-      console.log('Submitting data:', submissionData)
+      // console.log('Submitting data:', submissionData)
       await onSubmit(submissionData)
     } catch (error) {
       message.error('Có lỗi xảy ra khi cập nhật thông tin')

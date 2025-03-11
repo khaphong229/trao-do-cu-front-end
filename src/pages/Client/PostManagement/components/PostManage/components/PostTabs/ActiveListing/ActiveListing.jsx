@@ -194,9 +194,6 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
       render: (text, record) => (
         <Space direction="vertical" size="small">
           <Typography.Text strong>{text}</Typography.Text>
-          <Typography.Text type="secondary" style={{ fontSize: '12px' }} className={styles.descPost}>
-            {record.description}
-          </Typography.Text>
         </Space>
       )
     },

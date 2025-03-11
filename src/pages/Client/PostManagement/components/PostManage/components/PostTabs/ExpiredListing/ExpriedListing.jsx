@@ -218,12 +218,9 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
       title: 'Tiêu đề',
       dataIndex: 'title',
       key: 'title',
-      render: (text, record) => (
+      render: text => (
         <Space direction="vertical" size="small">
           <Typography.Text strong>{text}</Typography.Text>
-          <Typography.Text type="secondary" style={{ fontSize: '12px' }} className={styles.descPost}>
-            {record.description}
-          </Typography.Text>
         </Space>
       )
     },
@@ -313,7 +310,6 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
               title={<span onClick={() => handlePostDetail(null, item)}>{item.title}</span>}
               description={
                 <Space direction="vertical" size="small">
-                  <Typography.Text className={styles.descPost}>{item.description}</Typography.Text>
                   <Badge
                     status={item.type === 'exchange' ? 'success' : 'processing'}
                     text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
