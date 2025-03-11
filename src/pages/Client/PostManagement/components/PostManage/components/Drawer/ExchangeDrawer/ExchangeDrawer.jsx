@@ -89,7 +89,7 @@ export const ExchangeDrawer = ({
       placement="right"
       onClose={onClose}
       open={visible}
-      width={isMobile ? '100%' : '70%'}
+      width={isMobile.isMobile ? '100%' : '70%'}
       destroyOnClose={true}
       maskClosable={true}
     >

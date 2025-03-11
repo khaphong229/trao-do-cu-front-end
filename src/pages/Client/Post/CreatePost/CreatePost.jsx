@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react'
+import React, { useRef, useEffect, useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   updatePostData,
@@ -12,6 +12,8 @@ import { usePostForm } from 'hooks/usePostForm'
 import omit from 'lodash/omit'
 import { message } from 'antd'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
+import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
+import ContactInfoModal from './components/Modal/Contact'
 
 const TOUR_STORAGE_KEY = 'lastTourShownTime'
 const TOUR_COOLDOWN_DAYS = 3
@@ -20,6 +22,7 @@ const CreatePostModal = () => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const { dataCreatePost, isCreateModalVisible, isLoadingButton, isShowTour } = useSelector(state => state.post)
+  const [pendingPostOpen, setPendingPostOpen] = useState(false)
 
   const userInfoRef = useRef(null)
   const contentRef = useRef(null)
@@ -71,6 +74,55 @@ const CreatePostModal = () => {
     }
   }, [dispatch])
 
+  // Kiểm tra xem user có đủ thông tin liên hệ hay chưa
+  const hasRequiredContactInfo = useCallback(() => {
+    if (!user) return false
+
+    const hasPhone = !!user.phone
+    const hasFacebook = !!(user.social_media && user.social_media.facebook)
+    const hasAddress = !!user.address
+
+    // Yêu cầu có số điện thoại HOẶC Facebook, và phải có địa chỉ
+    return (hasPhone || hasFacebook) && hasAddress
+  }, [user])
+
+  useEffect(() => {
+    if (pendingPostOpen && hasRequiredContactInfo()) {
+      // Nếu đã đủ thông tin liên hệ, mở modal đăng bài
+      dispatch(setCreateModalVisibility(true))
+      setPendingPostOpen(false)
+    }
+  }, [user, pendingPostOpen, hasRequiredContactInfo, dispatch])
+
+  // Hàm xử lý khi người dùng muốn tạo bài đăng
+  const handleOpenCreatePostModal = useCallback(() => {
+    if (hasRequiredContactInfo()) {
+      // Nếu đã có đủ thông tin liên hệ, mở modal đăng bài
+      dispatch(setCreateModalVisibility(true))
+    } else {
+      // Nếu chưa đủ thông tin liên hệ, mở modal cập nhật thông tin
+      setPendingPostOpen(true)
+      dispatch(setInfoModalVisible(true))
+    }
+  }, [hasRequiredContactInfo, dispatch])
+
+  // Xử lý sau khi cập nhật thông tin liên hệ
+  const handleContactInfoSubmit = async contactInfo => {
+    try {
+      // Giả sử bạn có một API để cập nhật thông tin người dùng
+      // const response = await apiUpdateUserContactInfo(contactInfo);
+      // Sau khi cập nhật thành công, mở modal đăng bài
+      if (pendingPostOpen) {
+        dispatch(setCreateModalVisibility(true))
+        setPendingPostOpen(false)
+      }
+      return true
+    } catch (error) {
+      message.error('Có lỗi xảy ra khi cập nhật thông tin liên hệ')
+      return false
+    }
+  }
+
   useEffect(() => {
     if (isCreateModalVisible) {
       checkAndShowTour()
@@ -114,6 +166,8 @@ const CreatePostModal = () => {
 
   return (
     <>
+      <ContactInfoModal onSubmit={handleContactInfoSubmit} />
+
       <PostForm
         title="Tạo bài đăng"
         isVisible={isCreateModalVisible}
@@ -144,6 +198,7 @@ const CreatePostModal = () => {
         showTour={isShowTour}
         tourSteps={steps}
         onTourClose={() => dispatch(setShowTour(false))}
+        onContactInfoSubmit={handleContactInfoSubmit}
       />
     </>
   )

@@ -28,7 +28,8 @@ const PostForm = ({
   tourRef = {},
   showTour = false,
   tourSteps = [],
-  onTourClose = () => {}
+  onTourClose = () => {},
+  onContactInfoSubmit
 }) => {
   const dispatch = useDispatch()
   const {
@@ -98,6 +99,7 @@ const PostForm = ({
         className={styles.createPostModal}
         width={isMobile ? '90%' : 600}
         style={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
+        onSubmit={onContactInfoSubmit}
       >
         <UserInfoSection contentType={contentType} ref1={tourRef.ref1} errors={formErrors} />
 
@@ -147,7 +149,6 @@ const PostForm = ({
       />
 
       <ContactInfoModal
-        onSubmit={handleInfoSubmit}
         facebookLink={safeFormData.facebookLink || ''}
         setFacebookLink={facebookLink => handleFieldChange('facebookLink', facebookLink)}
         error={formErrors.facebookLink}

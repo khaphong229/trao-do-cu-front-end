@@ -87,7 +87,7 @@ export const RegistrationDrawer = ({
       closable={true}
       onClose={onClose}
       open={visible}
-      width={isMobile ? '100%' : '70%'}
+      width={isMobile.isMobile ? '100%' : '70%'}
       className={styles.registrationDrawer}
     >
       <Card className={styles.registrationCard}>

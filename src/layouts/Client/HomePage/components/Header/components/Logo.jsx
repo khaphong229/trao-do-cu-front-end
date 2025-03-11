@@ -8,11 +8,11 @@ import { getAllCategory } from 'features/client/category/categoryThunks'
 import { getCategories, setCategories } from 'utils/localStorageUtils'
 import { setCategory } from 'features/client/category/categorySlice'
 
-// Modified to pass parentId as a parameter when handling child items
+// Fixed to use category.id for navigation instead of parent ID
 const handleMenuItemClick = (e, category, navigate, parentId) => {
   e.domEvent.stopPropagation()
-  // Use parentId if it exists (meaning this is a child category), otherwise use category's own id
-  const navigateId = parentId || category.id
+  // Always use the category's own ID for navigation
+  const navigateId = category.id
   navigate(`/post/category/${navigateId === '67c6c5ecf83ba5fb6ecfaa0e' ? 'all' : navigateId}`)
 }
 

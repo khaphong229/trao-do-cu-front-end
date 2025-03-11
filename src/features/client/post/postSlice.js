@@ -20,6 +20,7 @@ const initialState = {
       zalo: ''
     }
   },
+  isPendingPostOpen: false, // Thêm state để theo dõi trạng thái chờ mở form đăng bài
   isShowTour: false,
   isLoadingModal: false,
   isLoadingButton: false,
@@ -59,6 +60,9 @@ const postSlice = createSlice({
     //create post action
     setCreateModalVisibility: (state, action) => {
       state.isCreateModalVisible = action.payload
+    },
+    setPendingPostOpen: (state, action) => {
+      state.isPendingPostOpen = action.payload
     },
     setSocialLinkModalVisibility: (state, action) => {
       state.isSocialLinkModalVisible = action.payload
@@ -300,7 +304,8 @@ export const {
   updatePostRequestStatus,
   setViewMode,
   setSortOrder,
-  setCityFilter
+  setCityFilter,
+  setPendingPostOpen
 } = postSlice.actions
 
 export default postSlice.reducer

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, Form, Modal, Radio, Input, message, Tooltip } from 'antd'
+import { Button, Form, Modal, Input, message, Tooltip, Typography } from 'antd'
 import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
 import { getCurrentUser } from 'features/auth/authThunks'
 import AddressSelection from 'components/common/AddressSelection'
 
+const { Text } = Typography
+
 export const ContactInfoModal = ({ onSubmit }) => {
   const dispatch = useDispatch()
   const [form] = Form.useForm()
-  const [contactMethod, setContactMethod] = useState('')
   const [fullAddress, setFullAddress] = useState('')
   const [addressTouched, setAddressTouched] = useState(false)
 
@@ -26,13 +27,10 @@ export const ContactInfoModal = ({ onSubmit }) => {
       const existingFacebook = user.social_media?.facebook
       const existingPhone = user.phone
 
-      const initialMethod = existingPhone ? 'phone' : 'social_media'
-      setContactMethod(initialMethod)
       setFullAddress(user?.address || '')
       setAddressTouched(false)
 
       form.setFieldsValue({
-        contact_method: initialMethod,
         phone: existingPhone || '',
         social_media: existingFacebook || ''
       })
@@ -53,22 +51,15 @@ export const ContactInfoModal = ({ onSubmit }) => {
         return
       }
 
-      // Chỉ gửi thông tin của phương thức liên hệ được chọn
+      // Tạo dữ liệu gửi đi
       const submissionData = {
         ...values,
-        address: fullAddress
-      }
-
-      if (values.contact_method === 'phone') {
-        submissionData.phone = values.phone
-        submissionData.social_media = user.social_media || {}
-      } else {
-        submissionData.social_media = {
+        address: fullAddress,
+        social_media: {
           facebook: values.social_media,
           zalo: user.social_media?.zalo || '',
           instagram: user.social_media?.instagram || ''
         }
-        submissionData.phone = user.phone || ''
       }
 
       await onSubmit(submissionData)
@@ -88,48 +79,44 @@ export const ContactInfoModal = ({ onSubmit }) => {
   return (
     <Modal title="Cập nhật thông tin liên hệ" open={isInfoModalVisible} onCancel={handleCancel} footer={null}>
       <Form form={form} onFinish={handleSubmit} layout="vertical">
+        <div style={{ marginBottom: 16 }}>
+          <span style={{ color: '#ff4d4f', marginRight: 4 }}>*</span>
+          <Tooltip title="Cung cấp thông tin liên hệ của bạn">Phương thức liên hệ</Tooltip>
+        </div>
+
         <Form.Item
-          name="contact_method"
-          label={<Tooltip title="Tùy chọn 1 trong 2 cách thức liên hệ chính">Phương thức liên hệ chính</Tooltip>}
-          rules={[{ required: true, message: 'Vui lòng chọn phương thức liên hệ chính' }]}
+          name="phone"
+          label="Số điện thoại"
+          rules={[
+            {
+              required: true,
+              message: 'Vui lòng nhập số điện thoại của bạn'
+            }
+          ]}
+          style={{ marginTop: 0, marginBottom: 16 }}
         >
-          <Radio.Group onChange={e => setContactMethod(e.target.value)}>
-            <Radio value="phone">Số điện thoại</Radio>
-            <Radio value="social_media">Facebook</Radio>
-          </Radio.Group>
+          <Input placeholder="Nhập số điện thoại của bạn" />
         </Form.Item>
 
-        {/* Hiển thị trường số điện thoại nếu chọn phương thức liên hệ là phone */}
-        {contactMethod === 'phone' && (
-          <Form.Item
-            name="phone"
-            label="Số điện thoại"
-            rules={[
-              {
-                required: true,
-                message: 'Vui lòng nhập số điện thoại của bạn'
-              }
-            ]}
-          >
-            <Input placeholder="Nhập số điện thoại của bạn" />
-          </Form.Item>
-        )}
+        <Form.Item
+          name="social_media"
+          label="Link mạng xã hội Facebook"
+          rules={[
+            {
+              required: false,
+              message: 'Vui lòng nhập link mạng xã hội của bạn'
+            }
+          ]}
+          style={{ marginBottom: 8 }}
+        >
+          <Input placeholder="Nhập link mạng xã hội của bạn" />
+        </Form.Item>
 
-        {/* Hiển thị trường link Facebook nếu chọn phương thức liên hệ là social_media */}
-        {contactMethod === 'social_media' && (
-          <Form.Item
-            name="social_media"
-            label="Link mạng xã hội Facebook"
-            rules={[
-              {
-                required: true,
-                message: 'Vui lòng nhập link mạng xã hội của bạn'
-              }
-            ]}
-          >
-            <Input placeholder="Nhập link mạng xã hội của bạn" />
-          </Form.Item>
-        )}
+        <div style={{ marginTop: -8, marginBottom: 16 }}>
+          <Text type="secondary" style={{ fontSize: '12px' }}>
+            * Chọn 1 trong 2 phương thức liên hệ
+          </Text>
+        </div>
 
         <Form.Item
           label="Địa chỉ"
