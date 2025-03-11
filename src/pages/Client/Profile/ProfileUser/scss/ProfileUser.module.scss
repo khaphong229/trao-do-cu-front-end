@@ -537,6 +537,9 @@ $breakpoint-xl: 1200px;
     }
   }
 }
+.error-message{
+  color: red;
+}
 
 /* Responsive */
 @media (max-width: $breakpoint-sm) {

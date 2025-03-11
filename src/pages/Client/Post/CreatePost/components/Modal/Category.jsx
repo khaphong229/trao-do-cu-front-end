@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { message, Modal, Tree } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCategoryModalVisibility, updatePostData } from 'features/client/post/postSlice'
@@ -11,12 +11,35 @@ const CategoryModal = () => {
   const { isCategoryModalVisible } = useSelector(state => state.post)
   const { categories, isLoading } = useSelector(state => state.category)
 
-  // Reset danh mục đã chọn khi mở modal
+  // Thêm state để lưu các key của node đã mở rộng
+  const [expandedKeys, setExpandedKeys] = useState([])
+
+  // Không reset danh mục đã chọn khi mở modal
   useEffect(() => {
-    if (isCategoryModalVisible) {
-      dispatch(setSelectedCategory(null)) // Reset danh mục đã chọn
+    if (isCategoryModalVisible && selectedCategory) {
+      // Tìm các node cha của node đã chọn để mở rộng
+      if (selectedCategory.dataRef && selectedCategory.dataRef.parent) {
+        const findParentPath = (items, targetId, path = []) => {
+          for (const item of items) {
+            if (item._id === targetId) {
+              return [...path, item._id]
+            }
+
+            if (item.children && item.children.length > 0) {
+              const found = findParentPath(item.children, targetId, [...path, item._id])
+              if (found.length) return found
+            }
+          }
+          return []
+        }
+
+        const parentPath = findParentPath(categories, selectedCategory.dataRef.parent)
+        if (parentPath.length > 0) {
+          setExpandedKeys(parentPath)
+        }
+      }
     }
-  }, [isCategoryModalVisible, dispatch])
+  }, [isCategoryModalVisible, selectedCategory, categories])
 
   const onSelect = (_, { selectedNodes, node }) => {
     if (selectedNodes.length > 0) {
@@ -26,20 +49,22 @@ const CategoryModal = () => {
       dispatch(setSelectedCategory(selectedNode))
       dispatch(updatePostData({ category_id: categoryId }))
 
-      if (node.children) {
-        node.expanded = !node.expanded
+      // Nếu node không có children (node lá), tự động đóng modal và hiển thị thông báo
+      if (!node.children || node.children.length === 0) {
+        dispatch(setCategoryModalVisibility(false))
+        message.success('Chọn danh mục thành công!')
       }
     }
   }
 
-  const handleOk = () => {
-    dispatch(setCategoryModalVisibility(false))
-    message.success('Chọn danh mục thành công!')
+  // Xử lý sự kiện mở rộng/thu gọn node
+  const onExpand = expandedKeys => {
+    setExpandedKeys(expandedKeys)
   }
 
   const handleCancel = () => {
     dispatch(setCategoryModalVisibility(false))
-    dispatch(setSelectedCategory(null)) // Reset danh mục khi đóng modal
+    // Không reset selectedCategory khi đóng modal để lưu lại lựa chọn
   }
 
   const renderTreeNodes = data =>
@@ -57,10 +82,8 @@ const CategoryModal = () => {
     <Modal
       title="Chọn danh mục"
       open={isCategoryModalVisible}
-      onOk={handleOk}
       onCancel={handleCancel}
-      okText="Lưu"
-      cancelText="Hủy"
+      footer={null}
       width={500}
       className={styles.categoryModal}
     >
@@ -71,6 +94,8 @@ const CategoryModal = () => {
           <Tree
             showLine={false}
             onSelect={onSelect}
+            onExpand={onExpand}
+            expandedKeys={expandedKeys}
             selectedKeys={selectedCategory?.key ? [selectedCategory.key] : []}
             className={styles.categoryTree}
             expandAction="click"

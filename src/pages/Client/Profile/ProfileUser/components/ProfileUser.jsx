@@ -295,7 +295,12 @@ const ProfilePage = () => {
                           placeholder="Nhập mật khẩu hiện tại"
                           value={formData.currentPassword}
                           onChange={handleChangePassword}
+                          required
+                          status={!formData.currentPassword && error ? 'error' : ''}
                         />
+                        {!formData.currentPassword && error && (
+                          <div className={styles['error-message']}>Vui lòng nhập mật khẩu hiện tại</div>
+                        )}
                       </div>
 
                       <div className={styles['form-item']}>
@@ -305,7 +310,20 @@ const ProfilePage = () => {
                           placeholder="Nhập mật khẩu mới"
                           value={formData.newPassword}
                           onChange={handleChangePassword}
+                          required
+                          status={
+                            (!formData.newPassword || (formData.newPassword && formData.newPassword.length < 8)) &&
+                            error
+                              ? 'error'
+                              : ''
+                          }
                         />
+                        {!formData.newPassword && error && (
+                          <div className={styles['error-message']}>Vui lòng nhập mật khẩu mới</div>
+                        )}
+                        {formData.newPassword && formData.newPassword.length < 8 && (
+                          <div className={styles['error-message']}>Mật khẩu phải có ít nhất 6 ký tự</div>
+                        )}
                       </div>
 
                       <div className={styles['form-item']}>
@@ -315,7 +333,19 @@ const ProfilePage = () => {
                           placeholder="Xác nhận mật khẩu mới"
                           value={formData.confirmPassword}
                           onChange={handleChangePassword}
+                          required
+                          status={
+                            (formData.newPassword !== formData.confirmPassword || !formData.confirmPassword) && error
+                              ? 'error'
+                              : ''
+                          }
                         />
+                        {!formData.confirmPassword && error && (
+                          <div className={styles['error-message']}>Vui lòng xác nhận mật khẩu mới</div>
+                        )}
+                        {formData.newPassword !== formData.confirmPassword && formData.confirmPassword && (
+                          <div className={styles['error-message']}>Mật khẩu xác nhận không khớp với mật khẩu mới</div>
+                        )}
                       </div>
 
                       <div className={styles['form-actions']}>
