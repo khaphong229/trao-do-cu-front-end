@@ -268,10 +268,10 @@ const ProfilePage = () => {
                   <Select.Option value="Khác">Khác</Select.Option>
                 </Select>
               </div>
-              <div className={styles['form-group']}>
+              {/* <div className={styles['form-group']}>
                 <label htmlFor="dob">Ngày, tháng, năm sinh</label>
                 <Input id="dob" type="date" />
-              </div>
+              </div> */}
               <div className={styles['form-actions1']}>
                 <Button type="primary" block style={{ width: '100px' }} onClick={handleUpdateMe}>
                   Thay đổi

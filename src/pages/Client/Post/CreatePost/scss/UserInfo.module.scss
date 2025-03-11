@@ -30,6 +30,16 @@
         margin-left: 0 !important;
       }
     }
+    .radioWrap {
+      :global {
+        @media (max-width: 400px) {
+          span.ant-radio + * {
+            padding-inline-start: 4px;
+            padding-inline-end: 4px;
+          }
+        }
+      }
+    }
   }
 }
 

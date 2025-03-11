@@ -30,7 +30,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
       form.setFieldsValue({
         contact_method: initialMethod,
         phone: existingPhone || '',
-        facebook: existingFacebook
+        social_media: existingFacebook
       })
     }
   }, [user, isSocialLinkModalVisible, form])
@@ -42,16 +42,20 @@ export const ContactInfoModal = ({ onSubmit }) => {
       }
 
       if (values.contact_method === 'social_media') {
-        submissionData.social_media = values.facebook || user?.social_media?.facebook || ''
+        submissionData.social_media = {
+          facebook: values.social_media || user.social_media?.facebook || '',
+          zalo: user.social_media?.zalo || '',
+          instagram: user.social_media?.instagram || ''
+        }
       } else {
         submissionData.phone = values.phone || user?.phone || ''
       }
 
       if (typeof onSubmit === 'function') {
         await onSubmit(submissionData)
-        dispatch(setSocialLinkModalVisibility(false))
+        // dispatch(setSocialLinkModalVisibility(false))
       } else {
-        message.error('Có lỗi xảy ra khi cập nhật thông tin: onSubmit is not a function')
+        message.error('Có lỗi xảy ra khi cập nhật thông tin')
       }
     } catch (error) {
       message.error('Có lỗi xảy ra khi cập nhật thông tin')
@@ -89,7 +93,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
 
         {contactMethod === 'social_media' && (
           <Form.Item
-            name="facebook"
+            name="social_media"
             label="Link mạng xã hội Facebook"
             rules={[{ required: true, message: 'Vui lòng nhập link Facebook' }]}
           >

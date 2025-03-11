@@ -58,21 +58,21 @@ export const ContactInfoModal = ({ onSubmit }) => {
         ...values,
         address: fullAddress
       }
-
+      console.log(submissionData)
       if (values.contact_method === 'phone') {
         submissionData.phone = values.phone
         submissionData.social_media = user.social_media || {}
       } else {
         submissionData.social_media = {
-          facebook: values.social_media,
+          facebook: values.social_media || '',
           zalo: user.social_media?.zalo || '',
           instagram: user.social_media?.instagram || ''
         }
         submissionData.phone = user.phone || ''
       }
-
+      console.log(submissionData)
       await onSubmit(submissionData)
-      dispatch(setInfoModalVisible(false))
+      // dispatch(setInfoModalVisible(false))
     } catch (error) {
       message.error('Có lỗi xảy ra khi cập nhật thông tin')
     }

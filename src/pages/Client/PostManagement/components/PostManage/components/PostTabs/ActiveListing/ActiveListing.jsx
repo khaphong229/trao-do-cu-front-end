@@ -281,7 +281,6 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
               title={<span onClick={() => handlePostDetail(null, item)}>{item.title}</span>}
               description={
                 <Space direction="vertical" size="small">
-                  <Typography.Text className={styles.descPost}>{item.description}</Typography.Text>
                   <Badge
                     status={item.type === 'exchange' ? 'success' : 'processing'}
                     text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}

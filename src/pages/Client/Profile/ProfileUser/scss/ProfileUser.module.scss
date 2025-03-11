@@ -275,6 +275,12 @@ $breakpoint-xl: 1200px;
     margin-bottom: 20px;
     position: relative;
 
+    :global {
+      .ant-select-single {
+        height: 44px;
+      }
+    }
+
     label {
       display: block;
       margin-bottom: 10px;

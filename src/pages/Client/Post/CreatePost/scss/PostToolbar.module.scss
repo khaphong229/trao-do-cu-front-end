@@ -114,6 +114,14 @@
     background-color: #f5f5f5;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 50px;
+    display: block;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
 
     &:nth-child(2) {
       grid-column: 2 / span 2;

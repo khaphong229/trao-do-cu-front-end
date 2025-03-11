@@ -155,7 +155,7 @@ const RequestedPosts = () => {
                   src={
                     request?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${request.post_id.image_url[0]}` : imgNotFound
                   }
-                  alt={request.post_id.title}
+                  alt={request.post_id?.title}
                   style={{ height: 200, objectFit: 'cover' }}
                   fallback={avt}
                   preview={false} // Disable image preview

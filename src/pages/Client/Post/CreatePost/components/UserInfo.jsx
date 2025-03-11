@@ -26,12 +26,17 @@ const UserInfo = ({ contentType, ref1 }) => {
         {contentType === 'post' && (
           <Radio.Group
             ref={ref1}
+            className={styles.radioWrap}
             value={dataCreatePost.type}
             onChange={e => dispatch(updatePostData({ type: e.target.value }))}
             style={{ marginLeft: 10 }}
           >
-            <Radio value="gift">Trao Tặng</Radio>
-            <Radio value="exchange">Trao Đổi</Radio>
+            <Radio value="gift" className={styles.text}>
+              Trao Tặng
+            </Radio>
+            <Radio value="exchange" className={styles.text}>
+              Trao Đổi
+            </Radio>
           </Radio.Group>
         )}
       </div>

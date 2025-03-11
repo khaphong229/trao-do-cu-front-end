@@ -9,6 +9,7 @@ import withAuth from 'hooks/useAuth'
 import { UseListNotification } from 'hooks/UseListNotification'
 import { NotificationMenu } from 'constants/menus'
 import { useAvatar } from 'hooks/useAvatar'
+import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
 
 const HeaderIcons = ({ menu }) => {
   const dispatch = useDispatch()
@@ -16,6 +17,19 @@ const HeaderIcons = ({ menu }) => {
   const { avatar } = useAvatar()
   const { isAuthenticated, user } = useSelector(state => state.auth)
   const { unreadCount, loadNotifications } = UseListNotification()
+  const { isInfoModalVisible } = useSelector(state => state.giftRequest)
+  const checkUserContactInfo = () => {
+    return (user?.phone || user?.social_media?.facebook) && user?.address
+  }
+
+  const handlePost = () => {
+    if (!checkUserContactInfo()) {
+      dispatch(setInfoModalVisible(true))
+    } else {
+      dispatch(setCreateModalVisibility(true))
+      dispatch(setShowTour(true))
+    }
+  }
 
   return (
     <>
@@ -38,15 +52,7 @@ const HeaderIcons = ({ menu }) => {
             <DownOutlined className={styles.IconDown} />
           </Space>
         </Dropdown>
-        <AuthenticatedButton
-          icon={<SignatureOutlined />}
-          type="default"
-          className={styles.Button}
-          onClick={() => {
-            dispatch(setCreateModalVisibility(true))
-            dispatch(setShowTour(true))
-          }}
-        >
+        <AuthenticatedButton icon={<SignatureOutlined />} type="default" className={styles.Button} onClick={handlePost}>
           Đăng bài
         </AuthenticatedButton>
       </Space>
