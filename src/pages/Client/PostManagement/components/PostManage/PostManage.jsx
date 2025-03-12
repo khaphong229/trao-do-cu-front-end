@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Tabs } from 'antd'
+import { ArrowLeftOutlined, TableOutlined, AppstoreOutlined } from '@ant-design/icons'
 import styles from './PostManage.module.scss'
 import CreatePostModal from 'pages/Client/Post/CreatePost/CreatePost'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCreateModalVisibility, setViewMode } from 'features/client/post/postSlice'
 import { UserInfo } from './components/UserInfor/UserInfor'
 import { ActiveListings } from './components/PostTabs/ActiveListing/ActiveListing'
-import { ExpiredListings } from './components/PostTabs/ExpiredListing/ExpriedListing'
 import RequestedPosts from './components/PostTabs/RequestedPosts'
-import { TableOutlined, AppstoreOutlined } from '@ant-design/icons'
+import { ExpiredListings } from './components/PostTabs/ExpiredListing/ExpriedListing'
 
 const { TabPane } = Tabs
 
 export const PostManage = ({ tabType }) => {
   const dispatch = useDispatch()
-
   const { user } = useSelector(state => state.auth)
   const { viewMode } = useSelector(state => state.post)
+
   const [activeTab, setActiveTab] = useState(tabType)
   const [activeSubTab, setActiveSubTab] = useState('all')
   const [tabRefreshKey, setTabRefreshKey] = useState(0)
+  const [showingExpired, setShowingExpired] = useState(false)
 
   useEffect(() => {
     setActiveTab(tabType)
+    setShowingExpired(false)
   }, [tabType])
 
   const handleTabChange = newTab => {
@@ -30,16 +32,41 @@ export const PostManage = ({ tabType }) => {
       setActiveTab(newTab)
       setActiveSubTab('all')
       setTabRefreshKey(prev => prev + 1)
+      setShowingExpired(false)
     }
   }
 
+  const handleShowExpiredListings = () => {
+    setShowingExpired(true)
+    setActiveSubTab('all')
+    setTabRefreshKey(prev => prev + 1)
+  }
+
+  const handleBackToActive = () => {
+    setShowingExpired(false)
+    setActiveSubTab('all')
+    setTabRefreshKey(prev => prev + 1)
+  }
+
   const tabItems = [
-    { key: 'active', label: 'Đang hiển thị' },
-    { key: 'expired', label: 'Đã thành công' },
-    { key: 'requested', label: 'Đã yêu cầu' }
+    { key: 'active', label: 'Sản phẩm trao đi' },
+    { key: 'requested', label: 'Sản phẩm đang chờ duyệt' }
   ]
 
   const renderTabContent = () => {
+    if (showingExpired && activeTab === 'active') {
+      return (
+        <div>
+          <ExpiredListings
+            activeSubTab={activeSubTab}
+            setActiveSubTab={setActiveSubTab}
+            refreshKey={tabRefreshKey}
+            isActive={true}
+          />
+        </div>
+      )
+    }
+
     switch (activeTab) {
       case 'active':
         return (
@@ -48,15 +75,7 @@ export const PostManage = ({ tabType }) => {
             setActiveSubTab={setActiveSubTab}
             refreshKey={tabRefreshKey}
             isActive={true}
-          />
-        )
-      case 'expired':
-        return (
-          <ExpiredListings
-            activeSubTab={activeSubTab}
-            setActiveSubTab={setActiveSubTab}
-            refreshKey={tabRefreshKey}
-            isActive={true}
+            onShowExpired={handleShowExpiredListings}
           />
         )
       case 'requested':
@@ -79,7 +98,16 @@ export const PostManage = ({ tabType }) => {
               ))}
             </Tabs>
 
-            <div className={styles.viewToggle}>
+            <div className={styles.actions}>
+              {showingExpired && (
+                <Button
+                  onClick={handleBackToActive}
+                  type="primary"
+                  icon={<ArrowLeftOutlined />}
+                  size="large"
+                  className={styles.backButton}
+                />
+              )}
               <Button
                 type={viewMode === 'table' ? 'primary' : 'default'}
                 icon={viewMode === 'table' ? <TableOutlined /> : <AppstoreOutlined />}

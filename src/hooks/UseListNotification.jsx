@@ -25,6 +25,11 @@ export const UseListNotification = () => {
       try {
         const response = await dispatch(getNotificationPagination({ current: page, pageSize: 10 }))
 
+        if (!response.payload || !response.payload.data) {
+          console.error('Invalid response format:', response)
+          return
+        }
+
         if (isPolling) {
           const currentUnreadCount = response.payload.data.data.filter(n => !n.isRead).length
           if (currentUnreadCount !== lastPolledCount) {
@@ -48,22 +53,22 @@ export const UseListNotification = () => {
 
         setCurrentPage(page)
       } catch (error) {
-        // console.error('Failed to load notifications:', error)
+        console.error('Failed to load notifications:', error)
       }
     },
     [dispatch, isAuthenticated, lastPolledCount]
   )
 
-  // Set up polling interval
-  // useEffect(() => {
-  //   if (!isAuthenticated) return
+  // Uncommented the polling interval for real-time notifications
+  useEffect(() => {
+    if (!isAuthenticated) return
 
-  //   const pollInterval = setInterval(() => {
-  //     loadNotifications(1, true)
-  //   }, 60000) // Poll every minute
+    const pollInterval = setInterval(() => {
+      loadNotifications(1, true)
+    }, 60000) // Poll every minute
 
-  //   return () => clearInterval(pollInterval)
-  // }, [isAuthenticated, loadNotifications])
+    return () => clearInterval(pollInterval)
+  }, [isAuthenticated, loadNotifications])
 
   // Initial load
   useEffect(() => {
@@ -86,10 +91,15 @@ export const UseListNotification = () => {
     try {
       const data = await dispatch(markNotificationAsRead(notificationId))
       if (data.payload?.data?.isRead === true) {
-        loadNotifications(currentPage)
+        // Update the notification locally first for better UX
+        setAllNotifications(prevNotifications =>
+          prevNotifications.map(notification =>
+            notification._id === notificationId ? { ...notification, isRead: true } : notification
+          )
+        )
       }
     } catch (error) {
-      // console.error('Failed to mark notification as read:', error)
+      console.error('Failed to mark notification as read:', error)
     }
   }
 
@@ -97,49 +107,67 @@ export const UseListNotification = () => {
     try {
       const response = await dispatch(markAllNotificationsAsRead())
       if (response.payload.status === 200 || response.payload.status === 201) {
+        // Update all notifications locally first for better UX
+        setAllNotifications(prevNotifications =>
+          prevNotifications.map(notification => ({ ...notification, isRead: true }))
+        )
+        // Then reload from server to ensure sync
         loadNotifications(1)
       }
     } catch (error) {
-      // console.error('Failed to mark all notifications as read:', error)
+      console.error('Failed to mark all notifications as read:', error)
     }
   }
 
   const getNotificationText = typeInput => {
+    if (!typeInput) return ''
+
     const [status, type] = typeInput.split('_')
 
     if (status === 'request') {
       return type === 'receive' ? 'yêu cầu nhận' : 'yêu cầu đổi'
     } else if (status === 'approve') {
-      return type === 'receive' ? 'yêu cầu nhận' : 'yêu cầu đổi'
+      return type === 'receive' ? 'đã chấp nhận yêu cầu nhận' : 'đã chấp nhận yêu cầu đổi'
+    } else if (status === 'reject') {
+      return type === 'receive' ? 'đã từ chối yêu cầu nhận' : 'đã từ chối yêu cầu đổi'
     }
     return ''
   }
 
   const getNotificationName = notification => {
+    if (!notification || !notification.type) return 'Ẩn danh'
+
     const type = notification.type.split('_')[0]
     if (type === 'request') {
       return notification.source_id?.user_req_id?.name || 'Ẩn danh'
     }
-    return notification.post_id.user_id?.name || 'Ẩn danh'
+    return notification.post_id?.user_id?.name || 'Ẩn danh'
   }
 
   const formattedNotifications = useMemo(() => {
-    if (!allNotifications) return []
+    if (!allNotifications || !Array.isArray(allNotifications)) return []
 
-    return allNotifications.map(notification => ({
-      id: notification?._id,
-      title: getNotificationName(notification),
-      action: getNotificationText(notification?.type),
-      postTitle: notification.post_id?.title || 'không có tiêu đề',
-      isApproved: notification?.type.startsWith('approve'),
-      time: formatTimeAgo(notification.created_at),
-      isRead: notification.isRead,
-      postId: notification.post_id?._id
-    }))
+    return allNotifications
+      .map(notification => {
+        if (!notification) return null
+
+        return {
+          id: notification?._id,
+          title: getNotificationName(notification),
+          action: getNotificationText(notification?.type),
+          postTitle: notification.post_id?.title || 'không có tiêu đề',
+          isApproved: notification?.type?.startsWith('approve'),
+          time: formatTimeAgo(notification.created_at),
+          isRead: notification.isRead,
+          postId: notification.post_id?._id,
+          sourceId: notification.source_id?._id
+        }
+      })
+      .filter(Boolean) // Remove null items
   }, [allNotifications])
 
   const unreadCount = useMemo(() => {
-    if (!allNotifications) return 0
+    if (!allNotifications || !Array.isArray(allNotifications)) return 0
     return allNotifications.filter(notification => !notification.isRead).length
   }, [allNotifications])
 

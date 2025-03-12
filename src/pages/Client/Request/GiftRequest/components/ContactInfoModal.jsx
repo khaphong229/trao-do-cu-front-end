@@ -4,7 +4,9 @@ import { Button, Form, Modal, Input, message, Tooltip, Typography } from 'antd'
 import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
 import { getCurrentUser } from 'features/auth/authThunks'
 import AddressSelection from 'components/common/AddressSelection'
+
 const { Text } = Typography
+
 export const ContactInfoModal = ({ onSubmit }) => {
   const dispatch = useDispatch()
   const [form] = Form.useForm()
@@ -22,12 +24,15 @@ export const ContactInfoModal = ({ onSubmit }) => {
 
   useEffect(() => {
     if (user && isInfoModalVisible) {
+      const existingFacebook = user.social_media?.facebook
+      const existingPhone = user.phone
+
       setFullAddress(user?.address || '')
       setAddressTouched(false)
 
       form.setFieldsValue({
-        phone: user?.phone || '',
-        social_media: user?.social_media?.facebook || ''
+        phone: existingPhone || '',
+        social_media: existingFacebook || ''
       })
     }
   }, [user, isInfoModalVisible, form])
@@ -46,24 +51,17 @@ export const ContactInfoModal = ({ onSubmit }) => {
         return
       }
 
-      // Kiểm tra xem có ít nhất một phương thức liên hệ
-      if (!values.phone && !values.social_media) {
-        message.error('Vui lòng nhập ít nhất một phương thức liên hệ (số điện thoại hoặc mạng xã hội)')
-        return
-      }
-
-      // Chuẩn bị dữ liệu gửi đi
+      // Tạo dữ liệu gửi đi
       const submissionData = {
+        ...values,
         address: fullAddress,
-        phone: values.phone || '',
         social_media: {
-          facebook: values.social_media || '',
-          zalo: user?.social_media?.zalo || '',
-          instagram: user?.social_media?.instagram || ''
+          facebook: values.social_media,
+          zalo: user.social_media?.zalo || '',
+          instagram: user.social_media?.instagram || ''
         }
       }
 
-      // console.log('Submitting data:', submissionData)
       await onSubmit(submissionData)
     } catch (error) {
       message.error('Có lỗi xảy ra khi cập nhật thông tin')
@@ -90,7 +88,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
           label="Số điện thoại"
           rules={[
             {
-              required: false, // Không bắt buộc nếu đã nhập social_media
+              required: true,
               message: 'Vui lòng nhập số điện thoại của bạn'
             }
           ]}
@@ -104,7 +102,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
           label="Link mạng xã hội Facebook"
           rules={[
             {
-              required: false, // Không bắt buộc nếu đã nhập phone
+              required: false,
               message: 'Vui lòng nhập link mạng xã hội của bạn'
             }
           ]}
@@ -114,7 +112,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
         </Form.Item>
 
         <div style={{ marginTop: -8, marginBottom: 16 }}>
-          <Text type="secondary" style={{ fontSize: '12px' }}>
+          <Text type="secondary" style={{ fontSize: '12px', color: '#2E8B57' }}>
             * Chọn 1 trong 2 phương thức liên hệ
           </Text>
         </div>

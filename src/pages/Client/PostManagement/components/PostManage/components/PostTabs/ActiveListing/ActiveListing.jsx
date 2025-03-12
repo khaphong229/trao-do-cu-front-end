@@ -12,7 +12,7 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetail from '../components/PostDetail/PostDetail'
 const { TabPane } = Tabs
 
-export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive }) => {
+export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive, onShowExpired }) => {
   const dispatch = useDispatch()
   const { posts = [], total = 0, isLoading, viewMode } = useSelector(state => state.post)
   const [selectedListing, setSelectedListing] = useState(null)
@@ -299,17 +299,12 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
       <div className={styles.tabHeader}>
         <Tabs activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
           {subTabItems.map(subTab => (
-            <TabPane
-              key={subTab.key}
-              tab={
-                <span className={styles.subTabLabel}>
-                  {subTab.label}
-                  {/* <span className={styles.subTabCount}>({subTab.count})</span> */}
-                </span>
-              }
-            />
+            <TabPane key={subTab.key} tab={<span className={styles.subTabLabel}>{subTab.label}</span>} />
           ))}
         </Tabs>
+        <Button type="default" onClick={onShowExpired}>
+          Lịch sử nhận đồ
+        </Button>
       </div>
 
       {viewMode === 'table' ? (

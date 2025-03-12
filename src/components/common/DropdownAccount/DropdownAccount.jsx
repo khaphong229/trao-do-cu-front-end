@@ -1,13 +1,6 @@
 import { handleLogout, NavigateItem } from 'constants/data'
 import { useSelector } from 'react-redux'
-import {
-  ArrowRightOutlined,
-  CheckSquareOutlined,
-  LockOutlined,
-  LogoutOutlined,
-  PlayCircleOutlined,
-  UserOutlined
-} from '@ant-design/icons'
+import { ArrowRightOutlined, LockOutlined, LogoutOutlined, PlayCircleOutlined, UserOutlined } from '@ant-design/icons'
 
 export const useMenuItems = () => {
   const { isAuthenticated } = useSelector(state => state.auth)
@@ -20,11 +13,6 @@ export const useMenuItems = () => {
           label: <NavigateItem to="/management-post?tab=active">Đang hiển thị</NavigateItem>,
           icon: <PlayCircleOutlined style={{ color: '#00b96b' }} />,
           key: 'active'
-        },
-        {
-          label: <NavigateItem to="/management-post?tab=expired">Đã thành công</NavigateItem>,
-          icon: <CheckSquareOutlined style={{ color: '#00b96b' }} />,
-          key: 'expired'
         },
         {
           label: <NavigateItem to="/management-post?tab=requested">Đã yêu cầu</NavigateItem>,
