@@ -15,7 +15,13 @@ export const UseListNotification = () => {
   const [hasMore, setHasMore] = useState(true)
   const [allNotifications, setAllNotifications] = useState([])
   const [lastPolledCount, setLastPolledCount] = useState(0)
-  const { data: notifications, total, isLoading } = useSelector(state => state.notification.notifications)
+  const {
+    data: notifications,
+    total,
+    isLoading,
+    selectedNotification,
+    isVisibleNotificationDetail
+  } = useSelector(state => state.notification.notifications)
   const { isAuthenticated } = useSelector(state => state.auth)
 
   const loadNotifications = useCallback(
@@ -146,7 +152,6 @@ export const UseListNotification = () => {
 
   const formattedNotifications = useMemo(() => {
     if (!allNotifications || !Array.isArray(allNotifications)) return []
-
     return allNotifications
       .map(notification => {
         if (!notification) return null
@@ -160,7 +165,13 @@ export const UseListNotification = () => {
           time: formatTimeAgo(notification.created_at),
           isRead: notification.isRead,
           postId: notification.post_id?._id,
-          sourceId: notification.source_id?._id
+          sourceId: notification.source_id?._id,
+          imageUrl: notification.post_id?.image_url?.[0] || null,
+          status: notification.post_id?.user_id?.status,
+          ownerName: notification.post_id?.user_id?.name,
+          receiverName: notification.source_id?.user_req_id?.name,
+          contact: notification.post_id?.user_id?.phone,
+          facebookLink: notification.post_id?.user_id?.social_media?.facebook
         }
       })
       .filter(Boolean) // Remove null items
@@ -178,6 +189,8 @@ export const UseListNotification = () => {
     isLoading,
     isLoaded,
     hasMore,
+    selectedNotification,
+    isVisibleNotificationDetail, // Ensure this is returned
     loadNotifications,
     loadMore,
     handleMarkAsRead,

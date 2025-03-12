@@ -10,12 +10,12 @@ export const useMenuItems = () => {
       title: 'Quản lý bài đăng',
       items: [
         {
-          label: <NavigateItem to="/management-post?tab=active">Đang hiển thị</NavigateItem>,
+          label: <NavigateItem to="/management-post?tab=active">Sản phẩm trao đi</NavigateItem>,
           icon: <PlayCircleOutlined style={{ color: '#00b96b' }} />,
           key: 'active'
         },
         {
-          label: <NavigateItem to="/management-post?tab=requested">Đã yêu cầu</NavigateItem>,
+          label: <NavigateItem to="/management-post?tab=requested">Sản phẩm đang chờ duyệt</NavigateItem>,
           icon: <ArrowRightOutlined style={{ color: '#00b96b' }} />,
           key: 'requested'
         }

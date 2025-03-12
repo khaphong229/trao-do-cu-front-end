@@ -35,10 +35,10 @@ const NotificationSuccessPopup = () => {
 
       return {
         id: item._id,
-        title: item.post_id.title,
-        userName: item.post_id.user_id.name,
-        phone: item.post_id.user_id.phone,
-        facebook: item.post_id.user_id.social_media.facebook,
+        title: item.post_id?.title,
+        userName: item.post_id?.user_id?.name,
+        phone: item.post_id?.user_id?.phone,
+        facebook: item.post_id?.user_id.social_media?.facebook,
         type: textOfType
       }
     })

@@ -1,28 +1,33 @@
-import React, { useRef, useCallback } from 'react'
+import React, { useRef, useCallback, useState } from 'react'
 import { Card, List, Typography, Button, Empty, Spin, Menu, Divider, Avatar } from 'antd'
 import { UseListNotification } from 'hooks/UseListNotification'
 import { useNavigate } from 'react-router-dom'
 import styles from './NotificationMenu.module.scss'
 import { useAvatar } from 'hooks/useAvatar'
 import { useMenuItems } from 'components/common/DropdownAccount/DropdownAccount'
-import { useDispatch } from 'react-redux'
-import { setVisibleNotificationDetail } from 'features/client/notification/notificationSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  markNotificationAsRead,
+  setSelectedNotification,
+  setVisibleNotificationDetail
+} from 'features/client/notification/notificationSlice'
+import NotificationDetail from 'components/feature/NotificationDetail/NotificationDetail'
 
 const { Text } = Typography
 
-const NotificationItem = ({ notification, onClick, navigate }) => {
+const NotificationItem = ({ notification, onClick, navigate, setDropdownVisible }) => {
   const dispatch = useDispatch()
-  const handleNotificationClick = () => {
-    // Gọi hàm onClick để đánh dấu là đã đọc
-    onClick()
-    dispatch(setVisibleNotificationDetail(true))
 
-    // Sử dụng navigate để điều hướng dựa vào trạng thái isApproved
-    // if (notification.isApproved) {
-    //   navigate('/management-post?tab=expired')
-    // } else {
-    //   navigate('/management-post?tab=active')
-    // }
+  const handleNotificationClick = () => {
+    // Đánh dấu thông báo là đã đọc
+    if (!notification.isRead) {
+      dispatch(markNotificationAsRead(notification._id))
+    }
+    console.log(notification.isApproved)
+    setDropdownVisible(false)
+    // Hiển thị modal chi tiết
+    dispatch(setVisibleNotificationDetail(true))
+    dispatch(setSelectedNotification(notification))
   }
 
   let content
@@ -56,9 +61,10 @@ const NotificationItem = ({ notification, onClick, navigate }) => {
   )
 }
 
-export const NotificationMenu = () => {
+export const NotificationMenu = ({ setDropdownVisible }) => {
   const navigate = useNavigate()
   const { notifications, isLoading, hasMore, handleMarkAsRead, handleMarkAllAsRead, loadMore } = UseListNotification()
+  const { isVisibleNotificationDetail, selectedNotification } = useSelector(state => state.notification)
 
   const observerRef = useRef(null)
   const lastElementRef = useRef(null)
@@ -98,52 +104,66 @@ export const NotificationMenu = () => {
       observerRef.current.observe(lastElementRef.current)
     }
   }, [notifications])
+
+  // Đóng dropdown khi mở modal chi tiết
+  React.useEffect(() => {
+    if (isVisibleNotificationDetail) {
+      setDropdownVisible(false)
+    }
+  }, [isVisibleNotificationDetail])
+
   return (
-    <Card
-      className={styles.notificationCard}
-      title={
-        <div className={styles.cardHeader}>
-          <span>Thông báo</span>
-          {notifications.length > 0 && (
-            <Button type="link" onClick={handleMarkAllAsRead}>
-              Đánh dấu tất cả đã đọc
-            </Button>
-          )}
-        </div>
-      }
-    >
-      {isLoading && notifications.length === 0 ? (
-        <div className={styles.loadingContainer}>
-          <Spin />
-        </div>
-      ) : notifications.length === 0 ? (
-        <Empty
-          description="Không có thông báo mới"
-          className={styles.emptyState}
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
-      ) : (
-        <div className={styles.notificationList}>
-          <List
-            dataSource={notifications}
-            renderItem={(notification, index) => (
-              <div ref={index === notifications.length - 1 ? lastElementRef : null}>
-                <NotificationItem
-                  notification={notification}
-                  onClick={() => handleMarkAsRead(notification.id)}
-                  navigate={navigate}
-                />
+    <>
+      <Card
+        className={styles.notificationCard}
+        title={
+          <div className={styles.cardHeader}>
+            <span>Thông báo</span>
+            {notifications.length > 0 && (
+              <Button type="link" onClick={handleMarkAllAsRead}>
+                Đánh dấu tất cả đã đọc
+              </Button>
+            )}
+          </div>
+        }
+      >
+        {isLoading && notifications.length === 0 ? (
+          <div className={styles.loadingContainer}>
+            <Spin />
+          </div>
+        ) : notifications.length === 0 ? (
+          <Empty
+            description="Không có thông báo mới"
+            className={styles.emptyState}
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        ) : (
+          <div className={styles.notificationList}>
+            <List
+              dataSource={notifications}
+              renderItem={(notification, index) => (
+                <div ref={index === notifications.length - 1 ? lastElementRef : null}>
+                  <NotificationItem
+                    notification={notification}
+                    onClick={() => handleMarkAsRead(notification.id)}
+                    navigate={navigate}
+                    setDropdownVisible={setDropdownVisible}
+                  />
+                </div>
+              )}
+            />
+            {isLoading && (
+              <div className={styles.loadingMore}>
+                <Spin size="small" />
               </div>
             )}
-          />
-          {isLoading && (
-            <div className={styles.loadingMore}>
-              <Spin size="small" />
-            </div>
-          )}
-        </div>
-      )}
-    </Card>
+          </div>
+        )}
+      </Card>
+
+      {/* Hiển thị modal chi tiết thông báo */}
+      {isVisibleNotificationDetail && <NotificationDetail notification={selectedNotification} />}
+    </>
   )
 }
 

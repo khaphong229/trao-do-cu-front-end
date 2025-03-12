@@ -92,27 +92,33 @@ export const PostManage = ({ tabType }) => {
       <div className={styles.tabsContainer}>
         <div className={styles.tabsWrapper}>
           <div className={styles.tabHeader}>
-            <Tabs activeKey={activeTab} onChange={handleTabChange} className={styles.listingTabs}>
-              {tabItems.map(tab => (
-                <TabPane key={tab.key} tab={<span className={styles.tabLabel}>{tab.label}</span>} />
-              ))}
-            </Tabs>
+            {!showingExpired && (
+              <Tabs activeKey={activeTab} onChange={handleTabChange} className={styles.listingTabs}>
+                {tabItems.map(tab => (
+                  <TabPane key={tab.key} tab={<span className={styles.tabLabel}>{tab.label}</span>} />
+                ))}
+              </Tabs>
+            )}
 
             <div className={styles.actions}>
-              {showingExpired && (
+              <div>
+                {showingExpired && (
+                  <Button
+                    onClick={handleBackToActive}
+                    type="primary"
+                    icon={<ArrowLeftOutlined />}
+                    size="large"
+                    className={styles.backButton}
+                  />
+                )}
+              </div>
+              <div>
                 <Button
-                  onClick={handleBackToActive}
-                  type="primary"
-                  icon={<ArrowLeftOutlined />}
-                  size="large"
-                  className={styles.backButton}
+                  type={viewMode === 'table' ? 'primary' : 'default'}
+                  icon={viewMode === 'table' ? <TableOutlined /> : <AppstoreOutlined />}
+                  onClick={() => dispatch(setViewMode(viewMode === 'table' ? 'card' : 'table'))}
                 />
-              )}
-              <Button
-                type={viewMode === 'table' ? 'primary' : 'default'}
-                icon={viewMode === 'table' ? <TableOutlined /> : <AppstoreOutlined />}
-                onClick={() => dispatch(setViewMode(viewMode === 'table' ? 'card' : 'table'))}
-              />
+              </div>
             </div>
           </div>
 

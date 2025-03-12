@@ -10,14 +10,27 @@ import {
   EyeOutlined,
   InfoCircleOutlined
 } from '@ant-design/icons'
+import { setVisibleNotificationDetail } from 'features/client/notification/notificationSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 
 const { Title, Text, Paragraph } = Typography
 
 // Component chính hiển thị modal thông tin sản phẩm
 const NotificationDetail = ({ notification }) => {
-  // Xác định màu và icon dựa vào trạng thái
-  const getStatusBadge = status => {
-    if (status === 'approved') {
+  const dispatch = useDispatch()
+  const { isVisibleNotificationDetail } = useSelector(state => state.notification) // Use useSelector to get the state
+
+  const onClose = () => {
+    dispatch(setVisibleNotificationDetail(false))
+  }
+
+  if (!notification) return null
+
+  const { isApproved, category, postTitle, imageUrl, ownerName, receiverName, contact, facebookLink } = notification
+
+  const getStatusBadge = isApproved => {
+    if (isApproved) {
       return (
         <Tag icon={<CheckCircleOutlined />} color="success">
           Đồng ý
@@ -32,7 +45,6 @@ const NotificationDetail = ({ notification }) => {
     }
   }
 
-  // Xác định màu và text dựa vào thể loại
   const getCategoryBadge = category => {
     if (category === 'gift') {
       return <Tag color="magenta">Tặng</Tag>
@@ -43,7 +55,7 @@ const NotificationDetail = ({ notification }) => {
 
   return (
     <Modal
-      open={visible}
+      open={isVisibleNotificationDetail}
       onCancel={onClose}
       footer={null}
       width="90%"
@@ -57,8 +69,8 @@ const NotificationDetail = ({ notification }) => {
         <Col xs={24} sm={24} md={12} lg={12} xl={10}>
           <div style={{ height: '100%', minHeight: 250 }}>
             <Image
-              alt={productName}
-              src={imageUrl || 'https://via.placeholder.com/500x500'}
+              alt={postTitle}
+              src={imageUrl ? `${URL_SERVER_IMAGE}${imageUrl}` : 'https://via.placeholder.com/300'}
               style={{
                 objectFit: 'cover',
                 width: '100%',
@@ -78,23 +90,17 @@ const NotificationDetail = ({ notification }) => {
 
         {/* Phần thông tin sản phẩm - responsive */}
         <Col xs={24} sm={24} md={12} lg={12} xl={14}>
-          <div style={{ padding: '20px 24px' }}>
+          <div style={{ padding: '10px 14px' }}>
             <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Space>
-                {getStatusBadge(status)}
+                {getStatusBadge(isApproved)}
                 {getCategoryBadge(category)}
               </Space>
             </div>
 
             <Title level={3} style={{ marginTop: 0, marginBottom: 16 }}>
-              {productName}
+              {postTitle}
             </Title>
-
-            {description && (
-              <div style={{ marginBottom: 24 }}>
-                <Paragraph ellipsis={{ rows: 3, expandable: true, symbol: 'Xem thêm' }}>{description}</Paragraph>
-              </div>
-            )}
 
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <div className="product-info-section">
@@ -162,5 +168,4 @@ const NotificationDetail = ({ notification }) => {
     </Modal>
   )
 }
-
 export default NotificationDetail

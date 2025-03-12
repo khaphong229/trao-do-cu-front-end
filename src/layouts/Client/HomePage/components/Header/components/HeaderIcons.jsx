@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Space, Badge, Avatar, Dropdown, Button } from 'antd'
 import { BellOutlined, DownOutlined, SignatureOutlined } from '@ant-design/icons'
 import styles from './scss/HeaderIcons.module.scss'
@@ -18,6 +18,8 @@ const HeaderIcons = ({ menu }) => {
   const { isAuthenticated, user } = useSelector(state => state.auth)
   const { unreadCount, loadNotifications } = UseListNotification()
 
+  const [dropdownVisible, setDropdownVisible] = useState(false) // State để điều khiển dropdown
+
   const checkUserContactInfo = () => {
     return (user?.phone || user?.social_media?.facebook) && user?.address
   }
@@ -35,11 +37,17 @@ const HeaderIcons = ({ menu }) => {
     <>
       <Space size="large" className={styles.contentWrapper}>
         <Dropdown
-          overlay={<NotificationMenu />}
+          overlay={<NotificationMenu setDropdownVisible={setDropdownVisible} />}
           trigger={['click']}
           placement="bottomRight"
           getPopupContainer={() => document.body}
-          onOpenChange={open => open && loadNotifications()}
+          open={dropdownVisible} // Điều khiển dropdown
+          onOpenChange={visible => {
+            setDropdownVisible(visible)
+            if (visible) {
+              loadNotifications()
+            }
+          }}
         >
           <Badge count={unreadCount} size="small" color="red">
             <BellOutlined className={styles.Icon} />
