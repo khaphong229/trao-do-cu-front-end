@@ -53,7 +53,7 @@ const HeaderIcons = ({ menu }) => {
           </Space>
         </Dropdown>
         <AuthenticatedButton icon={<SignatureOutlined />} type="default" className={styles.Button} onClick={handlePost}>
-          Đăng bài
+          Đăng sản phẩm
         </AuthenticatedButton>
       </Space>
       <CreatePostModal />

@@ -30,7 +30,9 @@ function AppFooter() {
                   TRAO ĐỒ CŨ
                 </span>
               </div>
-              <Text className={styles.slogan}>Kết nối yêu thương, trao giá trị mới cho đồ cũ</Text>
+              <Text className={styles.slogan}>
+                Trao Đồ Cũ tự hào là nền tảng kết nối cộng đồng trao đổi đồ dễ dàng, nhanh chóng và hiệu quả.
+              </Text>
               <Text className={styles.text}>
                 <EnvironmentOutlined style={{ marginRight: 8 }} />
                 Địa chỉ: 122 Hoàng Quốc Việt, Q.Cầu Giấy, Hà Nội
@@ -83,7 +85,7 @@ function AppFooter() {
             {/* Facebook Page Plugin */}
             <div className={styles.facebookContainer}>
               <iframe
-                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Ffacebook&tabs=timeline&width=340&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
+                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D61573947424629&tabs=timeline&width=340&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
                 width="100%"
                 height="130"
                 style={{ border: 'none', overflow: 'hidden' }}

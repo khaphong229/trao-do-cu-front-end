@@ -5,20 +5,24 @@ import { useNavigate } from 'react-router-dom'
 import styles from './NotificationMenu.module.scss'
 import { useAvatar } from 'hooks/useAvatar'
 import { useMenuItems } from 'components/common/DropdownAccount/DropdownAccount'
+import { useDispatch } from 'react-redux'
+import { setVisibleNotificationDetail } from 'features/client/notification/notificationSlice'
 
 const { Text } = Typography
 
 const NotificationItem = ({ notification, onClick, navigate }) => {
+  const dispatch = useDispatch()
   const handleNotificationClick = () => {
     // Gọi hàm onClick để đánh dấu là đã đọc
     onClick()
+    dispatch(setVisibleNotificationDetail(true))
 
     // Sử dụng navigate để điều hướng dựa vào trạng thái isApproved
-    if (notification.isApproved) {
-      navigate('/management-post?tab=expired')
-    } else {
-      navigate('/management-post?tab=active')
-    }
+    // if (notification.isApproved) {
+    //   navigate('/management-post?tab=expired')
+    // } else {
+    //   navigate('/management-post?tab=active')
+    // }
   }
 
   let content

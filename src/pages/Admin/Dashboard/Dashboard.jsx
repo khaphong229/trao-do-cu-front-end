@@ -56,7 +56,7 @@ const DashboardUI = () => {
       <div className={styles['header']}>
         <h2 className={styles['title']}>Bảng điều khiển</h2>
         <Button icon={<ShoppingOutlined />} type="primary">
-          Đăng bài mới
+          Sản phẩm mới
         </Button>
       </div>
 

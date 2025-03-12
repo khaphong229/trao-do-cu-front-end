@@ -98,12 +98,12 @@ const DescDetail = () => {
       <div className={styles.recommendWrap}>
         <div>
           <Text className={styles.recommendWrapText}>
-            <CameraOutlined /> Bạn có muốn đăng bài tiếp không?
+            <CameraOutlined /> Bạn có muốn đăng sản phẩm tiếp không?
           </Text>
         </div>
         <div>
           <Button type="primary" onClick={() => dispatch(setCreateModalVisibility(true))}>
-            Đăng bài
+            Sản phẩm
           </Button>
         </div>
       </div>

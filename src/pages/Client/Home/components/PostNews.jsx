@@ -178,7 +178,7 @@ const PostNews = () => {
       <div className={styles.postWrap}>
         <div className={styles.postHeader}>
           <Title level={5} className={styles.postTitle}>
-            {isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}
+            {isSearchMode ? 'Kết quả tìm kiếm' : 'Sản phẩm mới nhất'}
           </Title>
           <div>
             <Select

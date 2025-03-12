@@ -10,7 +10,6 @@ import UserInfoSection from 'pages/Client/Post/CreatePost/components/UserInfo'
 import PostContentEditor from 'pages/Client/Post/CreatePost/components/PostContent'
 import PostToolbar from 'pages/Client/Post/CreatePost/components/PostToolbar'
 import LocationModal from 'pages/Client/Post/CreatePost/components/Modal/Location'
-import { ContactInfoModal } from 'pages/Client/Post/CreatePost/components/Modal/Contact'
 import CategoryModal from 'pages/Client/Post/CreatePost/components/Modal/Category'
 
 import styles from 'pages/Client/Post/CreatePost/scss/CreatePost.module.scss'

@@ -1,21 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Tooltip } from 'antd'
-import {
-  PictureOutlined,
-  SmileOutlined,
-  EnvironmentOutlined,
-  WhatsAppOutlined,
-  AppstoreOutlined
-} from '@ant-design/icons'
+import { PictureOutlined, AppstoreOutlined } from '@ant-design/icons'
 import styles from '../scss/PostToolbar.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import UploadCustom from 'components/common/UploadCustom'
-import {
-  setLocationModalVisibility,
-  setShowEmoji as setPostShowEmoji,
-  setSocialLinkModalVisibility,
-  setCategoryModalVisibility
-} from 'features/client/post/postSlice'
+import { setShowEmoji as setPostShowEmoji, setCategoryModalVisibility } from 'features/client/post/postSlice'
 import { setShowEmoji as setExchangeShowEmoji } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { updatePostData } from 'features/client/post/postSlice'
 import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'

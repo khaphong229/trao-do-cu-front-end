@@ -88,7 +88,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
           label="Số điện thoại"
           rules={[
             {
-              required: true,
+              required: false,
               message: 'Vui lòng nhập số điện thoại của bạn'
             }
           ]}
