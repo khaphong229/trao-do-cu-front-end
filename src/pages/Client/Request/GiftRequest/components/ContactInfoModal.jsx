@@ -113,7 +113,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
         </Form.Item>
 
         <div style={{ marginTop: -8, marginBottom: 16 }}>
-          <Text type="secondary" style={{ fontSize: '12px' }}>
+          <Text type="secondary" style={{ fontSize: '12px', color: '#2E8B57' }}>
             * Chọn 1 trong 2 phương thức liên hệ
           </Text>
         </div>

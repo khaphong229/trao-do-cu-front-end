@@ -112,28 +112,21 @@ const PostToolbar = ({
       isUpload: true,
       onClick: null,
       disabled: maxImages <= 0
-    },
-    {
-      ref: socialLinkToolRef || facebookRef,
-      tooltip: 'Liên kết mạng xã hội',
-      icon: <WhatsAppOutlined className={styles.customIcon} />,
-      isUpload: false,
-      onClick: () => dispatch(setSocialLinkModalVisibility(true))
-    },
-    {
-      ref: null,
-      tooltip: 'Emoji',
-      icon: <SmileOutlined className={styles.iconSmile} />,
-      isUpload: false,
-      onClick: toggleEmojiPicker
-    },
-    {
-      ref: locationToolRef || locationRef,
-      tooltip: 'Thêm vị trí',
-      icon: <EnvironmentOutlined className={styles.iconEnvironment} />,
-      isUpload: false,
-      onClick: () => dispatch(setLocationModalVisibility(true))
     }
+    // {
+    //   ref: socialLinkToolRef || facebookRef,
+    //   tooltip: 'Liên kết mạng xã hội',
+    //   icon: <WhatsAppOutlined className={styles.customIcon} />,
+    //   isUpload: false,
+    //   onClick: () => dispatch(setSocialLinkModalVisibility(true))
+    // },
+    // {
+    //   ref: locationToolRef || locationRef,
+    //   tooltip: 'Thêm vị trí',
+    //   icon: <EnvironmentOutlined className={styles.iconEnvironment} />,
+    //   isUpload: false,
+    //   onClick: () => dispatch(setLocationModalVisibility(true))
+    // }
   ]
 
   if (contentType === 'post') {

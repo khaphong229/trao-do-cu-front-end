@@ -1,14 +1,26 @@
 import React, { useRef, useCallback } from 'react'
 import { Card, List, Typography, Button, Empty, Spin, Menu, Divider, Tag, Avatar } from 'antd'
 import { UseListNotification } from 'hooks/UseListNotification'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import styles from './NotificationMenu.module.scss'
 import { useAvatar } from 'hooks/useAvatar'
 import { useMenuItems } from 'components/common/DropdownAccount/DropdownAccount'
 
 const { Text } = Typography
 
-const NotificationItem = ({ notification, onClick }) => {
+const NotificationItem = ({ notification, onClick, navigate }) => {
+  const handleNotificationClick = () => {
+    // Gọi hàm onClick để đánh dấu là đã đọc
+    onClick()
+
+    // Sử dụng navigate để điều hướng dựa vào trạng thái isApproved
+    if (notification.isApproved) {
+      navigate('/management-post?tab=expired')
+    } else {
+      navigate('/management-post?tab=active')
+    }
+  }
+
   let content
   if (notification.isApproved) {
     content = (
@@ -29,18 +41,22 @@ const NotificationItem = ({ notification, onClick }) => {
   }
 
   return (
-    <List.Item className={`${styles.notificationItem} ${!notification.isRead ? styles.unread : ''}`} onClick={onClick}>
-      <Link className={styles.notifiHref}>
+    <List.Item
+      className={`${styles.notificationItem} ${!notification.isRead ? styles.unread : ''}`}
+      onClick={handleNotificationClick}
+    >
+      <div className={styles.notifiHref}>
         <List.Item.Meta
           title={<Text className={styles.itemTitle}>{content}</Text>}
           description={<Text type="secondary">{notification.time}</Text>}
         />
-      </Link>
+      </div>
     </List.Item>
   )
 }
 
 export const NotificationMenu = () => {
+  const navigate = useNavigate()
   const { notifications, isLoading, hasMore, handleMarkAsRead, handleMarkAllAsRead, loadMore } = UseListNotification()
 
   const observerRef = useRef(null)
@@ -81,7 +97,6 @@ export const NotificationMenu = () => {
       observerRef.current.observe(lastElementRef.current)
     }
   }, [notifications])
-
   return (
     <Card
       className={styles.notificationCard}
@@ -112,7 +127,11 @@ export const NotificationMenu = () => {
             dataSource={notifications}
             renderItem={(notification, index) => (
               <div ref={index === notifications.length - 1 ? lastElementRef : null}>
-                <NotificationItem notification={notification} onClick={() => handleMarkAsRead(notification.id)} />
+                <NotificationItem
+                  notification={notification}
+                  onClick={() => handleMarkAsRead(notification.id)}
+                  navigate={navigate}
+                />
               </div>
             )}
           />

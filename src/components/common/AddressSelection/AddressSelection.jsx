@@ -10,6 +10,7 @@ export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, o
   const [selectedWard, setSelectedWard] = useState(null)
   const [specificAddress, setSpecificAddress] = useState('')
   const [dataVN, setDataVN] = useState([])
+  const [isInitialized, setIsInitialized] = useState(false)
 
   const fetchProvince = useCallback(async () => {
     const cachedData = localStorage.getItem('provinceData')
@@ -67,6 +68,59 @@ export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, o
     [dataVN, selectedProvince, selectedDistrict]
   )
 
+  // Parse address string into components
+  const parseAddress = useCallback(
+    addressString => {
+      if (!addressString || !dataVN.length) return null
+
+      const parts = addressString.split(', ')
+      if (parts.length < 3) return null
+
+      // Last part is province, second-to-last is district, third-to-last is ward
+      const provinceName = parts[parts.length - 1]
+      const districtName = parts[parts.length - 2]
+      const wardName = parts[parts.length - 3]
+
+      // Everything before ward is specific address
+      const specificAddr = parts.slice(0, parts.length - 3).join(', ')
+
+      // Find matching codes
+      const province = provinces.find(p => p.name === provinceName)
+      if (!province) return null
+
+      const district = dataVN.find(p => p.Code === province.code)?.District.find(d => d.FullName === districtName)
+      if (!district) return null
+
+      const ward = dataVN
+        .find(p => p.Code === province.code)
+        ?.District.find(d => d.Code === district.Code)
+        ?.Ward.find(w => w.FullName === wardName)
+      if (!ward) return null
+
+      return {
+        provinceCode: province.code,
+        districtCode: district.Code,
+        wardCode: ward.Code,
+        specificAddress: specificAddr
+      }
+    },
+    [dataVN, provinces]
+  )
+
+  // Initialize form with parsed address when in editing mode
+  useEffect(() => {
+    if (isEditing && initialAddress && dataVN.length > 0 && !isInitialized) {
+      const parsedAddress = parseAddress(initialAddress)
+      if (parsedAddress) {
+        setSelectedProvince(parsedAddress.provinceCode)
+        setSelectedDistrict(parsedAddress.districtCode)
+        setSelectedWard(parsedAddress.wardCode)
+        setSpecificAddress(parsedAddress.specificAddress)
+        setIsInitialized(true)
+      }
+    }
+  }, [isEditing, initialAddress, dataVN, parseAddress, isInitialized])
+
   const filterProvinces = (input, option) => {
     return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
   }
@@ -85,9 +139,10 @@ export const AddressSelection = ({ initialAddress, onAddressChange, isEditing, o
       const districtName = districts.find(d => d.code === selectedDistrict)?.name
       const wardName = wards.find(w => w.code === selectedWard)?.name
 
-      const fullAddress = [specificAddress, wardName, districtName, provinceName].filter(Boolean).join(', ')
-
-      onAddressChange(fullAddress)
+      if (provinceName && districtName && wardName) {
+        const fullAddress = [specificAddress, wardName, districtName, provinceName].filter(Boolean).join(', ')
+        onAddressChange(fullAddress)
+      }
     }
   }, [selectedProvince, selectedDistrict, selectedWard, specificAddress, districts, onAddressChange, provinces, wards])
 

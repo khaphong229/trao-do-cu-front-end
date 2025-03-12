@@ -1,9 +1,10 @@
 import React from 'react'
-import { Button, Modal, Tour } from 'antd'
+import { Button, message, Modal, Tour } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
 import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
+import { setCategoryModalVisibility } from 'features/client/post/postSlice'
 
 import UserInfoSection from 'pages/Client/Post/CreatePost/components/UserInfo'
 import PostContentEditor from 'pages/Client/Post/CreatePost/components/PostContent'
@@ -36,19 +37,52 @@ const PostForm = ({
     errorPost,
     setErrorPost,
     formErrors,
+    setFormErrors,
     isMobile,
     titleRef,
     imageRef,
     phoneRef,
     facebookRef,
     locationRef,
-    categoryRef
+    categoryRef,
+    validateForm,
+    handleSubmit,
+    scrollToFirstError
   } = formUtils
 
   const safeFormData = formData || {}
 
   const isExchangeForm = title === 'Biểu mẫu trao đổi'
   const contentType = isExchangeForm ? 'exchange' : 'post'
+
+  const handleFormSubmit = () => {
+    // Validate các trường khác trước
+    const errors = validateForm()
+    setFormErrors(errors)
+    setErrorPost(Object.keys(errors).length > 0 ? errors : null)
+
+    // Kiểm tra các lỗi khác ngoài category_id trước
+    const otherErrors = { ...errors }
+    delete otherErrors.category_id
+
+    // Nếu có lỗi ở các trường khác, hiển thị lỗi đó trước
+    if (Object.keys(otherErrors).length > 0) {
+      // Hiển thị message lỗi đầu tiên
+      message.error(String(Object.values(otherErrors)[0]))
+      // Cuộn đến trường lỗi đầu tiên
+      scrollToFirstError(otherErrors)
+      return
+    }
+
+    // Chỉ khi các trường khác đều OK, nếu thiếu category_id thì mới hiện modal danh mục
+    if (errors.category_id) {
+      dispatch(setCategoryModalVisibility(true))
+      return
+    }
+
+    // Nếu không có lỗi nào, tiếp tục submit
+    handleSubmit()
+  }
 
   const handleFieldChange = (field, value) => {
     if (isExchangeForm) {
@@ -60,7 +94,7 @@ const PostForm = ({
     if (formErrors && formErrors[field]) {
       const newErrors = { ...formErrors }
       delete newErrors[field]
-      formUtils.setFormErrors && formUtils.setFormErrors(newErrors)
+      setFormErrors && setFormErrors(newErrors)
     }
   }
 
@@ -82,7 +116,7 @@ const PostForm = ({
     if (formErrors && formErrors.specificLocation) {
       const newErrors = { ...formErrors }
       delete newErrors.specificLocation
-      formUtils.setFormErrors && formUtils.setFormErrors(newErrors)
+      setFormErrors && setFormErrors(newErrors)
     }
   }
 
@@ -97,7 +131,7 @@ const PostForm = ({
         footer={null}
         closeIcon={<CloseOutlined />}
         className={styles.createPostModal}
-        width={isMobile ? '90%' : 600}
+        width={isMobile.isMobile ? '90%' : 600}
         style={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
         onSubmit={onContactInfoSubmit}
       >
@@ -134,7 +168,7 @@ const PostForm = ({
         <Button
           type="primary"
           className={styles.postButton}
-          onClick={onSubmit}
+          onClick={handleFormSubmit}
           loading={isLoading}
           style={isMobile ? { marginTop: 'auto' } : {}}
         >
@@ -148,11 +182,12 @@ const PostForm = ({
         error={formErrors.specificLocation}
       />
 
-      <ContactInfoModal
+      {/* <ContactInfoModal
+        onSubmit={handleInfoSubmit}
         facebookLink={safeFormData.facebookLink || ''}
         setFacebookLink={facebookLink => handleFieldChange('facebookLink', facebookLink)}
         error={formErrors.facebookLink}
-      />
+      /> */}
 
       <CategoryModal
         categoryId={safeFormData.category_id}

@@ -32,3 +32,17 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
+.tabsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.viewToggle {
+  margin-left: auto; // Đẩy về bên phải
+  margin-bottom: 20px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}

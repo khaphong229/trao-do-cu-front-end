@@ -1,22 +1,70 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { message, Modal, Tree } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import { setCategoryModalVisibility, updatePostData } from 'features/client/post/postSlice'
+import { setCategoryModalVisibility, updatePostData, setLocationModalVisibility } from 'features/client/post/postSlice'
 import { setSelectedCategory } from 'features/client/category/categorySlice'
 import styles from '../../scss/CategoryModal.module.scss'
 
-const CategoryModal = () => {
+const CategoryModal = ({ categoryId, setCategory, error }) => {
   const dispatch = useDispatch()
   const { selectedCategory } = useSelector(state => state.category)
   const { isCategoryModalVisible } = useSelector(state => state.post)
   const { categories, isLoading } = useSelector(state => state.category)
 
-  // Reset danh mục đã chọn khi mở modal
+  // Add state to track if a non-leaf node is selected
+  const [nonLeafSelected, setNonLeafSelected] = useState(false)
+
+  // State for expanded tree nodes
+  const [expandedKeys, setExpandedKeys] = useState([])
+
+  // Show error message if provided
   useEffect(() => {
-    if (isCategoryModalVisible) {
-      dispatch(setSelectedCategory(null)) // Reset danh mục đã chọn
+    if (error && isCategoryModalVisible) {
+      message.error(error, 5) // Show error message for 5 seconds
     }
-  }, [isCategoryModalVisible, dispatch])
+  }, [error, isCategoryModalVisible])
+
+  // Don't reset selected category when opening modal
+  useEffect(() => {
+    if (isCategoryModalVisible && selectedCategory) {
+      // Find parent nodes of selected category to expand them
+      if (selectedCategory.dataRef && selectedCategory.dataRef.parent) {
+        const findParentPath = (items, targetId, path = []) => {
+          for (const item of items) {
+            if (item._id === targetId) {
+              return [...path, item._id]
+            }
+
+            if (item.children && item.children.length > 0) {
+              const found = findParentPath(item.children, targetId, [...path, item._id])
+              if (found.length) return found
+            }
+          }
+          return []
+        }
+
+        const parentPath = findParentPath(categories, selectedCategory.dataRef.parent)
+        if (parentPath.length > 0) {
+          setExpandedKeys(parentPath)
+        }
+      }
+
+      // Check if current selection is a non-leaf node
+      if (selectedCategory.children && selectedCategory.children.length > 0) {
+        setNonLeafSelected(true)
+        // Show message when a non-leaf node is selected
+      } else {
+        setNonLeafSelected(false)
+      }
+    }
+  }, [isCategoryModalVisible, selectedCategory, categories])
+
+  // Show message when categories are empty
+  useEffect(() => {
+    if (isCategoryModalVisible && !isLoading && (!categories || categories.length === 0)) {
+      message.error('Không có dữ liệu danh mục. Vui lòng thử lại sau.', 3)
+    }
+  }, [isCategoryModalVisible, isLoading, categories])
 
   const onSelect = (_, { selectedNodes, node }) => {
     if (selectedNodes.length > 0) {
@@ -26,20 +74,38 @@ const CategoryModal = () => {
       dispatch(setSelectedCategory(selectedNode))
       dispatch(updatePostData({ category_id: categoryId }))
 
-      if (node.children) {
-        node.expanded = !node.expanded
+      if (setCategory) {
+        setCategory(categoryId)
+      }
+
+      // Check if this is a leaf node (no children)
+      const isLeafNode = !node.children || node.children.length === 0
+      setNonLeafSelected(!isLeafNode)
+
+      // Only auto-close and transition if it's a leaf node
+      if (isLeafNode) {
+        dispatch(setCategoryModalVisibility(false))
+        message.success('Chọn danh mục thành công!')
+
+        // Automatically open location modal after a short delay
+        setTimeout(() => {
+          dispatch(setLocationModalVisibility(true))
+        }, 300)
+      } else {
+        // If not a leaf node, just expand it and show message
+        setExpandedKeys([...expandedKeys, node.key])
       }
     }
   }
 
-  const handleOk = () => {
-    dispatch(setCategoryModalVisibility(false))
-    message.success('Chọn danh mục thành công!')
+  // Handle expand/collapse of tree nodes
+  const onExpand = expandedKeys => {
+    setExpandedKeys(expandedKeys)
   }
 
   const handleCancel = () => {
     dispatch(setCategoryModalVisibility(false))
-    dispatch(setSelectedCategory(null)) // Reset danh mục khi đóng modal
+    // Don't reset selectedCategory when closing modal to preserve selection
   }
 
   const renderTreeNodes = data =>
@@ -57,26 +123,30 @@ const CategoryModal = () => {
     <Modal
       title="Chọn danh mục"
       open={isCategoryModalVisible}
-      onOk={handleOk}
       onCancel={handleCancel}
-      okText="Lưu"
-      cancelText="Hủy"
+      footer={null}
       width={500}
       className={styles.categoryModal}
     >
       {isLoading ? (
-        <div>Đang tải...</div>
+        <div className={styles.loadingContainer}>Đang tải danh mục...</div>
       ) : (
         <div className={styles.categoryTreeWrapper}>
-          <Tree
-            showLine={false}
-            onSelect={onSelect}
-            selectedKeys={selectedCategory?.key ? [selectedCategory.key] : []}
-            className={styles.categoryTree}
-            expandAction="click"
-          >
-            {renderTreeNodes(categories)}
-          </Tree>
+          {categories && categories.length > 0 ? (
+            <Tree
+              showLine={false}
+              onSelect={onSelect}
+              onExpand={onExpand}
+              expandedKeys={expandedKeys}
+              selectedKeys={selectedCategory?.key ? [selectedCategory.key] : []}
+              className={styles.categoryTree}
+              expandAction="click"
+            >
+              {renderTreeNodes(categories)}
+            </Tree>
+          ) : (
+            <div className={styles.noDataMessage}>Không có dữ liệu danh mục. Vui lòng thử lại sau.</div>
+          )}
         </div>
       )}
     </Modal>

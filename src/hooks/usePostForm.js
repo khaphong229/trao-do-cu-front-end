@@ -106,7 +106,14 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
 
     if (Object.keys(errors).length > 0) {
       message.error(String(Object.values(errors)[0]))
-      scrollToFirstError(errors)
+
+      // If category error exists, open category modal immediately
+      if (errors.category_id) {
+        dispatch({ type: 'post/setCategoryModalVisibility', payload: true })
+      } else {
+        // Otherwise scroll to the first error as before
+        scrollToFirstError(errors)
+      }
       return
     }
 
@@ -218,6 +225,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     errorPost,
     setErrorPost,
     formErrors,
+    setFormErrors,
     isMobile,
     titleRef,
     imageRef,
@@ -225,7 +233,9 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     facebookRef,
     locationRef,
     categoryRef,
+    validateForm,
     handleSubmit,
+    scrollToFirstError,
     handleFieldChange,
     handleImageUpload,
     handleLocationChange

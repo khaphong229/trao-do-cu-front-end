@@ -47,44 +47,45 @@
               }
             }
           }
-
-          .tabLabel {
-            @include flex-center;
-            gap: 4px;
-
-            @media screen and (max-width: 420px) {
-              font-size: 14px;
-
-              .tabCount {
-                font-size: 11px;
-              }
-            }
-
-            .tabCount {
-              color: $colorTextFooter;
-              font-size: 12px;
-            }
-          }
         }
 
-        .viewToggle {
-          margin-left: 16px;
+        .actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
 
           @media screen and (max-width: 420px) {
-            margin-left: 0;
-            display: flex;
             justify-content: flex-end;
-
-            button {
-              width: auto;
-            }
+            width: 100%;
           }
 
-          button {
+          .backButton {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: $colorMain;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 4px 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+
+            &:hover {
+              background-color: $colorMain !important;
+              transform: scale(1.1);
+            }
+
+            &:focus {
+              outline: none;
+              box-shadow: 0 0 5px rgba(24, 144, 255, 0.5);
+            }
+
+            svg {
+              width: 20px;
+              height: 20px;
+              color: white;
+            }
           }
         }
       }

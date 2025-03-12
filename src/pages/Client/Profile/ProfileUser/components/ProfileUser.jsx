@@ -78,6 +78,10 @@ const ProfilePage = () => {
       const response = await dispatch(updateUserProfile(formData)).unwrap()
       if (response.status === 201) {
         message.success(response.message)
+        // Sử dụng navigate để reload trang hiện tại
+        setTimeout(() => {
+          navigate(0)
+        }, 1500)
       }
     } catch (error) {
       message.error('Cập nhật thông tin thất bại', error.message)
@@ -105,6 +109,10 @@ const ProfilePage = () => {
       .unwrap()
       .then(() => {
         message.success('Đổi mật khẩu thành công!')
+        // Sử dụng setTimeout để hiển thị message trước khi reload
+        setTimeout(() => {
+          navigate(0)
+        }, 1500)
       })
       .catch(err => {
         message.error(err.message || 'Đã xảy ra lỗi khi đổi mật khẩu!')
@@ -129,6 +137,10 @@ const ProfilePage = () => {
           message.success('Upload ảnh thành công')
           dispatch(getCurrentUser(false))
           onSuccess(uploadResponse)
+          // Sử dụng setTimeout để hiển thị message trước khi reload
+          setTimeout(() => {
+            navigate(0)
+          }, 1500)
         } else {
           message.error('Upload ảnh thất bại')
         }
@@ -305,7 +317,20 @@ const ProfilePage = () => {
                           placeholder="Nhập mật khẩu mới"
                           value={formData.newPassword}
                           onChange={handleChangePassword}
+                          required
+                          status={
+                            (!formData.newPassword || (formData.newPassword && formData.newPassword.length < 6)) &&
+                            error
+                              ? 'error'
+                              : ''
+                          }
                         />
+                        {!formData.newPassword && error && (
+                          <div className={styles['error-message']}>Vui lòng nhập mật khẩu mới</div>
+                        )}
+                        {formData.newPassword && formData.newPassword.length < 8 && (
+                          <div className={styles['error-message']}>Mật khẩu phải có ít nhất 6 ký tự</div>
+                        )}
                       </div>
 
                       <div className={styles['form-item']}>
