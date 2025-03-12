@@ -3,31 +3,104 @@
 .footerWrap {
   background-color: $colorBgFooter;
   color: $colorTextFooter;
-  padding: 40px 20px;
-}
-.image {
-  margin-bottom: 20px;
-}
-.text {
-  color: $textColor;
-  display: block;
-  margin-top: 10px;
-}
-.title {
-  color: $textColor !important;
-}
-.link {
-  color: #adb5bd !important;
+  padding: 60px 20px 40px;
+  margin: 0 auto;
 }
 
 .textLogo {
   font-weight: 700;
-  font-size: 26px;
+  font-size: 28px;
   color: $colorWhite;
   user-select: none;
   transition: ease 0.3s;
+  display: inline-block;
+  margin-bottom: 15px;
+
   &:hover {
     color: $colorMain;
     cursor: pointer;
+  }
+}
+
+.slogan {
+  color: #adb5bd !important;
+  display: block;
+  font-size: 14px;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.text {
+  color: $textColor;
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.title {
+  color: $colorWhite !important;
+  margin-bottom: 20px !important;
+  font-size: 18px !important;
+  position: relative;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background-color: $colorMain;
+    margin-top: 10px;
+  }
+}
+
+.link {
+  color: #adb5bd !important;
+  transition: all 0.3s ease;
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+
+  &:hover {
+    color: $colorMain !important;
+    padding-left: 5px;
+  }
+}
+
+.facebookContainer {
+  margin-top: 25px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.subscribeContainer {
+  margin-top: 25px;
+}
+
+.subscribeTitle {
+  color: $colorWhite !important;
+  margin-bottom: 15px !important;
+  font-size: 16px !important;
+}
+
+.subscribeInput {
+  height: 40px;
+  border-radius: 4px 0 0 4px;
+  border: 1px solid #434343;
+  color: $colorWhite;
+
+  &:focus {
+    border-color: $colorMain;
+  }
+}
+
+.subscribeButton {
+  height: 40px;
+  background-color: $colorMain !important;
+  border-color: $colorMain !important;
+  border-radius: 0 4px 4px 0;
+
+  &:hover {
+    opacity: 0.9;
   }
 }
