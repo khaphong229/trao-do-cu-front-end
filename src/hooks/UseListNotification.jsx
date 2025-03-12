@@ -32,7 +32,6 @@ export const UseListNotification = () => {
         const response = await dispatch(getNotificationPagination({ current: page, pageSize: 10 }))
 
         if (!response.payload || !response.payload.data) {
-          console.error('Invalid response format:', response)
           return
         }
 
@@ -166,12 +165,13 @@ export const UseListNotification = () => {
           isRead: notification.isRead,
           postId: notification.post_id?._id,
           sourceId: notification.source_id?._id,
-          imageUrl: notification.post_id?.image_url?.[0] || null,
+          imageUrl: notification.post_id?.image_url || null,
           status: notification.post_id?.user_id?.status,
           ownerName: notification.post_id?.user_id?.name,
           receiverName: notification.source_id?.user_req_id?.name,
           contact: notification.post_id?.user_id?.phone,
-          facebookLink: notification.post_id?.user_id?.social_media?.facebook
+          facebookLink: notification.post_id?.user_id?.social_media?.facebook,
+          type: notification.type.split('_')[1]
         }
       })
       .filter(Boolean) // Remove null items

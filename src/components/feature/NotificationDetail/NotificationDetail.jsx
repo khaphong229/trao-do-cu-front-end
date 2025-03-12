@@ -1,25 +1,29 @@
-import React from 'react'
-import { Modal, Avatar, Tag, Button, Divider, Typography, Row, Col, Space, Image } from 'antd'
+import React, { useState } from 'react'
+import { Modal, Tag, Button, Divider, Typography, Row, Col, Space, Image, Carousel } from 'antd'
 import {
-  UserOutlined,
   FacebookOutlined,
   PhoneOutlined,
-  MessageOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   EyeOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  GiftOutlined,
+  SwapOutlined,
+  LeftOutlined,
+  RightOutlined
 } from '@ant-design/icons'
 import { setVisibleNotificationDetail } from 'features/client/notification/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { URL_SERVER_IMAGE } from 'config/url_server'
+import styles from './styles.module.scss'
 
 const { Title, Text, Paragraph } = Typography
 
-// Component chính hiển thị modal thông tin sản phẩm
 const NotificationDetail = ({ notification }) => {
   const dispatch = useDispatch()
-  const { isVisibleNotificationDetail } = useSelector(state => state.notification) // Use useSelector to get the state
+  const { isVisibleNotificationDetail } = useSelector(state => state.notification)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const carouselRef = React.useRef()
 
   const onClose = () => {
     dispatch(setVisibleNotificationDetail(false))
@@ -27,29 +31,52 @@ const NotificationDetail = ({ notification }) => {
 
   if (!notification) return null
 
-  const { isApproved, category, postTitle, imageUrl, ownerName, receiverName, contact, facebookLink } = notification
+  const { isApproved, type, postTitle, imageUrl, ownerName, receiverName, contact, facebookLink, time } = notification
+
+  // Xử lý mảng ảnh
+  console.log(imageUrl)
+
+  const handlePrev = () => {
+    carouselRef.current.prev()
+  }
+
+  const handleNext = () => {
+    carouselRef.current.next()
+  }
+
+  const afterChange = current => {
+    setCurrentImageIndex(current)
+  }
 
   const getStatusBadge = isApproved => {
     if (isApproved) {
       return (
         <Tag icon={<CheckCircleOutlined />} color="success">
-          Đồng ý
+          Đã đồng ý
         </Tag>
       )
     } else {
       return (
-        <Tag icon={<ClockCircleOutlined />} color="warning">
+        <Tag icon={<ClockCircleOutlined />} color="processing">
           Chờ duyệt
         </Tag>
       )
     }
   }
 
-  const getCategoryBadge = category => {
-    if (category === 'gift') {
-      return <Tag color="magenta">Tặng</Tag>
+  const getCategoryBadge = type => {
+    if (type === 'receive' || type === 'yêu cầu nhận') {
+      return (
+        <Tag icon={<GiftOutlined />} color="gold">
+          Trao tặng
+        </Tag>
+      )
     } else {
-      return <Tag color="blue">Đổi</Tag>
+      return (
+        <Tag icon={<SwapOutlined />} color="lime">
+          Trao đổi
+        </Tag>
+      )
     }
   }
 
@@ -58,71 +85,111 @@ const NotificationDetail = ({ notification }) => {
       open={isVisibleNotificationDetail}
       onCancel={onClose}
       footer={null}
-      width="90%"
-      style={{ maxWidth: 1000 }}
+      width={500}
       bodyStyle={{ padding: 0 }}
       centered
       destroyOnClose
+      className={styles.notificationModal}
     >
       <Row gutter={[0, 0]}>
         {/* Phần ảnh sản phẩm - responsive */}
         <Col xs={24} sm={24} md={12} lg={12} xl={10}>
-          <div style={{ height: '100%', minHeight: 250 }}>
-            <Image
-              alt={postTitle}
-              src={imageUrl ? `${URL_SERVER_IMAGE}${imageUrl}` : 'https://via.placeholder.com/300'}
-              style={{
-                objectFit: 'cover',
-                width: '100%',
-                height: '100%'
-              }}
-              preview={{
-                mask: (
-                  <div>
-                    <EyeOutlined />
-                    <span style={{ marginLeft: 8 }}>Xem ảnh lớn</span>
-                  </div>
-                )
-              }}
-            />
+          <div className={styles.imageContainer}>
+            {imageUrl.length > 0 ? (
+              <>
+                <Carousel ref={carouselRef} afterChange={afterChange} dots={false} className={styles.carousel}>
+                  {imageUrl.map((img, index) => (
+                    <div key={index} className={styles.carouselItem}>
+                      <Image
+                        alt={`${postTitle}-${index}`}
+                        src={`${URL_SERVER_IMAGE}${img}`}
+                        className={styles.image}
+                        preview={{
+                          mask: (
+                            <div className={styles.previewMask}>
+                              <EyeOutlined className={styles.previewIcon} />
+                              Xem ảnh
+                            </div>
+                          ),
+                          getContainer: () => document.body
+                        }}
+                        fallback="https://via.placeholder.com/400x300?text=Ảnh+lỗi"
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+
+                {imageUrl.length > 1 && (
+                  <>
+                    <Button
+                      className={`${styles.carouselButton} ${styles.carouselButtonLeft}`}
+                      icon={<LeftOutlined />}
+                      onClick={handlePrev}
+                      shape="circle"
+                    />
+                    <Button
+                      className={`${styles.carouselButton} ${styles.carouselButtonRight}`}
+                      icon={<RightOutlined />}
+                      onClick={handleNext}
+                      shape="circle"
+                    />
+                    <div className={styles.imagePagination}>
+                      {currentImageIndex + 1}/{imageUrl.length}
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <div className={styles.noImage}>
+                <Image
+                  alt="No image"
+                  src="https://via.placeholder.com/400x300?text=Không+có+ảnh"
+                  className={styles.image}
+                  preview={false}
+                />
+              </div>
+            )}
+            <div className={styles.timeLabel}>{time || 'Không xác định'}</div>
           </div>
         </Col>
 
         {/* Phần thông tin sản phẩm - responsive */}
         <Col xs={24} sm={24} md={12} lg={12} xl={14}>
-          <div style={{ padding: '10px 14px' }}>
-            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Space>
+          <div className={styles.contentContainer}>
+            <div className={styles.statusContainer}>
+              <Space size="small">
                 {getStatusBadge(isApproved)}
-                {getCategoryBadge(category)}
+                {getCategoryBadge(type)}
               </Space>
             </div>
 
-            <Title level={3} style={{ marginTop: 0, marginBottom: 16 }}>
+            <Title level={3} className={styles.postTitle}>
               {postTitle}
             </Title>
 
-            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-              <div className="product-info-section">
+            <Space direction="vertical" size="large" className={styles.infoSection}>
+              <div>
                 <Row gutter={[16, 16]} align="middle">
-                  <Col xs={24} sm={24} md={24}>
-                    <Space align="center">
-                      <Avatar icon={<UserOutlined />} size="large" />
-                      <div>
-                        <Text type="secondary">{category === 'gift' ? 'Người tặng' : 'Người đổi'}</Text>
-                        <Paragraph strong style={{ marginBottom: 0, fontSize: 16 }}>
-                          {ownerName}
-                        </Paragraph>
-                      </div>
-                    </Space>
-                  </Col>
-
-                  {receiverName && (
-                    <Col xs={24} sm={24} md={24}>
+                  {isApproved && (
+                    <Col xs={24}>
                       <Space align="center">
-                        <Avatar icon={<UserOutlined />} size="large" />
                         <div>
-                          <Text type="secondary">Người nhận</Text>
+                          <Text type="secondary">
+                            {type === 'receive' || type === 'yêu cầu nhận' ? 'Người tặng' : 'Người đổi'}
+                          </Text>
+                          <Paragraph strong style={{ marginBottom: 0, fontSize: 16 }}>
+                            {ownerName}
+                          </Paragraph>
+                        </div>
+                      </Space>
+                    </Col>
+                  )}
+
+                  {!isApproved && receiverName && (
+                    <Col xs={24}>
+                      <Space align="center">
+                        <div>
+                          <Text type="secondary">Người yêu cầu</Text>
                           <Paragraph strong style={{ marginBottom: 0, fontSize: 16 }}>
                             {receiverName}
                           </Paragraph>
@@ -133,34 +200,42 @@ const NotificationDetail = ({ notification }) => {
                 </Row>
               </div>
 
-              <Divider style={{ margin: '16px 0' }} />
+              <Divider className={styles.divider} />
 
-              <div className="contact-info-section">
-                <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
-                  <InfoCircleOutlined style={{ marginRight: 8 }} />
-                  Thông tin liên hệ
-                </Title>
-                <Space direction="vertical" size="small" style={{ width: '100%', marginTop: 8 }}>
-                  {contact && (
-                    <Paragraph style={{ marginBottom: 8, fontSize: 15 }}>
-                      <PhoneOutlined style={{ marginRight: 8 }} />
-                      {contact}
-                    </Paragraph>
-                  )}
-                  <Space size="middle" wrap>
-                    {facebookLink && (
-                      <a href={facebookLink} target="_blank" rel="noopener noreferrer">
-                        <Button type="primary" ghost icon={<FacebookOutlined />}>
-                          Xem Facebook
-                        </Button>
-                      </a>
+              {isApproved && (
+                <div className={styles.contactSection}>
+                  <Title level={5} className={styles.contactTitle}>
+                    <InfoCircleOutlined className={styles.titleIcon} />
+                    Thông tin liên hệ
+                  </Title>
+                  <Space direction="vertical" size="small" className={styles.contactInfo}>
+                    {contact && (
+                      <Paragraph className={styles.phoneContainer}>
+                        <PhoneOutlined className={styles.phoneIcon} />
+                        <a href={`tel:${contact}`}>{contact}</a>
+                      </Paragraph>
                     )}
-                    <Button type="primary" icon={<MessageOutlined />}>
-                      Liên hệ ngay
-                    </Button>
+                    <Space size="middle" wrap>
+                      {facebookLink && (
+                        <a href={facebookLink} target="_blank" rel="noopener noreferrer">
+                          <Button type="primary" ghost icon={<FacebookOutlined />} size="middle">
+                            Xem Facebook
+                          </Button>
+                        </a>
+                      )}
+                    </Space>
                   </Space>
-                </Space>
-              </div>
+                </div>
+              )}
+
+              {!isApproved && (
+                <div className={styles.pendingNotice}>
+                  <Paragraph type="secondary" className={styles.pendingText}>
+                    <ClockCircleOutlined className={styles.pendingIcon} />
+                    Thông tin liên hệ sẽ được hiển thị sau khi yêu cầu được duyệt
+                  </Paragraph>
+                </div>
+              )}
             </Space>
           </div>
         </Col>
@@ -168,4 +243,5 @@ const NotificationDetail = ({ notification }) => {
     </Modal>
   )
 }
+
 export default NotificationDetail

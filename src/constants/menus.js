@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState } from 'react'
+import React, { useRef, useCallback } from 'react'
 import { Card, List, Typography, Button, Empty, Spin, Menu, Divider, Avatar } from 'antd'
 import { UseListNotification } from 'hooks/UseListNotification'
 import { useNavigate } from 'react-router-dom'
@@ -20,10 +20,11 @@ const NotificationItem = ({ notification, onClick, navigate, setDropdownVisible 
 
   const handleNotificationClick = () => {
     // Đánh dấu thông báo là đã đọc
+    onClick()
+
     if (!notification.isRead) {
       dispatch(markNotificationAsRead(notification._id))
     }
-    console.log(notification.isApproved)
     setDropdownVisible(false)
     // Hiển thị modal chi tiết
     dispatch(setVisibleNotificationDetail(true))

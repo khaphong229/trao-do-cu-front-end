@@ -21,7 +21,7 @@ function AppFooter() {
   return (
     <div>
       <footer className={styles.footerWrap}>
-        <Row gutter={[32, 32]}>
+        <Row gutter={[32, 0]}>
           {/* Cột đầu tiên */}
           <Col xs={24} sm={24} md={8}>
             <div style={{ textAlign: 'left' }}>
@@ -43,7 +43,7 @@ function AppFooter() {
               </Text>
               <Text className={styles.text}>
                 <PhoneOutlined style={{ marginRight: 8 }} />
-                Hotline: 1900 6750
+                Hotline: 0869 800 725
               </Text>
             </div>
           </Col>
