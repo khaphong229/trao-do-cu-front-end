@@ -360,7 +360,7 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     &__categories {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr);
     }
 
     &__actions {

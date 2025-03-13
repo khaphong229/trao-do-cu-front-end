@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { message, Modal, Tree } from 'antd'
+import { Button, message, Tree } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import { setCategoryModalVisibility, updatePostData, setLocationModalVisibility } from 'features/client/post/postSlice'
+import { setCategoryModalVisibility, updatePostData } from 'features/client/post/postSlice'
 import { setSelectedCategory } from 'features/client/category/categorySlice'
 import styles from '../../scss/CategoryModal.module.scss'
 
-const CategoryModal = ({ categoryId, setCategory, error }) => {
+const CategoryModal = ({ categoryId, setCategory, error, embeddedMode = false, onComplete }) => {
   const dispatch = useDispatch()
   const { selectedCategory } = useSelector(state => state.category)
   const { isCategoryModalVisible } = useSelector(state => state.post)
@@ -88,9 +88,9 @@ const CategoryModal = ({ categoryId, setCategory, error }) => {
         message.success('Chọn danh mục thành công!')
 
         // Automatically open location modal after a short delay
-        setTimeout(() => {
-          dispatch(setLocationModalVisibility(true))
-        }, 300)
+        // setTimeout(() => {
+        //   dispatch(setLocationModalVisibility(true))
+        // }, 300)
       } else {
         // If not a leaf node, just expand it and show message
         setExpandedKeys([...expandedKeys, node.key])
@@ -103,9 +103,20 @@ const CategoryModal = ({ categoryId, setCategory, error }) => {
     setExpandedKeys(expandedKeys)
   }
 
-  const handleCancel = () => {
-    dispatch(setCategoryModalVisibility(false))
-    // Don't reset selectedCategory when closing modal to preserve selection
+  const handleConfirmCategory = () => {
+    if (!selectedCategory) {
+      message.error('Vui lòng chọn một danh mục')
+      return
+    }
+
+    if (nonLeafSelected) {
+      message.error('Vui lòng chọn danh mục cấp thấp nhất (không có danh mục con)')
+      return
+    }
+
+    if (onComplete) {
+      onComplete()
+    }
   }
 
   const renderTreeNodes = data =>
@@ -120,14 +131,15 @@ const CategoryModal = ({ categoryId, setCategory, error }) => {
     )
 
   return (
-    <Modal
-      title="Chọn danh mục"
-      open={isCategoryModalVisible}
-      onCancel={handleCancel}
-      footer={null}
-      width={500}
-      className={styles.categoryModal}
-    >
+    // <Modal
+    //   title="Chọn danh mục"
+    //   open={isCategoryModalVisible}
+    //   onCancel={handleCancel}
+    //   footer={null}
+    //   width={500}
+    //   className={styles.categoryModal}
+    // >
+    <div className={styles.categoryModal}>
       {isLoading ? (
         <div className={styles.loadingContainer}>Đang tải danh mục...</div>
       ) : (
@@ -147,9 +159,21 @@ const CategoryModal = ({ categoryId, setCategory, error }) => {
           ) : (
             <div className={styles.noDataMessage}>Không có dữ liệu danh mục. Vui lòng thử lại sau.</div>
           )}
+          {embeddedMode && (
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+              <Button type="primary" onClick={handleConfirmCategory}>
+                Xác nhận danh mục
+              </Button>
+              {nonLeafSelected && (
+                <div style={{ color: 'red', marginTop: '10px' }}>
+                  Vui lòng chọn danh mục cấp thấp nhất (không có danh mục con)
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
-    </Modal>
+    </div>
   )
 }
 

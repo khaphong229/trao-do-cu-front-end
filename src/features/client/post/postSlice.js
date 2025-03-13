@@ -50,13 +50,18 @@ const initialState = {
 
   viewMode: 'card',
   sortOrder: 'newest',
-  cityFilter: null // Thêm state lưu thành phố đang lọc
+  cityFilter: null, // Thêm state lưu thành phố đang lọc,
+
+  isEdittingAddress: false
 }
 
 const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
+    setEdittingAddress: (state, action) => {
+      state.isEdittingAddress = action.payload
+    },
     //create post action
     setCreateModalVisibility: (state, action) => {
       state.isCreateModalVisible = action.payload
@@ -305,7 +310,8 @@ export const {
   setViewMode,
   setSortOrder,
   setCityFilter,
-  setPendingPostOpen
+  setPendingPostOpen,
+  setEdittingAddress
 } = postSlice.actions
 
 export default postSlice.reducer

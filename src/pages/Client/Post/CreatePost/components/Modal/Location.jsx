@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, message, Button, List, Radio, Space, Typography } from 'antd'
+import { message, Button, List, Radio, Space, Typography } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import { setLocationModalVisibility, updatePostData } from 'features/client/post/postSlice'
+import { setEdittingAddress, updatePostData } from 'features/client/post/postSlice'
 import AddressSelection from 'components/common/AddressSelection'
-import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined, EditOutlined, LeftOutlined } from '@ant-design/icons'
 import styles from '../../scss/LocationModal.module.scss'
 import { updateUserProfile } from '../../../../../../features/auth/authThunks'
 
 const { Text } = Typography
 
-const LocationModal = ({ location, setLocation }) => {
+const Location = ({ location, setLocation }) => {
   const dispatch = useDispatch()
   const [fullAddress, setFullAddress] = useState('')
   const [editingIndex, setEditingIndex] = useState(-1) // -1 means not editing any existing address
@@ -17,7 +17,6 @@ const LocationModal = ({ location, setLocation }) => {
   const [addresses, setAddresses] = useState([])
   const [defaultAddressIndex, setDefaultAddressIndex] = useState(0)
   const [showAddressForm, setShowAddressForm] = useState(false)
-  const { isLocationModalVisible } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
 
   useEffect(() => {
@@ -55,10 +54,8 @@ const LocationModal = ({ location, setLocation }) => {
   }, [location, addresses])
 
   useEffect(() => {
-    if (isLocationModalVisible) {
-      setShowAddressForm(!location)
-    }
-  }, [isLocationModalVisible, location])
+    setShowAddressForm(!location)
+  }, [location])
 
   // Save addresses to localStorage whenever they change
   useEffect(() => {
@@ -142,15 +139,6 @@ const LocationModal = ({ location, setLocation }) => {
         }
       }
     }
-
-    dispatch(setLocationModalVisibility(false))
-  }
-
-  const handleCancel = () => {
-    setFullAddress('')
-    setShowAddressForm(false)
-    setEditingIndex(-1)
-    dispatch(setLocationModalVisibility(false))
   }
 
   const handleEditAddress = index => {
@@ -192,80 +180,77 @@ const LocationModal = ({ location, setLocation }) => {
   }
 
   return (
-    <Modal
-      title="Địa chỉ của bạn"
-      open={isLocationModalVisible}
-      onCancel={handleCancel}
-      onOk={handleLocationSave}
-      okText="Lưu và sử dụng địa chỉ này"
-      cancelText="Hủy"
-      width={600}
-    >
-      <div className={styles.locationWrapper}>
-        {addresses.length > 0 && (
-          <List
-            className={styles.addressList}
-            itemLayout="horizontal"
-            dataSource={addresses}
-            renderItem={(address, index) => (
-              <List.Item
-                actions={[
-                  <EditOutlined key="edit" onClick={() => handleEditAddress(index)} style={{ color: '#1890ff' }} />,
-                  <DeleteOutlined
-                    key="delete"
-                    onClick={() => handleDeleteAddress(index)}
-                    style={{ color: '#ff4d4f' }}
-                  />
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={
-                    <Radio checked={index === defaultAddressIndex} onChange={() => setDefaultAddressIndex(index)} />
-                  }
-                  title={
-                    index === defaultAddressIndex ? (
-                      <Text strong>Địa chỉ mặc định</Text>
-                    ) : (
-                      <Text>Chọn làm địa chỉ mặc định</Text>
-                    )
-                  }
-                  description={address}
-                />
-              </List.Item>
-            )}
-          />
-        )}
+    <div className={styles.locationWrapper}>
+      <Button icon={<LeftOutlined />} onClick={() => dispatch(setEdittingAddress(false))}>
+        Quay lại
+      </Button>
+      <Typography.Title level={4} style={{ margin: '10px 0' }}>
+        Danh sách địa chỉ
+      </Typography.Title>
 
-        {showAddressForm ? (
-          <Space direction="vertical" style={{ width: '100%', marginTop: 16 }}>
-            <Typography.Title level={5}>
-              {editingIndex >= 0 ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}
-            </Typography.Title>
-            <AddressSelection
-              initialAddress={editingIndex >= 0 ? addresses[editingIndex] : ''}
-              onAddressChange={handleAddressChange}
-              isEditing={true}
-            />
-            <Space>
-              <Button type="primary" onClick={handleAddAddress}>
-                {editingIndex >= 0 ? 'Cập nhật địa chỉ' : 'Thêm địa chỉ'}
-              </Button>
-              <Button onClick={handleCancelEdit}>Hủy</Button>
-            </Space>
+      {addresses.length > 0 && (
+        <List
+          className={styles.addressList}
+          itemLayout="horizontal"
+          dataSource={addresses}
+          renderItem={(address, index) => (
+            <List.Item
+              actions={[
+                <EditOutlined key="edit" onClick={() => handleEditAddress(index)} style={{ color: '#1890ff' }} />,
+                <DeleteOutlined key="delete" onClick={() => handleDeleteAddress(index)} style={{ color: '#ff4d4f' }} />
+              ]}
+            >
+              <List.Item.Meta
+                avatar={
+                  <Radio checked={index === defaultAddressIndex} onChange={() => setDefaultAddressIndex(index)} />
+                }
+                title={
+                  index === defaultAddressIndex ? (
+                    <Text style={{ color: 'green' }}>Địa chỉ mặc định</Text>
+                  ) : (
+                    <Text strong>Chọn làm địa chỉ mặc định</Text>
+                  )
+                }
+                description={address}
+              />
+            </List.Item>
+          )}
+        />
+      )}
+
+      {showAddressForm ? (
+        <Space direction="vertical" style={{ width: '100%', marginTop: 16 }}>
+          <Typography.Title level={5}>{editingIndex >= 0 ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}</Typography.Title>
+          <AddressSelection
+            initialAddress={editingIndex >= 0 ? addresses[editingIndex] : ''}
+            onAddressChange={handleAddressChange}
+            isEditing={true}
+          />
+          <Space>
+            <Button type="primary" onClick={handleAddAddress}>
+              {editingIndex >= 0 ? 'Cập nhật địa chỉ' : 'Thêm địa chỉ'}
+            </Button>
+            <Button onClick={handleCancelEdit}>Hủy</Button>
           </Space>
-        ) : (
-          <Button
-            type="dashed"
-            icon={<PlusOutlined />}
-            onClick={handleAddNewAddress}
-            style={{ marginTop: 16, width: '100%' }}
-          >
-            Thêm địa chỉ mới
-          </Button>
-        )}
-      </div>
-    </Modal>
+        </Space>
+      ) : (
+        <Button
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={handleAddNewAddress}
+          style={{ marginTop: 16, width: '100%' }}
+        >
+          Thêm địa chỉ mới
+        </Button>
+      )}
+
+      {addresses.length > 0 && (
+        <Button type="primary" onClick={handleLocationSave} style={{ marginTop: 16, width: '100%' }}>
+          Lưu và sử dụng địa chỉ này
+        </Button>
+      )}
+    </div>
   )
 }
 
-export default LocationModal
+export default Location
