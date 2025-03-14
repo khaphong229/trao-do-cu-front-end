@@ -42,12 +42,63 @@ export const ContactInfoModal = ({ onSubmit }) => {
     setAddressTouched(true)
   }
 
+  // Hàm kiểm tra số điện thoại Việt Nam
+  const validatePhoneNumber = phone => {
+    // Kiểm tra định dạng số điện thoại Việt Nam (bắt đầu bằng 0, có 10 số)
+    const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/
+    return phoneRegex.test(phone)
+  }
+
+  // Kiểm tra link Facebook
+  const validateFacebookLink = link => {
+    if (!link) return true
+    // Kiểm tra link có chứa facebook.com hoặc fb.com
+    return link.includes('facebook.com') || link.includes('fb.com')
+  }
+
+  // Kiểm tra xem có ít nhất một phương thức liên hệ
+  const validateContactMethod = (phone, facebook) => {
+    return !!(phone || facebook)
+  }
+
   const handleSubmit = async values => {
     try {
       setAddressTouched(true)
+      let hasError = false
 
+      // Kiểm tra địa chỉ
       if (!fullAddress) {
         message.error('Vui lòng nhập địa chỉ đầy đủ')
+        hasError = true
+        return
+      }
+
+      // Kiểm tra số điện thoại nếu đã nhập
+      if (values.phone) {
+        if (!validatePhoneNumber(values.phone)) {
+          message.error('Số điện thoại không đúng định dạng (VD: 0912345678)')
+          hasError = true
+          return
+        }
+      }
+
+      // Kiểm tra link Facebook nếu đã nhập
+      if (values.social_media) {
+        if (!validateFacebookLink(values.social_media)) {
+          message.error('Link Facebook không hợp lệ, phải chứa facebook.com hoặc fb.com')
+          hasError = true
+          return
+        }
+      }
+
+      // Kiểm tra có ít nhất một phương thức liên hệ
+      if (!validateContactMethod(values.phone, values.social_media)) {
+        message.error('Vui lòng cung cấp ít nhất một phương thức liên hệ (Số điện thoại hoặc Facebook)')
+        hasError = true
+        return
+      }
+
+      if (hasError) {
         return
       }
 
@@ -80,7 +131,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
       <Form form={form} onFinish={handleSubmit} layout="vertical">
         <div style={{ marginBottom: 16 }}>
           <span style={{ color: '#ff4d4f', marginRight: 4 }}>*</span>
-          <Tooltip title="Cung cấp thông tin liên hệ của bạn">Phương thức liên hệ</Tooltip>
+          <Tooltip title="Cung cấp ít nhất một phương thức liên hệ của bạn">Phương thức liên hệ</Tooltip>
         </div>
 
         <Form.Item
@@ -113,7 +164,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
 
         <div style={{ marginTop: -8, marginBottom: 16 }}>
           <Text type="secondary" style={{ fontSize: '12px', color: '#2E8B57' }}>
-            * Chọn 1 trong 2 phương thức liên hệ
+            * Chọn ít nhất 1 trong 2 phương thức liên hệ
           </Text>
         </div>
 

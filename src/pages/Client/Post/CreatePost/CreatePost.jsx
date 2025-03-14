@@ -16,6 +16,22 @@ const CreatePostModal = () => {
   const { dataCreatePost, isCreateModalVisible, isLoadingButton } = useSelector(state => state.post)
   const [pendingPostOpen, setPendingPostOpen] = useState(false)
 
+  // Reset form data when modal is opened
+  useEffect(() => {
+    if (isCreateModalVisible) {
+      // Only reset certain fields that should be cleared on reopen
+      // Keep user contact info if it exists
+      dispatch(
+        updatePostData({
+          title: '',
+          content: '',
+          image_url: [],
+          category_id: null
+        })
+      )
+    }
+  }, [isCreateModalVisible, dispatch])
+
   const validateSubmit = async formData => {
     const response = await dispatch(
       createPost(formData.category_id === null ? omit(formData, ['category_id']) : formData)
@@ -25,6 +41,7 @@ const CreatePostModal = () => {
     if (status === 201) {
       message.success(msg)
       dispatch(setCreateModalVisibility(false))
+      // Full reset after successful post creation
       dispatch(resetPostData())
     }
     return response
@@ -89,6 +106,12 @@ const CreatePostModal = () => {
     }
   }
 
+  const handleCancelModal = () => {
+    dispatch(setCreateModalVisibility(false))
+    // Full reset when modal is closed manually
+    dispatch(resetPostData())
+  }
+
   const { isMobile } = useCheckMobileScreen()
 
   return (
@@ -98,7 +121,7 @@ const CreatePostModal = () => {
       <PostForm
         title="Tạo bài đăng"
         isVisible={isCreateModalVisible}
-        onCancel={() => dispatch(setCreateModalVisibility(false))}
+        onCancel={handleCancelModal}
         formData={dataCreatePost}
         isLoading={isLoadingButton}
         isMobile={isMobile}

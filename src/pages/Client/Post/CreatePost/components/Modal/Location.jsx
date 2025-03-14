@@ -22,11 +22,21 @@ const Location = ({ location, setLocation }) => {
   useEffect(() => {
     // Load saved addresses from localStorage if available
     const savedAddresses = localStorage.getItem('savedAddresses')
+    const savedDefaultIndex = localStorage.getItem('defaultAddressIndex')
+
     if (savedAddresses) {
       try {
         const parsedAddresses = JSON.parse(savedAddresses)
         if (Array.isArray(parsedAddresses) && parsedAddresses.length > 0) {
           setAddresses(parsedAddresses)
+
+          // Load the saved default index
+          if (savedDefaultIndex !== null) {
+            const index = parseInt(savedDefaultIndex, 10)
+            if (!isNaN(index) && index >= 0 && index < parsedAddresses.length) {
+              setDefaultAddressIndex(index)
+            }
+          }
         }
       } catch (e) {
         console.error('Error parsing saved addresses:', e)
@@ -50,6 +60,13 @@ const Location = ({ location, setLocation }) => {
           return prev
         })
       }
+
+      // If location matches a specific address, set it as default
+      const locationIndex = addresses.findIndex(addr => addr === location)
+      if (locationIndex !== -1) {
+        setDefaultAddressIndex(locationIndex)
+        localStorage.setItem('defaultAddressIndex', locationIndex.toString())
+      }
     }
   }, [location, addresses])
 
@@ -61,8 +78,19 @@ const Location = ({ location, setLocation }) => {
   useEffect(() => {
     if (addresses.length > 0) {
       localStorage.setItem('savedAddresses', JSON.stringify(addresses))
+
+      // Make sure defaultAddressIndex is valid when addresses change
+      if (defaultAddressIndex >= addresses.length) {
+        setDefaultAddressIndex(0)
+        localStorage.setItem('defaultAddressIndex', '0')
+      }
     }
   }, [addresses])
+
+  // Save default address index to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('defaultAddressIndex', defaultAddressIndex.toString())
+  }, [defaultAddressIndex])
 
   const handleAddressChange = address => {
     setFullAddress(address)
@@ -85,6 +113,8 @@ const Location = ({ location, setLocation }) => {
       // Add new address if it doesn't exist
       if (!addresses.includes(fullAddress)) {
         setAddresses(prev => [...prev, fullAddress])
+        // Optionally set the new address as default
+        setDefaultAddressIndex(addresses.length)
       }
     }
 
@@ -139,6 +169,9 @@ const Location = ({ location, setLocation }) => {
         }
       }
     }
+
+    // Thêm dòng này để quay về phần tạo bài đăng sau khi lưu địa chỉ
+    dispatch(setEdittingAddress(false))
   }
 
   const handleEditAddress = index => {
