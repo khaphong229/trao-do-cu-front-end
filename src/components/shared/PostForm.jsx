@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, message, Modal, Steps, theme } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
@@ -54,6 +54,13 @@ const PostForm = ({
   const isExchangeForm = title === 'Biểu mẫu trao đổi'
   const contentType = isExchangeForm ? 'exchange' : 'post'
 
+  // Reset current step when modal opens/closes
+  useEffect(() => {
+    if (isVisible) {
+      setCurrent(0)
+    }
+  }, [isVisible])
+
   const handleFormSubmit = () => {
     // Validate các trường khác trước
     const errors = validateForm()
@@ -81,6 +88,11 @@ const PostForm = ({
 
     // Nếu không có lỗi nào, tiếp tục submit
     handleSubmit()
+  }
+
+  const handleModalCancel = () => {
+    setCurrent(0) // Reset step when canceling
+    onCancel() // Call original onCancel prop
   }
 
   const handleFieldChange = (field, value) => {
@@ -253,7 +265,7 @@ const PostForm = ({
       <Modal
         title={title}
         open={isVisible}
-        onCancel={onCancel}
+        onCancel={handleModalCancel}
         footer={null}
         closeIcon={<CloseOutlined />}
         className={styles.createPostModal}
@@ -263,10 +275,10 @@ const PostForm = ({
       >
         <Steps
           current={current}
-          // items={steps.map(item => ({
-          //   key: item.title,
-          //   title: item.title
-          // }))}
+          items={steps.map(item => ({
+            key: item.title,
+            title: item.title
+          }))}
         />
 
         <div style={contentStyle}>{steps[current].content}</div>
@@ -283,7 +295,6 @@ const PostForm = ({
           {current === steps.length - 1 && (
             <Button
               type="primary"
-              // className={styles.postButton}
               style={isMobile ? { marginTop: 'auto' } : {}}
               onClick={handleFinish}
               loading={isLoading}
@@ -292,15 +303,6 @@ const PostForm = ({
             </Button>
           )}
         </div>
-        {/* <Button
-          type="primary"
-          className={styles.postButton}
-          onClick={handleFormSubmit}
-          loading={isLoading}
-          style={isMobile ? { marginTop: 'auto' } : {}}
-        >
-          {submitButtonText}
-        </Button> */}
       </Modal>
     </>
   )
