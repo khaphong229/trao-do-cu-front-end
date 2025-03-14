@@ -139,7 +139,9 @@ const CategoryModal = ({ categoryId, setCategory, error, embeddedMode = false, o
     //   width={500}
     //   className={styles.categoryModal}
     // >
+
     <div className={styles.categoryModal}>
+      <p className={styles.textTitle}>Chọn dạnh mục sản phẩm</p>
       {isLoading ? (
         <div className={styles.loadingContainer}>Đang tải danh mục...</div>
       ) : (

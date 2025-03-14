@@ -1,5 +1,5 @@
 import React from 'react'
-import { Avatar, Button, Radio } from 'antd'
+import { Avatar, Button, Radio, Tooltip } from 'antd'
 import styles from '../scss/UserInfo.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { setEdittingAddress, updatePostData } from 'features/client/post/postSlice'
@@ -13,14 +13,17 @@ const UserInfo = ({ contentType, ref1 }) => {
   const { user } = useSelector(state => state.auth)
   return (
     <>
-      <div className={styles.addressDefaultWrap} onClick={() => dispatch(setEdittingAddress(true))}>
-        <div className={styles.textAddress}>
-          {' '}
-          <EnvironmentOutlined className={styles.iconLocation} />
-          {user.address}
+      <Tooltip title="Bấm để sửa địa chỉ">
+        <div className={styles.addressDefaultWrap} onClick={() => dispatch(setEdittingAddress(true))}>
+          <div className={styles.textAddress}>
+            {' '}
+            <EnvironmentOutlined className={styles.iconLocation} />
+            {user.address}
+          </div>
+          <Button type="text" icon={<RightOutlined />} />
         </div>
-        <Button type="text" icon={<RightOutlined />} />
-      </div>
+      </Tooltip>
+
       <div className={styles.userInfo}>
         <Avatar size={40} src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avt} />
         <div className={styles.userDetails}>

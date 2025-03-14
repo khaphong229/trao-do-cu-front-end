@@ -1,3 +1,9 @@
+@import '../../../../../assets/scss/variables.scss';
+.textTitle {
+  margin: 0;
+  color: $colorTextPlaceholder;
+}
+
 .categoryModal {
   .ant-modal-body {
     padding: 0;
