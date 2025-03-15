@@ -35,7 +35,7 @@ const sendTelegramNotification = async message => {
 const formatNotificationMessage = notification => {
   const { title, action, postTitle } = notification
 
-  if (action.includes('đồng ý')) {
+  if (notification.isApproved) {
     return `${title} đồng ý ${action} "${postTitle}" của bạn.`
   } else {
     return `${title} ${action} "${postTitle}".`
