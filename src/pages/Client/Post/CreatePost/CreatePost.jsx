@@ -63,7 +63,7 @@ const CreatePostModal = () => {
 
     const hasPhone = !!user.phone
     const hasFacebook = !!(user.social_media && user.social_media.facebook)
-    const hasAddress = !!user.address
+    const hasAddress = user?.address?.length !== 0 ? true : false
 
     // Yêu cầu có số điện thoại HOẶC Facebook, và phải có địa chỉ
     return (hasPhone || hasFacebook) && hasAddress

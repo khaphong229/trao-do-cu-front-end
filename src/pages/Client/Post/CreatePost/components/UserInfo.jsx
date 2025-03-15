@@ -6,9 +6,11 @@ import { setEdittingAddress, updatePostData } from 'features/client/post/postSli
 import avt from 'assets/images/logo/avtDefault.webp'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { EnvironmentOutlined, RightOutlined } from '@ant-design/icons'
+import useDefaultLocation from 'hooks/useDefaultLocation'
 const UserInfo = ({ contentType, ref1 }) => {
   const dispatch = useDispatch()
   const { dataCreatePost } = useSelector(state => state.post)
+  const { addressDefault } = useDefaultLocation()
 
   const { user } = useSelector(state => state.auth)
   return (
@@ -18,7 +20,7 @@ const UserInfo = ({ contentType, ref1 }) => {
           <div className={styles.textAddress}>
             {' '}
             <EnvironmentOutlined className={styles.iconLocation} />
-            {user.address}
+            {addressDefault}
           </div>
           <Button type="text" icon={<RightOutlined />} />
         </div>

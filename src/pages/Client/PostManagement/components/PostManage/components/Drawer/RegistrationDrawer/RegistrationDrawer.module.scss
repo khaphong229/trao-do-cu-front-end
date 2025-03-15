@@ -3,37 +3,37 @@
     .ant-drawer-content-wrapper {
       width: 50%;
       transition: width 0.3s ease;
-      
+
       @media (max-width: 1200px) {
         width: 70% !important;
       }
-      
+
       @media (max-width: 768px) {
         width: 90% !important;
       }
-      
+
       @media (max-width: 480px) {
         width: 100% !important;
       }
     }
-    
+
     .ant-drawer-body {
       padding: 16px;
       overflow-y: auto;
-      
+
       @media (max-width: 480px) {
         padding: 12px;
       }
     }
-    
+
     .ant-descriptions {
       margin-bottom: 16px;
-      
+
       .ant-descriptions-item-label {
         color: #666;
         font-weight: 500;
       }
-      
+
       .ant-descriptions-item-content {
         color: #262626;
       }
@@ -47,15 +47,15 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   background: #fff;
   transition: all 0.3s ease;
-  
+
   &:hover {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   }
-  
+
   :global {
     .ant-card-body {
       padding: 20px;
-      
+
       @media (max-width: 480px) {
         padding: 16px;
       }
@@ -70,7 +70,7 @@
   margin-bottom: 20px;
   padding-bottom: 16px;
   border-bottom: 1px solid #f0f0f0;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
@@ -80,19 +80,19 @@
 .registrationInfo {
   flex: 1;
   width: 100%;
-  
+
   .registrationTitle {
     margin: 0 0 8px;
     font-size: 18px;
     font-weight: 600;
     color: #262626;
     word-break: break-word;
-    
+
     @media (max-width: 480px) {
       font-size: 16px;
     }
   }
-  
+
   .registrationDescription {
     margin: 0;
     color: #595959;
@@ -112,23 +112,23 @@
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 12px;
   margin-top: 16px;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
-  
+
   @media (max-width: 480px) {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 8px;
   }
-  
+
   .registrationImage {
     aspect-ratio: 1;
     width: 100%;
     object-fit: cover;
     border-radius: 8px;
     transition: transform 0.2s;
-    
+
     &:hover {
       transform: scale(1.05);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -144,17 +144,17 @@
     background: white;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     transition: all 0.3s ease;
-    
+
     &:hover {
       box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     }
-    
+
     @media (max-width: 480px) {
       padding: 16px;
       margin-bottom: 12px;
     }
   }
-  
+
   .requestHeader {
     display: flex;
     align-items: center;
@@ -162,45 +162,45 @@
     margin-bottom: 16px;
     flex-wrap: wrap;
     gap: 12px;
-    
+
     @media (max-width: 480px) {
       flex-direction: column;
       align-items: flex-start;
     }
-    
+
     .userInfo {
       display: flex;
       align-items: center;
       gap: 12px;
-      
+
       .userName {
         font-size: 16px;
         font-weight: 500;
         color: #262626;
         word-break: break-word;
-        
+
         @media (max-width: 480px) {
           font-size: 14px;
         }
       }
     }
   }
-  
+
   .requestContent {
     :global {
       .ant-descriptions {
         background: white;
         border-radius: 6px;
-        
+
         .ant-descriptions-item {
           padding-bottom: 12px;
         }
-        
+
         @media (max-width: 480px) {
           .ant-descriptions-header {
             padding: 8px 12px;
           }
-          
+
           .ant-descriptions-item-label,
           .ant-descriptions-item-content {
             padding: 8px 12px;
@@ -210,39 +210,39 @@
       }
     }
   }
-  
+
   .requestActions {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
     margin-top: 16px;
-    
+
     @media (max-width: 480px) {
       flex-direction: column;
       width: 100%;
     }
-    
+
     button {
       min-width: 100px;
-      
+
       @media (max-width: 480px) {
         width: 100%;
         margin-bottom: 8px;
       }
     }
   }
-  
+
   .statusBadge {
     font-weight: 500;
-    
+
     &.pending {
       color: #faad14;
     }
-    
+
     &.accepted {
       color: #52c41a;
     }
-    
+
     &.rejected {
       color: #ff4d4f;
     }
@@ -253,16 +253,16 @@
   display: flex;
   justify-content: flex-end;
   margin: 24px 0;
-  
+
   @media (max-width: 480px) {
     justify-content: center;
   }
-  
+
   :global {
     .ant-pagination-item {
       border-radius: 4px;
     }
-    
+
     @media (max-width: 480px) {
       .ant-pagination-item,
       .ant-pagination-prev,
@@ -272,7 +272,7 @@
         height: 28px;
         line-height: 26px;
       }
-      
+
       .ant-pagination-options {
         margin-left: 8px;
       }

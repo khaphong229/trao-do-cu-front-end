@@ -14,6 +14,7 @@ import CategoryModal from 'pages/Client/Post/CreatePost/components/Modal/Categor
 
 import styles from 'pages/Client/Post/CreatePost/scss/CreatePost.module.scss'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
+import useDefaultLocation from 'hooks/useDefaultLocation'
 
 const PostForm = ({
   title,
@@ -46,7 +47,7 @@ const PostForm = ({
     handleSubmit,
     scrollToFirstError
   } = formUtils
-
+  const { addressDefault } = useDefaultLocation()
   const { isEdittingAddress } = useSelector(state => state.post)
 
   const safeFormData = formData || {}
@@ -227,7 +228,7 @@ const PostForm = ({
             <>
               <LocationModal
                 embeddedMode={true}
-                location={safeFormData.specificLocation || user?.address || ''}
+                location={safeFormData.specificLocation || addressDefault || ''}
                 setLocation={handleLocationChange}
                 error={formErrors.specificLocation}
               />
@@ -275,10 +276,10 @@ const PostForm = ({
       >
         <Steps
           current={current}
-          items={steps.map(item => ({
-            key: item.title,
-            title: item.title
-          }))}
+          // items={steps.map(item => ({
+          //   key: item.title,
+          //   title: item.title
+          // }))}
         />
 
         <div style={contentStyle}>{steps[current].content}</div>

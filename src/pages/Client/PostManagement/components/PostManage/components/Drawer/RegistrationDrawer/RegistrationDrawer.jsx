@@ -8,7 +8,7 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getAvatarPost } from 'hooks/useAvatar'
-import moment from 'moment' // Assuming moment is already installed
+// Assuming moment is already installed
 
 export const RegistrationDrawer = ({
   visible,

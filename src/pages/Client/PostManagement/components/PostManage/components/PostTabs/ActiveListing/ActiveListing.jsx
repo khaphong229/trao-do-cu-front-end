@@ -327,7 +327,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
           ))}
         </Tabs>
         <Button type="default" onClick={showHistoryModal}>
-          Lịch sử bài đăng
+          Lịch sử sản phẩm
         </Button>
       </div>
 
@@ -359,7 +359,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
 
       {/* Modal lịch sử bài đăng */}
       <Modal
-        title="Lịch sử bài đăng"
+        title="Lịch sử sản phẩm"
         open={isHistoryModalVisible}
         onCancel={handleHistoryModalClose}
         footer={null}

@@ -105,7 +105,12 @@ export const ContactInfoModal = ({ onSubmit }) => {
       // Tạo dữ liệu gửi đi
       const submissionData = {
         ...values,
-        address: fullAddress,
+        address: [
+          {
+            address: fullAddress,
+            isDefault: true
+          }
+        ],
         social_media: {
           facebook: values.social_media,
           zalo: user.social_media?.zalo || '',
@@ -175,7 +180,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
           help={addressTouched && !fullAddress ? 'Vui lòng nhập địa chỉ đầy đủ' : null}
         >
           <AddressSelection
-            initialAddress={user?.address}
+            initialAddress={user?.address?.address}
             onAddressChange={handleAddressChange}
             showEditButton={true}
           />

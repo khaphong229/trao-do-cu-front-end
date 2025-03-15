@@ -11,7 +11,7 @@ import {
 } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getAvatarPost } from 'hooks/useAvatar'
-import moment from 'moment' // Assuming moment is already installed
+// Assuming moment is already installed
 
 export const ExchangeDrawer = ({
   visible,

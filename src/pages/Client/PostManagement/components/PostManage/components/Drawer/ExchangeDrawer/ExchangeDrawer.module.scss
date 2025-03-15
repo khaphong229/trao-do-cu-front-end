@@ -20,15 +20,15 @@ $screen-xl: 1200px;
 :global {
   .ant-drawer-body {
     padding: 16px !important;
-    
+
     @media (min-width: $screen-md) {
       padding: 20px 24px !important;
     }
   }
-  
+
   .ant-drawer-header {
     border-bottom: 1px solid #f0f0f0;
-    
+
     .ant-drawer-title {
       font-size: 18px;
       font-weight: 600;
@@ -44,15 +44,15 @@ $screen-xl: 1200px;
   overflow: hidden;
   transition: $transition-default;
   box-shadow: $box-shadow-sm;
-  
+
   &:hover {
     box-shadow: $box-shadow-md;
   }
-  
+
   :global {
     .ant-card-body {
       padding: 16px;
-      
+
       @media (min-width: $screen-md) {
         padding: 20px;
       }
@@ -71,23 +71,23 @@ $screen-xl: 1200px;
     color: rgba(0, 0, 0, 0.85);
     margin: 0 0 8px;
     line-height: 1.4;
-    
+
     @media (min-width: $screen-md) {
       font-size: 20px;
     }
   }
-  
+
   .metaInfo {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    
+
     :global {
       .ant-tag {
         margin-right: 0;
         border-radius: 16px;
         padding: 0 10px;
-        
+
         .anticon {
           margin-right: 4px;
         }
@@ -113,15 +113,15 @@ $screen-xl: 1200px;
   border: 1px solid #f0f0f0;
   transition: $transition-default;
   overflow: hidden;
-  
+
   &:hover {
     box-shadow: $box-shadow-md;
   }
-  
+
   :global {
     .ant-card-body {
       padding: 16px;
-      
+
       @media (min-width: $screen-md) {
         padding: 24px;
       }
@@ -135,18 +135,18 @@ $screen-xl: 1200px;
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
-  
+
   span {
     font-size: 16px;
     font-weight: 500;
     color: rgba(0, 0, 0, 0.85);
   }
-  
+
   :global {
     .ant-avatar {
       border: 2px solid #f0f0f0;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      
+
       @media (min-width: $screen-md) {
         width: 48px;
         height: 48px;
@@ -154,13 +154,13 @@ $screen-xl: 1200px;
         font-size: 24px;
       }
     }
-    
+
     .ant-badge {
       .ant-badge-status-dot {
         width: 8px;
         height: 8px;
       }
-      
+
       .ant-badge-status-text {
         color: $success-color;
         font-weight: 500;
@@ -172,52 +172,52 @@ $screen-xl: 1200px;
 // Exchange details styling
 .exchangeDetails {
   margin-bottom: 16px;
-  
+
   :global {
     .ant-descriptions {
       .ant-descriptions-header {
         margin-bottom: 16px;
-        
+
         .ant-descriptions-title {
           font-size: 16px;
           font-weight: 600;
           color: rgba(0, 0, 0, 0.85);
         }
       }
-      
+
       .ant-descriptions-view {
         border-radius: $border-radius;
         overflow: hidden;
         border: 1px solid #f0f0f0;
       }
-      
+
       .ant-descriptions-item-label {
         background-color: #fafafa;
         font-weight: 500;
         padding: 12px 16px;
         width: 30%;
-        
+
         @media (max-width: $screen-md) {
           width: 40%;
         }
       }
-      
+
       .ant-descriptions-item-content {
         color: rgba(0, 0, 0, 0.65);
         padding: 12px 16px;
         line-height: 1.5;
       }
-      
+
       @media (max-width: $screen-sm) {
         .ant-descriptions-item {
           padding-bottom: 0;
         }
-        
+
         .ant-descriptions-item-container {
           display: flex;
           flex-direction: column;
         }
-        
+
         .ant-descriptions-item-label,
         .ant-descriptions-item-content {
           width: 100%;
@@ -231,7 +231,7 @@ $screen-xl: 1200px;
 // Image section styling
 .imageSection {
   margin-top: 24px;
-  
+
   .imageTitle {
     font-size: 16px;
     font-weight: 600;
@@ -239,7 +239,7 @@ $screen-xl: 1200px;
     margin-bottom: 16px;
     position: relative;
     padding-left: 12px;
-    
+
     &::before {
       content: '';
       display: block;
@@ -258,24 +258,24 @@ $screen-xl: 1200px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   gap: 8px;
-  
+
   @media (min-width: $screen-sm) {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 12px;
   }
-  
+
   @media (min-width: $screen-md) {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 16px;
   }
-  
+
   .imgItem {
     aspect-ratio: 1;
     width: 100%;
     border-radius: $border-radius;
     object-fit: cover;
   }
-  
+
   :global {
     .ant-image {
       width: 100%;
@@ -283,7 +283,7 @@ $screen-xl: 1200px;
       overflow: hidden;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       transition: transform 0.2s;
-      
+
       &:hover {
         transform: scale(1.03);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -298,12 +298,12 @@ $screen-xl: 1200px;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
-  
+
   @media (max-width: $screen-sm) {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   :global {
     .ant-btn {
       height: 40px;
@@ -312,30 +312,30 @@ $screen-xl: 1200px;
       min-width: 120px;
       border-radius: $border-radius;
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
-      
+
       @media (max-width: $screen-sm) {
         width: 100%;
       }
-      
+
       &[disabled] {
         opacity: 0.6;
       }
-      
+
       &-primary {
         background: $success-color;
         border-color: $success-color;
-        
+
         &:hover:not([disabled]) {
           background: darken($success-color, 5%);
           border-color: darken($success-color, 5%);
         }
       }
-      
+
       &-danger {
         background: white;
         border-color: $danger-color;
         color: $danger-color;
-        
+
         &:hover:not([disabled]) {
           background: rgba($danger-color, 0.05);
           color: darken($danger-color, 5%);
@@ -351,33 +351,33 @@ $screen-xl: 1200px;
   margin: 24px 0;
   display: flex;
   justify-content: flex-end;
-  
+
   :global {
     .ant-pagination {
       .ant-pagination-item {
         border-radius: $border-radius;
-        
+
         &-active {
           background-color: $primary-color;
           border-color: $primary-color;
-          
+
           a {
             color: white;
           }
-          
+
           &:hover a {
             color: white;
           }
         }
       }
-      
+
       .ant-pagination-prev,
       .ant-pagination-next {
         .ant-pagination-item-link {
           border-radius: $border-radius;
         }
       }
-      
+
       .ant-select {
         .ant-select-selector {
           border-radius: $border-radius;
@@ -400,7 +400,7 @@ $screen-xl: 1200px;
   text-align: center;
   padding: 40px;
   color: rgba(0, 0, 0, 0.45);
-  
+
   :global {
     .anticon {
       font-size: 48px;
@@ -408,7 +408,7 @@ $screen-xl: 1200px;
       color: #d9d9d9;
     }
   }
-  
+
   .emptyText {
     font-size: 16px;
   }

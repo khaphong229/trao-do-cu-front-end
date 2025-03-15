@@ -11,6 +11,7 @@ import {
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import { setSocialLinkModalVisibility, updatePostRequestStatus } from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
+import useDefaultLocation from 'hooks/useDefaultLocation'
 const isObject = require('lodash/isObject')
 
 export const useGiftRequest = () => {
@@ -18,6 +19,7 @@ export const useGiftRequest = () => {
   const { user } = useSelector(state => state.auth)
   const selectedPostExchange = useSelector(state => state.exchangeRequest?.selectedPostExchange) || null
   const { batchClick } = useInteraction()
+  const { addressDefault } = useDefaultLocation()
 
   const checkUserContactInfo = () => {
     return (user?.phone || user?.social_media?.facebook) && user?.address
@@ -98,7 +100,7 @@ export const useGiftRequest = () => {
       reason_receive: values.reason_receive === undefined ? '' : values.reason_receive,
       status: 'pending',
       contact_phone: user?.phone ? user.phone : '',
-      contact_address: user?.address ? user.address : '',
+      contact_address: user?.address.length !== 0 ? addressDefault : '',
       contact_name: user.name
     }
 
@@ -157,7 +159,7 @@ export const useGiftRequest = () => {
         zalo: '',
         instagram: ''
       },
-      contact_address: user?.address ? user.address : ''
+      contact_address: user?.address.length !== 0 ? addressDefault : ''
     }
 
     try {
