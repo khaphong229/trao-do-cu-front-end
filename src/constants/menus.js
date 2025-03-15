@@ -162,7 +162,6 @@ export const NotificationMenu = ({ setDropdownVisible }) => {
         )}
       </Card>
 
-      {/* Hiển thị modal chi tiết thông báo */}
       {isVisibleNotificationDetail && <NotificationDetail notification={selectedNotification} />}
     </>
   )

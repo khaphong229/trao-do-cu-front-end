@@ -7,6 +7,40 @@ import {
   markAllNotificationsAsRead,
   markNotificationAsRead
 } from 'features/client/notification/notificationThunks'
+import axios from 'axios'
+
+const sendTelegramNotification = async message => {
+  const botToken = process.env.REACT_APP_TELEGRAM_BOT_TOKEN
+  const chatId = process.env.REACT_APP_TELEGRAM_CHAT_ID
+
+  if (!botToken || !chatId) {
+    console.error('Bot token or chat ID is missing.')
+    return
+  }
+
+  const url = `https://api.telegram.org/bot${botToken}/sendMessage`
+
+  try {
+    const response = await axios.post(url, {
+      chat_id: chatId,
+      text: message
+    })
+    console.log('Message sent successfully:', response.data)
+  } catch (error) {
+    console.error('Error sending message:', error.response?.data || error.message)
+  }
+}
+
+// Hàm định dạng thông báo
+const formatNotificationMessage = notification => {
+  const { title, action, postTitle } = notification
+
+  if (action.includes('đồng ý')) {
+    return `${title} đồng ý ${action} "${postTitle}" của bạn.`
+  } else {
+    return `${title} ${action} "${postTitle}".`
+  }
+}
 
 export const UseListNotification = () => {
   const dispatch = useDispatch()
@@ -40,6 +74,18 @@ export const UseListNotification = () => {
           if (currentUnreadCount !== lastPolledCount) {
             setLastPolledCount(currentUnreadCount)
             setAllNotifications(response.payload.data.data)
+
+            // Gửi thông báo đến Telegram khi có thông báo mới
+            const newNotifications = response.payload.data.data.filter(n => !n.isRead)
+            newNotifications.forEach(notification => {
+              const formattedNotification = {
+                title: getNotificationName(notification),
+                action: getNotificationText(notification?.type),
+                postTitle: notification.post_id?.title || 'Không có tiêu đề'
+              }
+              const message = formatNotificationMessage(formattedNotification)
+              sendTelegramNotification(message)
+            })
           }
           return
         }
@@ -64,7 +110,6 @@ export const UseListNotification = () => {
     [dispatch, isAuthenticated, lastPolledCount]
   )
 
-  // Uncommented the polling interval for real-time notifications
   useEffect(() => {
     if (!isAuthenticated) return
 
@@ -75,7 +120,6 @@ export const UseListNotification = () => {
     return () => clearInterval(pollInterval)
   }, [isAuthenticated, loadNotifications])
 
-  // Initial load
   useEffect(() => {
     if (isAuthenticated && !isLoaded) {
       loadNotifications(1)
@@ -96,15 +140,26 @@ export const UseListNotification = () => {
     try {
       const data = await dispatch(markNotificationAsRead(notificationId))
       if (data.payload?.data?.isRead === true) {
-        // Update the notification locally first for better UX
         setAllNotifications(prevNotifications =>
           prevNotifications.map(notification =>
             notification._id === notificationId ? { ...notification, isRead: true } : notification
           )
         )
+
+        // Gửi thông báo đến Telegram
+        const notification = allNotifications.find(n => n._id === notificationId)
+        if (notification) {
+          const formattedNotification = {
+            title: getNotificationName(notification),
+            action: getNotificationText(notification?.type),
+            postTitle: notification.post_id?.title || 'Không có tiêu đề'
+          }
+          const message = formatNotificationMessage(formattedNotification)
+          sendTelegramNotification(message)
+        }
       }
     } catch (error) {
-      // console.error('Failed to mark notification as read:', error)
+      console.error('Failed to mark notification as read:', error)
     }
   }
 
@@ -112,20 +167,22 @@ export const UseListNotification = () => {
     try {
       const response = await dispatch(markAllNotificationsAsRead())
       if (response.payload.status === 200 || response.payload.status === 201) {
-        // Update all notifications locally first for better UX
         setAllNotifications(prevNotifications =>
           prevNotifications.map(notification => ({ ...notification, isRead: true }))
         )
-        // Then reload from server to ensure sync
         loadNotifications(1)
+
+        // Gửi thông báo đến Telegram
+        const message = 'Tất cả thông báo đã được đánh dấu là đã đọc.'
+        sendTelegramNotification(message)
       }
     } catch (error) {
-      // console.error('Failed to mark all notifications as read:', error)
+      console.error('Failed to mark all notifications as read:', error)
     }
   }
 
   const getNotificationText = typeInput => {
-    if (!typeInput) return ''
+    if (!typeInput) return 'Không có loại thông báo'
 
     const [status, type] = typeInput.split('_')
 
@@ -136,7 +193,7 @@ export const UseListNotification = () => {
     } else if (status === 'reject') {
       return type === 'receive' ? 'đã từ chối yêu cầu nhận' : 'đã từ chối yêu cầu đổi'
     }
-    return ''
+    return 'Không có loại thông báo'
   }
 
   const getNotificationName = notification => {
@@ -156,25 +213,25 @@ export const UseListNotification = () => {
         if (!notification) return null
 
         return {
-          id: notification?._id,
-          title: getNotificationName(notification),
-          action: getNotificationText(notification?.type),
-          postTitle: notification.post_id?.title || 'không có tiêu đề',
-          isApproved: notification?.type?.startsWith('approve'),
-          time: formatTimeAgo(notification.created_at),
-          isRead: notification.isRead,
-          postId: notification.post_id?._id,
-          sourceId: notification.source_id?._id,
+          id: notification?._id || 'Không có ID',
+          title: getNotificationName(notification) || 'Ẩn danh',
+          action: getNotificationText(notification?.type) || 'Không có hành động',
+          postTitle: notification.post_id?.title || 'Không có tiêu đề',
+          isApproved: notification?.type?.startsWith('approve') || false,
+          time: formatTimeAgo(notification.created_at) || 'Không có thời gian',
+          isRead: notification.isRead || false,
+          postId: notification.post_id?._id || 'Không có post ID',
+          sourceId: notification.source_id?._id || 'Không có source ID',
           imageUrl: notification.post_id?.image_url || null,
-          status: notification.post_id?.user_id?.status,
-          ownerName: notification.post_id?.user_id?.name,
-          receiverName: notification.source_id?.user_req_id?.name,
-          contact: notification.post_id?.user_id?.phone,
-          facebookLink: notification.post_id?.user_id?.social_media?.facebook,
-          type: notification.type.split('_')[1]
+          status: notification.post_id?.user_id?.status || 'Không có trạng thái',
+          ownerName: notification.post_id?.user_id?.name || 'Ẩn danh',
+          receiverName: notification.source_id?.user_req_id?.name || 'Ẩn danh',
+          contact: notification.post_id?.user_id?.phone || 'Không có liên hệ',
+          facebookLink: notification.post_id?.user_id?.social_media?.facebook || 'Không có link Facebook',
+          type: notification.type?.split('_')[1] || 'Không có loại'
         }
       })
-      .filter(Boolean) // Remove null items
+      .filter(Boolean)
   }, [allNotifications])
 
   const unreadCount = useMemo(() => {
@@ -190,7 +247,7 @@ export const UseListNotification = () => {
     isLoaded,
     hasMore,
     selectedNotification,
-    isVisibleNotificationDetail, // Ensure this is returned
+    isVisibleNotificationDetail,
     loadNotifications,
     loadMore,
     handleMarkAsRead,
