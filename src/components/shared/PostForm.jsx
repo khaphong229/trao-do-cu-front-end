@@ -74,7 +74,7 @@ const PostForm = ({
     // Nếu có lỗi ở các trường khác, hiển thị lỗi đó trước
     if (Object.keys(otherErrors).length > 0) {
       // Hiển thị message lỗi đầu tiên
-      message.error(String(Object.values(otherErrors)[0]))
+      message.error(String(Object.values(otherErrors)[0])) // Ensure this is a string
       // Cuộn đến trường lỗi đầu tiên
       scrollToFirstError(otherErrors)
       return
@@ -150,7 +150,7 @@ const PostForm = ({
 
     if (Object.keys(stepOneErrors).length > 0) {
       // Show error message for step 1
-      message.error(String(Object.values(stepOneErrors)[0]))
+      message.error(String(Object.values(stepOneErrors)[0])) // Ensure this is a string
       scrollToFirstError(stepOneErrors)
       return false
     }
@@ -163,7 +163,7 @@ const PostForm = ({
     const errors = validateForm()
 
     if (errors.category_id) {
-      message.error(errors.category_id)
+      message.error(errors.category_id) // Ensure this is a string
       return false
     }
 

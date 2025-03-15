@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react'
-import { Drawer, Card, List, Avatar, Space, Button, Image, message, Badge, Descriptions, Pagination } from 'antd'
-import { UserOutlined } from '@ant-design/icons'
+import { Drawer, Card, List, Avatar, Space, Button, Image, message, Badge, Descriptions, Pagination, Tag } from 'antd'
+import { UserOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './ExchangeDrawer.module.scss'
+import dayjs from 'dayjs'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import {
   acceptExchangeRequest,
@@ -10,6 +11,7 @@ import {
 } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getAvatarPost } from 'hooks/useAvatar'
+import moment from 'moment' // Assuming moment is already installed
 
 export const ExchangeDrawer = ({
   visible,
@@ -95,9 +97,20 @@ export const ExchangeDrawer = ({
     >
       {listing && (
         <Card className={styles.originalPost}>
+          <div className={styles.postHeader}>
+            <div className={styles.postInfo}>
+              <p className={styles.title}>{`Tiêu đề: ${listing.title}`}</p>
+              <Space direction="horizontal" size="small" className={styles.metaInfo}>
+                <Tag icon={<UserOutlined />} color="blue">
+                  {`Đăng bởi: ${listing.user_id?.name || 'Không xác định'}`}
+                </Tag>
+                <Tag icon={<ClockCircleOutlined />} color="green">
+                  {`Đăng lúc: ${dayjs(listing.created_at).format('DD/MM/YYYY HH:mm')}`}
+                </Tag>
+              </Space>
+            </div>
+          </div>
           <div className={styles.postContent}>
-            <p className={styles.title}>{`Tiêu đề: ${listing.title}`}</p>
-            <p className={styles.description}>{listing.description}</p>
             <div className={styles.imageGrid}>
               {listing.image_url?.map((img, index) => (
                 <Image

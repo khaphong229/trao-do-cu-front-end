@@ -15,82 +15,79 @@ const Location = ({ location, setLocation }) => {
   const [editingIndex, setEditingIndex] = useState(-1) // -1 means not editing any existing address
   const [initialAddress, setInitialAddress] = useState('')
   const [addresses, setAddresses] = useState([])
-  const [defaultAddressIndex, setDefaultAddressIndex] = useState(0)
   const [showAddressForm, setShowAddressForm] = useState(false)
   const { user } = useSelector(state => state.auth)
 
-  useEffect(() => {
-    // Load saved addresses from localStorage if available
-    const savedAddresses = localStorage.getItem('savedAddresses')
-    const savedDefaultIndex = localStorage.getItem('defaultAddressIndex')
+  // Tạo khóa localStorage duy nhất cho mỗi người dùng
+  const getStorageKeyForUser = key => {
+    if (!user || !user.id) return null
+    return `${key}_${user.id}`
+  }
 
-    if (savedAddresses) {
-      try {
-        const parsedAddresses = JSON.parse(savedAddresses)
-        if (Array.isArray(parsedAddresses) && parsedAddresses.length > 0) {
-          setAddresses(parsedAddresses)
-
-          // Load the saved default index
-          if (savedDefaultIndex !== null) {
-            const index = parseInt(savedDefaultIndex, 10)
-            if (!isNaN(index) && index >= 0 && index < parsedAddresses.length) {
-              setDefaultAddressIndex(index)
-            }
-          }
-        }
-      } catch (e) {
-        console.error('Error parsing saved addresses:', e)
+  // Hàm lưu danh sách địa chỉ vào localStorage
+  const saveAddressesToStorage = addressesList => {
+    if (user && user.id) {
+      const userAddressesKey = getStorageKeyForUser('savedAddresses')
+      if (userAddressesKey) {
+        localStorage.setItem(userAddressesKey, JSON.stringify(addressesList))
+        console.log('Đã lưu địa chỉ vào localStorage:', addressesList)
       }
     }
-  }, [])
+  }
 
+  // Hàm tải danh sách địa chỉ từ localStorage
+  const loadAddressesFromStorage = () => {
+    if (user && user.id) {
+      const userAddressesKey = getStorageKeyForUser('savedAddresses')
+      const savedAddresses = localStorage.getItem(userAddressesKey)
+      if (savedAddresses) {
+        try {
+          const parsedAddresses = JSON.parse(savedAddresses)
+          if (Array.isArray(parsedAddresses)) {
+            return parsedAddresses
+          }
+        } catch (e) {
+          console.error('Error parsing saved addresses:', e)
+        }
+      }
+    }
+    return []
+  }
+
+  // Tải địa chỉ từ localStorage khi component được mount hoặc user thay đổi
   useEffect(() => {
-    if (location) {
+    const loadedAddresses = loadAddressesFromStorage()
+    setAddresses(loadedAddresses)
+  }, [user])
+
+  // Xử lý khi location prop thay đổi
+  useEffect(() => {
+    if (location && user && user.id) {
       setFullAddress(location)
       setInitialAddress(location)
 
-      // Initialize addresses array with the current location if not already present
-      if (addresses.length === 0 || !addresses.includes(location)) {
-        setAddresses(prev => {
-          if (prev.length === 0) {
-            return [location]
-          } else if (!prev.includes(location)) {
-            return [...prev, location]
-          }
-          return prev
-        })
-      }
+      const locationIndex = addresses.findIndex(addr => addr.address === location)
 
-      // If location matches a specific address, set it as default
-      const locationIndex = addresses.findIndex(addr => addr === location)
       if (locationIndex !== -1) {
-        setDefaultAddressIndex(locationIndex)
-        localStorage.setItem('defaultAddressIndex', locationIndex.toString())
+        // Nếu địa chỉ đã tồn tại, đặt nó làm mặc định
+        handleSetDefaultAddress(locationIndex)
+      } else {
+        // Nếu địa chỉ chưa tồn tại, thêm vào danh sách
+        const newAddress = {
+          address: location,
+          isDefault: addresses.length === 0 // Nếu không có địa chỉ nào, đặt làm mặc định
+        }
+        const newAddresses = [...addresses, newAddress]
+        setAddresses(newAddresses)
+        saveAddressesToStorage(newAddresses)
       }
     }
-  }, [location, addresses])
+  }, [location, user])
 
+  // Hiển thị form địa chỉ nếu không có location
   useEffect(() => {
     setShowAddressForm(!location)
   }, [location])
-
-  // Save addresses to localStorage whenever they change
-  useEffect(() => {
-    if (addresses.length > 0) {
-      localStorage.setItem('savedAddresses', JSON.stringify(addresses))
-
-      // Make sure defaultAddressIndex is valid when addresses change
-      if (defaultAddressIndex >= addresses.length) {
-        setDefaultAddressIndex(0)
-        localStorage.setItem('defaultAddressIndex', '0')
-      }
-    }
-  }, [addresses])
-
-  // Save default address index to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('defaultAddressIndex', defaultAddressIndex.toString())
-  }, [defaultAddressIndex])
 
   const handleAddressChange = address => {
     setFullAddress(address)
@@ -102,81 +99,23 @@ const Location = ({ location, setLocation }) => {
       return
     }
 
-    // Check if we're editing an existing address or adding a new one
-    if (editingIndex >= 0) {
-      // Update existing address
-      const newAddresses = [...addresses]
-      newAddresses[editingIndex] = fullAddress
-      setAddresses(newAddresses)
-      setEditingIndex(-1)
-    } else {
-      // Add new address if it doesn't exist
-      if (!addresses.includes(fullAddress)) {
-        setAddresses(prev => [...prev, fullAddress])
-        // Optionally set the new address as default
-        setDefaultAddressIndex(addresses.length)
-      }
+    const newAddress = {
+      address: fullAddress,
+      isDefault: addresses.length === 0 // Nếu không có địa chỉ nào, đặt làm mặc định
     }
 
-    // Reset form after adding
+    const newAddresses = [...addresses, newAddress]
+    setAddresses(newAddresses)
+    saveAddressesToStorage(newAddresses)
+
     setShowAddressForm(false)
     setFullAddress('')
     message.success('Đã lưu địa chỉ thành công!')
   }
 
-  const handleLocationSave = async () => {
-    // Use the default address for updating post data
-    const selectedAddress = addresses[defaultAddressIndex]
-    if (!selectedAddress) {
-      message.error('Vui lòng chọn hoặc thêm ít nhất một địa chỉ')
-      return
-    }
-
-    const addressParts = selectedAddress.split(', ')
-    const city = addressParts[addressParts.length - 1]
-
-    await dispatch(
-      updatePostData({
-        city,
-        specificLocation: selectedAddress
-      })
-    )
-
-    if (setLocation) {
-      setLocation(selectedAddress)
-    }
-
-    if (selectedAddress !== initialAddress) {
-      try {
-        const response = await dispatch(
-          updateUserProfile({
-            name: user.name,
-            email: user.email,
-            address: selectedAddress,
-            phone: user.phone
-          })
-        ).unwrap()
-
-        if (response.status === 201) {
-          message.success('Cập nhật địa chỉ thành công!')
-          setInitialAddress(selectedAddress)
-        }
-      } catch (error) {
-        if (error.status === 400) {
-          Object.values(error.detail).forEach(val => {
-            message.error(val)
-          })
-        }
-      }
-    }
-
-    // Thêm dòng này để quay về phần tạo bài đăng sau khi lưu địa chỉ
-    dispatch(setEdittingAddress(false))
-  }
-
   const handleEditAddress = index => {
     setEditingIndex(index)
-    setFullAddress(addresses[index])
+    setFullAddress(addresses[index].address)
     setShowAddressForm(true)
   }
 
@@ -198,18 +137,74 @@ const Location = ({ location, setLocation }) => {
       return
     }
 
-    const newAddresses = [...addresses]
-    newAddresses.splice(index, 1)
+    const newAddresses = addresses.filter((_, i) => i !== index)
     setAddresses(newAddresses)
+    saveAddressesToStorage(newAddresses)
 
-    // If we're deleting the default address, update the default index
-    if (index === defaultAddressIndex) {
-      setDefaultAddressIndex(0)
-    } else if (index < defaultAddressIndex) {
-      setDefaultAddressIndex(defaultAddressIndex - 1)
+    if (addresses[index].isDefault && newAddresses.length > 0) {
+      newAddresses[0].isDefault = true // Đặt địa chỉ đầu tiên làm mặc định
+      saveAddressesToStorage(newAddresses)
     }
 
     message.success('Đã xóa địa chỉ thành công')
+  }
+
+  const handleSetDefaultAddress = index => {
+    const newAddresses = addresses.map((addr, i) => ({
+      ...addr,
+      isDefault: i === index
+    }))
+    setAddresses(newAddresses)
+    saveAddressesToStorage(newAddresses)
+  }
+
+  const handleLocationSave = async () => {
+    const selectedAddress = addresses.find(addr => addr.isDefault)
+    if (!selectedAddress) {
+      message.error('Vui lòng chọn hoặc thêm ít nhất một địa chỉ')
+      return
+    }
+
+    const addressParts = selectedAddress.address.split(', ')
+    const city = addressParts[addressParts.length - 1]
+
+    await dispatch(
+      updatePostData({
+        city,
+        specificLocation: selectedAddress.address
+      })
+    )
+
+    if (setLocation) {
+      setLocation(selectedAddress.address)
+    }
+
+    if (selectedAddress.address !== initialAddress) {
+      try {
+        const response = await dispatch(
+          updateUserProfile({
+            name: user.name,
+            email: user.email,
+            address: selectedAddress.address,
+            phone: user.phone
+          })
+        ).unwrap()
+
+        if (response.status === 201) {
+          message.success('Cập nhật địa chỉ thành công!')
+          setInitialAddress(selectedAddress.address)
+        }
+      } catch (error) {
+        if (error.status === 400) {
+          Object.values(error.detail).forEach(val => {
+            message.error(String(val)) // Ensure this is a string
+          })
+        }
+      }
+    }
+
+    // Quay về phần tạo bài đăng sau khi lưu địa chỉ
+    dispatch(setEdittingAddress(false))
   }
 
   return (
@@ -234,17 +229,15 @@ const Location = ({ location, setLocation }) => {
               ]}
             >
               <List.Item.Meta
-                avatar={
-                  <Radio checked={index === defaultAddressIndex} onChange={() => setDefaultAddressIndex(index)} />
-                }
+                avatar={<Radio checked={address.isDefault} onChange={() => handleSetDefaultAddress(index)} />}
                 title={
-                  index === defaultAddressIndex ? (
+                  address.isDefault ? (
                     <Text style={{ color: 'green' }}>Địa chỉ mặc định</Text>
                   ) : (
                     <Text strong>Chọn làm địa chỉ mặc định</Text>
                   )
                 }
-                description={address}
+                description={address.address}
               />
             </List.Item>
           )}
@@ -255,7 +248,7 @@ const Location = ({ location, setLocation }) => {
         <Space direction="vertical" style={{ width: '100%', marginTop: 16 }}>
           <Typography.Title level={5}>{editingIndex >= 0 ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}</Typography.Title>
           <AddressSelection
-            initialAddress={editingIndex >= 0 ? addresses[editingIndex] : ''}
+            initialAddress={editingIndex >= 0 ? addresses[editingIndex].address : ''}
             onAddressChange={handleAddressChange}
             isEditing={true}
           />

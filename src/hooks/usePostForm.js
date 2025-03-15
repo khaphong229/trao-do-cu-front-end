@@ -105,7 +105,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     setErrorPost(Object.keys(errors).length > 0 ? errors : null)
 
     if (Object.keys(errors).length > 0) {
-      message.error(String(Object.values(errors)[0]))
+      message.error(String(Object.values(errors)[0])) // Ensure this is a string
 
       // If category error exists, open category modal immediately
       if (errors.category_id) {
@@ -128,7 +128,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
           newErrors[field] = msg
 
           if (!hasDisplayedError) {
-            message.error(String(msg))
+            message.error(String(msg)) // Ensure this is a string
             hasDisplayedError = true
           }
         })

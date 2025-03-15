@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Table, Tabs, Typography, Button, Badge, Image, Space, Popconfirm, message, Row, Col, Card, Empty } from 'antd'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { getReceiveRequestGift } from 'features/client/request/giftRequest/giftRequestThunks'
 import { getExchangeRequest } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import { getPostGiftPagination, rePost } from 'features/client/post/postThunks'
@@ -15,15 +15,23 @@ import { Repeat2 } from 'lucide-react'
 
 const { TabPane } = Tabs
 
-export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive }) => {
+export const ExpiredListings = ({ refreshKey, isActive }) => {
   const dispatch = useDispatch()
-  const { posts = [], total = 0, isLoading, isError, viewMode } = useSelector(state => state.post)
+  // Don't use useSelector for posts - maintain local state
+  const [inactivePosts, setInactivePosts] = useState([])
+  const [total, setTotal] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const [viewMode, setViewMode] = useState('table') // Default to table view
+
   const [selectedListing, setSelectedListing] = useState(null)
   const [visibleDrawer, setVisibleDrawer] = useState(false)
   const [visibleExchangeDrawer, setVisibleExchangeDrawer] = useState(false)
   const [receiveRequests, setReceiveRequests] = useState([])
   const [exchangeRequests, setExchangeRequests] = useState([])
   const [isModalDetail, setIsModalDetail] = useState(false)
+  // Thêm state riêng cho ExpiredListings
+  const [expiredActiveSubTab, setExpiredActiveSubTab] = useState('all')
   const [tabCounts, setTabCounts] = useState({
     all: 0,
     gift: 0,
@@ -48,32 +56,41 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
     [pagination.current, pagination.pageSize]
   )
 
+  // Cập nhật fetchParams để sử dụng expiredActiveSubTab
   const fetchParams = useMemo(
     () => ({
       current: paginationRef.current,
       pageSize: paginationRef.pageSize,
       status: 'inactive',
-      type: activeSubTab !== 'all' ? activeSubTab : undefined
+      type: expiredActiveSubTab !== 'all' ? expiredActiveSubTab : undefined
     }),
-    [activeSubTab, paginationRef]
+    [expiredActiveSubTab, paginationRef]
   )
 
   const fetchData = useCallback(async () => {
     if (!isActive) return
 
+    setIsLoading(true)
     try {
       const response = await dispatch(getPostGiftPagination(fetchParams)).unwrap()
       if (response?.data?.data) {
         const allPosts = response.data.data
+        // Update local state
+        setInactivePosts(allPosts)
+        setTotal(response.data.total || 0)
+
         setTabCounts({
           all: response.data.total || 0,
           gift: allPosts.filter(post => post.type === 'gift').length,
           exchange: allPosts.filter(post => post.type === 'exchange').length
         })
       }
+      setIsError(false)
     } catch (error) {
+      setIsError(true)
       // console.error('Error fetching posts:', error)
-      throw error
+    } finally {
+      setIsLoading(false)
     }
   }, [dispatch, fetchParams, isActive])
 
@@ -85,8 +102,10 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
   }, [total])
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData, refreshKey])
+    if (isActive) {
+      fetchData()
+    }
+  }, [fetchData, refreshKey, isActive])
 
   const getRequests = useCallback(
     async (listing, paginationParams = null) => {
@@ -99,7 +118,8 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
       try {
         if (listing.type === 'exchange') {
           const response = await dispatch(getExchangeRequest(params)).unwrap()
-          const requestsData = response.data?.receiveRequests || []
+          // Sửa đúng key từ response
+          const requestsData = response.data?.exchangeRequests || []
           const filteredRequests = requestsData.filter(request => request.post_id?._id === listing._id)
           setExchangeRequests(filteredRequests)
           setVisibleExchangeDrawer(true)
@@ -161,8 +181,9 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
     }
   }
 
+  // Cập nhật handleTabChange để sử dụng expiredActiveSubTab
   const handleTabChange = key => {
-    setActiveSubTab(key)
+    setExpiredActiveSubTab(key)
     setPagination(prev => ({
       ...prev,
       current: 1
@@ -236,7 +257,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
       }
     },
     {
-      title: 'Thời gian đăng',
+      title: 'thành công',
       dataIndex: 'created_at',
       key: 'created_at',
       width: 150,
@@ -270,7 +291,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
 
   const renderCardView = () => (
     <Row gutter={[16, 16]} className={styles.cardGrid}>
-      {posts.map(item => (
+      {inactivePosts.map(item => (
         <Col xs={24} sm={12} md={8} lg={6} key={item._id}>
           <Card
             hoverable
@@ -338,7 +359,8 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
 
   return (
     <>
-      <Tabs activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
+      {/* Cập nhật activeKey thành expiredActiveSubTab */}
+      <Tabs activeKey={expiredActiveSubTab} onChange={handleTabChange} className={styles.subTabs}>
         {subTabItems.map(subTab => (
           <TabPane
             key={subTab.key}
@@ -352,7 +374,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
             {viewMode === 'table' ? (
               <Table
                 columns={columns}
-                dataSource={posts}
+                dataSource={inactivePosts}
                 rowKey="_id"
                 pagination={{
                   ...pagination,
@@ -374,7 +396,7 @@ export const ExpiredListings = ({ activeSubTab, setActiveSubTab, refreshKey, isA
         ))}
       </Tabs>
 
-      {posts.length === 0 && viewMode === 'card' && (
+      {inactivePosts.length === 0 && viewMode === 'card' && (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
       )}
 
