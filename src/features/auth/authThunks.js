@@ -125,3 +125,12 @@ export const loginGoogle = createAsyncThunk('auth/loginGoogle', async (id, { rej
     return rejectWithValue(error.response?.data)
   }
 })
+
+export const updateDefaultAddress = createAsyncThunk('auth/updateDefaultAddress', async (id, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.updateDefaultAddress(id)
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response?.data)
+  }
+})

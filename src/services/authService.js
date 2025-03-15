@@ -43,6 +43,10 @@ const authService = {
 
   loginGoogle(id) {
     return this.http.post('/auth/login-success', { googleId: id })
+  },
+
+  updateDefaultAddress(id) {
+    return this.http.post('/auth/update-default-address', { address_id: id })
   }
 }
 

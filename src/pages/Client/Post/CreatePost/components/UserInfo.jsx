@@ -20,9 +20,9 @@ const UserInfo = ({ contentType, ref1 }) => {
           <div className={styles.textAddress}>
             {' '}
             <EnvironmentOutlined className={styles.iconLocation} />
-            {addressDefault}
+            {dataCreatePost.specificLocation || addressDefault}
           </div>
-          <Button type="text" icon={<RightOutlined />} />
+          <Button type="link" icon={<RightOutlined />} />
         </div>
       </Tooltip>
 

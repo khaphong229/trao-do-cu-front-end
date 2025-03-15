@@ -119,7 +119,7 @@ const CreatePostModal = () => {
       <ContactInfoModal onSubmit={handleContactInfoSubmit} />
 
       <PostForm
-        title="Tạo bài đăng"
+        title="Tạo bài đăng sản phẩm"
         isVisible={isCreateModalVisible}
         onCancel={handleCancelModal}
         formData={dataCreatePost}

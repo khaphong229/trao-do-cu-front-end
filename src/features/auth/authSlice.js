@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getCurrentUser, loginUser, logoutUser, updateUserProfile } from './authThunks'
+import { getCurrentUser, loginUser, logoutUser, updateDefaultAddress, updateUserProfile } from './authThunks'
 
 const initialState = {
   user: {},
@@ -105,6 +105,18 @@ const authSlice = createSlice({
     })
     builder.addCase(updateUserProfile.rejected, (state, action) => {
       // state.isLoading = false
+      state.error = action.payload?.message || 'Profile update failed'
+    })
+
+    builder.addCase(updateDefaultAddress.fulfilled, (state, action) => {
+      console.log(action.payload)
+
+      state.user = {
+        ...state.user,
+        ...action.payload.data
+      }
+    })
+    builder.addCase(updateDefaultAddress.rejected, (state, action) => {
       state.error = action.payload?.message || 'Profile update failed'
     })
   }

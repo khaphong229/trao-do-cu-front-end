@@ -33,8 +33,8 @@ export const PostManage = ({ tabType }) => {
   }
 
   const tabItems = [
-    { key: 'active', label: 'Đang hiển thị' },
-    { key: 'requested', label: 'Đã yêu cầu' }
+    { key: 'active', label: 'Sản phẩm trao đi' },
+    { key: 'requested', label: 'Sản phẩm đang chờ duyệt' }
   ]
 
   const renderTabContent = () => {

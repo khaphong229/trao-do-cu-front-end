@@ -83,13 +83,6 @@ const DescDetail = () => {
     <div className={styles.ContentWrap}>
       <Typography>
         {renderTitle()}
-        <br />
-        {selectedPost?.description && (
-          <>
-            {renderDescription()}
-            <br />
-          </>
-        )}
         {selectedPost?.user_id?.phone && (
           <Link>{`Số điện thoại: ${selectedPost.user_id.phone.slice(0, 3)}xxxxxxx`}</Link>
         )}
@@ -103,7 +96,7 @@ const DescDetail = () => {
         </div>
         <div>
           <Button type="primary" onClick={() => dispatch(setCreateModalVisibility(true))}>
-            Sản phẩm
+            Đăng sản phẩm
           </Button>
         </div>
       </div>

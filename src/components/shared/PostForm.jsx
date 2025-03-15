@@ -284,7 +284,7 @@ const PostForm = ({
 
         <div style={contentStyle}>{steps[current].content}</div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, width: '100%' }}>
           {current > 0 && <Button onClick={handlePrevStep}>Quay lại</Button>}
 
           {current < steps.length - 1 && (
