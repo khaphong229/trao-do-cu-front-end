@@ -24,11 +24,6 @@ export const RegistrationDrawer = ({
   const [pageSize, setPageSize] = useState(10)
   const isMobile = useCheckMobileScreen()
 
-  const formatDate = dateString => {
-    if (!dateString) return 'Không có thông tin'
-    return moment(dateString).format('DD/MM/YYYY HH:mm')
-  }
-
   const sortedRequests = React.useMemo(() => {
     if (!receiveRequests) return []
     const accepted = receiveRequests.filter(req => req.status === 'accepted')
