@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Row, Col, Input, Button } from 'antd'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons'
 import UserTable from './components/UserTable'
@@ -7,36 +7,22 @@ import UserFormModal from './components/UserFormModal'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsDetailsModalVisible, setIsModalVisible, setSelectedUser } from '../../../features/admin/user/userSlice'
-import { getUserPagination } from '../../../features/admin/user/userThunks'
 
-const User = () => {
+const UserManager = () => {
   const dispatch = useDispatch()
 
   const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
+  // const [selectedUser, setSelectedUser] = useState(null)
 
-  const { isModalVisible, isDetailsModalVisible, selectedUser, page, perPage } = useSelector(
-    state => state.userManagement
-  )
-
-  // Load users when component mounts
-  useEffect(() => {
-    dispatch(getUserPagination({ page, per_page: perPage }))
-  }, [dispatch, page, perPage])
+  const { isModalVisible, isDetailsModalVisible, selectedUser } = useSelector(state => state.userManagement)
 
   const handleSearch = value => {
     setSearchText(value)
-    dispatch(
-      getUserPagination({
-        page: 1,
-        per_page: perPage,
-        q: value
-      })
-    )
   }
 
   const handleAddUser = () => {
-    dispatch(setSelectedUser(null)) // Fixed: using dispatch instead of direct state setter
+    setSelectedUser(null)
     setIsEditing(false)
     dispatch(setIsModalVisible(true))
   }
@@ -55,7 +41,7 @@ const User = () => {
   return (
     <div className={styles.userManagement}>
       <h2 className={styles.titleMain} style={{ marginBottom: '20px' }}>
-        Quản lý người dùng
+        Quản lý sản phẩm
       </h2>
       <Row gutter={[16, 16]} align="middle" justify="space-between" style={{ marginBottom: '40px' }}>
         <Col xs={24} sm={6}>
@@ -69,7 +55,7 @@ const User = () => {
         </Col>
         <Col xs={24} sm={4} style={{ textAlign: 'right' }}>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAddUser} block>
-            Thêm người dùng
+            Thêm sản phẩm
           </Button>
         </Col>
       </Row>
@@ -86,14 +72,10 @@ const User = () => {
         visible={isModalVisible}
         isEditing={isEditing}
         initialUser={selectedUser}
-        onClose={() => {
-          dispatch(setIsModalVisible(false))
-          // Refresh user list after adding/editing
-          dispatch(getUserPagination({ page, per_page: perPage, q: searchText }))
-        }}
+        onClose={() => dispatch(setIsModalVisible(false))}
       />
     </div>
   )
 }
 
-export default User
+export default UserManager

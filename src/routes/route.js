@@ -19,9 +19,7 @@ const LoginGoogle = lazy(() => import('pages/Auth/LoginGoogle'))
 const UserSurvey = lazy(() => import('pages/Client/UserSurvey/UserSurvey'))
 const ForgotPassword = lazy(() => import('pages/Auth/ForgotPassword'))
 const ResetPassword = lazy(() => import('pages/Auth/ResetPassword'))
-const User = lazy(() => import('../pages/Admin/User/User'))
-const Post = lazy(() => import('pages/Admin/Post/Post'))
-
+const UserManager = lazy(() => import('pages/Admin/UserManager'))
 const router = createBrowserRouter([
   {
     element: (
@@ -199,7 +197,7 @@ const router = createBrowserRouter([
           },
           // Protected Admin Routes
           {
-            element: <ProtectedRoute requireAuth={true} adminOnly={true} />,
+            element: <ProtectedRoute requireAuth={true} adminOnly={true} />, // Ensure adminOnly is true here
             children: [
               {
                 path: 'dashboard',
@@ -216,21 +214,21 @@ const router = createBrowserRouter([
                 element: (
                   <Suspense>
                     <AdminLayout>
-                      <User />
-                    </AdminLayout>
-                  </Suspense>
-                )
-              },
-              {
-                path: 'post',
-                element: (
-                  <Suspense>
-                    <AdminLayout>
-                      <Post />
+                      <UserManager />
                     </AdminLayout>
                   </Suspense>
                 )
               }
+              // {
+              //   path: 'post',
+              //   element: (
+              //     <Suspense>
+              //       <AdminLayout>
+              //         <Post />
+              //       </AdminLayout>
+              //     </Suspense>
+              //   )
+              // }
             ]
           }
         ]
