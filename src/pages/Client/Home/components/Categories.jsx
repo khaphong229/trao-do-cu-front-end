@@ -96,10 +96,13 @@ const Categories = () => {
 
       // Chỉ cập nhật dataDefaultCategory nếu có dữ liệu từ localStorage
       if (categoriesLocal && categoriesLocal.length > 0) {
-        const dataProcess = categoriesLocal.map(item => ({
-          category_id: item._id,
-          title: item.name
-        }))
+        const dataProcess = categoriesLocal
+          .map(item => ({
+            category_id: item._id,
+            title: item.name
+          }))
+          .filter(item => item.name !== 'Tất cả')
+
         setDataDefaultCategory(dataProcess)
       }
     }

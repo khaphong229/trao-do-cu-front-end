@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { ArrowRightOutlined, LockOutlined, LogoutOutlined, PlayCircleOutlined, UserOutlined } from '@ant-design/icons'
 
 export const useMenuItems = () => {
-  const { isAuthenticated } = useSelector(state => state.auth)
+  const { isAuthenticated, user } = useSelector(state => state.auth)
 
   return [
     {
@@ -29,11 +29,15 @@ export const useMenuItems = () => {
           icon: <UserOutlined style={{ color: '#00b96b' }} />,
           key: 'personal'
         },
-        {
-          label: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
-          icon: <LockOutlined style={{ color: '#00b96b' }} />,
-          key: 'security'
-        },
+        ...(user?.isGoogle === false
+          ? [
+              {
+                label: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
+                icon: <LockOutlined style={{ color: '#00b96b' }} />,
+                key: 'security'
+              }
+            ]
+          : []),
         ...(isAuthenticated
           ? [
               {
