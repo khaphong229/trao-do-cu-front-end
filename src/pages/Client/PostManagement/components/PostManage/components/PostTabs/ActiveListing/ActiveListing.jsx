@@ -11,7 +11,7 @@ import dayjs from 'dayjs'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetail from '../components/PostDetail/PostDetail'
 import { ExpiredListings } from '../ExpiredListing/ExpriedListing'
-
+import { ClockCircleOutlined } from '@ant-design/icons'
 const { TabPane } = Tabs
 
 export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive, onShowExpired }) => {
@@ -283,35 +283,49 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
           <Card
             hoverable
             className={styles.itemCard}
+            onClick={e => handlePostDetail(e, item)}
             cover={
-              <div className={styles.imageWrapper}>
-                <Image
-                  src={`${URL_SERVER_IMAGE}${item.image_url[0]}`}
-                  alt={item.title}
-                  style={{ height: 200, objectFit: 'cover', borderRadius: '8px 8px 0 0' }}
-                />
+              <div className={styles.imageContainer}>
+                <Image preview={false} src={`${URL_SERVER_IMAGE}${item.image_url[0]}`} alt={item.title} />
+                <div className={styles.ribbonWrapper}>
+                  <Badge.Ribbon
+                    text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
+                    color={item.type === 'exchange' ? 'green' : 'blue'}
+                  />
+                </div>
               </div>
             }
-            actions={[
-              <Button type={item.type === 'gift' ? 'primary' : 'dashed'} onClick={() => handleViewRegistrations(item)}>
-                {item.type === 'exchange' ? 'Xem yêu cầu đổi' : 'Xem yêu cầu nhận'}
-              </Button>
-            ]}
           >
-            <Card.Meta
-              title={<span onClick={() => handlePostDetail(null, item)}>{item.title}</span>}
-              description={
-                <Space direction="vertical" size="small">
-                  <Badge
-                    status={item.type === 'exchange' ? 'success' : 'processing'}
-                    text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
-                  />
-                  <Typography.Text type="secondary">
-                    {dayjs(item.created_at).format('DD/MM/YYYY HH:mm')}
-                  </Typography.Text>
-                </Space>
-              }
-            />
+            <div className={styles.cardContent}>
+              <Typography.Title level={5} ellipsis={{ rows: 1 }} className={styles.cardTitle}>
+                {item.title}
+              </Typography.Title>
+
+              <Typography.Paragraph className={styles.cardDescription} ellipsis={{ rows: 2 }}>
+                {item.description}
+              </Typography.Paragraph>
+
+              <div className={styles.cardFooter}>
+                <Typography.Text type="secondary" className={styles.dateInfo}>
+                  <span className={styles.dateIcon}>
+                    <ClockCircleOutlined />
+                  </span>
+                  {dayjs(item.created_at).format('DD/MM/YYYY')}
+                </Typography.Text>
+
+                <Button
+                  type={item.type === 'gift' ? 'primary' : 'default'}
+                  size="small"
+                  className={styles.actionButton}
+                  onClick={e => {
+                    e.stopPropagation()
+                    handleViewRegistrations(item)
+                  }}
+                >
+                  Xem yêu cầu
+                </Button>
+              </div>
+            </div>
           </Card>
         </Col>
       ))}

@@ -32,7 +32,7 @@ const PostDetailModal = ({ isVisible, onClose, post }) => {
             Chi tiết bài đăng
           </Title>
           <Tag color={typeCheck === 'acp' ? 'success' : typeCheck === 'end' ? 'error' : 'warning'}>
-            {typeCheck === 'acp' ? 'Đã nhận' : typeCheck === 'end' ? 'Kết thúc' : 'Chờ duyệt'}
+            {typeCheck === 'acp' ? 'Đã nhận' : typeCheck === 'end' ? 'Kết thúc' : 'Chờ đồng ý'}
           </Tag>
         </div>
       }
@@ -103,9 +103,7 @@ const PostDetailModal = ({ isVisible, onClose, post }) => {
               <Descriptions.Item label="Tiêu đề">
                 <Text strong>{post.post_id.title}</Text>
               </Descriptions.Item>
-              {post.post_id.description && (
-                <Descriptions.Item label="Mô tả">{post.post_id.description}</Descriptions.Item>
-              )}
+
               <Descriptions.Item label="Địa chỉ">{post.post_id.specificLocation}</Descriptions.Item>
               <Descriptions.Item label="Thành phố">{post.post_id.city}</Descriptions.Item>
               <Descriptions.Item label="Loại">

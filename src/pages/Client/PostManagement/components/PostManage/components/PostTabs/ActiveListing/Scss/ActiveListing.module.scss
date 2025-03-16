@@ -1,4 +1,13 @@
-/* ActiveListings.module.scss */
+.tabHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .subTabs {
+    flex: 1;
+  }
+}
 
 .subTabs {
   margin-bottom: 16px;
@@ -10,75 +19,129 @@
   font-size: 14px;
 }
 
-.subTabCount {
-  margin-left: 4px;
-}
-
-.listingCardsContainer {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.descPost {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
-
-.tabHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-
-  .subTabs {
-    flex: 1;
-  }
-
-  .viewToggle {
-    margin-left: 16px;
-  }
-}
-
 .cardGrid {
   margin-top: 16px;
 }
 
 .itemCard {
   height: 100%;
+  transition: transform 0.3s;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
-  :global {
-    .ant-card-cover {
-      height: 200px;
-      overflow: hidden;
-      .ant-image {
-        width: 100%;
-      }
-    }
-    .ant-card-body {
-      padding: 16px;
-    }
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
 
-    .ant-card-meta-title {
-      margin-bottom: 0px !important;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+/* Use :global for targeting Ant Design's classes */
+:global(.ant-card-body) {
+  padding: 12px !important;
+}
+
+/* Fix for ribbon badge */
+:global(.ant-ribbon) {
+  top: 0;
+  height: auto;
+  line-height: 1.5;
+  white-space: nowrap;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+:global(.ant-ribbon-text) {
+  font-weight: 500;
+}
+
+.imageContainer {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
+
+/* Fix for ribbon badge position and display */
+.ribbonWrapper {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none; /* Allow clicks to pass through to the card */
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  height: 120px;
+}
+
+.cardTitle {
+  margin-top: 0 !important;
+  margin-bottom: 8px !important;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cardDescription {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 12px;
+  margin-bottom: 8px !important;
+  flex: 1;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.dateInfo {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.dateIcon {
+  margin-right: 4px;
+}
+
+.actionButton {
+  border-radius: 4px;
+  font-weight: 500;
+
+  &:hover {
+    opacity: 0.9;
   }
 }
 
 .descPost {
+  overflow: hidden;
+  text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .cardGrid {
+    [class*='ant-col'] {
+      padding-bottom: 8px;
+    }
+  }
 }

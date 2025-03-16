@@ -99,7 +99,7 @@ export const ExchangeDrawer = ({
         <Card className={styles.originalPost}>
           <div className={styles.postHeader}>
             <div className={styles.postInfo}>
-              <p className={styles.title}>{`Tiêu đề: ${listing.title}`}</p>
+              <p className={styles.title}>{`${listing.title}`}</p>
               <Space direction="horizontal" size="small" className={styles.metaInfo}>
                 <Tag icon={<UserOutlined />} color="blue">
                   {`Đăng bởi: ${listing.user_id?.name || 'Không xác định'}`}

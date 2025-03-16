@@ -95,7 +95,7 @@ export const RegistrationDrawer = ({
       <Card className={styles.registrationCard}>
         <div className={styles.registrationHeader}>
           <div className={styles.registrationInfo}>
-            <h4 className={styles.registrationTitle}>{`Tiêu đề: ${listing.title}`}</h4>
+            <h4 className={styles.registrationTitle}>{`${listing.title}`}</h4>
             <Space direction="horizontal" size="small" className={styles.metaInfo}>
               <Tag icon={<UserOutlined />} color="blue">
                 {`Đăng bởi: ${listing.user_id?.name || 'Không xác định'}`}

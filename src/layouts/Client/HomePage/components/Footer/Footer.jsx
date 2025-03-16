@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Row, Col, Typography, Space, Divider } from 'antd'
 import { MailOutlined, EnvironmentOutlined, PhoneOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import { useNavigate } from 'react-router-dom'
+import Policy from 'components/Policy'
 
 const { Title, Text, Link } = Typography
 
@@ -16,6 +17,15 @@ function AppFooter() {
   const handleSubscribe = values => {
     console.log('Submitted email:', values.email)
     // Implement subscription logic here
+  }
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const showModal = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false)
   }
 
   return (
@@ -59,23 +69,26 @@ function AppFooter() {
                   <Link href="/" className={styles.link}>
                     Trang Chủ
                   </Link>
-                  <Link href="/" className={styles.link}>
+                  <Link
+                    href="https://www.facebook.com/photo?fbid=122106469844798247&set=a.122101845656798247"
+                    className={styles.link}
+                  >
                     Giới Thiệu
                   </Link>
-                  <Link href="/" className={styles.link}>
+                  <Link href="/post/category/all" className={styles.link}>
                     Sản Phẩm
                   </Link>
                 </Space>
               </Col>
               <Col span={12}>
                 <Space direction="vertical" size={0} className={styles.linkContainer}>
-                  <Link href="/" className={styles.link}>
+                  <Link onClick={() => setIsModalOpen(true)} className={styles.link}>
                     Điều khoản
                   </Link>
-                  <Link href="/" className={styles.link}>
+                  <Link href="https://www.facebook.com/profile.php?id=61573947424629" className={styles.link}>
                     Tin Tức
                   </Link>
-                  <Link href="/" className={styles.link}>
+                  <Link href="https://www.facebook.com/profile.php?id=61573947424629" className={styles.link}>
                     Liên Hệ
                   </Link>
                 </Space>
@@ -106,10 +119,13 @@ function AppFooter() {
               <Link href="/" className={styles.link}>
                 Trang Chủ
               </Link>
-              <Link href="/" className={styles.link}>
+              <Link
+                href="https://www.facebook.com/photo?fbid=122106469844798247&set=a.122101845656798247"
+                className={styles.link}
+              >
                 Giới Thiệu
               </Link>
-              <Link href="/" className={styles.link}>
+              <Link href="/post/category/all" className={styles.link}>
                 Sản Phẩm
               </Link>
             </Space>
@@ -142,7 +158,7 @@ function AppFooter() {
         </Row>
 
         <Divider style={{ borderColor: 'rgba(255,255,255,0.1)', margin: '30px 0 20px' }} />
-
+        <Policy isOpen={isModalOpen} handleCancel={handleCancel} />
         <div style={{ textAlign: 'center', fontSize: 14, color: '#adb5bd' }}>
           © {new Date().getFullYear()} TRAO ĐỒ CŨ. Tất cả các quyền được bảo lưu.
         </div>
