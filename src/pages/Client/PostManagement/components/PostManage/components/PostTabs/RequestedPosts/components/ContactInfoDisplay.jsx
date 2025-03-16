@@ -1,73 +1,113 @@
 import React from 'react'
-import { Descriptions } from 'antd'
-import { FacebookOutlined } from '@ant-design/icons'
+import { Descriptions, Space, Button, Tooltip } from 'antd'
+import { FacebookOutlined, PhoneOutlined, EnvironmentOutlined, LockOutlined } from '@ant-design/icons'
 
 const ContactInfoDisplay = ({ post, showInTable = false }) => {
   const isAccepted = post.status === 'accepted'
   const phone = post?.post_id?.user_id?.phone
   const facebook = post?.post_id?.user_id?.social_media?.[0]
+  const location = post?.post_id?.specificLocation
 
+  // For table view - compact display
   if (showInTable) {
     return (
-      <>
-        <span>{isAccepted ? `SĐT: ${phone}` : phone ? `SĐT: ${phone.slice(0, 3)}xxxxxxx` : ''}</span>
+      <Space direction="vertical" size={4} className="contact-info-compact">
+        {phone && (
+          <div className="contact-item">
+            <PhoneOutlined style={{ marginRight: 8, color: isAccepted ? '#1890ff' : '#bfbfbf' }} />
+            {isAccepted ? (
+              <span className="contact-value">{phone}</span>
+            ) : (
+              <Tooltip title="Hiển thị khi được chấp nhận">
+                <span className="contact-value masked">{phone.slice(0, 3)}xxxxxxx</span>
+              </Tooltip>
+            )}
+          </div>
+        )}
+
         {facebook && (
-          <>
-            <br />
-            <span>
-              <FacebookOutlined />{' '}
+          <div className="contact-item">
+            <FacebookOutlined style={{ marginRight: 8, color: '#1890ff' }} />
+            {isAccepted ? (
               <a
                 href={facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  color: isAccepted ? '#1890ff' : '#ccc',
-                  pointerEvents: isAccepted ? 'auto' : 'none',
-                  cursor: isAccepted ? 'pointer' : 'default'
-                }}
+                onClick={e => e.stopPropagation()}
+                className="facebook-link"
               >
                 Facebook
               </a>
-            </span>
-          </>
+            ) : (
+              <Tooltip title="Hiển thị khi được chấp nhận">
+                <span className="contact-value masked">Facebook</span>
+              </Tooltip>
+            )}
+          </div>
         )}
-      </>
+
+        {location && (
+          <div className="contact-item">
+            <EnvironmentOutlined style={{ marginRight: 8, color: isAccepted ? '#52c41a' : '#bfbfbf' }} />
+            {isAccepted ? (
+              <span className="contact-value">{location}</span>
+            ) : (
+              <Tooltip title="Hiển thị khi được chấp nhận">
+                <span className="contact-value masked">***</span>
+              </Tooltip>
+            )}
+          </div>
+        )}
+      </Space>
     )
   }
 
+  // For card view - prettier display with status indication
   return (
-    <Descriptions column={1} labelStyle={{ fontWeight: '500' }}>
-      {phone && (
-        <Descriptions.Item label="Số điện thoại">
-          {isAccepted ? phone : `${phone.slice(0, 3)}xxxxxxx`}
-        </Descriptions.Item>
+    <div className="contact-info-card">
+      {!isAccepted && (
+        <div className="contact-locked">
+          <LockOutlined /> Chấp nhận để xem thông tin liên hệ
+        </div>
       )}
-      {facebook && (
-        <Descriptions.Item
-          label={
-            <span>
-              <FacebookOutlined /> Facebook
-            </span>
-          }
-        >
-          <a
-            href={facebook}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: isAccepted ? '#1890ff' : '#ccc',
-              pointerEvents: isAccepted ? 'auto' : 'none',
-              cursor: isAccepted ? 'pointer' : 'default'
-            }}
-          >
-            Liên kết Facebook
-          </a>
-        </Descriptions.Item>
+
+      {isAccepted && (
+        <Space direction="vertical" size={8} className="contact-accepted">
+          {phone && (
+            <Button
+              type="link"
+              icon={<PhoneOutlined />}
+              href={`tel:${phone}`}
+              className="contact-button phone"
+              onClick={e => e.stopPropagation()}
+            >
+              {phone}
+            </Button>
+          )}
+
+          {facebook && (
+            <Button
+              type="link"
+              icon={<FacebookOutlined />}
+              href={facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact-button facebook"
+              onClick={e => e.stopPropagation()}
+            >
+              Facebook
+            </Button>
+          )}
+
+          {location && (
+            <div className="location-info">
+              <EnvironmentOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+              <span>{location}</span>
+            </div>
+          )}
+        </Space>
       )}
-      <Descriptions.Item label="Địa chỉ liên hệ">
-        {isAccepted ? post.post_id.specificLocation : '***'}
-      </Descriptions.Item>
-    </Descriptions>
+    </div>
   )
 }
 

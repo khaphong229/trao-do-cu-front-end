@@ -18,7 +18,7 @@ const RequestedPosts = () => {
   const [activeTab, setActiveTab] = useState('all')
   const [selectedPost, setSelectedPost] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const viewMode = useSelector(state => state.post.viewMode) // Get viewMode from Redux state
+  const viewMode = useSelector(state => state.post.viewMode)
 
   const giftRequests = useSelector(state => state.giftRequest.requests)
   const exchangeRequests = useSelector(state => state.exchangeRequest.requests)
@@ -111,8 +111,8 @@ const RequestedPosts = () => {
           alt="Post image"
           style={{ width: 100, height: 100, objectFit: 'cover' }}
           fallback={avt}
-          preview={false} // Disable image preview
-          onClick={e => handlePostClick(record, e)} // Handle click event to open post details
+          preview={false}
+          onClick={e => handlePostClick(record, e)}
         />
       )
     },
@@ -142,9 +142,9 @@ const RequestedPosts = () => {
   ]
 
   const renderCardView = requests => (
-    <Row gutter={[16, 16]} className="card-grid">
+    <Row gutter={[12, 12]} className="card-grid">
       {requests.map(request => (
-        <Col xs={24} sm={12} md={8} lg={6} key={request.id}>
+        <Col xs={12} sm={8} md={6} lg={6} xl={4} key={request.id}>
           <Card
             hoverable
             className="item-card"
@@ -156,7 +156,6 @@ const RequestedPosts = () => {
                     request?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${request.post_id.image_url[0]}` : imgNotFound
                   }
                   alt={request.post_id?.title}
-                  style={{ height: '100%', width: '100%' }}
                   fallback={avt}
                   preview={false}
                 />
@@ -166,33 +165,34 @@ const RequestedPosts = () => {
                 />
               </div>
             }
+            bodyStyle={{ padding: '12px', height: 'auto' }}
           >
-            <Card.Meta
-              title={request.post_id.title}
-              description={
-                <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                  <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
+            <div className="card-content">
+              <Typography.Title level={5} ellipsis className="card-title">
+                {request.post_id.title}
+              </Typography.Title>
 
-                  <Typography.Paragraph className="desc-post">{request.post_id.description}</Typography.Paragraph>
+              <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
 
-                  <div className="card-footer">
-                    <div className="user-info">
-                      <Avatar
-                        src={
-                          request?.post_id?.user_id?.avatar
-                            ? `${URL_SERVER_IMAGE}${request.post_id.user_id.avatar}`
-                            : avt
-                        }
-                        size={24}
-                      />
-                      <Text className="user-name">{request?.post_id?.user_id?.name || 'Không xác định'}</Text>
-                    </div>
+              <Typography.Paragraph className="desc-post" ellipsis={{ rows: 2 }}>
+                {request.post_id.description}
+              </Typography.Paragraph>
 
-                    <ContactInfoDisplay post={request} showInTable={false} />
-                  </div>
-                </Space>
-              }
-            />
+              <div className="card-footer">
+                <div className="user-info">
+                  <Avatar
+                    src={
+                      request?.post_id?.user_id?.avatar ? `${URL_SERVER_IMAGE}${request.post_id.user_id.avatar}` : avt
+                    }
+                    size={20}
+                  />
+                  <Typography.Text className="user-name" ellipsis>
+                    {request?.post_id?.user_id?.name || 'Không xác định'}
+                  </Typography.Text>
+                </div>
+                <ContactInfoDisplay post={request} showInTable={false} />
+              </div>
+            </div>
           </Card>
         </Col>
       ))}
