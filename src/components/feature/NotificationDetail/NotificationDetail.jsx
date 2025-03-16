@@ -15,26 +15,31 @@ import {
 import { setVisibleNotificationDetail } from 'features/client/notification/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { URL_SERVER_IMAGE } from 'config/url_server'
+import { useNavigate } from 'react-router-dom'
 import styles from './styles.module.scss'
 
 const { Title, Text, Paragraph } = Typography
 
 const NotificationDetail = ({ notification }) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { isVisibleNotificationDetail } = useSelector(state => state.notification)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const { user } = useSelector(state => state.auth)
   const carouselRef = React.useRef()
 
   const onClose = () => {
     dispatch(setVisibleNotificationDetail(false))
   }
 
+  const goToManagementPost = receiverName => {
+    dispatch(setVisibleNotificationDetail(false))
+    navigate(receiverName !== user.name ? '/management-post?tab=active' : '/management-post?tab=requested')
+  }
+
   if (!notification) return null
 
   const { isApproved, type, postTitle, imageUrl, ownerName, receiverName, contact, facebookLink, time } = notification
-
-  // Xử lý mảng ảnh
-  console.log(imageUrl)
 
   const handlePrev = () => {
     carouselRef.current.prev()
@@ -80,13 +85,28 @@ const NotificationDetail = ({ notification }) => {
     }
   }
 
+  const renderModalFooter = () => {
+    return (
+      <div className={styles.modalFooter}>
+        <Button
+          type="primary"
+          size="middle"
+          onClick={() => goToManagementPost(receiverName)}
+          className={styles.managementButton}
+        >
+          Di chuyển tới quản lý sản phẩm
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <Modal
       open={isVisibleNotificationDetail}
       onCancel={onClose}
-      footer={null}
-      width={500}
+      footer={renderModalFooter()}
       bodyStyle={{ padding: 0 }}
+      width={500}
       centered
       destroyOnClose
       className={styles.notificationModal}
@@ -149,7 +169,6 @@ const NotificationDetail = ({ notification }) => {
                 />
               </div>
             )}
-
             <div className={styles.timeLabel}>{time || 'Không xác định'}</div>
           </div>
         </Col>
@@ -217,7 +236,7 @@ const NotificationDetail = ({ notification }) => {
                       </Paragraph>
                     )}
                     <Space size="middle" wrap>
-                      {facebookLink && (
+                      {facebookLink && facebookLink.includes('facebook') && (
                         <a href={facebookLink} target="_blank" rel="noopener noreferrer">
                           <Button type="primary" ghost icon={<FacebookOutlined />} size="middle">
                             Xem Facebook

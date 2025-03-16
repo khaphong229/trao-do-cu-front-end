@@ -2,6 +2,7 @@
   :global(.ant-modal-content) {
     overflow: hidden;
     border-radius: 8px;
+    padding: 0;
   }
 }
 
@@ -149,13 +150,14 @@
 }
 
 .divider {
-  margin: 16px 0;
+  margin: 6px 0;
 }
 
 .contactSection {
   .contactTitle {
     display: flex;
     align-items: center;
+    margin: 8px 0;
 
     .titleIcon {
       margin-right: 8px;
@@ -164,7 +166,6 @@
 
   .contactInfo {
     width: 100%;
-    margin-top: 8px;
   }
 
   .phoneContainer {
@@ -188,4 +189,16 @@
       margin-right: 8px;
     }
   }
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: center;
+  padding: 12px 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.managementButton {
+  width: 100%;
+  max-width: 240px;
 }
