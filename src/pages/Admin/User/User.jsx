@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Row, Col, Input, Button } from 'antd'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons'
 import UserTable from './components/UserTable'
@@ -7,22 +7,36 @@ import UserFormModal from './components/UserFormModal'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsDetailsModalVisible, setIsModalVisible, setSelectedUser } from '../../../features/admin/user/userSlice'
+import { getUserPagination } from '../../../features/admin/user/userThunks'
 
 const User = () => {
   const dispatch = useDispatch()
 
   const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
-  // const [selectedUser, setSelectedUser] = useState(null)
 
-  const { isModalVisible, isDetailsModalVisible, selectedUser } = useSelector(state => state.userManagement)
+  const { isModalVisible, isDetailsModalVisible, selectedUser, page, perPage } = useSelector(
+    state => state.userManagement
+  )
+
+  // Load users when component mounts
+  useEffect(() => {
+    dispatch(getUserPagination({ page, per_page: perPage }))
+  }, [dispatch, page, perPage])
 
   const handleSearch = value => {
     setSearchText(value)
+    dispatch(
+      getUserPagination({
+        page: 1,
+        per_page: perPage,
+        q: value
+      })
+    )
   }
 
   const handleAddUser = () => {
-    setSelectedUser(null)
+    dispatch(setSelectedUser(null)) // Fixed: using dispatch instead of direct state setter
     setIsEditing(false)
     dispatch(setIsModalVisible(true))
   }
@@ -72,7 +86,11 @@ const User = () => {
         visible={isModalVisible}
         isEditing={isEditing}
         initialUser={selectedUser}
-        onClose={() => dispatch(setIsModalVisible(false))}
+        onClose={() => {
+          dispatch(setIsModalVisible(false))
+          // Refresh user list after adding/editing
+          dispatch(getUserPagination({ page, per_page: perPage, q: searchText }))
+        }}
       />
     </div>
   )

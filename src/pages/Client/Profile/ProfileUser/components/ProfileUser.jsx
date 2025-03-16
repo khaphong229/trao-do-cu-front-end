@@ -57,6 +57,14 @@ const ProfilePage = () => {
     return String(address)
   }
 
+  // Sửa lại hàm getDefaultAddress để kiểm tra nếu list là một mảng
+  const getDefaultAddress = list => {
+    if (!list) return ''
+    if (!Array.isArray(list)) return String(list)
+    const defaultAddress = list.find(item => item.isDefault === true)
+    return defaultAddress?.address || ''
+  }
+
   useEffect(() => {
     if (userData) {
       setFormData({
@@ -71,6 +79,7 @@ const ProfilePage = () => {
       })
     }
   }, [userData])
+
   const handleInputChange = e => {
     const { id, value } = e.target
     setFormData(prev => ({ ...prev, [id]: value }))
@@ -175,10 +184,6 @@ const ProfilePage = () => {
     navigate(`/profile?tab=${activeKey}`)
   }
 
-  const getDefaultAddress = list => {
-    return list.find(item => item.isDefault === true)?.address || ''
-  }
-
   return (
     <main className={styles['profile-page']}>
       <div className={styles.container}>
@@ -277,12 +282,7 @@ const ProfilePage = () => {
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="address">Địa chỉ mặc định</label>
-                <Input
-                  id="address"
-                  placeholder="Nhập địa chỉ"
-                  value={formData.address ? getDefaultAddress(formData.address) : ''}
-                  onChange={handleInputChange}
-                />
+                <Input id="address" placeholder="Nhập địa chỉ" value={formData.address} onChange={handleInputChange} />
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="email">Email</label>

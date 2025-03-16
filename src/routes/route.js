@@ -5,13 +5,11 @@ import { ProtectedRoute } from './protectedRoute'
 import { lazy, Suspense } from 'react'
 
 const DashboardUI = lazy(() => import('pages/Admin/Dashboard/Dashboard'))
-const UserManagement = lazy(() => import('pages/Admin/User/User'))
 const Login = lazy(() => import('pages/Auth/Login'))
 const Register = lazy(() => import('pages/Auth/Register'))
 const Home = lazy(() => import('pages/Client/Home'))
 const PostDetail = lazy(() => import('pages/Client/Post/PostDetail'))
 const PostCategory = lazy(() => import('pages/Client/Post/PostCategory'))
-const PostManagement = lazy(() => import('pages/Admin/Post'))
 const PostManagementClient = lazy(() => import('pages/Client/PostManagement'))
 const PostArticle = lazy(() => import('pages/Client/Post/PostArticle'))
 const ProfileUser = lazy(() => import('pages/Client/Profile/ProfileUser'))
@@ -21,6 +19,8 @@ const LoginGoogle = lazy(() => import('pages/Auth/LoginGoogle'))
 const UserSurvey = lazy(() => import('pages/Client/UserSurvey/UserSurvey'))
 const ForgotPassword = lazy(() => import('pages/Auth/ForgotPassword'))
 const ResetPassword = lazy(() => import('pages/Auth/ResetPassword'))
+const User = lazy(() => import('../pages/Admin/User/User'))
+const Post = lazy(() => import('pages/Admin/Post/Post'))
 
 const router = createBrowserRouter([
   {
@@ -216,7 +216,7 @@ const router = createBrowserRouter([
                 element: (
                   <Suspense>
                     <AdminLayout>
-                      <UserManagement />
+                      <User />
                     </AdminLayout>
                   </Suspense>
                 )
@@ -226,7 +226,7 @@ const router = createBrowserRouter([
                 element: (
                   <Suspense>
                     <AdminLayout>
-                      <PostManagement />
+                      <Post />
                     </AdminLayout>
                   </Suspense>
                 )
