@@ -142,9 +142,9 @@ const RequestedPosts = () => {
   ]
 
   const renderCardView = requests => (
-    <Row gutter={[12, 12]} className="card-grid">
+    <Row gutter={[16, 16]} className="card-grid">
       {requests.map(request => (
-        <Col xs={12} sm={8} md={6} lg={6} xl={4} key={request.id}>
+        <Col xs={24} sm={12} md={8} lg={6} xl={6} xxl={30} key={request.id}>
           <Card
             hoverable
             className="item-card"
