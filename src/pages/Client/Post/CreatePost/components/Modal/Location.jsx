@@ -216,9 +216,10 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
 
   const handleUpdateDefaultAddress = async id => {
     try {
-      await dispatch(updateDefaultAddress(id)).unwrap()
-      // User data will be updated in Redux store
-      // The useEffect hook will re-render the addresses
+      const response = await dispatch(updateDefaultAddress(id)).unwrap()
+      if (response.status === 200) {
+        message.success(response.message)
+      }
     } catch (error) {
       message.error('Không thể cập nhật địa chỉ mặc định')
     }

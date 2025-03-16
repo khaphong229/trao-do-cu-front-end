@@ -1,14 +1,5 @@
 import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message, Checkbox, Input, Select } from 'antd'
-import {
-  MessageOutlined,
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-  EnvironmentOutlined,
-  FacebookOutlined,
-  TwitterOutlined,
-  MailOutlined,
-  CameraOutlined
-} from '@ant-design/icons'
+import { ClockCircleOutlined, EnvironmentOutlined, CameraOutlined } from '@ant-design/icons'
 import Avatar from 'assets/images/logo/avtDefault.webp'
 import styles from '../scss/ProfileUser.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
@@ -71,7 +62,7 @@ const ProfilePage = () => {
         name: userData.name || '',
         email: userData.email || '',
         phone: userData.phone || '',
-        address: addressToString(userData.address),
+        address: getDefaultAddress(userData.address),
         gender: userData.gender || '',
         currentPassword: '',
         newPassword: '',
@@ -228,11 +219,11 @@ const ProfilePage = () => {
 
         <Card className={styles.card}>
           <div className={styles['badges-section']}>
-            <Tooltip title="Phản hồi chat">
+            {/* <Tooltip title="Phản hồi chat">
               <Badge className={styles.badge}>
                 <MessageOutlined /> Chưa có thông tin
               </Badge>
-            </Tooltip>
+            </Tooltip> */}
 
             <Tooltip title="Thời gian tham gia">
               <Badge className={styles.badge}>
@@ -243,7 +234,7 @@ const ProfilePage = () => {
               </Badge>
             </Tooltip>
 
-            <Tooltip title="Xác thực">
+            {/* <Tooltip title="Xác thực">
               <Badge className={styles.badge}>
                 <CheckCircleOutlined />
                 Thông tin xác thực:{' '}
@@ -253,7 +244,7 @@ const ProfilePage = () => {
                   <MailOutlined style={{ color: '#f56a00' }} />
                 </div>
               </Badge>
-            </Tooltip>
+            </Tooltip> */}
 
             <Tooltip title="Địa chỉ">
               <Badge className={styles.badge}>
@@ -282,7 +273,12 @@ const ProfilePage = () => {
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="address">Địa chỉ mặc định</label>
-                <Input id="address" placeholder="Nhập địa chỉ" value={formData.address} onChange={handleInputChange} />
+                <Input
+                  id="address"
+                  placeholder="Nhập địa chỉ"
+                  value={formData.address ? getDefaultAddress(formData.address) : ''}
+                  onChange={handleInputChange}
+                />
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="email">Email</label>
@@ -313,7 +309,7 @@ const ProfilePage = () => {
               </div>
             </TabPane>
 
-            <TabPane tab="Sổ địa chỉ">
+            <TabPane tab="Danh sách địa chỉ">
               <Location isInProfile={true} />
             </TabPane>
 

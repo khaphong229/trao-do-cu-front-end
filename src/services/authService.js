@@ -54,7 +54,7 @@ const authService = {
     })
   },
   updateDefaultAddress(data) {
-    return this.http.put('/auth/update-default-address', data)
+    return this.http.post('/auth/update-default-address', { address_id: data })
   }
 }
 
