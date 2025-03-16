@@ -52,6 +52,9 @@ const authService = {
       token: data.token,
       password: data.password
     })
+  },
+  updateDefaultAddress(data) {
+    return this.http.put('/auth/update-default-address', data)
   }
 }
 

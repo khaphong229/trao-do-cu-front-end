@@ -142,3 +142,12 @@ export const resetPassword = createAsyncThunk('auth/resetPassword', async (data,
     return rejectWithValue(error.response?.data || { message: 'Đặt lại mật khẩu thất bại. Vui lòng thử lại.' })
   }
 })
+
+export const updateDefaultAddress = createAsyncThunk('auth/updateDefaultAddress', async (data, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.updateDefaultAddress(data)
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response?.data || { message: 'Failed to update default address' })
+  }
+})

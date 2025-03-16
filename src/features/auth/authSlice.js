@@ -1,5 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getCurrentUser, loginUser, logoutUser, updateUserProfile, forgotPassword, resetPassword } from './authThunks'
+import {
+  getCurrentUser,
+  loginUser,
+  logoutUser,
+  updateUserProfile,
+  forgotPassword,
+  resetPassword,
+  updateDefaultAddress
+} from './authThunks'
 
 const initialState = {
   user: {},
@@ -135,6 +143,17 @@ const authSlice = createSlice({
         state.changePassWordSuccess = false
         state.changePassWordMessage = action?.payload?.message || 'Reset Password Failed'
       })
+    builder.addCase(updateDefaultAddress.fulfilled, (state, action) => {
+      console.log(action.payload)
+
+      state.user = {
+        ...state.user,
+        ...action.payload.data
+      }
+    })
+    builder.addCase(updateDefaultAddress.rejected, (state, action) => {
+      state.error = action.payload?.message || 'Profile update failed'
+    })
   }
 })
 
