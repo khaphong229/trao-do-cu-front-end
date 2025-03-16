@@ -1,6 +1,6 @@
 import React from 'react'
-import { Row, Col, Typography, Space, Input, Button, Form, Divider } from 'antd'
-import { MailOutlined, SendOutlined, EnvironmentOutlined, PhoneOutlined } from '@ant-design/icons'
+import { Row, Col, Typography, Space, Divider } from 'antd'
+import { MailOutlined, EnvironmentOutlined, PhoneOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import { useNavigate } from 'react-router-dom'
 
@@ -115,7 +115,7 @@ function AppFooter() {
             </Space>
 
             {/* Form đăng ký */}
-            <div className={styles.subscribeContainer}>
+            {/* <div className={styles.subscribeContainer}>
               <Title level={5} className={styles.subscribeTitle}>
                 Đăng ký nhận tin
               </Title>
@@ -137,7 +137,7 @@ function AppFooter() {
                   </Input.Group>
                 </Form.Item>
               </Form>
-            </div>
+            </div> */}
           </Col>
         </Row>
 

@@ -19,6 +19,7 @@ import { changePassWord, getCurrentUser, updateUserProfile } from 'features/auth
 import Title from 'antd/es/skeleton/Title'
 import { useAvatar } from 'hooks/useAvatar'
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import Location from 'pages/Client/Post/CreatePost/components/Modal/Location'
 
 const { TabPane } = Tabs
 
@@ -47,7 +48,6 @@ const ProfilePage = () => {
     newPassword: '',
     confirmPassword: ''
   })
-  console.log('userData', userData)
   const [savePassword, setSavePassword] = useState(false)
 
   useEffect(() => {
@@ -163,6 +163,10 @@ const ProfilePage = () => {
     navigate(`/profile?tab=${activeKey}`)
   }
 
+  const getDefaultAddress = list => {
+    return list.find(item => item.isDefault === true)?.address || ''
+  }
+
   return (
     <main className={styles['profile-page']}>
       <div className={styles.container}>
@@ -237,7 +241,7 @@ const ProfilePage = () => {
             <Tooltip title="Địa chỉ">
               <Badge className={styles.badge}>
                 <EnvironmentOutlined />
-                {`Địa chỉ: ${userData?.address ? userData.address : 'Chưa cung cấp'}`}
+                {`Địa chỉ: ${userData?.address ? getDefaultAddress(userData.address) : 'Chưa cung cấp'}`}
               </Badge>
             </Tooltip>
           </div>
@@ -260,8 +264,13 @@ const ProfilePage = () => {
                 />
               </div>
               <div className={styles['form-group']}>
-                <label htmlFor="address">Địa chỉ</label>
-                <Input id="address" placeholder="Nhập địa chỉ" value={formData.address} onChange={handleInputChange} />
+                <label htmlFor="address">Địa chỉ mặc định</label>
+                <Input
+                  id="address"
+                  placeholder="Nhập địa chỉ"
+                  value={formData.address ? getDefaultAddress(formData.address) : ''}
+                  onChange={handleInputChange}
+                />
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="email">Email</label>
@@ -290,6 +299,10 @@ const ProfilePage = () => {
                   Thay đổi
                 </Button>
               </div>
+            </TabPane>
+
+            <TabPane tab="Sổ địa chỉ">
+              <Location isInProfile={true} />
             </TabPane>
 
             {!userData?.isGoogle && (

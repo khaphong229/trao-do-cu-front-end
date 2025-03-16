@@ -7,7 +7,7 @@ import { PlusOutlined, DeleteOutlined, EditOutlined, LeftOutlined } from '@ant-d
 import styles from '../../scss/LocationModal.module.scss'
 import { updateDefaultAddress, updateUserProfile } from '../../../../../../features/auth/authThunks'
 
-const Location = ({ location, setLocation }) => {
+const Location = ({ location, setLocation, isInProfile = false }) => {
   const dispatch = useDispatch()
   const [fullAddress, setFullAddress] = useState('')
   const [editingIndex, setEditingIndex] = useState(-1) // -1 means not editing any existing address
@@ -254,12 +254,14 @@ const Location = ({ location, setLocation }) => {
 
   return (
     <div className={styles.locationWrapper}>
-      <div className={styles.titleLocation} onClick={() => dispatch(setEdittingAddress(false))}>
-        <Button type="link" icon={<LeftOutlined />} />
-        <Typography.Title level={4} style={{ margin: 0, fontSize: 16 }}>
-          Danh sách địa chỉ
-        </Typography.Title>
-      </div>
+      {!isInProfile && (
+        <div className={styles.titleLocation} onClick={() => dispatch(setEdittingAddress(false))}>
+          <Button type="link" icon={<LeftOutlined />} />
+          <Typography.Title level={4} style={{ margin: 0, fontSize: 16 }}>
+            Danh sách địa chỉ
+          </Typography.Title>
+        </div>
+      )}
 
       {addresses.length > 0 && (
         <List
@@ -323,7 +325,7 @@ const Location = ({ location, setLocation }) => {
         </Button>
       )}
 
-      {addresses.length > 0 && (
+      {addresses.length > 0 && !isInProfile && (
         <Button type="primary" onClick={handleLocationSave} style={{ marginTop: 16, width: '100%' }}>
           Lưu và sử dụng địa chỉ này
         </Button>

@@ -149,6 +149,7 @@ const NotificationDetail = ({ notification }) => {
                 />
               </div>
             )}
+
             <div className={styles.timeLabel}>{time || 'Không xác định'}</div>
           </div>
         </Col>
