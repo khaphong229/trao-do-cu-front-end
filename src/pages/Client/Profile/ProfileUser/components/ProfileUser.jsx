@@ -70,7 +70,6 @@ const ProfilePage = () => {
       })
     }
   }, [userData])
-
   const handleInputChange = e => {
     const { id, value } = e.target
     setFormData(prev => ({ ...prev, [id]: value }))
