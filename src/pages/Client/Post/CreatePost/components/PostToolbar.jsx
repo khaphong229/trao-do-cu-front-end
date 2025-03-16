@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { Button } from 'antd'
-import { UploadOutlined } from '@ant-design/icons'
+import React, { useState, useEffect } from 'react'
+import { Button, Spin } from 'antd'
+import { UploadOutlined, LoadingOutlined } from '@ant-design/icons'
 import styles from '../scss/PostToolbar.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import UploadCustom from 'components/common/UploadCustom'
@@ -14,6 +14,9 @@ const PostToolbar = ({
   imageToolRef
 }) => {
   const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState([])
+  const [fileList, setFileList] = useState([])
 
   const { imageUrls } = useSelector(state => {
     if (contentType === 'exchange') {
@@ -27,48 +30,70 @@ const PostToolbar = ({
     }
   })
 
-  const [fileList, setFileList] = useState([])
   const maxImages = 10 - (imageUrls?.length || 0)
 
   // Handle successful upload
   const handleUploadSuccess = uploadedUrls => {
-    if (contentType === 'exchange') {
-      dispatch(
-        updateRequestData({
-          image_url: [...(imageUrls || []), ...uploadedUrls]
-        })
-      )
-    } else {
-      dispatch(
-        updatePostData({
-          image_url: [...(imageUrls || []), ...uploadedUrls]
-        })
-      )
-    }
+    setUploadedFiles(uploadedUrls)
+    setIsLoading(false)
   }
+
+  // Only update Redux after the loading is complete
+  useEffect(() => {
+    if (uploadedFiles.length > 0 && !isLoading) {
+      if (contentType === 'exchange') {
+        dispatch(
+          updateRequestData({
+            image_url: [...(imageUrls || []), ...uploadedFiles]
+          })
+        )
+      } else {
+        dispatch(
+          updatePostData({
+            image_url: [...(imageUrls || []), ...uploadedFiles]
+          })
+        )
+      }
+      setUploadedFiles([])
+    }
+  }, [uploadedFiles, isLoading])
 
   const handleFileUpload = ({ fileList }) => {
     setFileList(fileList)
   }
 
+  const handleBeforeUpload = () => {
+    setIsLoading(true)
+    return true
+  }
+
   const uploadButton = (
-    <Button ref={imageToolRef || imageRef} type="text" icon={<UploadOutlined />} disabled={maxImages <= 0}>
-      Tải ảnh/video sản phẩm
+    <Button
+      ref={imageToolRef || imageRef}
+      type="text"
+      icon={isLoading ? <LoadingOutlined spin /> : <UploadOutlined />}
+      disabled={maxImages <= 0 || isLoading}
+    >
+      {isLoading ? 'Đang tải...' : 'Tải ảnh/video sản phẩm'}
     </Button>
   )
 
   return (
     <div className={styles.postTools}>
       <div className={styles.toolsButtons}>
-        <UploadCustom
-          fileList={fileList}
-          setFileList={handleFileUpload}
-          uploadButton={uploadButton}
-          maxCount={maxImages}
-          disabled={maxImages <= 0}
-          type={contentType === 'exchange' ? 'exchange' : 'post'}
-          onUploadSuccess={handleUploadSuccess}
-        />
+        <Spin spinning={isLoading} tip="Đang tải ảnh lên..." wrapperClassName={styles.uploadSpinner}>
+          <UploadCustom
+            fileList={fileList}
+            setFileList={handleFileUpload}
+            uploadButton={uploadButton}
+            maxCount={maxImages}
+            disabled={maxImages <= 0 || isLoading}
+            type={contentType === 'exchange' ? 'exchange' : 'post'}
+            onUploadSuccess={handleUploadSuccess}
+            beforeUpload={handleBeforeUpload}
+            showUploadList={!isLoading} // Hide upload list during loading
+          />
+        </Spin>
       </div>
     </div>
   )
