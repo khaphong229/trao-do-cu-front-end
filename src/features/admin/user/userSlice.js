@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getUserPagination, toggleUserStatus, deleteUser, createUser, updateUser } from './userThunks'
+import { getUserPagination, toggleUserStatus, deleteUser, createUser, updateUser, getUserById } from './userThunks'
 
 const initialState = {
   users: [],
@@ -34,7 +34,8 @@ const userSlice = createSlice({
     },
     clearError: state => {
       state.error = null
-    }
+    },
+    resetState: () => initialState
   },
   extraReducers: builder => {
     // Get Users Pagination
@@ -97,6 +98,7 @@ const userSlice = createSlice({
       .addCase(createUser.fulfilled, (state, action) => {
         state.isLoading = false
         state.isModalVisible = false
+        state.users.push(action.payload) // Thêm người dùng mới
       })
       .addCase(createUser.rejected, (state, action) => {
         state.isLoading = false
@@ -114,17 +116,40 @@ const userSlice = createSlice({
         state.isModalVisible = false
         const index = state.users.findIndex(user => user._id === action.payload._id)
         if (index !== -1) {
-          state.users[index] = action.payload
+          state.users[index] = action.payload // Cập nhật người dùng
         }
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload
       })
+
+    // Get User By ID
+    // Đảm bảo rằng bạn đã thêm getUserById vào extraReducers
+    builder
+      .addCase(getUserById.pending, state => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(getUserById.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.selectedUser = action.payload // Cập nhật selectedUser
+      })
+      .addCase(getUserById.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+      })
   }
 })
 
-export const { setIsModalVisible, setIsDetailsModalVisible, setSelectedUser, setPage, setPerPage, clearError } =
-  userSlice.actions
+export const {
+  setIsModalVisible,
+  setIsDetailsModalVisible,
+  setSelectedUser,
+  setPage,
+  setPerPage,
+  clearError,
+  resetState
+} = userSlice.actions
 
 export default userSlice.reducer

@@ -70,6 +70,7 @@ const ProfilePage = () => {
       })
     }
   }, [userData])
+  console.log('userData:', userData)
 
   const handleInputChange = e => {
     const { id, value } = e.target

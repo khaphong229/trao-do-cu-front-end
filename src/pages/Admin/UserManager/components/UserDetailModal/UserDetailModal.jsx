@@ -35,7 +35,6 @@ const UserDetailModal = ({ visible, user, onClose }) => {
       width={800}
     >
       <Descriptions
-        title="Chi tiết người dùng"
         bordered
         column={{
           xs: 1,

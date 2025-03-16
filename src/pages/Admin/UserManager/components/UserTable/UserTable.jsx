@@ -1,44 +1,89 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Table, Button, Space, Modal, message, Input } from 'antd'
 import {
   EditOutlined,
   DeleteOutlined,
-  LockOutlined,
-  UnlockOutlined,
-  LoadingOutlined,
   EyeOutlined,
   PhoneOutlined,
   SearchOutlined,
   MailOutlined
 } from '@ant-design/icons'
-import { useDispatch, useSelector } from 'react-redux'
-import { getUserPagination, toggleUserStatus, deleteUser } from '../../../../../features/admin/user/userThunks'
 import styles from './styles.module.scss'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
+const initialUsers = [
+  {
+    _id: '1',
+    avatar: null,
+    name: '🌹Nhà sổ riêng 2,55 tỷ Gần cầu Phú Xuân Q7',
+    address: 'Ha Noi',
+    phone: '0123456789',
+    status: 'active',
+    typePost: 'gift'
+  },
+  {
+    _id: '2',
+    avatar: null,
+    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
+    address: 'Ninh bình',
+    phone: '0987654321',
+    status: 'inactive',
+    typePost: 'exchange'
+  },
+  {
+    _id: '3',
+    avatar: null,
+    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
+    address: 'Ninh bình',
+    phone: '0987654321',
+    status: 'inactive',
+    typePost: 'exchange'
+  },
+  {
+    _id: '4',
+    avatar: null,
+    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
+    address: 'Ninh bình',
+    phone: '0987654321',
+    status: 'inactive',
+    typePost: 'exchange'
+  },
+  {
+    _id: '5',
+    avatar: null,
+    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
+    address: 'Ninh bình',
+    phone: '0987654321',
+    status: 'inactive',
+    typePost: 'exchange'
+  },
+  {
+    _id: '6',
+    avatar: null,
+    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
+    address: 'Ninh bình',
+    phone: '0987654321',
+    status: 'inactive',
+    typePost: 'exchange'
+  },
+  {
+    _id: '7',
+    avatar: null,
+    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
+    address: 'Ninh bình',
+    phone: '0987654321',
+    status: 'inactive',
+    typePost: 'exchange'
+  }
+]
 
 const UserTable = ({ onEdit, onViewDetails }) => {
-  const dispatch = useDispatch()
-  const { users, total, isLoading } = useSelector(state => state.userManagement)
-
+  const [setData] = useState(initialUsers)
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
       pageSize: 10
-    },
-    filters: {},
-    sorter: {}
+    }
   })
-
-  useEffect(() => {
-    dispatch(
-      getUserPagination({
-        page: tableParams.pagination.current,
-        per_page: tableParams.pagination.pageSize,
-        ...tableParams.filters,
-        ...tableParams.sorter
-      })
-    )
-  }, [dispatch, tableParams])
 
   const handleTableChange = (pagination, filters, sorter) => {
     setTableParams({
@@ -56,22 +101,36 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       title: 'Bạn có chắc chắn muốn xóa người dùng này?',
       content: 'Hành động này không thể hoàn tác.',
       onOk() {
-        dispatch(deleteUser(userId))
-          .then(() => message.success('Xóa người dùng thành công'))
-          .catch(() => message.error('Xóa người dùng thất bại'))
+        setData(prevData => prevData.filter(user => user._id !== userId))
+        message.success('Xóa người dùng thành công')
       }
     })
   }
 
-  const handleToggleStatus = userId => {
-    dispatch(toggleUserStatus(userId))
-      .then(() => message.success('Cập nhật trạng thái người dùng thành công'))
-      .catch(() => message.error('Cập nhật trạng thái thất bại'))
-  }
+  // const handleAdd = () => {
+  //   const newUser = {
+  //     _id: Date.now().toString(),
+  //     avatar: null,
+  //     name: 'Người dùng mới',
+  //     email: 'newuser@example.com',
+  //     phone: '0000000000',
+  //     status: 'active',
+  //     gender: 'other'
+  //   }
+  //   setData(prevData => [...prevData, newUser])
+  //   message.success('Thêm người dùng thành công')
+  // }
 
+  // const handleEdit = user => {
+  //   const newName = prompt('Nhập tên mới:', user.name)
+  //   if (newName) {
+  //     setData(prevData => prevData.map(item => (item._id === user._id ? { ...item, name: newName } : item)))
+  //     message.success('Sửa thông tin bài đăng thành công')
+  //   }
+  // }
   const columns = [
     {
-      title: 'Ảnh đại diện',
+      title: 'Ảnh bài đăng',
       dataIndex: 'avatar',
       key: 'avatar',
       render: avatar => (
@@ -79,7 +138,7 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       )
     },
     {
-      title: 'Tên tài khoản',
+      title: 'Tên bài đăng',
       dataIndex: 'name',
       key: 'name',
       sorter: {
@@ -94,7 +153,7 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
         <div style={{ padding: 8 }}>
           <Input
-            placeholder="Tìm tên tài khoản"
+            placeholder="Tìm tên bài đăng"
             value={selectedKeys[0]}
             onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
             onPressEnter={confirm}
@@ -114,18 +173,18 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: 'Địa chỉ',
+      dataIndex: 'address',
+      key: 'address',
       sorter: {
-        compare: (a, b) => a.email - b.email
+        compare: (a, b) => a.address - b.address
       },
       // responsive: ['md'],
-      render: email => <div className="truncate">{email}</div>,
+      render: address => <div className="truncate">{address}</div>,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
         <div style={{ padding: 8 }}>
           <Input
-            placeholder="Tìm email"
+            placeholder="Tìm địa chỉ"
             value={selectedKeys[0]}
             onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
             onPressEnter={confirm}
@@ -188,22 +247,22 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       )
     },
     {
-      title: 'Giới tính',
-      dataIndex: 'gender',
-      key: 'gender',
+      title: 'loại bài đăng',
+      dataIndex: 'typePost',
+      key: 'typePost',
       filters: [
-        { text: 'Nam', value: 'male' },
-        { text: 'Nữ', value: 'female' },
+        { text: 'Cho', value: 'gift' },
+        { text: 'Tặng', value: 'exchange' },
         { text: 'Khác', value: 'other' }
       ],
-      onFilter: (value, record) => record.gender === value,
-      render: gender => {
+      onFilter: (value, record) => record.typePost === value,
+      render: typePost => {
         const genderMap = {
-          male: 'Nam',
-          female: 'Nữ',
+          male: 'Cho',
+          female: 'Tặng',
           other: 'Khác'
         }
-        return genderMap[gender] || gender
+        return genderMap[typePost] || typePost
       }
     },
     {
@@ -214,11 +273,6 @@ const UserTable = ({ onEdit, onViewDetails }) => {
           <Button icon={<EyeOutlined />} onClick={() => onViewDetails(record)} size="small" />
           <Button icon={<EditOutlined />} onClick={() => onEdit(record)} size="small" />
           <Button icon={<DeleteOutlined />} onClick={() => handleDelete(record._id)} danger size="small" />
-          <Button
-            icon={record.status === 'active' ? <LockOutlined /> : <UnlockOutlined />}
-            onClick={() => handleToggleStatus(record._id)}
-            size="small"
-          />
         </Space>
       )
     }
@@ -228,11 +282,9 @@ const UserTable = ({ onEdit, onViewDetails }) => {
     <Table
       className={styles.responsiveTable}
       columns={columns}
-      dataSource={users}
+      dataSource={initialUsers}
       rowKey="_id"
-      loading={{ indicator: <LoadingOutlined />, spinning: isLoading }}
       pagination={{
-        total,
         current: tableParams.pagination.current,
         pageSize: tableParams.pagination.pageSize,
         showSizeChanger: true,
