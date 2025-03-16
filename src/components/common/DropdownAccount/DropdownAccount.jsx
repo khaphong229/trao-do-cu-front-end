@@ -7,7 +7,7 @@ export const useMenuItems = () => {
 
   return [
     {
-      title: 'Quản lý bài đăng',
+      title: 'Quản lý sản phẩm',
       items: [
         {
           label: <NavigateItem to="/management-post?tab=active">Sản phẩm trao đi</NavigateItem>,

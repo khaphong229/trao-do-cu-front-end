@@ -12,7 +12,7 @@ export const UserInfo = ({ user, onCreatePost }) => {
       <div className={styles['user-details']}>
         <h4>{user.name}</h4>
         <Button type="primary" className={styles['create-post-btn']} onClick={onCreatePost}>
-          Tạo bài đăng
+          Đăng sản phẩm
         </Button>
       </div>
     </div>

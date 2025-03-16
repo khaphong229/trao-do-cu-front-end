@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { message, Button, List, Radio, Space, Typography } from 'antd'
+import { message, Button, List, Radio, Space, Typography, Tag } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { setEdittingAddress, updatePostData } from 'features/client/post/postSlice'
 import AddressSelection from 'components/common/AddressSelection'
 import { PlusOutlined, DeleteOutlined, EditOutlined, LeftOutlined } from '@ant-design/icons'
 import styles from '../../scss/LocationModal.module.scss'
-import { updateUserProfile } from '../../../../../../features/auth/authThunks'
-
-const { Text } = Typography
+import { updateDefaultAddress, updateUserProfile } from '../../../../../../features/auth/authThunks'
 
 const Location = ({ location, setLocation }) => {
   const dispatch = useDispatch()
@@ -17,14 +15,29 @@ const Location = ({ location, setLocation }) => {
   const [showAddressForm, setShowAddressForm] = useState(false)
   const { user } = useSelector(state => state.auth)
 
+  // Selected address for contact_address (separate from default address)
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(-1)
+
   // Initialize addresses from user.address or empty array if not available
-  const [addresses, setAddresses] = useState(user.address || [])
+  const [addresses, setAddresses] = useState([])
   const [addressesChanged, setAddressesChanged] = useState(false)
 
   // Load addresses from user data when component mounts or user changes
   useEffect(() => {
     if (user && Array.isArray(user.address)) {
-      setAddresses(user.address)
+      // Create a new array to avoid modifying the original
+      const addressesCopy = [...user.address]
+      // Sort the copy
+      const sortedAddresses = addressesCopy.sort(
+        (a, b) => (b.isDefault === true ? 1 : 0) - (a.isDefault === true ? 1 : 0)
+      )
+      setAddresses(sortedAddresses)
+
+      // Find default address index
+      const defaultIndex = sortedAddresses.findIndex(addr => addr.isDefault === true)
+      if (defaultIndex !== -1) {
+        setSelectedAddressIndex(defaultIndex)
+      }
     } else {
       setAddresses([])
     }
@@ -41,12 +54,8 @@ const Location = ({ location, setLocation }) => {
         const locationIndex = user.address.findIndex(addr => addr.address === location)
 
         if (locationIndex !== -1) {
-          // If address exists, mark it as default locally (without API call)
-          const newAddresses = addresses.map((addr, i) => ({
-            ...addr,
-            isDefault: i === locationIndex
-          }))
-          setAddresses(newAddresses)
+          // If address exists, select it
+          setSelectedAddressIndex(locationIndex)
         } else if (location.trim() !== '') {
           // If address doesn't exist, add it to the list locally
           const newAddress = {
@@ -55,34 +64,30 @@ const Location = ({ location, setLocation }) => {
           }
           const newAddresses = [...addresses, newAddress]
           setAddresses(newAddresses)
+          setSelectedAddressIndex(newAddresses.length - 1)
           setAddressesChanged(true) // Mark that we've made changes
         }
       }
     }
   }, [location, user])
 
+  // Re-render addresses when the default address changes
+  useEffect(() => {
+    if (user && Array.isArray(user.address)) {
+      // Create a new array
+      const addressesCopy = [...user.address]
+      // Sort the copy
+      const sortedAddresses = addressesCopy.sort(
+        (a, b) => (b.isDefault === true ? 1 : 0) - (a.isDefault === true ? 1 : 0)
+      )
+      setAddresses(sortedAddresses)
+    }
+  }, [user.address])
+
   // Show address form if no location
   useEffect(() => {
     setShowAddressForm(!location)
   }, [location])
-
-  // Function to save addresses to user profile via Redux - only called when needed
-  const saveAddressesToUserProfile = async () => {
-    if (!addressesChanged) return
-
-    try {
-      await dispatch(
-        updateUserProfile({
-          address: addresses
-        })
-      ).unwrap()
-      console.log('Addresses saved to user profile:', addresses)
-      setAddressesChanged(false)
-    } catch (error) {
-      console.error('Error saving addresses to profile:', error)
-      message.error('Không thể lưu danh sách địa chỉ')
-    }
-  }
 
   const handleAddressChange = address => {
     setFullAddress(address)
@@ -100,8 +105,6 @@ const Location = ({ location, setLocation }) => {
     }
 
     const newAddresses = [...addresses, newAddress]
-    setAddresses(newAddresses)
-    setAddressesChanged(true)
 
     // Call API immediately when adding a new address
     try {
@@ -110,10 +113,12 @@ const Location = ({ location, setLocation }) => {
           address: newAddresses
         })
       ).unwrap()
-      setAddressesChanged(false)
+
+      // Update local state after API success
+      setAddresses(newAddresses)
+      setSelectedAddressIndex(newAddresses.length - 1)
       message.success('Đã lưu địa chỉ thành công!')
     } catch (error) {
-      console.error('Error saving addresses to profile:', error)
       message.error('Không thể lưu địa chỉ')
     }
 
@@ -140,9 +145,6 @@ const Location = ({ location, setLocation }) => {
       address: fullAddress
     }
 
-    setAddresses(newAddresses)
-    setAddressesChanged(true)
-
     // Call API immediately when updating an address
     try {
       await dispatch(
@@ -150,10 +152,11 @@ const Location = ({ location, setLocation }) => {
           address: newAddresses
         })
       ).unwrap()
-      setAddressesChanged(false)
+
+      // Update local state after API success
+      setAddresses(newAddresses)
       message.success('Đã cập nhật địa chỉ thành công!')
     } catch (error) {
-      console.error('Error updating address:', error)
       message.error('Không thể cập nhật địa chỉ')
     }
 
@@ -180,12 +183,8 @@ const Location = ({ location, setLocation }) => {
       return
     }
 
+    const addressToDelete = addresses[index]
     const newAddresses = addresses.filter((_, i) => i !== index)
-
-    // If we're deleting the default address, make the first remaining address the default
-    if (addresses[index].isDefault && newAddresses.length > 0) {
-      newAddresses[0].isDefault = true
-    }
 
     // Call API immediately when deleting an address
     try {
@@ -195,52 +194,43 @@ const Location = ({ location, setLocation }) => {
         })
       ).unwrap()
 
+      // Update local state after API success
       setAddresses(newAddresses)
-      setAddressesChanged(false)
+
+      // Adjust selected index if needed
+      if (index === selectedAddressIndex) {
+        setSelectedAddressIndex(0)
+      } else if (index < selectedAddressIndex) {
+        setSelectedAddressIndex(selectedAddressIndex - 1)
+      }
+
       message.success('Đã xóa địa chỉ thành công')
     } catch (error) {
-      console.error('Error deleting address:', error)
       message.error('Không thể xóa địa chỉ')
     }
   }
 
-  const handleSetDefaultAddress = async index => {
-    const newAddresses = addresses.map((addr, i) => ({
-      ...addr,
-      isDefault: i === index
-    }))
+  const handleSelectAddress = index => {
+    setSelectedAddressIndex(index)
+  }
 
-    // Just update local state, no API call until save
-    setAddresses(newAddresses)
-    setAddressesChanged(true)
+  const handleUpdateDefaultAddress = async id => {
+    try {
+      await dispatch(updateDefaultAddress(id)).unwrap()
+      // User data will be updated in Redux store
+      // The useEffect hook will re-render the addresses
+    } catch (error) {
+      message.error('Không thể cập nhật địa chỉ mặc định')
+    }
   }
 
   const handleLocationSave = async () => {
-    const selectedAddress = addresses.find(addr => addr.isDefault)
-    if (!selectedAddress) {
-      message.error('Vui lòng chọn hoặc thêm ít nhất một địa chỉ')
+    if (selectedAddressIndex === -1 || !addresses[selectedAddressIndex]) {
+      message.error('Vui lòng chọn một địa chỉ')
       return
     }
 
-    // Save addresses if there are pending changes
-    if (addressesChanged) {
-      try {
-        await dispatch(
-          updateUserProfile({
-            address: addresses
-          })
-        ).unwrap()
-        setAddressesChanged(false)
-      } catch (error) {
-        if (error.status === 400) {
-          Object.values(error.detail).forEach(val => {
-            message.error(String(val))
-          })
-        }
-        return
-      }
-    }
-
+    const selectedAddress = addresses[selectedAddressIndex]
     const addressParts = selectedAddress.address.split(', ')
     const city = addressParts[addressParts.length - 1]
 
@@ -264,12 +254,12 @@ const Location = ({ location, setLocation }) => {
 
   return (
     <div className={styles.locationWrapper}>
-      <Button icon={<LeftOutlined />} onClick={() => dispatch(setEdittingAddress(false))}>
-        Quay lại
-      </Button>
-      <Typography.Title level={4} style={{ margin: '10px 0' }}>
-        Danh sách địa chỉ
-      </Typography.Title>
+      <div className={styles.titleLocation} onClick={() => dispatch(setEdittingAddress(false))}>
+        <Button type="link" icon={<LeftOutlined />} />
+        <Typography.Title level={4} style={{ margin: 0, fontSize: 16 }}>
+          Danh sách địa chỉ
+        </Typography.Title>
+      </div>
 
       {addresses.length > 0 && (
         <List
@@ -284,13 +274,19 @@ const Location = ({ location, setLocation }) => {
               ]}
             >
               <List.Item.Meta
-                avatar={<Radio checked={address.isDefault} onChange={() => handleSetDefaultAddress(index)} />}
+                avatar={<Radio checked={index === selectedAddressIndex} onChange={() => handleSelectAddress(index)} />}
                 title={
-                  address.isDefault ? (
-                    <Text style={{ color: 'green' }}>Địa chỉ mặc định</Text>
-                  ) : (
-                    <Text strong>Chọn làm địa chỉ mặc định</Text>
-                  )
+                  <>
+                    {address.isDefault ? (
+                      <Tag color="green" className={styles.locationDefault}>
+                        Mặc định
+                      </Tag>
+                    ) : (
+                      <Tag style={{ cursor: 'pointer' }} onClick={() => handleUpdateDefaultAddress(address?._id)}>
+                        Đặt làm mặc định
+                      </Tag>
+                    )}
+                  </>
                 }
                 description={address.address}
               />
@@ -300,18 +296,20 @@ const Location = ({ location, setLocation }) => {
       )}
 
       {showAddressForm ? (
-        <Space direction="vertical" style={{ width: '100%', marginTop: 16 }}>
-          <Typography.Title level={5}>{editingIndex >= 0 ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}</Typography.Title>
+        <Space direction="vertical" style={{ width: '100%', marginTop: 10 }}>
+          <Typography.Title style={{ margin: 0, fontSize: 16 }} level={5}>
+            {editingIndex >= 0 ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}
+          </Typography.Title>
           <AddressSelection
             initialAddress={editingIndex >= 0 ? addresses[editingIndex].address : ''}
             onAddressChange={handleAddressChange}
             isEditing={true}
           />
-          <Space>
+          <Space className={styles.spaceButton}>
+            <Button onClick={handleCancelEdit}>Hủy</Button>
             <Button type="primary" onClick={editingIndex >= 0 ? handleUpdateAddress : handleAddAddress}>
               {editingIndex >= 0 ? 'Cập nhật địa chỉ' : 'Thêm địa chỉ'}
             </Button>
-            <Button onClick={handleCancelEdit}>Hủy</Button>
           </Space>
         </Space>
       ) : (
@@ -319,7 +317,7 @@ const Location = ({ location, setLocation }) => {
           type="dashed"
           icon={<PlusOutlined />}
           onClick={handleAddNewAddress}
-          style={{ marginTop: 16, width: '100%' }}
+          style={{ marginTop: 10, width: '100%' }}
         >
           Thêm địa chỉ mới
         </Button>
