@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import AuthService from '../../services/authService'
 import { setAuthToken } from '../../utils/localStorageUtils'
 import { timeoutPromise } from 'utils/errorUtils'
+import { reject } from 'lodash'
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
   const { isAdmin, ...data } = credentials
@@ -123,5 +124,21 @@ export const loginGoogle = createAsyncThunk('auth/loginGoogle', async (id, { rej
     return response.data
   } catch (error) {
     return rejectWithValue(error.response?.data)
+  }
+})
+export const forgotPassword = createAsyncThunk('auth/forgotPassword', async (email, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.forgotPassword(email)
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response?.data)
+  }
+})
+export const resetPassword = createAsyncThunk('auth/resetPassword', async (data, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.resetPasswordConfirm(data)
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response?.data || { message: 'Đặt lại mật khẩu thất bại. Vui lòng thử lại.' })
   }
 })

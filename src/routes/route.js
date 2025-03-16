@@ -19,6 +19,8 @@ const ErrorBoundary = lazy(() => import('components/common/ErrorBoundary'))
 const NotFound = lazy(() => import('components/common/NotFound'))
 const LoginGoogle = lazy(() => import('pages/Auth/LoginGoogle'))
 const UserSurvey = lazy(() => import('pages/Client/UserSurvey/UserSurvey'))
+const ForgotPassword = lazy(() => import('pages/Auth/ForgotPassword'))
+const ResetPassword = lazy(() => import('pages/Auth/ResetPassword'))
 
 const router = createBrowserRouter([
   {
@@ -64,6 +66,26 @@ const router = createBrowserRouter([
               <Suspense>
                 <ClientLayout>
                   <Register />
+                </ClientLayout>
+              </Suspense>
+            )
+          },
+          {
+            path: 'forgot-password',
+            element: (
+              <Suspense>
+                <ClientLayout>
+                  <ForgotPassword />
+                </ClientLayout>
+              </Suspense>
+            )
+          },
+          {
+            path: 'reset-password',
+            element: (
+              <Suspense>
+                <ClientLayout>
+                  <ResetPassword />
                 </ClientLayout>
               </Suspense>
             )

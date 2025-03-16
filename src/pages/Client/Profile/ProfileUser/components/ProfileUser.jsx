@@ -42,11 +42,12 @@ const ProfilePage = () => {
     email: '',
     gender: '',
     phone: '',
-    address: '',
+    address: [],
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   })
+  console.log('userData', userData)
   const [savePassword, setSavePassword] = useState(false)
 
   useEffect(() => {
@@ -55,7 +56,7 @@ const ProfilePage = () => {
         name: userData.name || '',
         email: userData.email || '',
         phone: userData.phone || '',
-        address: userData.address || '',
+        address: userData.address || [],
         gender: userData.gender || '',
         currentPassword: '',
         newPassword: '',

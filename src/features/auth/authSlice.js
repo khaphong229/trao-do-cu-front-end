@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getCurrentUser, loginUser, logoutUser, updateUserProfile } from './authThunks'
+import { getCurrentUser, loginUser, logoutUser, updateUserProfile, forgotPassword, resetPassword } from './authThunks'
 
 const initialState = {
   user: {},
@@ -107,6 +107,34 @@ const authSlice = createSlice({
       // state.isLoading = false
       state.error = action.payload?.message || 'Profile update failed'
     })
+    //Change Password
+    builder
+      .addCase(forgotPassword.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.changePassWordSuccess = true
+        state.changePassWordMessage = action.payload.message
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.isLoading = false
+        state.changePassWordSuccess = false
+        state.changePassWordMessage = action?.payload?.message || 'Change Password Failed'
+      })
+    //Reset Password
+    builder
+      .addCase(resetPassword.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.changePassWordSuccess = true
+        state.changePassWordMessage = action.payload.message
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.isLoading = false
+        state.changePassWordSuccess = false
+        state.changePassWordMessage = action?.payload?.message || 'Reset Password Failed'
+      })
   }
 })
 

@@ -43,6 +43,15 @@ const authService = {
 
   loginGoogle(id) {
     return this.http.post('/auth/login-success', { googleId: id })
+  },
+  forgotPassword(email) {
+    return this.http.post('/auth/forgot-password', { email })
+  },
+  resetPasswordConfirm(data) {
+    return this.http.post('/auth/reset-password-confirm', {
+      token: data.token,
+      password: data.password
+    })
   }
 }
 
