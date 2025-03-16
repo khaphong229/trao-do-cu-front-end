@@ -8,7 +8,7 @@ import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsDetailsModalVisible, setIsModalVisible, setSelectedUser } from '../../../features/admin/user/userSlice'
 
-const User = () => {
+const Post = () => {
   const dispatch = useDispatch()
 
   const [searchText, setSearchText] = useState('')
@@ -78,4 +78,4 @@ const User = () => {
   )
 }
 
-export default User
+export default Post
