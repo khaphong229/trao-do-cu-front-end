@@ -90,9 +90,16 @@ const ResetPassword = () => {
           <Form.Item
             name="password"
             rules={[
-              { required: true, message: 'Vui lòng nhập mật khẩu mới!' },
-              { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự!' }
+              {
+                required: true,
+                message: 'Vui lòng nhập mật khẩu!'
+              },
+              {
+                min: 6,
+                message: 'Mật khẩu tối thiểu 6 kí tự.'
+              }
             ]}
+            hasFeedback
           >
             <Input.Password
               prefix={<LockOutlined className="site-form-item-icon" />}
@@ -102,10 +109,27 @@ const ResetPassword = () => {
           </Form.Item>
 
           <Form.Item
-            name="confirmPassword"
+            name="confirm"
+            dependencies={['password']}
+            hasFeedback
             rules={[
-              { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
-              { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự!' }
+              {
+                required: true,
+                message: 'Vui lòng xác nhận lại mật khẩu!'
+              },
+              {
+                min: 6,
+                message: 'Mật khẩu tối thiểu 6 kí tự.'
+              },
+              ({ getFieldValue }) => ({
+                validator(rule, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve()
+                  }
+
+                  return Promise.reject('Mật khẩu không khớp. Vui lòng nhập lại!')
+                }
+              })
             ]}
           >
             <Input.Password

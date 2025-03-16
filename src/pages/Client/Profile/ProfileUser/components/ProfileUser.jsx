@@ -43,12 +43,19 @@ const ProfilePage = () => {
     email: '',
     gender: '',
     phone: '',
-    address: [],
+    address: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   })
   const [savePassword, setSavePassword] = useState(false)
+
+  // Hàm tiện ích để chuyển đổi địa chỉ từ mảng sang chuỗi
+  const addressToString = address => {
+    if (!address) return ''
+    if (Array.isArray(address)) return address.join('')
+    return String(address)
+  }
 
   useEffect(() => {
     if (userData) {
@@ -56,7 +63,7 @@ const ProfilePage = () => {
         name: userData.name || '',
         email: userData.email || '',
         phone: userData.phone || '',
-        address: userData.address || [],
+        address: addressToString(userData.address),
         gender: userData.gender || '',
         currentPassword: '',
         newPassword: '',
@@ -64,7 +71,6 @@ const ProfilePage = () => {
       })
     }
   }, [userData])
-
   const handleInputChange = e => {
     const { id, value } = e.target
     setFormData(prev => ({ ...prev, [id]: value }))
@@ -76,7 +82,13 @@ const ProfilePage = () => {
 
   const handleUpdateMe = async () => {
     try {
-      const response = await dispatch(updateUserProfile(formData)).unwrap()
+      // Chuyển đổi địa chỉ từ chuỗi thành mảng ký tự để backend xử lý
+      const updatedData = {
+        ...formData,
+        address: formData.address.split('') // Chuyển thành mảng ký tự
+      }
+
+      const response = await dispatch(updateUserProfile(updatedData)).unwrap()
       if (response.status === 201) {
         message.success(response.message)
         // Sử dụng navigate để reload trang hiện tại
@@ -149,7 +161,7 @@ const ProfilePage = () => {
         throw new Error('Upload response không hợp lệ')
       }
     } catch (error) {
-      Object.values(error.detail).forEach(err => {
+      Object.values(error.detail || {}).forEach(err => {
         message.error(err)
       })
       onError(error)

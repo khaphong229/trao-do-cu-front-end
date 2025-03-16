@@ -74,15 +74,27 @@ export const updateUserProfile = createAsyncThunk(
   async (userData, { rejectWithValue, getState, dispatch }) => {
     try {
       const currentUser = getState().auth.user
+
+      // Convert address to string if it's an object
+      let currentAddress = currentUser?.address || ''
+      if (typeof currentAddress === 'object' && currentAddress !== null) {
+        if (Array.isArray(currentAddress)) {
+          currentAddress = currentAddress.join('')
+        } else {
+          currentAddress = Object.values(currentAddress).join('')
+        }
+      }
+
       const payload = {
         name: currentUser?.name || '',
         email: currentUser?.email || '',
         phone: currentUser?.phone || '',
-        address: currentUser?.address || '',
+        address: currentAddress,
         // Remove social_media if not required
         // ...(currentUser?.social_media?.length > 0 && { social_media: [currentUser?.social_media[0]] }),
         ...userData
       }
+
       const response = await AuthService.updateProfile(payload)
 
       if (response.status === 201) {
