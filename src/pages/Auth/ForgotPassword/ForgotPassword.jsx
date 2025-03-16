@@ -39,7 +39,23 @@ const ForgotPassword = () => {
         <h2>Quên Mật Khẩu</h2>
         <p>Nhập email của bạn để nhận liên kết đặt lại mật khẩu.</p>
         <Form name="forgot_password" onFinish={onFinish} layout="vertical">
-          <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập email!', type: 'email' }]}>
+          <Form.Item
+            name="email"
+            rules={[
+              {
+                type: 'email',
+                message: 'Dữ liệu nhập không hợp lệ!'
+              },
+              {
+                required: true,
+                message: 'Vui lòng nhập email!'
+              },
+              {
+                min: 10,
+                message: 'Email tối thiểu 10 kí tự.'
+              }
+            ]}
+          >
             <Input
               prefix={<MailOutlined className="site-form-item-icon" />}
               placeholder="Nhập email của bạn"
