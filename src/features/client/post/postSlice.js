@@ -20,6 +20,7 @@ const initialState = {
       zalo: ''
     }
   },
+  isPendingPostOpen: false, // Thêm state để theo dõi trạng thái chờ mở form đăng bài
   isShowTour: false,
   isLoadingModal: false,
   isLoadingButton: false,
@@ -49,20 +50,24 @@ const initialState = {
 
   viewMode: 'card',
   sortOrder: 'newest',
-  cityFilter: null // Thêm state lưu thành phố đang lọc
+  cityFilter: null, // Thêm state lưu thành phố đang lọc,
+
+  isEdittingAddress: false
 }
 
 const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
-    // Your existing reducers...
-    setSelectedPost: (state, action) => {
-      state.postDetail = action.payload
+    setEdittingAddress: (state, action) => {
+      state.isEdittingAddress = action.payload
     },
     //create post action
     setCreateModalVisibility: (state, action) => {
       state.isCreateModalVisible = action.payload
+    },
+    setPendingPostOpen: (state, action) => {
+      state.isPendingPostOpen = action.payload
     },
     setSocialLinkModalVisibility: (state, action) => {
       state.isSocialLinkModalVisible = action.payload
@@ -304,7 +309,9 @@ export const {
   updatePostRequestStatus,
   setViewMode,
   setSortOrder,
-  setCityFilter
+  setCityFilter,
+  setPendingPostOpen,
+  setEdittingAddress
 } = postSlice.actions
 
 export default postSlice.reducer

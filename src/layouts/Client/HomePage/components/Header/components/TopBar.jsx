@@ -28,7 +28,7 @@ const TopBar = () => {
           </Button>
         ) : (
           <Button icon={<BarsOutlined />} type="text" className={styles.button}>
-            <Link to="/management-post">Quản lý bài đăng</Link>
+            <Link to="/management-post">Quản lý sản phẩm</Link>
           </Button>
         )}
       </div>

@@ -1,19 +1,20 @@
-import React from 'react'
-import { Button, Modal, Tour } from 'antd'
+import React, { useState, useEffect } from 'react'
+import { Button, message, Modal, Steps, theme } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
 import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
+import { setCategoryModalVisibility } from 'features/client/post/postSlice'
 
 import UserInfoSection from 'pages/Client/Post/CreatePost/components/UserInfo'
 import PostContentEditor from 'pages/Client/Post/CreatePost/components/PostContent'
 import PostToolbar from 'pages/Client/Post/CreatePost/components/PostToolbar'
 import LocationModal from 'pages/Client/Post/CreatePost/components/Modal/Location'
-import { ContactInfoModal } from 'pages/Client/Post/CreatePost/components/Modal/Contact'
 import CategoryModal from 'pages/Client/Post/CreatePost/components/Modal/Category'
 
 import styles from 'pages/Client/Post/CreatePost/scss/CreatePost.module.scss'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
+import useDefaultLocation from 'hooks/useDefaultLocation'
 
 const PostForm = ({
   title,
@@ -25,29 +26,75 @@ const PostForm = ({
   onSubmit,
   formUtils,
   submitButtonText,
-  tourRef = {},
-  showTour = false,
-  tourSteps = [],
-  onTourClose = () => {}
+  onContactInfoSubmit
 }) => {
+  const { token } = theme.useToken()
+  const [current, setCurrent] = useState(0)
   const dispatch = useDispatch()
   const {
     errorPost,
     setErrorPost,
     formErrors,
+    setFormErrors,
     isMobile,
     titleRef,
     imageRef,
     phoneRef,
     facebookRef,
     locationRef,
-    categoryRef
+    categoryRef,
+    validateForm,
+    handleSubmit,
+    scrollToFirstError
   } = formUtils
+  const { addressDefault } = useDefaultLocation()
+  const { isEdittingAddress } = useSelector(state => state.post)
 
   const safeFormData = formData || {}
 
   const isExchangeForm = title === 'Biểu mẫu trao đổi'
   const contentType = isExchangeForm ? 'exchange' : 'post'
+
+  // Reset current step when modal opens/closes
+  useEffect(() => {
+    if (isVisible) {
+      setCurrent(0)
+    }
+  }, [isVisible])
+
+  const handleFormSubmit = () => {
+    // Validate các trường khác trước
+    const errors = validateForm()
+    setFormErrors(errors)
+    setErrorPost(Object.keys(errors).length > 0 ? errors : null)
+
+    // Kiểm tra các lỗi khác ngoài category_id trước
+    const otherErrors = { ...errors }
+    delete otherErrors.category_id
+
+    // Nếu có lỗi ở các trường khác, hiển thị lỗi đó trước
+    if (Object.keys(otherErrors).length > 0) {
+      // Hiển thị message lỗi đầu tiên
+      message.error(String(Object.values(otherErrors)[0])) // Ensure this is a string
+      // Cuộn đến trường lỗi đầu tiên
+      scrollToFirstError(otherErrors)
+      return
+    }
+
+    // Chỉ khi các trường khác đều OK, nếu thiếu category_id thì mới hiện modal danh mục
+    if (errors.category_id) {
+      dispatch(setCategoryModalVisibility(true))
+      return
+    }
+
+    // Nếu không có lỗi nào, tiếp tục submit
+    handleSubmit()
+  }
+
+  const handleModalCancel = () => {
+    setCurrent(0) // Reset step when canceling
+    onCancel() // Call original onCancel prop
+  }
 
   const handleFieldChange = (field, value) => {
     if (isExchangeForm) {
@@ -59,7 +106,7 @@ const PostForm = ({
     if (formErrors && formErrors[field]) {
       const newErrors = { ...formErrors }
       delete newErrors[field]
-      formUtils.setFormErrors && formUtils.setFormErrors(newErrors)
+      setFormErrors && setFormErrors(newErrors)
     }
   }
 
@@ -81,96 +128,184 @@ const PostForm = ({
     if (formErrors && formErrors.specificLocation) {
       const newErrors = { ...formErrors }
       delete newErrors.specificLocation
-      formUtils.setFormErrors && formUtils.setFormErrors(newErrors)
+      setFormErrors && setFormErrors(newErrors)
     }
   }
 
   const { handleInfoSubmit } = useGiftRequest()
+
+  const validateStepOne = () => {
+    // Validate first step (main content, title, etc.)
+    const errors = validateForm()
+    setFormErrors(errors)
+    setErrorPost(Object.keys(errors).length > 0 ? errors : null)
+
+    // Filter errors to only check fields relevant to step 1
+    // For example, title and content
+    const stepOneFields = ['title', 'content', 'image_url']
+    const stepOneErrors = {}
+
+    stepOneFields.forEach(field => {
+      if (errors[field]) stepOneErrors[field] = errors[field]
+    })
+
+    if (Object.keys(stepOneErrors).length > 0) {
+      // Show error message for step 1
+      message.error(String(Object.values(stepOneErrors)[0])) // Ensure this is a string
+      scrollToFirstError(stepOneErrors)
+      return false
+    }
+
+    return true
+  }
+
+  const validateStepTwo = () => {
+    // Validate category selection (step 2)
+    const errors = validateForm()
+
+    if (errors.category_id) {
+      message.error(errors.category_id) // Ensure this is a string
+      return false
+    }
+
+    return true
+  }
+
+  const handleNextStep = () => {
+    if (current === 0) {
+      // Validate step 1 before proceeding
+      if (validateStepOne()) {
+        setCurrent(current + 1)
+      }
+    } else if (current === 1) {
+      // Validate step 2 before proceeding
+      if (validateStepTwo()) {
+        setCurrent(current + 2)
+      }
+    }
+  }
+
+  const handlePrevStep = () => {
+    setCurrent(current - 1)
+  }
+
+  const handleFinish = () => {
+    // Final submission
+    handleSubmit()
+  }
+
+  let steps = [
+    {
+      title: 'Thông tin',
+      content: (
+        <>
+          {!isEdittingAddress ? (
+            <>
+              <UserInfoSection contentType={contentType} errors={formErrors} />
+
+              <PostContentEditor
+                contentType={contentType}
+                errorPost={errorPost}
+                setErrorPost={setErrorPost}
+                titleRef={titleRef}
+                imageRef={imageRef}
+                uploadedImages={safeFormData.image_url || []}
+                setUploadedImages={handleImageUpload}
+                onChange={handleFieldChange}
+                errors={formErrors}
+              />
+
+              <PostToolbar
+                contentType={contentType}
+                phoneRef={phoneRef}
+                facebookRef={facebookRef}
+                errors={formErrors}
+                onChange={handleFieldChange}
+                showLocationCategoryTools={false}
+              />
+            </>
+          ) : (
+            <>
+              <LocationModal
+                embeddedMode={true}
+                location={safeFormData.specificLocation || addressDefault || ''}
+                setLocation={handleLocationChange}
+                error={formErrors.specificLocation}
+              />
+            </>
+          )}
+        </>
+      )
+    }
+  ]
+
+  if (contentType === 'post') {
+    steps = [
+      ...steps,
+      {
+        title: 'Danh mục',
+        content: (
+          <CategoryModal
+            embeddedMode={false}
+            categoryId={safeFormData.category_id}
+            setCategory={categoryId => handleFieldChange('category_id', categoryId)}
+            error={formErrors.category_id}
+            onComplete={() => setCurrent(current + 1)}
+          />
+        )
+      }
+    ]
+  }
+
+  const contentStyle = {
+    marginTop: 16
+  }
 
   return (
     <>
       <Modal
         title={title}
         open={isVisible}
-        onCancel={onCancel}
+        onCancel={handleModalCancel}
         footer={null}
         closeIcon={<CloseOutlined />}
         className={styles.createPostModal}
-        width={isMobile ? '90%' : 600}
-        // style={isMobile ? { top: 0 } : {}}
-        bodyStyle={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
+        width={isMobile.isMobile ? '70%' : 600}
+        style={isMobile ? { padding: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 } : {}}
+        onSubmit={onContactInfoSubmit}
       >
-        <UserInfoSection contentType={contentType} ref1={tourRef.ref1} errors={formErrors} />
-
-        <PostContentEditor
-          contentType={contentType}
-          errorPost={errorPost}
-          setErrorPost={setErrorPost}
-          titleRef={titleRef}
-          imageRef={imageRef}
-          uploadedImages={safeFormData.image_url || []}
-          setUploadedImages={handleImageUpload}
-          onChange={handleFieldChange}
-          errors={formErrors}
-          ref2={tourRef.ref2}
+        <Steps
+          current={current}
+          // items={steps.map(item => ({
+          //   key: item.title,
+          //   title: item.title
+          // }))}
         />
 
-        <PostToolbar
-          contentType={contentType}
-          phoneRef={phoneRef}
-          facebookRef={facebookRef}
-          locationRef={locationRef}
-          categoryRef={categoryRef}
-          imageRef={imageRef}
-          errors={formErrors}
-          onChange={handleFieldChange}
-          imageToolRef={tourRef.ref3}
-          socialLinkToolRef={tourRef.ref4}
-          locationToolRef={tourRef.ref5}
-          categoryToolRef={tourRef.ref6}
-        />
+        <div style={contentStyle}>{steps[current].content}</div>
 
-        <Button
-          type="primary"
-          className={styles.postButton}
-          onClick={onSubmit}
-          loading={isLoading}
-          style={isMobile ? { marginTop: 'auto' } : {}}
-        >
-          {submitButtonText}
-        </Button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, width: '100%' }}>
+          {current > 0 && <Button onClick={handlePrevStep}>Quay lại</Button>}
+
+          {current < steps.length - 1 && (
+            <Button type="primary" onClick={handleNextStep} style={{ marginLeft: 'auto' }} disabled={isEdittingAddress}>
+              Tiếp theo
+            </Button>
+          )}
+
+          {current === steps.length - 1 && (
+            <Button
+              type="primary"
+              // className={styles.postButton}
+              style={isMobile ? { marginTop: 'auto' } : contentType === 'exchange' ? { width: '100%' } : {}}
+              onClick={handleFinish}
+              loading={isLoading}
+            >
+              {submitButtonText}
+            </Button>
+          )}
+        </div>
       </Modal>
-
-      <LocationModal
-        location={safeFormData.specificLocation || user?.address || ''}
-        setLocation={handleLocationChange}
-        error={formErrors.specificLocation}
-      />
-
-      <ContactInfoModal
-        onSubmit={handleInfoSubmit}
-        facebookLink={safeFormData.facebookLink || ''}
-        setFacebookLink={facebookLink => handleFieldChange('facebookLink', facebookLink)}
-        error={formErrors.facebookLink}
-      />
-
-      <CategoryModal
-        categoryId={safeFormData.category_id}
-        setCategory={categoryId => handleFieldChange('category_id', categoryId)}
-        error={formErrors.category_id}
-      />
-
-      {showTour && tourSteps.length > 0 && (
-        <Tour
-          open={showTour}
-          onClose={onTourClose}
-          steps={tourSteps.map(step => ({
-            title: step.title,
-            description: step.description,
-            target: () => step.ref?.current
-          }))}
-        />
-      )}
     </>
   )
 }

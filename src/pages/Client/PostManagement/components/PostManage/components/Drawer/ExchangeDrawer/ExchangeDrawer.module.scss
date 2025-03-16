@@ -1,56 +1,158 @@
-.requestCard {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 16px;
-  border: 1px solid #f0f0f0;
-  transition: all 0.3s ease;
+// Enhanced ExchangeDrawer.module.scss
 
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+// Variables for consistent styling
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$danger-color: #ff4d4f;
+$border-radius: 8px;
+$box-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+$box-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+$transition-default: all 0.3s ease;
+
+// Responsiveness breakpoints
+$screen-xs: 480px;
+$screen-sm: 576px;
+$screen-md: 768px;
+$screen-lg: 992px;
+$screen-xl: 1200px;
+
+// Main Drawer styles
+:global {
+  .ant-drawer-body {
+    padding: 16px !important;
+
+    @media (min-width: $screen-md) {
+      padding: 20px 24px !important;
+    }
   }
 
-  :global {
-    .ant-card-body {
-      padding: 20px;
+  .ant-drawer-header {
+    border-bottom: 1px solid #f0f0f0;
+
+    .ant-drawer-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.85);
     }
   }
 }
 
-:global {
-  .ant-drawer-body {
-    padding: 10px 20px !important;
+// Original post card styling
+.originalPost {
+  margin-bottom: 24px;
+  border-radius: $border-radius;
+  overflow: hidden;
+  transition: $transition-default;
+  box-shadow: $box-shadow-sm;
+
+  &:hover {
+    box-shadow: $box-shadow-md;
+  }
+
+  :global {
+    .ant-card-body {
+      padding: 16px;
+
+      @media (min-width: $screen-md) {
+        padding: 20px;
+      }
+    }
+  }
+}
+
+.postHeader {
+  margin-bottom: 16px;
+}
+
+.postInfo {
+  .title {
+    font-size: 18px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.85);
+    margin: 0 0 8px;
+    line-height: 1.4;
+
+    @media (min-width: $screen-md) {
+      font-size: 20px;
+    }
+  }
+
+  .metaInfo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    :global {
+      .ant-tag {
+        margin-right: 0;
+        border-radius: 16px;
+        padding: 0 10px;
+
+        .anticon {
+          margin-right: 4px;
+        }
+      }
+    }
   }
 }
 
 .postContent {
-  .title {
-    font-size: large;
-    padding: 0;
-    margin: 0;
-    font-weight: 600;
-  }
   .description {
-    margin-top: 4px;
-    margin-bottom: 8px;
+    margin: 8px 0 16px;
+    color: rgba(0, 0, 0, 0.65);
+    line-height: 1.6;
   }
 }
 
+// Exchange request card styling
+.requestCard {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-sm;
+  margin-bottom: 20px;
+  border: 1px solid #f0f0f0;
+  transition: $transition-default;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: $box-shadow-md;
+  }
+
+  :global {
+    .ant-card-body {
+      padding: 16px;
+
+      @media (min-width: $screen-md) {
+        padding: 24px;
+      }
+    }
+  }
+}
+
+// User info section
 .userInfo {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 
   span {
     font-size: 16px;
     font-weight: 500;
-    color: #262626;
+    color: rgba(0, 0, 0, 0.85);
   }
 
   :global {
     .ant-avatar {
       border: 2px solid #f0f0f0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+      @media (min-width: $screen-md) {
+        width: 48px;
+        height: 48px;
+        line-height: 48px;
+        font-size: 24px;
+      }
     }
 
     .ant-badge {
@@ -58,15 +160,19 @@
         width: 8px;
         height: 8px;
       }
+
       .ant-badge-status-text {
-        color: #52c41a;
+        color: $success-color;
         font-weight: 500;
       }
     }
   }
 }
 
+// Exchange details styling
 .exchangeDetails {
+  margin-bottom: 16px;
+
   :global {
     .ant-descriptions {
       .ant-descriptions-header {
@@ -74,85 +180,252 @@
 
         .ant-descriptions-title {
           font-size: 16px;
-          font-weight: 500;
-          color: #262626;
+          font-weight: 600;
+          color: rgba(0, 0, 0, 0.85);
         }
       }
 
       .ant-descriptions-view {
-        border-radius: 8px;
+        border-radius: $border-radius;
         overflow: hidden;
+        border: 1px solid #f0f0f0;
       }
 
       .ant-descriptions-item-label {
         background-color: #fafafa;
         font-weight: 500;
+        padding: 12px 16px;
+        width: 30%;
+
+        @media (max-width: $screen-md) {
+          width: 40%;
+        }
       }
 
       .ant-descriptions-item-content {
-        color: #595959;
+        color: rgba(0, 0, 0, 0.65);
+        padding: 12px 16px;
+        line-height: 1.5;
+      }
+
+      @media (max-width: $screen-sm) {
+        .ant-descriptions-item {
+          padding-bottom: 0;
+        }
+
+        .ant-descriptions-item-container {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .ant-descriptions-item-label,
+        .ant-descriptions-item-content {
+          width: 100%;
+          padding: 8px 12px;
+        }
       }
     }
   }
 }
 
+// Image section styling
 .imageSection {
-  margin-top: 20px;
+  margin-top: 24px;
 
   .imageTitle {
     font-size: 16px;
-    font-weight: 500;
-    color: #262626;
-    margin-bottom: 12px;
-  }
-}
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.85);
+    margin-bottom: 16px;
+    position: relative;
+    padding-left: 12px;
 
-.originalPost {
-  margin-bottom: 20px;
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 3px;
+      bottom: 3px;
+      width: 4px;
+      background-color: $success-color;
+      border-radius: 2px;
+    }
+  }
 }
 
 .imageGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+
+  @media (min-width: $screen-sm) {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+  }
+
+  @media (min-width: $screen-md) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+
+  .imgItem {
+    aspect-ratio: 1;
+    width: 100%;
+    border-radius: $border-radius;
+    object-fit: cover;
+  }
 
   :global {
     .ant-image {
-      border-radius: 8px;
-      object-fit: cover;
+      width: 100%;
+      border-radius: $border-radius;
+      overflow: hidden;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       transition: transform 0.2s;
 
       &:hover {
-        transform: scale(1.02);
+        transform: scale(1.03);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
     }
   }
 }
 
+// Action buttons styling
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 20px;
+  gap: 12px;
+  margin-top: 24px;
+
+  @media (max-width: $screen-sm) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
   :global {
     .ant-btn {
-      min-width: 100px;
+      height: 40px;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 120px;
+      border-radius: $border-radius;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+
+      @media (max-width: $screen-sm) {
+        width: 100%;
+      }
 
       &[disabled] {
         opacity: 0.6;
       }
 
-      &-danger {
-        background: white;
-        border-color: #ff4d4f;
-        color: #ff4d4f;
+      &-primary {
+        background: $success-color;
+        border-color: $success-color;
 
         &:hover:not([disabled]) {
-          background: #fff1f0;
+          background: darken($success-color, 5%);
+          border-color: darken($success-color, 5%);
+        }
+      }
+
+      &-danger {
+        background: white;
+        border-color: $danger-color;
+        color: $danger-color;
+
+        &:hover:not([disabled]) {
+          background: rgba($danger-color, 0.05);
+          color: darken($danger-color, 5%);
+          border-color: darken($danger-color, 5%);
         }
       }
     }
   }
+}
+
+// Pagination styling
+.paginationContainer {
+  margin: 24px 0;
+  display: flex;
+  justify-content: flex-end;
+
+  :global {
+    .ant-pagination {
+      .ant-pagination-item {
+        border-radius: $border-radius;
+
+        &-active {
+          background-color: $primary-color;
+          border-color: $primary-color;
+
+          a {
+            color: white;
+          }
+
+          &:hover a {
+            color: white;
+          }
+        }
+      }
+
+      .ant-pagination-prev,
+      .ant-pagination-next {
+        .ant-pagination-item-link {
+          border-radius: $border-radius;
+        }
+      }
+
+      .ant-select {
+        .ant-select-selector {
+          border-radius: $border-radius;
+        }
+      }
+    }
+  }
+}
+
+// Loader styling
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+// Empty state
+.emptyState {
+  text-align: center;
+  padding: 40px;
+  color: rgba(0, 0, 0, 0.45);
+
+  :global {
+    .anticon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: #d9d9d9;
+    }
+  }
+
+  .emptyText {
+    font-size: 16px;
+  }
+}
+
+// Smooth fade-in animation for cards
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.requestCard {
+  animation: fadeIn 0.3s ease-out;
 }

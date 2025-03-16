@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Card, Row, Col, Button, Avatar, Tooltip, Badge, Typography, Select } from 'antd'
+import { Card, Row, Col, Button, Avatar, Tooltip, Badge, Typography, Select, Empty } from 'antd'
 import styles from '../scss/PostNews.module.scss'
 import { useNavigate } from 'react-router-dom'
 import withAuth from 'hooks/useAuth'
@@ -105,12 +105,6 @@ const PostNews = () => {
       (!query || post.title.toLowerCase().includes(query.toLowerCase())) && // Lọc theo từ khóa
       (!cityFilter || post.city === cityFilter) // Lọc theo thành phố nếu có chọn
   )
-  // .sort(
-  //   (a, b) =>
-  //     sortOrder === 'newest'
-  //       ? dayjs(b.created_at).diff(dayjs(a.created_at)) // Sắp xếp mới -> cũ
-  //       : dayjs(a.created_at).diff(dayjs(b.created_at)) // Sắp xếp cũ -> mới
-  // )
 
   const renderActionButton = item => {
     if (!user) {
@@ -171,9 +165,6 @@ const PostNews = () => {
       </Tooltip>
     )
   }
-  // const handleSortChange = value => {
-  //   dispatch(setSortOrder(value))
-  // }
 
   const handleCityChange = value => {
     setSelectedCity(value)
@@ -187,13 +178,9 @@ const PostNews = () => {
       <div className={styles.postWrap}>
         <div className={styles.postHeader}>
           <Title level={5} className={styles.postTitle}>
-            {isSearchMode ? 'Kết quả tìm kiếm' : 'Bài đăng mới nhất'}
+            {isSearchMode ? 'Kết quả tìm kiếm' : 'Sản phẩm mới nhất'}
           </Title>
           <div>
-            {/* <Select value={sortOrder} onChange={handleSortChange} style={{ marginRight: '10px' }}>
-              <Option value="newest">Bài đăng mới nhất</Option>
-              <Option value="oldest">Bài đăng cũ nhất</Option>
-            </Select> */}
             <Select
               showSearch
               style={{ width: 150 }}
@@ -218,7 +205,7 @@ const PostNews = () => {
           </Row>
         )}
 
-        {filteredPosts && filteredPosts.length > 0 && (
+        {filteredPosts && filteredPosts.length > 0 ? (
           <Row gutter={[16, 0]} className={styles.itemsGrid}>
             {filteredPosts.map(item => (
               <Col key={item._id} xs={24} sm={12} md={8} lg={6}>
@@ -256,11 +243,6 @@ const PostNews = () => {
                           </Paragraph>
                         </Tooltip>
                       }
-                      // description={
-                      //   <Paragraph className={styles.itemDesc} ellipsis={{ rows: 2 }}>
-                      //     {item?.description || ''}
-                      //   </Paragraph>
-                      // }
                     />
 
                     <div className={styles.locationRow}>
@@ -288,9 +270,8 @@ const PostNews = () => {
               </Col>
             ))}
           </Row>
-          // ) : (
-          //   !isLoading && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
-          // )}
+        ) : (
+          !isLoading && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
         )}
 
         {hasMore && !isSearchMode && (

@@ -9,8 +9,9 @@ import {
   setSelectedPostExchange
 } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import { updatePostRequestStatus } from 'features/client/post/postSlice'
+import { setSocialLinkModalVisibility, updatePostRequestStatus } from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
+import useDefaultLocation from 'hooks/useDefaultLocation'
 const isObject = require('lodash/isObject')
 
 export const useGiftRequest = () => {
@@ -18,6 +19,7 @@ export const useGiftRequest = () => {
   const { user } = useSelector(state => state.auth)
   const selectedPostExchange = useSelector(state => state.exchangeRequest?.selectedPostExchange) || null
   const { batchClick } = useInteraction()
+  const { addressDefault } = useDefaultLocation()
 
   const checkUserContactInfo = () => {
     return (user?.phone || user?.social_media?.facebook) && user?.address
@@ -43,22 +45,23 @@ export const useGiftRequest = () => {
       const dataUserUpdate = {
         name: user.name,
         email: user.email,
-        address: values.address
+        address: values?.address
       }
+      console.log(values, 'use gifft')
 
       // Xử lý trường hợp người dùng điền cả số điện thoại và mạng xã hội
       if (values.contact_method === 'phone') {
         // Nếu chọn phone làm phương thức chính, nhưng vẫn giữ thông tin social_media nếu có
         dataUserUpdate.phone = values.phone
         dataUserUpdate.social_media = {
-          facebook: values.social_media || user.social_media?.facebook || '',
+          facebook: values.social_media?.facebook || user.social_media?.facebook || '',
           zalo: user.social_media?.zalo || '',
           instagram: user.social_media?.instagram || ''
         }
       } else {
         // Nếu chọn social_media làm phương thức chính, nhưng vẫn giữ thông tin phone nếu có
         dataUserUpdate.social_media = {
-          facebook: values.social_media || '',
+          facebook: values.social_media?.facebook || '',
           zalo: user.social_media?.zalo || '',
           instagram: user.social_media?.instagram || ''
         }
@@ -69,7 +72,9 @@ export const useGiftRequest = () => {
       const { status, message: msg } = response
       if (status === 201) {
         message.success(msg)
+
         dispatch(setInfoModalVisible(false))
+        dispatch(setSocialLinkModalVisibility(false))
         if (selectedPostExchange) {
           if (selectedPostExchange.type === 'gift') {
             dispatch(setAcceptModalVisible(true))
@@ -84,8 +89,6 @@ export const useGiftRequest = () => {
   }
 
   const handleRequestConfirm = async values => {
-    console.log(values)
-
     if (!selectedPostExchange) {
       message.error('Không tìm thấy bài viết được chọn')
       return
@@ -97,7 +100,7 @@ export const useGiftRequest = () => {
       reason_receive: values.reason_receive === undefined ? '' : values.reason_receive,
       status: 'pending',
       contact_phone: user?.phone ? user.phone : '',
-      contact_address: user?.address ? user.address : '',
+      contact_address: user?.address.length !== 0 ? addressDefault : '',
       contact_name: user.name
     }
 
@@ -156,7 +159,7 @@ export const useGiftRequest = () => {
         zalo: '',
         instagram: ''
       },
-      contact_address: user?.address ? user.address : ''
+      contact_address: user?.address.length !== 0 ? addressDefault : ''
     }
 
     try {

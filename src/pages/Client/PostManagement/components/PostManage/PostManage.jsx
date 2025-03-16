@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setCreateModalVisibility, setViewMode } from 'features/client/post/postSlice'
 import { UserInfo } from './components/UserInfor/UserInfor'
 import { ActiveListings } from './components/PostTabs/ActiveListing/ActiveListing'
-import { ExpiredListings } from './components/PostTabs/ExpiredListing/ExpriedListing'
 import RequestedPosts from './components/PostTabs/RequestedPosts'
 import { TableOutlined, AppstoreOutlined } from '@ant-design/icons'
 
@@ -34,9 +33,8 @@ export const PostManage = ({ tabType }) => {
   }
 
   const tabItems = [
-    { key: 'active', label: 'Đang hiển thị' },
-    { key: 'expired', label: 'Đã thành công' },
-    { key: 'requested', label: 'Đã yêu cầu' }
+    { key: 'active', label: 'Sản phẩm trao đi' },
+    { key: 'requested', label: 'Sản phẩm đang chờ duyệt' }
   ]
 
   const renderTabContent = () => {
@@ -44,15 +42,6 @@ export const PostManage = ({ tabType }) => {
       case 'active':
         return (
           <ActiveListings
-            activeSubTab={activeSubTab}
-            setActiveSubTab={setActiveSubTab}
-            refreshKey={tabRefreshKey}
-            isActive={true}
-          />
-        )
-      case 'expired':
-        return (
-          <ExpiredListings
             activeSubTab={activeSubTab}
             setActiveSubTab={setActiveSubTab}
             refreshKey={tabRefreshKey}

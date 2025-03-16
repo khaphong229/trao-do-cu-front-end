@@ -8,7 +8,7 @@ import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsDetailsModalVisible, setIsModalVisible, setSelectedUser } from '../../../features/admin/user/userSlice'
 
-const User = () => {
+const Post = () => {
   const dispatch = useDispatch()
 
   const [searchText, setSearchText] = useState('')
@@ -41,7 +41,7 @@ const User = () => {
   return (
     <div className={styles.userManagement}>
       <h2 className={styles.titleMain} style={{ marginBottom: '20px' }}>
-        Quản lý bài đăng
+        Quản lý sản phẩm
       </h2>
       <Row gutter={[16, 16]} align="middle" justify="space-between" style={{ marginBottom: '40px' }}>
         <Col xs={24} sm={6}>
@@ -55,7 +55,7 @@ const User = () => {
         </Col>
         <Col xs={24} sm={4} style={{ textAlign: 'right' }}>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAddUser} block>
-            Thêm bài đăng
+            Thêm sản phẩm
           </Button>
         </Col>
       </Row>
@@ -78,4 +78,4 @@ const User = () => {
   )
 }
 
-export default User
+export default Post

@@ -95,7 +95,7 @@ const Login = () => {
             <Checkbox>Ghi nhớ</Checkbox>
           </Form.Item>
 
-          <Link className="loginFormForgot" to="/">
+          <Link className="loginFormForgot" to="/forgot-password">
             Quên mật khẩu
           </Link>
         </Form.Item>

@@ -1,16 +1,21 @@
+@import '../../../../../assets/scss/variables.scss';
+.textTitle {
+  margin: 0;
+  color: $colorTextPlaceholder;
+}
+
 .categoryModal {
   .ant-modal-body {
     padding: 0;
   }
 
   .categoryTreeWrapper {
-    max-height: 500px;
+    max-height: 400px;
     overflow-y: auto;
   }
 
   .categoryTree {
     font-size: 16px;
-    padding: 16px;
 
     .ant-tree-node-content-wrapper {
       padding: 8px 16px;

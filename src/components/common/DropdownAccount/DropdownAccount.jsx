@@ -1,33 +1,21 @@
 import { handleLogout, NavigateItem } from 'constants/data'
 import { useSelector } from 'react-redux'
-import {
-  ArrowRightOutlined,
-  CheckSquareOutlined,
-  LockOutlined,
-  LogoutOutlined,
-  PlayCircleOutlined,
-  UserOutlined
-} from '@ant-design/icons'
+import { ArrowRightOutlined, LockOutlined, LogoutOutlined, PlayCircleOutlined, UserOutlined } from '@ant-design/icons'
 
 export const useMenuItems = () => {
-  const { isAuthenticated } = useSelector(state => state.auth)
+  const { isAuthenticated, user } = useSelector(state => state.auth)
 
   return [
     {
-      title: 'Quản lý bài đăng',
+      title: 'Quản lý sản phẩm',
       items: [
         {
-          label: <NavigateItem to="/management-post?tab=active">Đang hiển thị</NavigateItem>,
+          label: <NavigateItem to="/management-post?tab=active">Sản phẩm trao đi</NavigateItem>,
           icon: <PlayCircleOutlined style={{ color: '#00b96b' }} />,
           key: 'active'
         },
         {
-          label: <NavigateItem to="/management-post?tab=expired">Đã thành công</NavigateItem>,
-          icon: <CheckSquareOutlined style={{ color: '#00b96b' }} />,
-          key: 'expired'
-        },
-        {
-          label: <NavigateItem to="/management-post?tab=requested">Đã yêu cầu</NavigateItem>,
+          label: <NavigateItem to="/management-post?tab=requested">Sản phẩm đang chờ duyệt</NavigateItem>,
           icon: <ArrowRightOutlined style={{ color: '#00b96b' }} />,
           key: 'requested'
         }
@@ -41,11 +29,15 @@ export const useMenuItems = () => {
           icon: <UserOutlined style={{ color: '#00b96b' }} />,
           key: 'personal'
         },
-        {
-          label: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
-          icon: <LockOutlined style={{ color: '#00b96b' }} />,
-          key: 'security'
-        },
+        ...(user?.isGoogle === false
+          ? [
+              {
+                label: <NavigateItem to="/profile?tab=security">Đổi mật khẩu</NavigateItem>,
+                icon: <LockOutlined style={{ color: '#00b96b' }} />,
+                key: 'security'
+              }
+            ]
+          : []),
         ...(isAuthenticated
           ? [
               {

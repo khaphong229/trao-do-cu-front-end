@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Tabs, Typography, Badge, Button, Table, Image, Space, Card, Row, Col, Empty } from 'antd'
+import { Tabs, Typography, Badge, Button, Table, Image, Space, Card, Row, Col, Empty, Modal } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { getPostGiftPagination } from 'features/client/post/postThunks'
@@ -10,17 +10,23 @@ import { getExchangeRequest } from 'features/client/request/exchangeRequest/exch
 import dayjs from 'dayjs'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetail from '../components/PostDetail/PostDetail'
+import { ExpiredListings } from '../ExpiredListing/ExpriedListing'
+import { ClockCircleOutlined } from '@ant-design/icons'
 const { TabPane } = Tabs
 
-export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive }) => {
+export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive, onShowExpired }) => {
   const dispatch = useDispatch()
   const { posts = [], total = 0, isLoading, viewMode } = useSelector(state => state.post)
+  const [activePosts, setActivePosts] = useState([]) // Store active posts separately
+  const [activeTotal, setActiveTotal] = useState(0) // Store active total separately
   const [selectedListing, setSelectedListing] = useState(null)
   const [visibleDrawer, setVisibleDrawer] = useState(false)
   const [receiveRequests, setReceiveRequests] = useState([])
   const [exchangeRequests, setExchangeRequests] = useState([])
   const [visibleExchangeDrawer, setVisibleExchangeDrawer] = useState(false)
   const [isModalDetail, setIsModalDetail] = useState(false)
+  const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false)
+  const [historyTabRefreshKey, setHistoryTabRefreshKey] = useState(0)
   const [tabCounts, setTabCounts] = useState({
     all: 0,
     gift: 0,
@@ -62,6 +68,10 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
       const response = await dispatch(getPostGiftPagination(fetchParams)).unwrap()
       if (response?.data?.data) {
         const allPosts = response.data.data
+        // Store active posts separately to prevent conflicts with modal
+        setActivePosts(allPosts)
+        setActiveTotal(response.data.total || 0)
+
         setTabCounts({
           all: response.data.total || 0,
           gift: allPosts.filter(post => post.type === 'gift').length,
@@ -81,9 +91,9 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
   useEffect(() => {
     setPagination(prev => ({
       ...prev,
-      total
+      total: activeTotal
     }))
-  }, [total])
+  }, [activeTotal])
 
   const handleTableChange = pagination => {
     setPagination(prev => ({
@@ -169,6 +179,17 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
   const handleClosePostDetail = () => {
     setIsModalDetail(false)
     setSelectedListing(null)
+  }
+
+  const showHistoryModal = () => {
+    setHistoryTabRefreshKey(prev => prev + 1)
+    setIsHistoryModalVisible(true)
+  }
+
+  const handleHistoryModalClose = () => {
+    setIsHistoryModalVisible(false)
+    // Refresh the active listings after closing the modal
+    fetchData()
   }
 
   const columns = [
@@ -257,41 +278,54 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
 
   const renderCardView = () => (
     <Row gutter={[16, 16]} className={styles.cardGrid}>
-      {posts.map(item => (
+      {activePosts.map(item => (
         <Col xs={24} sm={12} md={8} lg={6} key={item._id}>
           <Card
             hoverable
             className={styles.itemCard}
+            onClick={e => handlePostDetail(e, item)}
             cover={
-              <div className={styles.imageWrapper}>
-                <Image
-                  src={`${URL_SERVER_IMAGE}${item.image_url[0]}`}
-                  alt={item.title}
-                  style={{ height: 200, objectFit: 'cover', borderRadius: '8px 8px 0 0' }}
-                />
+              <div className={styles.imageContainer}>
+                <Image preview={false} src={`${URL_SERVER_IMAGE}${item.image_url[0]}`} alt={item.title} />
+                <div className={styles.ribbonWrapper}>
+                  <Badge.Ribbon
+                    text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
+                    color={item.type === 'exchange' ? 'green' : 'blue'}
+                  />
+                </div>
               </div>
             }
-            actions={[
-              <Button type={item.type === 'gift' ? 'primary' : 'dashed'} onClick={() => handleViewRegistrations(item)}>
-                {item.type === 'exchange' ? 'Xem yêu cầu đổi' : 'Xem yêu cầu nhận'}
-              </Button>
-            ]}
           >
-            <Card.Meta
-              title={<span onClick={() => handlePostDetail(null, item)}>{item.title}</span>}
-              description={
-                <Space direction="vertical" size="small">
-                  <Typography.Text className={styles.descPost}>{item.description}</Typography.Text>
-                  <Badge
-                    status={item.type === 'exchange' ? 'success' : 'processing'}
-                    text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
-                  />
-                  <Typography.Text type="secondary">
-                    {dayjs(item.created_at).format('DD/MM/YYYY HH:mm')}
-                  </Typography.Text>
-                </Space>
-              }
-            />
+            <div className={styles.cardContent}>
+              <Typography.Title level={5} ellipsis={{ rows: 1 }} className={styles.cardTitle}>
+                {item.title}
+              </Typography.Title>
+
+              <Typography.Paragraph className={styles.cardDescription} ellipsis={{ rows: 2 }}>
+                {item.description}
+              </Typography.Paragraph>
+
+              <div className={styles.cardFooter}>
+                <Typography.Text type="secondary" className={styles.dateInfo}>
+                  <span className={styles.dateIcon}>
+                    <ClockCircleOutlined />
+                  </span>
+                  {dayjs(item.created_at).format('DD/MM/YYYY')}
+                </Typography.Text>
+
+                <Button
+                  type={item.type === 'gift' ? 'primary' : 'default'}
+                  size="small"
+                  className={styles.actionButton}
+                  onClick={e => {
+                    e.stopPropagation()
+                    handleViewRegistrations(item)
+                  }}
+                >
+                  Xem yêu cầu
+                </Button>
+              </div>
+            </div>
           </Card>
         </Col>
       ))}
@@ -303,23 +337,18 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
       <div className={styles.tabHeader}>
         <Tabs activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
           {subTabItems.map(subTab => (
-            <TabPane
-              key={subTab.key}
-              tab={
-                <span className={styles.subTabLabel}>
-                  {subTab.label}
-                  {/* <span className={styles.subTabCount}>({subTab.count})</span> */}
-                </span>
-              }
-            />
+            <TabPane key={subTab.key} tab={<span className={styles.subTabLabel}>{subTab.label}</span>} />
           ))}
         </Tabs>
+        <Button type="default" onClick={showHistoryModal}>
+          Lịch sử sản phẩm
+        </Button>
       </div>
 
       {viewMode === 'table' ? (
         <Table
           columns={columns}
-          dataSource={posts}
+          dataSource={activePosts} // Use local state instead of Redux posts
           rowKey="_id"
           pagination={{
             ...pagination,
@@ -338,9 +367,25 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         renderCardView()
       )}
 
-      {posts.length === 0 && viewMode === 'card' && (
+      {activePosts.length === 0 && viewMode === 'card' && (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
       )}
+
+      {/* Modal lịch sử bài đăng */}
+      <Modal
+        title="Lịch sử sản phẩm"
+        open={isHistoryModalVisible}
+        onCancel={handleHistoryModalClose}
+        footer={null}
+        width={1000}
+        style={{ top: 20 }}
+        bodyStyle={{ padding: '12px', maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}
+      >
+        <ExpiredListings
+          refreshKey={historyTabRefreshKey}
+          isActive={isHistoryModalVisible} // Only active when modal is visible
+        />
+      </Modal>
 
       <RegistrationDrawer
         visible={visibleDrawer}

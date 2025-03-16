@@ -1,41 +1,62 @@
 import React from 'react'
-import { Avatar, Radio } from 'antd'
+import { Avatar, Button, Radio, Tooltip } from 'antd'
 import styles from '../scss/UserInfo.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
-import { updatePostData } from 'features/client/post/postSlice'
+import { setEdittingAddress, updatePostData } from 'features/client/post/postSlice'
 import avt from 'assets/images/logo/avtDefault.webp'
 import { URL_SERVER_IMAGE } from 'config/url_server'
+import { EnvironmentOutlined, RightOutlined } from '@ant-design/icons'
+import useDefaultLocation from 'hooks/useDefaultLocation'
 const UserInfo = ({ contentType, ref1 }) => {
   const dispatch = useDispatch()
   const { dataCreatePost } = useSelector(state => state.post)
-  const { selectedCategory } = useSelector(state => state.category)
+  const { addressDefault } = useDefaultLocation()
+
   const { user } = useSelector(state => state.auth)
   return (
-    <div className={styles.userInfo}>
-      <Avatar size={40} src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avt} />
-      <div className={styles.userDetails}>
-        <div className={styles.textWrapper}>
-          <div className={styles.username}>{user.name}</div>
-          <div className={styles.infoMore}>
-            {dataCreatePost.city && <span className={styles.cityText}>{dataCreatePost.city}</span>}
-            {dataCreatePost.category_id && (
-              <span className={styles.categoryText}>{` - ${selectedCategory?.title || ''}`}</span>
-            )}
+    <>
+      <Tooltip title="Bấm để sửa địa chỉ">
+        <div className={styles.addressDefaultWrap} onClick={() => dispatch(setEdittingAddress(true))}>
+          <div className={styles.textAddress}>
+            {' '}
+            <EnvironmentOutlined className={styles.iconLocation} />
+            {dataCreatePost.specificLocation || addressDefault}
           </div>
+          <Button type="link" icon={<RightOutlined />} />
         </div>
-        {contentType === 'post' && (
-          <Radio.Group
-            ref={ref1}
-            value={dataCreatePost.type}
-            onChange={e => dispatch(updatePostData({ type: e.target.value }))}
-            style={{ marginLeft: 10 }}
-          >
-            <Radio value="gift">Trao Tặng</Radio>
-            <Radio value="exchange">Trao Đổi</Radio>
-          </Radio.Group>
-        )}
+      </Tooltip>
+
+      <div className={styles.userInfo}>
+        <Avatar size={40} src={user?.avatar ? `${URL_SERVER_IMAGE}${user.avatar}` : avt} />
+        <div className={styles.userDetails}>
+          <div className={styles.textWrapper}>
+            <div className={styles.username}>{user.name}</div>
+            {/* <div className={styles.infoMore}>
+              {dataCreatePost.city && <span className={styles.cityText}>{dataCreatePost.city}</span>}
+              {dataCreatePost.category_id && (
+                <span className={styles.categoryText}>{` - ${selectedCategory?.title || ''}`}</span>
+              )}
+            </div> */}
+          </div>
+          {contentType === 'post' && (
+            <Radio.Group
+              ref={ref1}
+              className={styles.radioWrap}
+              value={dataCreatePost.type}
+              onChange={e => dispatch(updatePostData({ type: e.target.value }))}
+              style={{ marginLeft: 10 }}
+            >
+              <Radio value="gift" className={styles.text}>
+                Trao Tặng
+              </Radio>
+              <Radio value="exchange" className={styles.text}>
+                Trao Đổi
+              </Radio>
+            </Radio.Group>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

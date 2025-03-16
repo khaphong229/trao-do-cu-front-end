@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { message } from 'antd'
 import { uploadPostImages } from 'features/upload/uploadThunks'
+import useDefaultLocation from './useDefaultLocation'
 
 export const usePostForm = ({ type, updateData, validateSubmit, formData, user, isModalVisible, dispatch }) => {
   const [errorPost, setErrorPost] = useState(null)
   const [formErrors, setFormErrors] = useState({})
   const [isMobile] = useState(window.innerWidth <= 768)
+  const { addressDefault } = useDefaultLocation()
 
   // Refs for scrolling to error fields
   const titleRef = useRef(null)
@@ -24,8 +26,8 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
   }, [isModalVisible])
 
   useEffect(() => {
-    if (isModalVisible && user?.address) {
-      const addressParts = user.address.split(', ')
+    if (isModalVisible && addressDefault) {
+      const addressParts = addressDefault.split(', ')
       const city = addressParts.pop()
 
       let dataExisting = {
@@ -41,19 +43,19 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
         dataExisting = {
           ...dataExisting,
           city,
-          specificLocation: user.address
+          specificLocation: addressDefault
         }
       } else {
         dataExisting = {
           ...dataExisting,
           city,
-          contact_address: user.address
+          contact_address: addressDefault
         }
       }
 
       dispatch(updateData(dataExisting))
     }
-  }, [isModalVisible, user?.address, type, updateData, dispatch, user.phone, user.social_media?.facebook])
+  }, [isModalVisible, addressDefault, type, updateData, dispatch, user.phone, user.social_media?.facebook])
 
   const validateForm = () => {
     const errors = {}
@@ -62,17 +64,9 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     if (!formData.title || !formData.title.trim()) {
       errors.title = 'Vui lòng nhập tiêu đề bài đăng'
     }
-
     if (!formData.image_url || formData.image_url.length === 0) {
       errors.image_url = 'Vui lòng tải lên ít nhất một hình ảnh'
     }
-
-    if (type === 'post') {
-      if (!formData.category_id) {
-        errors.category_id = 'Vui lòng nhập danh mục'
-      }
-    }
-
     if (type === 'post') {
       if (!formData.specificLocation) {
         errors.specificLocation = 'Vui lòng nhập địa chỉ'
@@ -83,6 +77,11 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
       }
     }
 
+    if (type === 'post') {
+      if (!formData.category_id) {
+        errors.category_id = 'Vui lòng nhập danh mục'
+      }
+    }
     return errors
   }
 
@@ -108,8 +107,15 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     setErrorPost(Object.keys(errors).length > 0 ? errors : null)
 
     if (Object.keys(errors).length > 0) {
-      message.error(String(Object.values(errors)[0]))
-      scrollToFirstError(errors)
+      message.error(String(Object.values(errors)[0])) // Ensure this is a string
+
+      // If category error exists, open category modal immediately
+      if (errors.category_id) {
+        dispatch({ type: 'post/setCategoryModalVisibility', payload: true })
+      } else {
+        // Otherwise scroll to the first error as before
+        scrollToFirstError(errors)
+      }
       return
     }
 
@@ -124,7 +130,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
           newErrors[field] = msg
 
           if (!hasDisplayedError) {
-            message.error(String(msg))
+            message.error(String(msg)) // Ensure this is a string
             hasDisplayedError = true
           }
         })
@@ -221,6 +227,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     errorPost,
     setErrorPost,
     formErrors,
+    setFormErrors,
     isMobile,
     titleRef,
     imageRef,
@@ -228,7 +235,9 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     facebookRef,
     locationRef,
     categoryRef,
+    validateForm,
     handleSubmit,
+    scrollToFirstError,
     handleFieldChange,
     handleImageUpload,
     handleLocationChange

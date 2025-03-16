@@ -1,14 +1,5 @@
 import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message, Checkbox, Input, Select } from 'antd'
-import {
-  MessageOutlined,
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-  EnvironmentOutlined,
-  FacebookOutlined,
-  TwitterOutlined,
-  MailOutlined,
-  CameraOutlined
-} from '@ant-design/icons'
+import { ClockCircleOutlined, EnvironmentOutlined, CameraOutlined } from '@ant-design/icons'
 import Avatar from 'assets/images/logo/avtDefault.webp'
 import styles from '../scss/ProfileUser.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
@@ -19,6 +10,7 @@ import { changePassWord, getCurrentUser, updateUserProfile } from 'features/auth
 import Title from 'antd/es/skeleton/Title'
 import { useAvatar } from 'hooks/useAvatar'
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import Location from 'pages/Client/Post/CreatePost/components/Modal/Location'
 
 const { TabPane } = Tabs
 
@@ -49,13 +41,28 @@ const ProfilePage = () => {
   })
   const [savePassword, setSavePassword] = useState(false)
 
+  // Hàm tiện ích để chuyển đổi địa chỉ từ mảng sang chuỗi
+  const addressToString = address => {
+    if (!address) return ''
+    if (Array.isArray(address)) return address.join('')
+    return String(address)
+  }
+
+  // Sửa lại hàm getDefaultAddress để kiểm tra nếu list là một mảng
+  const getDefaultAddress = list => {
+    if (!list) return ''
+    if (!Array.isArray(list)) return String(list)
+    const defaultAddress = list.find(item => item.isDefault === true)
+    return defaultAddress?.address || ''
+  }
+
   useEffect(() => {
     if (userData) {
       setFormData({
         name: userData.name || '',
         email: userData.email || '',
         phone: userData.phone || '',
-        address: userData.address || '',
+        address: getDefaultAddress(userData.address),
         gender: userData.gender || '',
         currentPassword: '',
         newPassword: '',
@@ -63,6 +70,7 @@ const ProfilePage = () => {
       })
     }
   }, [userData])
+  console.log('userData:', userData)
 
   const handleInputChange = e => {
     const { id, value } = e.target
@@ -75,9 +83,19 @@ const ProfilePage = () => {
 
   const handleUpdateMe = async () => {
     try {
-      const response = await dispatch(updateUserProfile(formData)).unwrap()
+      // Chuyển đổi địa chỉ từ chuỗi thành mảng ký tự để backend xử lý
+      const updatedData = {
+        ...formData,
+        address: formData.address.split('') // Chuyển thành mảng ký tự
+      }
+
+      const response = await dispatch(updateUserProfile(updatedData)).unwrap()
       if (response.status === 201) {
         message.success(response.message)
+        // Sử dụng navigate để reload trang hiện tại
+        setTimeout(() => {
+          navigate(0)
+        }, 1500)
       }
     } catch (error) {
       message.error('Cập nhật thông tin thất bại', error.message)
@@ -105,6 +123,10 @@ const ProfilePage = () => {
       .unwrap()
       .then(() => {
         message.success('Đổi mật khẩu thành công!')
+        // Sử dụng setTimeout để hiển thị message trước khi reload
+        setTimeout(() => {
+          navigate(0)
+        }, 1500)
       })
       .catch(err => {
         message.error(err.message || 'Đã xảy ra lỗi khi đổi mật khẩu!')
@@ -129,6 +151,10 @@ const ProfilePage = () => {
           message.success('Upload ảnh thành công')
           dispatch(getCurrentUser(false))
           onSuccess(uploadResponse)
+          // Sử dụng setTimeout để hiển thị message trước khi reload
+          setTimeout(() => {
+            navigate(0)
+          }, 1500)
         } else {
           message.error('Upload ảnh thất bại')
         }
@@ -136,7 +162,7 @@ const ProfilePage = () => {
         throw new Error('Upload response không hợp lệ')
       }
     } catch (error) {
-      Object.values(error.detail).forEach(err => {
+      Object.values(error.detail || {}).forEach(err => {
         message.error(err)
       })
       onError(error)
@@ -194,11 +220,11 @@ const ProfilePage = () => {
 
         <Card className={styles.card}>
           <div className={styles['badges-section']}>
-            <Tooltip title="Phản hồi chat">
+            {/* <Tooltip title="Phản hồi chat">
               <Badge className={styles.badge}>
                 <MessageOutlined /> Chưa có thông tin
               </Badge>
-            </Tooltip>
+            </Tooltip> */}
 
             <Tooltip title="Thời gian tham gia">
               <Badge className={styles.badge}>
@@ -209,7 +235,7 @@ const ProfilePage = () => {
               </Badge>
             </Tooltip>
 
-            <Tooltip title="Xác thực">
+            {/* <Tooltip title="Xác thực">
               <Badge className={styles.badge}>
                 <CheckCircleOutlined />
                 Thông tin xác thực:{' '}
@@ -219,12 +245,12 @@ const ProfilePage = () => {
                   <MailOutlined style={{ color: '#f56a00' }} />
                 </div>
               </Badge>
-            </Tooltip>
+            </Tooltip> */}
 
             <Tooltip title="Địa chỉ">
               <Badge className={styles.badge}>
                 <EnvironmentOutlined />
-                {`Địa chỉ: ${userData?.address ? userData.address : 'Chưa cung cấp'}`}
+                {`Địa chỉ: ${userData?.address ? getDefaultAddress(userData.address) : 'Chưa cung cấp'}`}
               </Badge>
             </Tooltip>
           </div>
@@ -247,8 +273,13 @@ const ProfilePage = () => {
                 />
               </div>
               <div className={styles['form-group']}>
-                <label htmlFor="address">Địa chỉ</label>
-                <Input id="address" placeholder="Nhập địa chỉ" value={formData.address} onChange={handleInputChange} />
+                <label htmlFor="address">Địa chỉ mặc định</label>
+                <Input
+                  id="address"
+                  placeholder="Nhập địa chỉ"
+                  value={formData.address ? getDefaultAddress(formData.address) : ''}
+                  onChange={handleInputChange}
+                />
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="email">Email</label>
@@ -268,15 +299,19 @@ const ProfilePage = () => {
                   <Select.Option value="Khác">Khác</Select.Option>
                 </Select>
               </div>
-              <div className={styles['form-group']}>
+              {/* <div className={styles['form-group']}>
                 <label htmlFor="dob">Ngày, tháng, năm sinh</label>
                 <Input id="dob" type="date" />
-              </div>
+              </div> */}
               <div className={styles['form-actions1']}>
                 <Button type="primary" block style={{ width: '100px' }} onClick={handleUpdateMe}>
                   Thay đổi
                 </Button>
               </div>
+            </TabPane>
+
+            <TabPane tab="Danh sách địa chỉ">
+              <Location isInProfile={true} />
             </TabPane>
 
             {!userData?.isGoogle && (
@@ -295,7 +330,12 @@ const ProfilePage = () => {
                           placeholder="Nhập mật khẩu hiện tại"
                           value={formData.currentPassword}
                           onChange={handleChangePassword}
+                          required
+                          status={!formData.currentPassword && error ? 'error' : ''}
                         />
+                        {!formData.currentPassword && error && (
+                          <div className={styles['error-message']}>Vui lòng nhập mật khẩu hiện tại</div>
+                        )}
                       </div>
 
                       <div className={styles['form-item']}>
@@ -305,7 +345,20 @@ const ProfilePage = () => {
                           placeholder="Nhập mật khẩu mới"
                           value={formData.newPassword}
                           onChange={handleChangePassword}
+                          required
+                          status={
+                            (!formData.newPassword || (formData.newPassword && formData.newPassword.length < 6)) &&
+                            error
+                              ? 'error'
+                              : ''
+                          }
                         />
+                        {!formData.newPassword && error && (
+                          <div className={styles['error-message']}>Vui lòng nhập mật khẩu mới</div>
+                        )}
+                        {formData.newPassword && formData.newPassword.length < 8 && (
+                          <div className={styles['error-message']}>Mật khẩu phải có ít nhất 6 ký tự</div>
+                        )}
                       </div>
 
                       <div className={styles['form-item']}>
@@ -315,7 +368,19 @@ const ProfilePage = () => {
                           placeholder="Xác nhận mật khẩu mới"
                           value={formData.confirmPassword}
                           onChange={handleChangePassword}
+                          required
+                          status={
+                            (formData.newPassword !== formData.confirmPassword || !formData.confirmPassword) && error
+                              ? 'error'
+                              : ''
+                          }
                         />
+                        {!formData.confirmPassword && error && (
+                          <div className={styles['error-message']}>Vui lòng xác nhận mật khẩu mới</div>
+                        )}
+                        {formData.newPassword !== formData.confirmPassword && formData.confirmPassword && (
+                          <div className={styles['error-message']}>Mật khẩu xác nhận không khớp với mật khẩu mới</div>
+                        )}
                       </div>
 
                       <div className={styles['form-actions']}>

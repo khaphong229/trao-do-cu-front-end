@@ -1,10 +1,9 @@
 @import '../../../../../assets/scss/variables.scss';
 
 .postTools {
-  border: 1px solid $colorBorderBox;
-  border-radius: 8px;
-  padding: 12px;
+  padding: 0;
   margin: 16px 0;
+  border: none;
 
   .toolsText {
     color: $colorTextPlaceholder;
@@ -14,156 +13,75 @@
 
   .toolsButtons {
     display: flex;
-    gap: 8px;
+    width: 100%;
+    :global {
+      .ant-upload-wrapper {
+        width: 100%;
+      }
+      .ant-upload-select {
+        width: 100%;
+      }
+    }
 
+    // Tùy chỉnh nút upload
     :global(.ant-btn) {
-      padding: 8px;
-      border-radius: 50%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background-color: #ffffff;
+      border: 1px dashed $colorMain; /* Màu xanh lá */
+      height: auto;
+      transition: all 0.3s ease;
+      color: $colorMain; /* Màu chữ xanh lá */
 
       &:hover {
-        background: #f0f2f5;
+        background-color: rgba(76, 175, 80, 0.05);
+        border-color: $colorMain;
+        color: $colorMain !important;
       }
 
       :global(.anticon) {
         font-size: 20px;
-        color: #65676b;
+        color: $colorMain; /* Icon màu xanh lá */
+        margin-right: 8px;
+      }
 
-        &:hover {
-          color: $colorMain;
+      // Tùy chỉnh text của nút
+      span {
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      &:disabled {
+        background-color: #f5f5f5;
+        color: rgba(0, 0, 0, 0.25);
+
+        :global(.anticon) {
+          color: rgba(0, 0, 0, 0.25);
         }
       }
     }
   }
 }
 
-.iconPicture {
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #4caf50 !important;
-  }
+// Tùy chỉnh cho danh sách file đã upload
+:global(.ant-upload-list) {
+  margin-top: 12px;
 }
 
-.iconSmile {
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #fbbd02 !important;
-  }
-}
-
-.iconEnvironment {
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #40a9ff !important;
-  }
-}
-
-.iconTags {
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: $colorRed !important;
-  }
-}
-
-.iconEllipsis {
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #d9d9d9;
-  }
+:global(.ant-upload-list-item) {
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 8px;
 }
 
 .customIcon {
   font-size: 22px;
   transition: color 0.3s ease;
   &:hover {
-    color: #40a9ff;
-  }
-}
-
-// Mobile styles
-.mobilePostTools {
-  display: flex;
-  flex-direction: column;
-  padding: 10px 0;
-  border-top: 1px solid #e8e8e8;
-  border-bottom: 1px solid #e8e8e8;
-  margin: 10px 0;
-
-  .mobileToolsText {
-    font-size: 14px;
-    color: #65676b;
-    margin-bottom: 12px;
-  }
-
-  .mobileToolsButtons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto auto;
-    gap: 10px;
-  }
-
-  .mobileToolItem {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    border-radius: 8px;
-    background-color: #f5f5f5;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-
-    &:nth-child(2) {
-      grid-column: 2 / span 2;
-    }
-
-    &:nth-child(4) {
-      grid-column: 2 / span 2;
-    }
-
-    &:nth-child(5) {
-      grid-column: 1 / span 3;
-    }
-
-    &:hover {
-      background-color: #e8e8e8;
-    }
-  }
-
-  .mobileIconWrapper {
-    display: flex;
-    align-items: center;
-    width: 100%;
-
-    .iconPicture,
-    .iconSmile,
-    .iconEnvironment,
-    .iconCategory,
-    .customIcon {
-      font-size: 20px;
-      color: #4d4d4d;
-      margin-right: 12px;
-    }
-
-    .iconLabel {
-      font-size: 14px;
-      color: #4d4d4d;
-      font-weight: 500;
-    }
-  }
-}
-
-// Hide mobile version on desktop and desktop version on mobile
-@media (max-width: 768px) {
-  .postTools {
-    display: none;
-  }
-}
-
-@media (min-width: 769px) {
-  .mobilePostTools {
-    display: none;
+    color: $colorMain;
   }
 }

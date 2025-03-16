@@ -13,7 +13,8 @@ const useCheckMobileScreen = () => {
     }
   }, [])
 
-  return width <= 768
+  const isMobile = width <= 768
+  return { isMobile, width }
 }
 
 export default useCheckMobileScreen

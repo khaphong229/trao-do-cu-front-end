@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import { Drawer, Card, List, Avatar, Button, message, Badge, Descriptions, Image, Pagination } from 'antd'
-import { UserOutlined } from '@ant-design/icons'
+import { Drawer, Card, List, Avatar, Button, message, Badge, Descriptions, Image, Pagination, Tag, Space } from 'antd'
+import { UserOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './RegistrationDrawer.module.scss'
+import dayjs from 'dayjs'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getAvatarPost } from 'hooks/useAvatar'
+// Assuming moment is already installed
 
 export const RegistrationDrawer = ({
   visible,
@@ -87,16 +89,21 @@ export const RegistrationDrawer = ({
       closable={true}
       onClose={onClose}
       open={visible}
-      width={isMobile ? '100%' : '70%'}
+      width={isMobile.isMobile ? '100%' : '70%'}
       className={styles.registrationDrawer}
     >
       <Card className={styles.registrationCard}>
         <div className={styles.registrationHeader}>
           <div className={styles.registrationInfo}>
-            <h4 className={styles.registrationTitle}>{`Tiêu đề: ${listing.title}`}</h4>
-            <p className={styles.registrationDescription}>
-              {listing?.description ? `Mô tả: ${listing.description}` : ''}
-            </p>
+            <h4 className={styles.registrationTitle}>{`${listing.title}`}</h4>
+            <Space direction="horizontal" size="small" className={styles.metaInfo}>
+              <Tag icon={<UserOutlined />} color="blue">
+                {`Đăng bởi: ${listing.user_id?.name || 'Không xác định'}`}
+              </Tag>
+              <Tag icon={<ClockCircleOutlined />} color="green">
+                {`Đăng lúc: ${dayjs(listing.created_at).format('DD/MM/YYYY HH:mm')}`}
+              </Tag>
+            </Space>
           </div>
         </div>
         <div className={styles.registrationImages}>

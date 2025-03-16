@@ -100,7 +100,7 @@ const RegularPostContent = ({
         <TextArea
           status={errorPost?.title ? 'error' : ''}
           variant={errorPost?.title ? 'outlined' : 'borderless'}
-          autoSize={{ minRows: 3, maxRows: 8 }}
+          autoSize={{ minRows: 3, maxRows: 10 }}
           placeholder={
             errorPost?.title ? errorPost.title : `${user.name} ơi, bạn đang muốn trao đổi hay cho đi gì thế?`
           }

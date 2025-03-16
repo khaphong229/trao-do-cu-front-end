@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, Form, Modal, Radio, Input, message, Tooltip } from 'antd'
+import { Button, Form, Modal, Input, message, Tooltip, Typography } from 'antd'
 import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
 import { getCurrentUser } from 'features/auth/authThunks'
 import AddressSelection from 'components/common/AddressSelection'
 
+const { Text } = Typography
+
 export const ContactInfoModal = ({ onSubmit }) => {
   const dispatch = useDispatch()
   const [form] = Form.useForm()
-  const [contactMethod, setContactMethod] = useState('')
   const [fullAddress, setFullAddress] = useState('')
   const [addressTouched, setAddressTouched] = useState(false)
 
@@ -26,13 +27,10 @@ export const ContactInfoModal = ({ onSubmit }) => {
       const existingFacebook = user.social_media?.facebook
       const existingPhone = user.phone
 
-      const initialMethod = existingPhone ? 'phone' : 'social_media'
-      setContactMethod(initialMethod)
       setFullAddress(user?.address || '')
       setAddressTouched(false)
 
       form.setFieldsValue({
-        contact_method: initialMethod,
         phone: existingPhone || '',
         social_media: existingFacebook || ''
       })
@@ -44,26 +42,83 @@ export const ContactInfoModal = ({ onSubmit }) => {
     setAddressTouched(true)
   }
 
+  // Hàm kiểm tra số điện thoại Việt Nam
+  const validatePhoneNumber = phone => {
+    // Kiểm tra định dạng số điện thoại Việt Nam (bắt đầu bằng 0, có 10 số)
+    const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/
+    return phoneRegex.test(phone)
+  }
+
+  // Kiểm tra link Facebook
+  const validateFacebookLink = link => {
+    if (!link) return true
+    // Kiểm tra link có chứa facebook.com hoặc fb.com
+    return link.includes('facebook.com') || link.includes('fb.com')
+  }
+
+  // Kiểm tra xem có ít nhất một phương thức liên hệ
+  const validateContactMethod = (phone, facebook) => {
+    return !!(phone || facebook)
+  }
+
   const handleSubmit = async values => {
     try {
       setAddressTouched(true)
+      let hasError = false
 
+      // Kiểm tra địa chỉ
       if (!fullAddress) {
         message.error('Vui lòng nhập địa chỉ đầy đủ')
+        hasError = true
         return
       }
 
-      // Luôn bao gồm cả phone và social_media trong dữ liệu gửi đi,
-      // bất kể phương thức liên hệ được chọn là gì
+      // Kiểm tra số điện thoại nếu đã nhập
+      if (values.phone) {
+        if (!validatePhoneNumber(values.phone)) {
+          message.error('Số điện thoại không đúng định dạng (VD: 0912345678)')
+          hasError = true
+          return
+        }
+      }
+
+      // Kiểm tra link Facebook nếu đã nhập
+      if (values.social_media) {
+        if (!validateFacebookLink(values.social_media)) {
+          message.error('Link Facebook không hợp lệ, phải chứa facebook.com hoặc fb.com')
+          hasError = true
+          return
+        }
+      }
+
+      // Kiểm tra có ít nhất một phương thức liên hệ
+      if (!validateContactMethod(values.phone, values.social_media)) {
+        message.error('Vui lòng cung cấp ít nhất một phương thức liên hệ (Số điện thoại hoặc Facebook)')
+        hasError = true
+        return
+      }
+
+      if (hasError) {
+        return
+      }
+
+      // Tạo dữ liệu gửi đi
       const submissionData = {
         ...values,
-        address: fullAddress,
-        phone: values.phone || '', // Luôn gửi phone nếu có
-        social_media: values.social_media || '' // Luôn gửi social_media nếu có
+        address: [
+          {
+            address: fullAddress,
+            isDefault: true
+          }
+        ],
+        social_media: {
+          facebook: values.social_media,
+          zalo: user.social_media?.zalo || '',
+          instagram: user.social_media?.instagram || ''
+        }
       }
 
       await onSubmit(submissionData)
-      dispatch(setInfoModalVisible(false))
     } catch (error) {
       message.error('Có lỗi xảy ra khi cập nhật thông tin')
     }
@@ -79,27 +134,21 @@ export const ContactInfoModal = ({ onSubmit }) => {
   return (
     <Modal title="Cập nhật thông tin liên hệ" open={isInfoModalVisible} onCancel={handleCancel} footer={null}>
       <Form form={form} onFinish={handleSubmit} layout="vertical">
-        <Form.Item
-          name="contact_method"
-          label={<Tooltip title="Tùy chọn 1 trong 2 cách thức liên hệ chính">Phương thức liên hệ chính</Tooltip>}
-          rules={[{ required: true, message: 'Vui lòng chọn phương thức liên hệ chính' }]}
-        >
-          <Radio.Group onChange={e => setContactMethod(e.target.value)}>
-            <Radio value="phone">Số điện thoại</Radio>
-            <Radio value="social_media">Facebook</Radio>
-          </Radio.Group>
-        </Form.Item>
+        <div style={{ marginBottom: 16 }}>
+          <span style={{ color: '#ff4d4f', marginRight: 4 }}>*</span>
+          <Tooltip title="Cung cấp ít nhất một phương thức liên hệ của bạn">Phương thức liên hệ</Tooltip>
+        </div>
 
-        {/* Hiển thị cả hai trường nhưng chỉ yêu cầu bắt buộc cho phương thức được chọn */}
         <Form.Item
           name="phone"
           label="Số điện thoại"
           rules={[
             {
-              required: contactMethod === 'phone',
+              required: false,
               message: 'Vui lòng nhập số điện thoại của bạn'
             }
           ]}
+          style={{ marginTop: 0, marginBottom: 16 }}
         >
           <Input placeholder="Nhập số điện thoại của bạn" />
         </Form.Item>
@@ -109,13 +158,20 @@ export const ContactInfoModal = ({ onSubmit }) => {
           label="Link mạng xã hội Facebook"
           rules={[
             {
-              required: contactMethod === 'social_media',
+              required: false,
               message: 'Vui lòng nhập link mạng xã hội của bạn'
             }
           ]}
+          style={{ marginBottom: 8 }}
         >
           <Input placeholder="Nhập link mạng xã hội của bạn" />
         </Form.Item>
+
+        <div style={{ marginTop: -8, marginBottom: 16 }}>
+          <Text type="secondary" style={{ fontSize: '12px', color: '#2E8B57' }}>
+            * Chọn ít nhất 1 trong 2 phương thức liên hệ
+          </Text>
+        </div>
 
         <Form.Item
           label="Địa chỉ"
@@ -124,7 +180,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
           help={addressTouched && !fullAddress ? 'Vui lòng nhập địa chỉ đầy đủ' : null}
         >
           <AddressSelection
-            initialAddress={user?.address}
+            initialAddress={user?.address?.address}
             onAddressChange={handleAddressChange}
             showEditButton={true}
           />

@@ -1,32 +1,36 @@
-import React, { useRef, useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  updatePostData,
-  resetPostData,
-  setCreateModalVisibility,
-  setShowTour
-} from '../../../../features/client/post/postSlice'
+import { updatePostData, resetPostData, setCreateModalVisibility } from '../../../../features/client/post/postSlice'
 import { createPost } from '../../../../features/client/post/postThunks'
 import PostForm from 'components/shared/PostForm'
 import { usePostForm } from 'hooks/usePostForm'
 import omit from 'lodash/omit'
 import { message } from 'antd'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
-
-const TOUR_STORAGE_KEY = 'lastTourShownTime'
-const TOUR_COOLDOWN_DAYS = 3
+import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
+import ContactInfoModal from './components/Modal/Contact'
 
 const CreatePostModal = () => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
-  const { dataCreatePost, isCreateModalVisible, isLoadingButton, isShowTour } = useSelector(state => state.post)
+  const { dataCreatePost, isCreateModalVisible, isLoadingButton } = useSelector(state => state.post)
+  const [pendingPostOpen, setPendingPostOpen] = useState(false)
 
-  const userInfoRef = useRef(null)
-  const contentRef = useRef(null)
-  const imageRef = useRef(null)
-  const socialLinkRef = useRef(null)
-  const locationRef = useRef(null)
-  const categoryRef = useRef(null)
+  // Reset form data when modal is opened
+  useEffect(() => {
+    if (isCreateModalVisible) {
+      // Only reset certain fields that should be cleared on reopen
+      // Keep user contact info if it exists
+      dispatch(
+        updatePostData({
+          title: '',
+          content: '',
+          image_url: [],
+          category_id: null
+        })
+      )
+    }
+  }, [isCreateModalVisible, dispatch])
 
   const validateSubmit = async formData => {
     const response = await dispatch(
@@ -37,6 +41,7 @@ const CreatePostModal = () => {
     if (status === 201) {
       message.success(msg)
       dispatch(setCreateModalVisibility(false))
+      // Full reset after successful post creation
       dispatch(resetPostData())
     }
     return response
@@ -52,98 +57,83 @@ const CreatePostModal = () => {
     dispatch
   })
 
-  const checkAndShowTour = useCallback(() => {
-    const lastShownTime = localStorage.getItem(TOUR_STORAGE_KEY)
-    const currentTime = new Date().getTime()
+  // Kiểm tra xem user có đủ thông tin liên hệ hay chưa
+  const hasRequiredContactInfo = useCallback(() => {
+    if (!user) return false
 
-    if (!lastShownTime) {
-      dispatch(setShowTour(true))
-      localStorage.setItem(TOUR_STORAGE_KEY, currentTime.toString())
-    } else {
-      const daysSinceLastShown = (currentTime - parseInt(lastShownTime)) / (1000 * 60 * 60 * 24)
+    const hasPhone = !!user.phone
+    const hasFacebook = !!(user.social_media && user.social_media.facebook)
+    const hasAddress = user?.address?.length !== 0 ? true : false
 
-      if (daysSinceLastShown >= TOUR_COOLDOWN_DAYS) {
-        dispatch(setShowTour(true))
-        localStorage.setItem(TOUR_STORAGE_KEY, currentTime.toString())
-      } else {
-        dispatch(setShowTour(false))
-      }
-    }
-  }, [dispatch])
+    // Yêu cầu có số điện thoại HOẶC Facebook, và phải có địa chỉ
+    return (hasPhone || hasFacebook) && hasAddress
+  }, [user])
 
   useEffect(() => {
-    if (isCreateModalVisible) {
-      checkAndShowTour()
+    if (pendingPostOpen && hasRequiredContactInfo()) {
+      // Nếu đã đủ thông tin liên hệ, mở modal đăng bài
+      dispatch(setCreateModalVisibility(true))
+      setPendingPostOpen(false)
     }
-  }, [isCreateModalVisible, checkAndShowTour])
+  }, [user, pendingPostOpen, hasRequiredContactInfo, dispatch])
+
+  // Hàm xử lý khi người dùng muốn tạo bài đăng
+  const handleOpenCreatePostModal = useCallback(() => {
+    if (hasRequiredContactInfo()) {
+      // Nếu đã có đủ thông tin liên hệ, mở modal đăng bài
+      dispatch(setCreateModalVisibility(true))
+    } else {
+      // Nếu chưa đủ thông tin liên hệ, mở modal cập nhật thông tin
+      setPendingPostOpen(true)
+      dispatch(setInfoModalVisible(true))
+    }
+  }, [hasRequiredContactInfo, dispatch])
+
+  // Xử lý sau khi cập nhật thông tin liên hệ
+  const handleContactInfoSubmit = async contactInfo => {
+    try {
+      // Giả sử bạn có một API để cập nhật thông tin người dùng
+      // const response = await apiUpdateUserContactInfo(contactInfo);
+      // Sau khi cập nhật thành công, mở modal đăng bài
+      if (pendingPostOpen) {
+        dispatch(setCreateModalVisibility(true))
+        setPendingPostOpen(false)
+      }
+      return true
+    } catch (error) {
+      message.error('Có lỗi xảy ra khi cập nhật thông tin liên hệ')
+      return false
+    }
+  }
+
+  const handleCancelModal = () => {
+    dispatch(setCreateModalVisibility(false))
+    // Full reset when modal is closed manually
+    dispatch(resetPostData())
+  }
 
   const { isMobile } = useCheckMobileScreen()
 
-  const steps = [
-    {
-      title: 'Trao tặng/ Trao đổi',
-      description: 'Chọn chế độ cần thực hiện.',
-      target: () => userInfoRef.current
-    },
-    {
-      title: 'Nội dung',
-      description: 'Nhập nội dung bài đăng.',
-      target: () => contentRef.current
-    },
-    {
-      title: 'Ảnh, Video',
-      description: 'Tải lên ảnh, video.',
-      target: () => imageRef.current
-    },
-    {
-      title: 'Thông tin liên hệ',
-      description: 'Nhập thông tin liên hệ.',
-      target: () => socialLinkRef.current
-    },
-    {
-      title: 'Địa điểm',
-      description: 'Nhập địa điểm của bạn.',
-      target: () => locationRef.current
-    },
-    {
-      title: 'Danh mục',
-      description: 'Nhập danh mục theo đồ của bạn.',
-      target: () => categoryRef.current
-    }
-  ]
-
   return (
-    <PostForm
-      title="Tạo bài đăng"
-      isVisible={isCreateModalVisible}
-      onCancel={() => dispatch(setCreateModalVisibility(false))}
-      formData={dataCreatePost}
-      isLoading={isLoadingButton}
-      isMobile={isMobile}
-      user={user}
-      onSubmit={formUtils.handleSubmit}
-      formUtils={{
-        ...formUtils,
-        userInfoRef,
-        contentRef,
-        imageRef,
-        socialLinkRef,
-        locationRef,
-        categoryRef
-      }}
-      submitButtonText="Đăng"
-      tourRef={{
-        ref1: userInfoRef,
-        ref2: contentRef,
-        ref3: imageRef,
-        ref4: socialLinkRef,
-        ref5: locationRef,
-        ref6: categoryRef
-      }}
-      showTour={isShowTour}
-      tourSteps={steps}
-      onTourClose={() => dispatch(setShowTour(false))}
-    />
+    <>
+      <ContactInfoModal onSubmit={handleContactInfoSubmit} />
+
+      <PostForm
+        title="Tạo bài đăng sản phẩm"
+        isVisible={isCreateModalVisible}
+        onCancel={handleCancelModal}
+        formData={dataCreatePost}
+        isLoading={isLoadingButton}
+        isMobile={isMobile}
+        user={user}
+        onSubmit={formUtils.handleSubmit}
+        formUtils={{
+          ...formUtils
+        }}
+        submitButtonText="Đăng"
+        onContactInfoSubmit={handleContactInfoSubmit}
+      />
+    </>
   )
 }
 

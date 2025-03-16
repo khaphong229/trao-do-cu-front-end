@@ -83,13 +83,6 @@ const DescDetail = () => {
     <div className={styles.ContentWrap}>
       <Typography>
         {renderTitle()}
-        <br />
-        {selectedPost?.description && (
-          <>
-            {renderDescription()}
-            <br />
-          </>
-        )}
         {selectedPost?.user_id?.phone && (
           <Link>{`Số điện thoại: ${selectedPost.user_id.phone.slice(0, 3)}xxxxxxx`}</Link>
         )}
@@ -98,12 +91,12 @@ const DescDetail = () => {
       <div className={styles.recommendWrap}>
         <div>
           <Text className={styles.recommendWrapText}>
-            <CameraOutlined /> Bạn có muốn đăng bài tiếp không?
+            <CameraOutlined /> Bạn có muốn đăng sản phẩm tiếp không?
           </Text>
         </div>
         <div>
           <Button type="primary" onClick={() => dispatch(setCreateModalVisibility(true))}>
-            Đăng bài
+            Đăng sản phẩm
           </Button>
         </div>
       </div>

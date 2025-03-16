@@ -1,7 +1,28 @@
 @import '../../../../../assets/scss/variables.scss';
+
+.addressDefaultWrap {
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .textAddress {
+    color: $colorTextPlaceholder;
+  }
+  .iconLocation {
+    margin-right: 6px;
+    color: $colorMain;
+  }
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .userInfo {
   display: flex;
   align-items: center;
+  margin-top: 10px;
   padding: 6px 0;
 
   .userDetails {
@@ -28,6 +49,16 @@
     :global {
       .ant-radio-group {
         margin-left: 0 !important;
+      }
+    }
+    .radioWrap {
+      :global {
+        @media (max-width: 400px) {
+          span.ant-radio + * {
+            padding-inline-start: 4px;
+            padding-inline-end: 4px;
+          }
+        }
       }
     }
   }

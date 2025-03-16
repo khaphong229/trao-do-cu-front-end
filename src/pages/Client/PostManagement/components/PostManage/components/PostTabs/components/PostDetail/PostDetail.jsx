@@ -23,7 +23,7 @@ const PostDetail = ({ isVisible, onClose, post }) => {
             Chi tiết bài đăng
           </Title>
           <Tag color={post.status === 'active' ? 'processing' : 'success'}>
-            {post.status === 'active' ? 'Đang hiển thị' : 'Đã thành công'}
+            {post.status === 'active' ? 'Đang trao đi' : 'Đã thành công'}
           </Tag>
         </div>
       }
@@ -71,7 +71,6 @@ const PostDetail = ({ isVisible, onClose, post }) => {
               <Descriptions.Item label="Tiêu đề">
                 <Text strong>{post.title}</Text>
               </Descriptions.Item>
-              {post.description && <Descriptions.Item label="Mô tả">{post.description}</Descriptions.Item>}
               <Descriptions.Item label="Địa chỉ">{post.specificLocation}</Descriptions.Item>
               <Descriptions.Item label="Thành phố">{post.city}</Descriptions.Item>
               <Descriptions.Item label="Loại">

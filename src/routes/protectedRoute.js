@@ -3,11 +3,11 @@ import { getAuthToken, removeAuthToken } from '../utils/localStorageUtils'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { getCurrentUser, logoutUser } from '../features/auth/authThunks'
-// import FullScreenLoading from '../components/common/Loading'
+import FullScreenLoading from '../components/common/Loading'
 
 export const ProtectedRoute = ({ requireAuth = true, adminOnly = false }) => {
   const dispatch = useDispatch()
-  const { isAuthenticated, isAdmin } = useSelector(state => state.auth)
+  const { isAuthenticated, isAdmin, isLoading } = useSelector(state => state.auth)
   const location = useLocation()
 
   useEffect(() => {
@@ -27,9 +27,9 @@ export const ProtectedRoute = ({ requireAuth = true, adminOnly = false }) => {
   }, [dispatch, isAuthenticated, location.pathname])
 
   // Nếu đang loading hoặc đang chuyển trang, hiển thị loading toàn màn hình
-  // if (isLoading) {
-  //   return <FullScreenLoading isVisible={true} />
-  // }
+  if (isLoading) {
+    ;<FullScreenLoading isVisible={true} /> // or return <FullScreenLoading isVisible={true} /> if you uncomment it
+  }
 
   const isAuthRoute = location.pathname.includes('/login') || location.pathname.includes('/register')
 
@@ -40,12 +40,13 @@ export const ProtectedRoute = ({ requireAuth = true, adminOnly = false }) => {
       return <Navigate to={adminOnly ? '/admin/login' : '/login'} state={{ from: location }} replace />
     }
 
-    //Đăng nhập nhưng không phải admin khi truy cập trang admin
+    // Đăng nhập nhưng không phải admin khi truy cập trang admin
     if (adminOnly && !isAdmin) {
-      return <Navigate to="/login" state={{ from: location }} replace />
+      return <Navigate to="/admin/login" state={{ from: location }} replace />
     }
   }
 
+  // Nếu đã đăng nhập và đang cố truy cập trang login/register
   if (isAuthRoute && isAuthenticated) {
     return <Navigate to={isAdmin ? '/admin/dashboard' : '/'} replace />
   }

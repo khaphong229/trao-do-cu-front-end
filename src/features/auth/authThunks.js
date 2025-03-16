@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import AuthService from '../../services/authService'
 import { setAuthToken } from '../../utils/localStorageUtils'
 import { timeoutPromise } from 'utils/errorUtils'
+import { reject } from 'lodash'
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
   const { isAdmin, ...data } = credentials
@@ -73,15 +74,27 @@ export const updateUserProfile = createAsyncThunk(
   async (userData, { rejectWithValue, getState, dispatch }) => {
     try {
       const currentUser = getState().auth.user
+
+      // Convert address to string if it's an object
+      let currentAddress = currentUser?.address || ''
+      if (typeof currentAddress === 'object' && currentAddress !== null) {
+        if (Array.isArray(currentAddress)) {
+          currentAddress = currentAddress.join('')
+        } else {
+          currentAddress = Object.values(currentAddress).join('')
+        }
+      }
+
       const payload = {
         name: currentUser?.name || '',
         email: currentUser?.email || '',
         phone: currentUser?.phone || '',
-        address: currentUser?.address || '',
+        address: currentAddress,
         // Remove social_media if not required
-        ...(currentUser?.social_media?.length > 0 && { social_media: [currentUser?.social_media[0]] }),
+        // ...(currentUser?.social_media?.length > 0 && { social_media: [currentUser?.social_media[0]] }),
         ...userData
       }
+
       const response = await AuthService.updateProfile(payload)
 
       if (response.status === 201) {
@@ -89,7 +102,6 @@ export const updateUserProfile = createAsyncThunk(
       }
       return response.data
     } catch (error) {
-      console.log('error', error.response)
       return rejectWithValue(error.response?.data || { message: 'Failed to update profile' })
     }
   }
@@ -124,5 +136,30 @@ export const loginGoogle = createAsyncThunk('auth/loginGoogle', async (id, { rej
     return response.data
   } catch (error) {
     return rejectWithValue(error.response?.data)
+  }
+})
+export const forgotPassword = createAsyncThunk('auth/forgotPassword', async (email, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.forgotPassword(email)
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response?.data)
+  }
+})
+export const resetPassword = createAsyncThunk('auth/resetPassword', async (data, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.resetPasswordConfirm(data)
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response?.data || { message: 'Đặt lại mật khẩu thất bại. Vui lòng thử lại.' })
+  }
+})
+
+export const updateDefaultAddress = createAsyncThunk('auth/updateDefaultAddress', async (data, { rejectWithValue }) => {
+  try {
+    const response = await AuthService.updateDefaultAddress(data)
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response?.data || { message: 'Failed to update default address' })
   }
 })

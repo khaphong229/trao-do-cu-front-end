@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Space, Empty } from 'antd'
+import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Space, Empty, Badge } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import avt from 'assets/images/logo/avtDefault.webp'
 import './styles.scss'
@@ -33,7 +33,7 @@ const RequestedPosts = () => {
   )
 
   const handlePostClick = (post, e) => {
-    if (e?.target?.closest('.ant-image') || e?.target?.closest('.ant-btn') || e?.target?.closest('a')) {
+    if (e?.target?.closest('.ant-btn') || e?.target?.closest('a')) {
       return
     }
     setSelectedPost(post)
@@ -111,9 +111,8 @@ const RequestedPosts = () => {
           alt="Post image"
           style={{ width: 100, height: 100, objectFit: 'cover' }}
           fallback={avt}
-          preview={{
-            mask: null
-          }}
+          preview={false} // Disable image preview
+          onClick={e => handlePostClick(record, e)} // Handle click event to open post details
         />
       )
     },
@@ -156,9 +155,14 @@ const RequestedPosts = () => {
                   src={
                     request?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${request.post_id.image_url[0]}` : imgNotFound
                   }
-                  alt={request.post_id.title}
-                  style={{ height: 200, objectFit: 'cover' }}
+                  alt={request.post_id?.title}
+                  style={{ height: '100%', width: '100%' }}
                   fallback={avt}
+                  preview={false}
+                />
+                <Badge.Ribbon
+                  text={request.post_id.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
+                  color={request.post_id.type === 'exchange' ? 'green' : 'blue'}
                 />
               </div>
             }
@@ -166,24 +170,26 @@ const RequestedPosts = () => {
             <Card.Meta
               title={request.post_id.title}
               description={
-                <Space direction="vertical" size="small">
-                  {getStatusTag(request.post_id.status, request.status)}
-                  <Tag color={request.post_id.type === 'exchange' ? 'green' : 'blue'}>
-                    {request.post_id.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
-                  </Tag>
-                  <Text className="desc-post" ellipsis={{ rows: 2 }}>
-                    {request.post_id.description}
-                  </Text>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Avatar
-                      src={
-                        request?.post_id?.user_id?.avatar ? `${URL_SERVER_IMAGE}${request.post_id.user_id.avatar}` : avt
-                      }
-                      size={24}
-                    />
-                    <Text strong>{request?.post_id?.user_id?.name || 'Không xác định'}</Text>
+                <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                  <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
+
+                  <Typography.Paragraph className="desc-post">{request.post_id.description}</Typography.Paragraph>
+
+                  <div className="card-footer">
+                    <div className="user-info">
+                      <Avatar
+                        src={
+                          request?.post_id?.user_id?.avatar
+                            ? `${URL_SERVER_IMAGE}${request.post_id.user_id.avatar}`
+                            : avt
+                        }
+                        size={24}
+                      />
+                      <Text className="user-name">{request?.post_id?.user_id?.name || 'Không xác định'}</Text>
+                    </div>
+
+                    <ContactInfoDisplay post={request} showInTable={false} />
                   </div>
-                  <ContactInfoDisplay post={request} showInTable={false} />
                 </Space>
               }
             />

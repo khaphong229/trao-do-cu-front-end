@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Row, Col, Card, Button } from 'antd'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import styles from '../scss/Categories.module.scss'
@@ -17,6 +17,10 @@ import giaitri from 'assets/images/categories/dochoi.webp'
 import hoctap from 'assets/images/categories/hoctap.webp'
 
 import { useNavigate } from 'react-router-dom'
+import { getCategories } from 'utils/localStorageUtils'
+import { useDispatch } from 'react-redux'
+import { getAllCategory } from 'features/client/category/categoryThunks'
+import { setCategory } from 'features/client/category/categorySlice'
 
 const imgCategory = [
   { title: 'Tất cả danh mục', image: tatcadanhmuc },
@@ -32,7 +36,8 @@ const imgCategory = [
   { title: 'Học tập', image: hoctap }
 ]
 
-const dataDefaultCategory = [
+// Dữ liệu mặc định ban đầu
+const initialDefaultCategory = [
   {
     category_id: '67c6c553f83ba5fb6ecfa97a',
     title: 'Học tập'
@@ -78,6 +83,30 @@ const dataDefaultCategory = [
 const Categories = () => {
   const scrollContainerRef = useRef(null)
   const navigate = useNavigate()
+  // Khởi tạo state với dữ liệu mặc định
+  const [dataDefaultCategory, setDataDefaultCategory] = useState(initialDefaultCategory)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const categoriesLocal = getCategories()
+    if (categoriesLocal.length === 0) {
+      dispatch(getAllCategory())
+    } else {
+      dispatch(setCategory(categoriesLocal))
+
+      // Chỉ cập nhật dataDefaultCategory nếu có dữ liệu từ localStorage
+      if (categoriesLocal && categoriesLocal.length > 0) {
+        const dataProcess = categoriesLocal
+          .map(item => ({
+            category_id: item._id,
+            title: item.name
+          }))
+          .filter(item => item.name !== 'Tất cả')
+
+        setDataDefaultCategory(dataProcess)
+      }
+    }
+  }, [dispatch])
 
   const proccessedCategory = useMemo(() => {
     const mappedCategory = dataDefaultCategory.map(cate => {
@@ -97,7 +126,7 @@ const Categories = () => {
       },
       ...mappedCategory
     ]
-  }, [])
+  }, [dataDefaultCategory])
 
   const scroll = useCallback(direction => {
     if (scrollContainerRef.current) {

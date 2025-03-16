@@ -1,91 +1,167 @@
-import React from 'react'
-// import Container from '../../../../../pages/Client/Home/components/Container'
-import { Row, Col, Typography, Space } from 'antd'
-import { MailOutlined } from '@ant-design/icons'
+import React, { useState } from 'react'
+import { Row, Col, Typography, Space, Divider } from 'antd'
+import { MailOutlined, EnvironmentOutlined, PhoneOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import { useNavigate } from 'react-router-dom'
+import Policy from 'components/Policy'
+
 const { Title, Text, Link } = Typography
+
 function AppFooter() {
   const navigate = useNavigate()
+
   const goHome = () => {
     navigate('/')
   }
+
+  const handleSubscribe = values => {
+    console.log('Submitted email:', values.email)
+    // Implement subscription logic here
+  }
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const showModal = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false)
+  }
+
   return (
     <div>
       <footer className={styles.footerWrap}>
-        <Row gutter={[32, 32]}>
-          <Col xs={24} sm={24} md={6}>
+        <Row gutter={[32, 0]}>
+          {/* Cột đầu tiên */}
+          <Col xs={24} sm={24} md={8}>
             <div style={{ textAlign: 'left' }}>
               <div>
                 <span className={styles.textLogo} onClick={goHome}>
                   TRAO ĐỒ CŨ
                 </span>
               </div>
-              <Text className={styles.text}>Địa chỉ: 122, Hoàng Quốc Việt, Cầu Giấy, Hà Nội.</Text>
-              <Text className={styles.text}>
-                <MailOutlined /> Email: axtralab.ptit@gmail.com
+              <Text className={styles.slogan}>
+                Trao Đồ Cũ tự hào là nền tảng kết nối cộng đồng trao đổi đồ dễ dàng, nhanh chóng và hiệu quả.
               </Text>
-              {/* <Text className={styles.text}>Hotline: 1900 1819</Text> */}
+              <Text className={styles.text}>
+                <EnvironmentOutlined style={{ marginRight: 8 }} />
+                Địa chỉ: 122 Hoàng Quốc Việt, Q.Cầu Giấy, Hà Nội
+              </Text>
+              <Text className={styles.text}>
+                <MailOutlined style={{ marginRight: 8 }} />
+                Email: axtralab.ptit@gmail.com
+              </Text>
+              <Text className={styles.text}>
+                <PhoneOutlined style={{ marginRight: 8 }} />
+                Hotline: 0869 800 725
+              </Text>
             </div>
           </Col>
 
-          <Col xs={12} sm={8} md={6}>
+          {/* Cột thứ 2 */}
+          <Col xs={24} sm={8} md={8}>
             <Title level={5} className={styles.title}>
-              Thông Tin
+              Về Chúng Tôi
             </Title>
-            <Space direction="vertical">
-              <Link href="#" className={styles.link}>
-                Dịch Vụ Tùy Chỉnh
-              </Link>
-              <Link href="#" className={styles.link}>
-                Câu Hỏi Thường Gặp
-              </Link>
-              <Link href="#" className={styles.link}>
-                Liên Hệ
-              </Link>
-              <Link href="#" className={styles.link}>
-                Phổ Biến
-              </Link>
-            </Space>
+            <Row gutter={[16, 8]}>
+              <Col span={12}>
+                <Space direction="vertical" size={0} className={styles.linkContainer}>
+                  <Link href="/" className={styles.link}>
+                    Trang Chủ
+                  </Link>
+                  <Link
+                    href="https://www.facebook.com/photo?fbid=122106469844798247&set=a.122101845656798247"
+                    className={styles.link}
+                  >
+                    Giới Thiệu
+                  </Link>
+                  <Link href="/post/category/all" className={styles.link}>
+                    Sản Phẩm
+                  </Link>
+                </Space>
+              </Col>
+              <Col span={12}>
+                <Space direction="vertical" size={0} className={styles.linkContainer}>
+                  <Link onClick={() => setIsModalOpen(true)} className={styles.link}>
+                    Điều khoản
+                  </Link>
+                  <Link href="https://www.facebook.com/profile.php?id=61573947424629" className={styles.link}>
+                    Tin Tức
+                  </Link>
+                  <Link href="https://www.facebook.com/profile.php?id=61573947424629" className={styles.link}>
+                    Liên Hệ
+                  </Link>
+                </Space>
+              </Col>
+            </Row>
+
+            {/* Facebook Page Plugin */}
+            <div className={styles.facebookContainer}>
+              <iframe
+                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D61573947424629&tabs=timeline&width=340&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
+                width="100%"
+                height="130"
+                style={{ border: 'none', overflow: 'hidden' }}
+                scrolling="no"
+                frameBorder="0"
+                allowTransparency="true"
+                allow="encrypted-media"
+              ></iframe>
+            </div>
           </Col>
 
-          <Col xs={12} sm={8} md={6}>
+          {/* Cột thứ 3 */}
+          <Col xs={24} sm={8} md={8}>
             <Title level={5} className={styles.title}>
-              Dịch Vụ Của Chúng Tôi
+              Hỗ Trợ Khách Hàng
             </Title>
-            <Space direction="vertical">
-              <Link href="#" className={styles.link}>
-                Chính Sách Bảo Mật
+            <Space direction="vertical" size={0} className={styles.linkContainer}>
+              <Link href="/" className={styles.link}>
+                Trang Chủ
               </Link>
-              <Link href="#" className={styles.link}>
-                Tài Khoản Của Bạn
+              <Link
+                href="https://www.facebook.com/photo?fbid=122106469844798247&set=a.122101845656798247"
+                className={styles.link}
+              >
+                Giới Thiệu
               </Link>
-              <Link href="#" className={styles.link}>
-                Tìm Kiếm Nâng Cao
-              </Link>
-              <Link href="#" className={styles.link}>
-                Liên Hệ Chúng Tôi
+              <Link href="/post/category/all" className={styles.link}>
+                Sản Phẩm
               </Link>
             </Space>
-          </Col>
 
-          <Col xs={12} sm={8} md={6}>
-            <Title level={5} className={styles.title}>
-              Tài Khoản Của Tôi
-            </Title>
-            <Space direction="vertical">
-              <Link href="#" className={styles.link}>
-                Về Chúng Tôi
-              </Link>
-              <Link href="#" className={styles.link}>
-                Dịch Vụ Tùy Chỉnh
-              </Link>
-              <Link href="#" className={styles.link}>
-                Điều Khoản & Điều Kiện
-              </Link>
-            </Space>
+            {/* Form đăng ký */}
+            {/* <div className={styles.subscribeContainer}>
+              <Title level={5} className={styles.subscribeTitle}>
+                Đăng ký nhận tin
+              </Title>
+              <Form onFinish={handleSubscribe}>
+                <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]}>
+                  <Input.Group compact>
+                    <Input
+                      placeholder="Nhập email của bạn"
+                      className={styles.subscribeInput}
+                      style={{ width: '200px' }}
+                    />
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      icon={<SendOutlined />}
+                      className={styles.subscribeButton}
+                      style={{ width: '40px' }}
+                    />
+                  </Input.Group>
+                </Form.Item>
+              </Form>
+            </div> */}
           </Col>
         </Row>
+
+        <Divider style={{ borderColor: 'rgba(255,255,255,0.1)', margin: '30px 0 20px' }} />
+        <Policy isOpen={isModalOpen} handleCancel={handleCancel} />
+        <div style={{ textAlign: 'center', fontSize: 14, color: '#adb5bd' }}>
+          © {new Date().getFullYear()} TRAO ĐỒ CŨ. Tất cả các quyền được bảo lưu.
+        </div>
       </footer>
     </div>
   )

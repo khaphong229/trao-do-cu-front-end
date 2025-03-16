@@ -18,6 +18,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        width: 100%; /* Đảm bảo phần tử chiếm toàn bộ chiều rộng */
         margin-bottom: 16px;
 
         @media screen and (max-width: 420px) {
@@ -38,6 +39,7 @@
               :global(.ant-tabs-nav-list) {
                 width: 100%;
                 justify-content: space-between;
+                gap: 10px;
               }
 
               :global(.ant-tabs-tab) {
@@ -47,44 +49,52 @@
               }
             }
           }
-
-          .tabLabel {
-            @include flex-center;
-            gap: 4px;
-
-            @media screen and (max-width: 420px) {
-              font-size: 14px;
-
-              .tabCount {
-                font-size: 11px;
-              }
-            }
-
-            .tabCount {
-              color: $colorTextFooter;
-              font-size: 12px;
-            }
-          }
         }
 
-        .viewToggle {
-          margin-left: 16px;
+        .actions {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-grow: 1; /* Đảm bảo phần tử giãn ra đủ */
+          min-width: 180px; /* Đảm bảo có đủ chỗ để hiển thị nút */
+          gap: 8px;
 
           @media screen and (max-width: 420px) {
-            margin-left: 0;
-            display: flex;
-            justify-content: flex-end;
-
-            button {
-              width: auto;
-            }
+            justify-content: space-between !important;
+            width: 100%;
           }
 
           button {
+            flex-shrink: 0; /* Ngăn các nút bị co lại quá mức */
+          }
+
+          .backButton {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: $colorMain;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 4px 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+
+            &:hover {
+              background-color: darken($colorMain, 10%);
+              transform: scale(1.1);
+            }
+
+            &:focus {
+              outline: none;
+              box-shadow: 0 0 5px rgba(24, 144, 255, 0.5);
+            }
+
+            svg {
+              width: 20px;
+              height: 20px;
+              color: white;
+            }
           }
         }
       }
