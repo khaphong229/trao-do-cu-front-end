@@ -178,6 +178,7 @@ const RequestedPosts = () => {
                 {request.post_id.description}
               </Typography.Paragraph>
 
+              {/* User info placed before contact info */}
               <div className="card-footer">
                 <div className="user-info">
                   <Avatar
@@ -190,8 +191,10 @@ const RequestedPosts = () => {
                     {request?.post_id?.user_id?.name || 'Không xác định'}
                   </Typography.Text>
                 </div>
-                <ContactInfoDisplay post={request} showInTable={false} />
               </div>
+
+              {/* Contact info now appears below the user info */}
+              <ContactInfoDisplay post={request} showInTable={false} />
             </div>
           </Card>
         </Col>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Descriptions, Space, Button, Tooltip } from 'antd'
+import { Space, Button, Tooltip } from 'antd'
 import { FacebookOutlined, PhoneOutlined, EnvironmentOutlined, LockOutlined } from '@ant-design/icons'
 
 const ContactInfoDisplay = ({ post, showInTable = false }) => {

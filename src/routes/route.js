@@ -20,6 +20,7 @@ const UserSurvey = lazy(() => import('pages/Client/UserSurvey/UserSurvey'))
 const ForgotPassword = lazy(() => import('pages/Auth/ForgotPassword'))
 const ResetPassword = lazy(() => import('pages/Auth/ResetPassword'))
 const UserManager = lazy(() => import('pages/Admin/UserManager'))
+const PostManager = lazy(() => import('pages/Admin/Post'))
 const router = createBrowserRouter([
   {
     element: (
@@ -218,17 +219,17 @@ const router = createBrowserRouter([
                     </AdminLayout>
                   </Suspense>
                 )
+              },
+              {
+                path: 'post',
+                element: (
+                  <Suspense>
+                    <AdminLayout>
+                      <PostManager />
+                    </AdminLayout>
+                  </Suspense>
+                )
               }
-              // {
-              //   path: 'post',
-              //   element: (
-              //     <Suspense>
-              //       <AdminLayout>
-              //         <Post />
-              //       </AdminLayout>
-              //     </Suspense>
-              //   )
-              // }
             ]
           }
         ]

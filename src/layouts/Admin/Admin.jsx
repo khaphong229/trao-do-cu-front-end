@@ -66,17 +66,17 @@ const App = ({ children }) => {
             {
               key: '1',
               icon: <MdDashboard />,
-              label: <Link to="dashboard">Bảng điều khiển</Link>
+              label: <Link to="/admin/dashboard">Bảng điều khiển</Link>
             },
             {
               key: '2',
               icon: <FaUser />,
-              label: <Link to="user">Người dùng</Link>
+              label: <Link to="/admin/user">Người dùng</Link>
             },
             {
               key: '3',
               icon: <BsPostcardFill />,
-              label: <Link to="post">Bài đăng</Link>
+              label: <Link to="/admin/post">Bài đăng</Link>
             },
             {
               key: '4',

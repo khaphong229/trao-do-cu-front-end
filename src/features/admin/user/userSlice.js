@@ -10,7 +10,8 @@ const initialState = {
   isModalVisible: false,
   isDetailsModalVisible: false,
   selectedUser: null,
-  error: null
+  error: null,
+  searchText: ''
 }
 
 const userSlice = createSlice({
@@ -19,6 +20,9 @@ const userSlice = createSlice({
   reducers: {
     setIsModalVisible: (state, action) => {
       state.isModalVisible = action.payload
+    },
+    setSearchText: (state, action) => {
+      state.searchText = action.payload
     },
     setIsDetailsModalVisible: (state, action) => {
       state.isDetailsModalVisible = action.payload
@@ -149,7 +153,8 @@ export const {
   setPage,
   setPerPage,
   clearError,
-  resetState
+  resetState,
+  setSearchText
 } = userSlice.actions
 
 export default userSlice.reducer
