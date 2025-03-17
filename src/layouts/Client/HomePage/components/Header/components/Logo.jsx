@@ -54,15 +54,15 @@ const renderMenuItems = (categories, navigate, parentId = null) =>
 const handleDataCategory = categories => {
   return categories?.map(category => {
     const formattedCategory = {
-      id: category._id,
+      id: category.name !== 'Tất cả' ? category._id : 'all',
       title: category.name,
       // icon: iconCategories[category.name] || <ShoppingOutlined />,
       children: []
     }
 
-    // if (category.children && category.children.length > 0) {
-    //   formattedCategory.children = handleDataCategory(category.children)
-    // }
+    if (category.children && category.children.length > 0) {
+      formattedCategory.children = handleDataCategory(category.children)
+    }
 
     return formattedCategory
   })

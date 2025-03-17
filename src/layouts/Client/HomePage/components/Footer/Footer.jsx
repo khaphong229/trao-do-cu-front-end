@@ -49,7 +49,7 @@ function AppFooter() {
               </Text>
               <Text className={styles.text}>
                 <MailOutlined style={{ marginRight: 8 }} />
-                Email: axtralab.ptit@gmail.com
+                Email: contact@traodocu.vn
               </Text>
               <Text className={styles.text}>
                 <PhoneOutlined style={{ marginRight: 8 }} />
@@ -96,18 +96,6 @@ function AppFooter() {
             </Row>
 
             {/* Facebook Page Plugin */}
-            <div className={styles.facebookContainer}>
-              <iframe
-                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D61573947424629&tabs=timeline&width=340&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
-                width="100%"
-                height="130"
-                style={{ border: 'none', overflow: 'hidden' }}
-                scrolling="no"
-                frameBorder="0"
-                allowTransparency="true"
-                allow="encrypted-media"
-              ></iframe>
-            </div>
           </Col>
 
           {/* Cột thứ 3 */}
@@ -115,20 +103,38 @@ function AppFooter() {
             <Title level={5} className={styles.title}>
               Hỗ Trợ Khách Hàng
             </Title>
-            <Space direction="vertical" size={0} className={styles.linkContainer}>
-              <Link href="/" className={styles.link}>
-                Trang Chủ
-              </Link>
-              <Link
-                href="https://www.facebook.com/photo?fbid=122106469844798247&set=a.122101845656798247"
-                className={styles.link}
-              >
-                Giới Thiệu
-              </Link>
-              <Link href="/post/category/all" className={styles.link}>
-                Sản Phẩm
-              </Link>
-            </Space>
+            <Row>
+              <Col xs={24} sm={6}>
+                <Space direction="vertical" size={0} className={styles.linkContainer}>
+                  <Link href="/" className={styles.link}>
+                    Trang Chủ
+                  </Link>
+                  <Link
+                    href="https://www.facebook.com/photo?fbid=122106469844798247&set=a.122101845656798247"
+                    className={styles.link}
+                  >
+                    Giới Thiệu
+                  </Link>
+                  <Link href="/post/category/all" className={styles.link}>
+                    Sản Phẩm
+                  </Link>
+                </Space>
+              </Col>
+              <Col xs={24} sm={18}>
+                <div className={styles.facebookContainer}>
+                  <iframe
+                    src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D61573947424629&tabs=timeline&width=340&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
+                    width="100%"
+                    height="130"
+                    style={{ border: 'none', overflow: 'hidden' }}
+                    scrolling="no"
+                    frameBorder="0"
+                    allowTransparency="true"
+                    allow="encrypted-media"
+                  ></iframe>
+                </div>
+              </Col>
+            </Row>
 
             {/* Form đăng ký */}
             {/* <div className={styles.subscribeContainer}>

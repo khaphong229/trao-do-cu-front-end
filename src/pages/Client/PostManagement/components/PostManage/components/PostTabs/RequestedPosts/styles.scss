@@ -12,7 +12,7 @@
     gap: 32px;
     margin-top: 32px;
     justify-content: center;
-  
+
     @media (max-width: 768px) {
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 24px;
@@ -30,7 +30,7 @@
 // Contact info styling for both card and table views
 .contact-info-compact {
   width: 100%;
-  
+
   .contact-item {
     display: flex;
     align-items: center;
@@ -39,19 +39,19 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 4px;
-    
+
     .contact-value {
       color: rgba(0, 0, 0, 0.65);
-      
+
       &.masked {
         color: #bfbfbf;
         font-style: italic;
       }
     }
-    
+
     .facebook-link {
       color: #1890ff;
-      
+
       &:hover {
         text-decoration: underline;
       }
@@ -61,7 +61,7 @@
 
 .contact-info-card {
   margin-top: 8px;
-  
+
   .contact-locked {
     display: flex;
     align-items: center;
@@ -71,16 +71,16 @@
     border-radius: 4px;
     padding: 4px 8px;
     font-size: 12px;
-    
+
     .anticon {
       margin-right: 4px;
       font-size: 10px;
     }
   }
-  
+
   .contact-accepted {
     width: 100%;
-    
+
     .contact-button {
       height: auto;
       padding: 0;
@@ -91,27 +91,27 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      
+
       &.phone {
         color: #1890ff;
       }
-      
+
       &.facebook {
-        color: #4267B2;
+        color: #4267b2;
       }
-      
+
       .anticon {
         margin-right: 4px;
         font-size: 12px;
       }
     }
-    
+
     .location-info {
       display: flex;
       align-items: flex-start;
       font-size: 12px;
       color: rgba(0, 0, 0, 0.65);
-      
+
       span {
         flex: 1;
         white-space: normal;
@@ -128,22 +128,22 @@
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  
+
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
   }
-  
+
   .ant-card-body {
     padding: 16px;
     height: auto;
   }
-  
+
   .image-wrapper {
     height: 200px;
     position: relative;
     overflow: hidden;
-    
+
     &::after {
       content: '';
       position: absolute;
@@ -151,46 +151,46 @@
       left: 0;
       width: 100%;
       height: 50%;
-      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%);
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%);
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.3s ease;
     }
-    
+
     &:hover::after {
       opacity: 1;
     }
-    
+
     .ant-image {
       width: 100%;
       height: 100%;
     }
-    
+
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.5s ease;
     }
-    
+
     &:hover img {
       transform: scale(1.08);
     }
-    
+
     .ant-ribbon {
       font-weight: 600;
       font-size: 11px;
       padding: 2px 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
       border-radius: 0 0 0 4px;
     }
   }
-  
+
   .card-content {
     display: flex;
     flex-direction: column;
     height: 100%;
-    
+
     .card-title {
       margin-bottom: 8px !important;
       font-size: 15px;
@@ -198,18 +198,18 @@
       font-weight: 600;
       color: rgba(0, 0, 0, 0.85);
       transition: color 0.3s ease;
-      
+
       &:hover {
         color: $colorMain;
       }
     }
-    
+
     .status-tags {
       margin-bottom: 10px;
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      
+
       .ant-tag {
         margin-right: 0;
         padding: 0 8px;
@@ -222,24 +222,24 @@
         align-items: center;
         justify-content: center;
         text-transform: uppercase;
-        
+
         &.ant-tag-success {
           background-color: rgba(82, 196, 26, 0.1);
           border-color: rgba(82, 196, 26, 0.3);
         }
-        
+
         &.ant-tag-warning {
           background-color: rgba(250, 173, 20, 0.1);
           border-color: rgba(250, 173, 20, 0.3);
         }
-        
+
         &.ant-tag-error {
           background-color: rgba(245, 34, 45, 0.1);
           border-color: rgba(245, 34, 45, 0.3);
         }
       }
     }
-    
+
     .desc-post {
       margin-bottom: 12px;
       color: rgba(0, 0, 0, 0.65);
@@ -252,7 +252,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    
+
     .card-footer {
       margin-top: auto;
       padding-top: 10px;
@@ -260,12 +260,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      
+
       .user-info {
         display: flex;
         align-items: center;
         gap: 8px;
-        
+
         .user-name {
           font-size: 12px;
           color: rgba(0, 0, 0, 0.65);
@@ -274,10 +274,10 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
-        
+
         .ant-avatar {
           border: 2px solid #fff;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
       }
     }
@@ -308,30 +308,30 @@
 .ant-tabs {
   .ant-tabs-nav {
     margin-bottom: 16px;
-    
+
     &::before {
       border-bottom-color: rgba(0, 0, 0, 0.06);
     }
-    
+
     .ant-tabs-tab {
       padding: 8px 16px;
       font-weight: 500;
-      
+
       &:hover {
         color: #1890ff;
       }
-      
+
       &.ant-tabs-tab-active .ant-tabs-tab-btn {
         font-weight: 600;
       }
     }
   }
-  
+
   .ant-tabs-ink-bar {
     height: 3px;
     border-radius: 3px 3px 0 0;
   }
-  
+
   .ant-tabs-content {
     padding-top: 16px;
   }
@@ -344,28 +344,28 @@
     font-weight: 600;
     color: rgba(0, 0, 0, 0.85);
   }
-  
+
   .ant-table-tbody > tr {
     &:hover {
       background-color: #f5f5f5;
     }
-    
+
     td {
       padding: 12px 16px;
-      
+
       .ant-typography {
         margin-bottom: 0;
       }
-      
+
       .ant-image {
         border-radius: 4px;
         overflow: hidden;
         border: 1px solid rgba(0, 0, 0, 0.06);
-        
+
         img {
           transition: transform 0.3s ease;
         }
-        
+
         &:hover img {
           transform: scale(1.05);
         }
@@ -380,16 +380,16 @@
     border-radius: 8px;
     overflow: hidden;
   }
-  
+
   .ant-modal-header {
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     padding: 16px 24px;
   }
-  
+
   .ant-modal-body {
     padding: 0;
   }
-  
+
   .post-detail-content {
     padding: 20px;
 
@@ -403,14 +403,14 @@
         height: 160px !important;
         border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
         img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           transition: transform 0.3s ease;
-          
+
           &:hover {
             transform: scale(1.05);
           }
@@ -429,45 +429,45 @@
           display: flex;
           align-items: center;
           gap: 12px;
-          
+
           .user-name {
             font-weight: 600;
             font-size: 16px;
             color: rgba(0, 0, 0, 0.85);
           }
-          
+
           .user-email {
             font-size: 13px;
             color: rgba(0, 0, 0, 0.45);
           }
         }
-        
+
         .post-tags {
           display: flex;
           gap: 8px;
         }
       }
-      
+
       .post-title {
         font-size: 20px;
         font-weight: 600;
         color: rgba(0, 0, 0, 0.85);
         margin-bottom: 16px;
       }
-      
+
       .post-description {
         font-size: 14px;
         line-height: 1.6;
         color: rgba(0, 0, 0, 0.65);
         margin-bottom: 20px;
       }
-      
+
       .post-details {
         background-color: #fafafa;
         border-radius: 8px;
         padding: 16px;
         margin-bottom: 20px;
-        
+
         .ant-descriptions-item-label {
           font-weight: 500;
         }
@@ -521,12 +521,12 @@
 // Empty state styling
 .ant-empty {
   margin: 32px 0;
-  
+
   .ant-empty-image {
     height: 60px;
     margin-bottom: 16px;
   }
-  
+
   .ant-empty-description {
     color: rgba(0, 0, 0, 0.45);
     font-size: 14px;
@@ -538,25 +538,27 @@
   &.ant-btn-primary {
     background-color: $colorMain;
     border-color: $colorMain;
-    
-    &:hover, &:focus {
+
+    &:hover,
+    &:focus {
       background-color: lighten($colorMain, 5%);
       border-color: lighten($colorMain, 5%);
     }
   }
-  
+
   &.ant-btn-default {
     border-color: #d9d9d9;
-    
-    &:hover, &:focus {
+
+    &:hover,
+    &:focus {
       border-color: $colorMain;
       color: $colorMain;
     }
   }
-  
+
   &.ant-btn-link {
     color: $colorMain;
-    
+
     &:hover {
       color: lighten($colorMain, 10%);
     }

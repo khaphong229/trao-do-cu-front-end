@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Row, Col, Image, Typography, Divider, Avatar, Tooltip } from 'antd'
-import { ClockCircleOutlined, EnvironmentOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
+import { ClockCircleOutlined, EnvironmentOutlined, UserOutlined } from '@ant-design/icons'
 import styles from './../scss/PostInfoDetail.module.scss'
 import CreatePostModal from '../../CreatePost/CreatePost'
 import withAuth from 'hooks/useAuth'
@@ -238,10 +238,10 @@ const PostInfoDetail = () => {
               </div>
             </div>
 
-            <div style={{ textAlign: 'center' }}>
+            {/* <div style={{ textAlign: 'center' }}>
               <StarOutlined className={styles.StartIcon} />
               <Text className={styles.Evaluate}>0 đánh giá</Text>
-            </div>
+            </div> */}
           </div>
         </Col>
       </Row>

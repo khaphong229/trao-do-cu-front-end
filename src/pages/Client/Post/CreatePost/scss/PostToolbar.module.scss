@@ -15,26 +15,26 @@
   .toolsButtons {
     display: flex;
     width: 100%;
-    
+
     :global {
       .ant-upload-wrapper {
         width: 100%;
       }
-      
+
       .ant-upload-select {
         width: 100%;
       }
-      
+
       .ant-upload-list {
         margin-top: 12px;
       }
-      
+
       .ant-upload-list-item {
         border-radius: 6px;
         padding: 8px 12px;
         margin-top: 8px;
       }
-      
+
       // Tùy chỉnh nút upload
       .ant-btn {
         width: 100%;
@@ -48,29 +48,29 @@
         height: auto;
         transition: all 0.3s ease;
         color: $colorMain; /* Màu chữ xanh lá */
-        
+
         &:hover {
           background-color: rgba(76, 175, 80, 0.05);
           border-color: $colorMain;
           color: $colorMain !important;
         }
-        
+
         .anticon {
           font-size: 20px;
           color: $colorMain; /* Icon màu xanh lá */
           margin-right: 8px;
         }
-        
+
         // Tùy chỉnh text của nút
         span {
           font-size: 15px;
           font-weight: 500;
         }
-        
+
         &:disabled {
           background-color: #f5f5f5;
           color: rgba(0, 0, 0, 0.25);
-          
+
           .anticon {
             color: rgba(0, 0, 0, 0.25);
           }
@@ -82,7 +82,7 @@
 
 .uploadSpinner {
   width: 100%;
-  
+
   :global {
     .ant-spin-container {
       width: 100%;
@@ -93,7 +93,7 @@
 .customIcon {
   font-size: 22px;
   transition: color 0.3s ease;
-  
+
   &:hover {
     color: $colorMain;
   }

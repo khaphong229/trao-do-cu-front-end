@@ -8,7 +8,7 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getAvatarPost } from 'hooks/useAvatar'
-// Assuming moment is already installed
+import imgNotFound from 'assets/images/others/imagenotfound.webp'
 
 export const RegistrationDrawer = ({
   visible,
@@ -110,9 +110,13 @@ export const RegistrationDrawer = ({
           {(listing.image_url || []).map((img, index) => (
             <Image
               key={index}
-              src={`${URL_SERVER_IMAGE}${img}`}
+              src={`${URL_SERVER_IMAGE}${img}` || imgNotFound}
               alt={`Sản phẩm ${index + 1}`}
               className={styles.registrationImage}
+              onError={e => {
+                e.target.onerror = null
+                e.target.src = imgNotFound
+              }}
             />
           ))}
         </div>

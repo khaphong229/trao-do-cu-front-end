@@ -1,9 +1,10 @@
 import React from 'react'
 import { Button } from 'antd'
-import { UserOutlined, LoginOutlined, BarsOutlined, HomeOutlined } from '@ant-design/icons'
+import { UserOutlined, LoginOutlined, HomeOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import styles from './scss/TopBar.module.scss'
 import { useSelector } from 'react-redux'
+import { Package } from 'lucide-react'
 
 const TopBar = () => {
   const { isAuthenticated } = useSelector(state => state.auth)
@@ -27,7 +28,7 @@ const TopBar = () => {
             <Link to="/login">Đăng nhập</Link>
           </Button>
         ) : (
-          <Button icon={<BarsOutlined />} type="text" className={styles.button}>
+          <Button icon={<Package height={16} width={16} />} type="text" className={styles.button}>
             <Link to="/management-post">Quản lý sản phẩm</Link>
           </Button>
         )}

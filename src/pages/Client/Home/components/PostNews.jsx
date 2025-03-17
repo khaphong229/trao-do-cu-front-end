@@ -20,7 +20,7 @@ import { ArrowDownOutlined, GiftOutlined, SwapOutlined } from '@ant-design/icons
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 import { FaMapMarkerAlt } from 'react-icons/fa'
 import { locationService } from 'services/client/locationService'
-import { getAvatarPost } from 'hooks/useAvatar'
+import { getAvatarPostNews } from 'hooks/useAvatar'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -38,7 +38,7 @@ const PostNews = () => {
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
-  const pageSizeContanst = 8
+  const pageSizeContanst = 16
 
   const fetchCity = useCallback(async () => {
     const cachedCities = localStorage.getItem('vietnameseCities')
@@ -197,7 +197,7 @@ const PostNews = () => {
 
         {(isLoading || isError) && (
           <Row gutter={[16, 0]} className={styles.itemsGrid}>
-            {[...Array(8)].map((_, index) => (
+            {[...Array(16)].map((_, index) => (
               <Col key={index} xs={24} sm={12} md={8} lg={6}>
                 <PostCardSkeleton />
               </Col>
@@ -247,7 +247,7 @@ const PostNews = () => {
 
                     <div className={styles.locationRow}>
                       <div className={styles.userGroup}>
-                        <Avatar size="small" className={styles.avtUser} src={getAvatarPost(item?.user_id)} />
+                        <Avatar size="small" className={styles.avtUser} src={getAvatarPostNews(item?.user_id)} />
                         <Text type="secondary" className={styles.time}>
                           {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
                         </Text>

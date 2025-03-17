@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Space, Empty, Badge } from 'antd'
+import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Empty, Badge } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import avt from 'assets/images/logo/avtDefault.webp'
 import './styles.scss'
@@ -9,6 +9,7 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetailModal from './components/PostDetailModal'
 import imgNotFound from 'assets/images/others/imagenotfound.webp'
 import ContactInfoDisplay from './components/ContactInfoDisplay'
+import { getAvatarPost } from 'hooks/useAvatar'
 
 const { Text } = Typography
 
@@ -180,12 +181,7 @@ const RequestedPosts = () => {
 
               <div className="card-footer">
                 <div className="user-info">
-                  <Avatar
-                    src={
-                      request?.post_id?.user_id?.avatar ? `${URL_SERVER_IMAGE}${request.post_id.user_id.avatar}` : avt
-                    }
-                    size={20}
-                  />
+                  <Avatar src={getAvatarPost(request?.post_id?.user_id)} size={20} />
                   <Typography.Text className="user-name" ellipsis>
                     {request?.post_id?.user_id?.name || 'Không xác định'}
                   </Typography.Text>

@@ -10,7 +10,7 @@ const postService = {
   getPostPagination(
     params = {
       current: 1,
-      pageSize: 8,
+      pageSize: 16,
       q: null,
       city: null,
       title: null,

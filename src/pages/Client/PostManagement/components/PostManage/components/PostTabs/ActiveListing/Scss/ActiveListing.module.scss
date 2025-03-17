@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-  
+
   .subTabs {
     flex: 1;
   }
@@ -29,7 +29,7 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -60,7 +60,7 @@
   width: 100%;
   height: 180px; // Keep a fixed height for consistency
   overflow: hidden;
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -68,7 +68,7 @@
     object-position: center; // Centers the image within the container
     transition: transform 0.3s;
   }
-  
+
   &:hover img {
     transform: scale(1.05);
   }
@@ -125,7 +125,7 @@
 .actionButton {
   border-radius: 4px;
   font-weight: 500;
-  
+
   &:hover {
     opacity: 0.9;
   }

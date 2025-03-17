@@ -2,7 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import AuthService from '../../services/authService'
 import { setAuthToken } from '../../utils/localStorageUtils'
 import { timeoutPromise } from 'utils/errorUtils'
-import { reject } from 'lodash'
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
   const { isAdmin, ...data } = credentials
@@ -79,6 +78,11 @@ export const updateUserProfile = createAsyncThunk(
         email: currentUser?.email || '',
         phone: currentUser?.phone || '',
         address: currentUser?.address || [],
+        social_media: {
+          facebook: currentUser?.social_media?.facebook || '',
+          zalo: '',
+          instagram: ''
+        },
         // Remove social_media if not required
         // ...(currentUser?.social_media?.length > 0 && { social_media: [currentUser?.social_media[0]] }),
         ...userData

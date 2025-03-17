@@ -38,7 +38,7 @@ const initialState = {
   isLoading: false,
   isError: false,
   current: 1,
-  pageSize: 5,
+  pageSize: 16,
   hasMore: true,
   query: '',
   // get my post

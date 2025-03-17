@@ -74,6 +74,7 @@ $transition-base: all 0.3s ease;
   border-radius: 0;
   border: 1px solid #f0f0f0;
   height: 100%;
+
   display: flex;
   overflow: hidden;
 
@@ -127,8 +128,7 @@ $transition-base: all 0.3s ease;
 .TimeRole {
   color: $subTextColor;
   font-size: 12px;
-  margin-top: 6px;
-  margin-bottom: 30px;
+  margin: 10px 0;
 }
 
 .User {
@@ -144,9 +144,10 @@ $transition-base: all 0.3s ease;
 }
 
 .ButtonChat {
-  min-width: 120px;
+  width: 120px;
   padding: 6px;
-  text-align: center;
+  margin-left: auto;
+  margin-top: auto;
 }
 
 .pagination {
@@ -175,4 +176,8 @@ $transition-base: all 0.3s ease;
       font-size: 13px;
     }
   }
+}
+
+.userText {
+  margin-top: 10px;
 }

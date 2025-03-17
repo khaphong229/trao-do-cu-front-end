@@ -35,18 +35,16 @@ const ProfilePage = () => {
     gender: '',
     phone: '',
     address: '',
+    social_media: {
+      facebook: '',
+      zalo: '',
+      instagram: ''
+    },
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   })
   const [savePassword, setSavePassword] = useState(false)
-
-  // Hàm tiện ích để chuyển đổi địa chỉ từ mảng sang chuỗi
-  const addressToString = address => {
-    if (!address) return ''
-    if (Array.isArray(address)) return address.join('')
-    return String(address)
-  }
 
   // Sửa lại hàm getDefaultAddress để kiểm tra nếu list là một mảng
   const getDefaultAddress = list => {
@@ -64,13 +62,17 @@ const ProfilePage = () => {
         phone: userData.phone || '',
         address: getDefaultAddress(userData.address),
         gender: userData.gender || '',
+        social_media: {
+          facebook: userData?.social_media?.facebook,
+          zalo: '',
+          instagram: ''
+        },
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       })
     }
   }, [userData])
-  console.log('userData:', userData)
 
   const handleInputChange = e => {
     const { id, value } = e.target
