@@ -180,12 +180,12 @@ const PostNews = () => {
       <div className={styles.postWrap}>
         <div className={styles.postHeader}>
           <Title level={5} className={styles.postTitle}>
-            {isSearchMode ? 'Kết quả tìm kiếm' : 'Sản phẩm mới nhất'}
+            {isSearchMode ? 'Kết quả tìm kiếm' : 'Sản phẩm dành cho bạn'}
           </Title>
           <div>
             <Select
               showSearch
-              style={{ width: 150 }}
+              style={{ width: 180 }}
               placeholder="Chọn thành phố"
               value={selectedCity}
               optionFilterProp="children"
