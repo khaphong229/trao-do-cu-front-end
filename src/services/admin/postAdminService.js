@@ -3,21 +3,14 @@ import { createApi } from 'utils/apiUtils'
 const postAdminService = {
   http: createApi(),
 
-  getPagination(
-    params = {
-      page: 1,
-      per_page: 10,
-      q: null,
-      sort_order: null,
-      field: null
-    }
-  ) {
-    const { page, per_page, q, sort_order, field } = params
+  getPagination(params) {
+    const { current = 1, limit = 10, q = '', sort_order, field } = params || {}
+
     let path = '/admin/posts'
     const queryParams = new URLSearchParams()
 
-    queryParams.append('page', page)
-    queryParams.append('per_page', per_page)
+    queryParams.append('current', current)
+    queryParams.append('limit', limit)
 
     if (q) queryParams.append('q', q)
     if (sort_order) queryParams.append('sort_order', sort_order)
@@ -26,6 +19,7 @@ const postAdminService = {
     path += `?${queryParams.toString()}`
     return this.http.get(path)
   },
+
   approvalStatus(id) {
     return this.http.patch(`/admin/posts/${id}/approval`)
   }

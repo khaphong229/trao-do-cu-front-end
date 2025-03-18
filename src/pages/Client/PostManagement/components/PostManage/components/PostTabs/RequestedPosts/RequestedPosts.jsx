@@ -162,6 +162,7 @@ const RequestedPosts = () => {
                 <Badge.Ribbon
                   text={request.post_id.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
                   color={request.post_id.type === 'exchange' ? 'green' : 'blue'}
+                  className="post-type-ribbon"
                 />
               </div>
             }

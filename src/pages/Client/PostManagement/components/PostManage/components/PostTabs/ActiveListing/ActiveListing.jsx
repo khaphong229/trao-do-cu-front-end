@@ -285,7 +285,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
             onClick={e => handlePostDetail(e, item)}
             cover={
               <div className={styles.imageContainer}>
-                <Image preview={false} src={`${URL_SERVER_IMAGE}${item.image_url[0]}`} alt={item.title}  />
+                <Image preview={false} src={`${URL_SERVER_IMAGE}${item.image_url[0]}`} alt={item.title} />
                 <div className={styles.ribbonWrapper}>
                   <Badge.Ribbon
                     text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
@@ -301,7 +301,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
               </Typography.Title>
 
               <Typography.Paragraph className={styles.cardDescription} ellipsis={{ rows: 2 }}>
-                {item.description}
+                {item.city}
               </Typography.Paragraph>
 
               <div className={styles.cardFooter}>

@@ -1,4 +1,4 @@
-import { Button, Input, Space, Table } from 'antd'
+import { Button, Input, message, Space, Table } from 'antd'
 import { setPage, setPerPage } from 'features/admin/post/postAdminSlice'
 import { getPostPagination } from 'features/client/post/postThunks'
 import React, { useEffect, useState } from 'react'
@@ -11,16 +11,23 @@ import moment from 'moment'
 
 const PostTable = ({ onViewDetails }) => {
   const dispatch = useDispatch()
-  const { posts, total, page, perPage, isLoading, searchText } = useSelector(state => state.postManagement)
+  const { posts, total, current, pageSize, isLoading, searchText } = useSelector(state => state.postManagement || {})
 
   const handleApprovePost = postId => {
     dispatch(approvalStatus(postId))
+      .unwrap()
+      .then(() => {
+        message.success('Bài đăng đã được duyệt')
+      })
+      .catch(() => {
+        message.error('Có lỗi xảy ra khi duyệt bài đăng')
+      })
   }
 
   const [tableParams, setTableParams] = useState({
     pagination: {
-      current: page,
-      pageSize: perPage,
+      current: current,
+      pageSize: pageSize,
       total: total
     }
   })
@@ -28,10 +35,11 @@ const PostTable = ({ onViewDetails }) => {
   const filteredPosts = searchText
     ? posts.filter(post => post.title && post.title.toLowerCase().includes(searchText.toLowerCase()))
     : posts
+
   // Load posts when component mounts
   useEffect(() => {
-    dispatch(getPostPagination({ page, per_page: perPage }))
-  }, [dispatch, page, perPage])
+    dispatch(getPostPagination({ current, pageSize: pageSize }))
+  }, [dispatch, current, pageSize])
 
   // Update table params when redux state changes
   useEffect(() => {
@@ -39,12 +47,12 @@ const PostTable = ({ onViewDetails }) => {
       ...tableParams,
       pagination: {
         ...tableParams.pagination,
-        current: page,
-        pageSize: perPage,
+        current: current,
+        pageSize: pageSize,
         total: total
       }
     })
-  }, [page, perPage, total])
+  }, [current, pageSize, total])
 
   const handleTableChange = (pagination, filters, sorter) => {
     dispatch(setPage(pagination.current))
@@ -66,9 +74,8 @@ const PostTable = ({ onViewDetails }) => {
       dataIndex: 'image_url',
       key: 'image_url',
       render: (imageUrl, record) => {
-        // Handle array of image URLs from the data structure
         const imageSource = record.image_url && record.image_url.length > 0 ? record.image_url[0] : avt
-        return <img src={imageSource} alt="imageUrl" width={50} height={50} style={{ objectFit: 'cover' }} />
+        return <img src={imageSource} alt="Bài đăng" width={50} height={50} style={{ objectFit: 'cover' }} />
       }
     },
     {
@@ -145,7 +152,6 @@ const PostTable = ({ onViewDetails }) => {
       dataIndex: 'created_at',
       key: 'created_at',
       render: created_at => {
-        // Format the date string from ISO format
         return moment(created_at).format('DD/MM/YYYY HH:mm')
       }
     },
@@ -154,7 +160,6 @@ const PostTable = ({ onViewDetails }) => {
       dataIndex: 'category_id',
       key: 'category_id',
       render: category_id => {
-        // Display category name if available
         return category_id?.name || 'Không có thể loại'
       }
     },
@@ -162,11 +167,19 @@ const PostTable = ({ onViewDetails }) => {
       title: 'Trạng thái',
       dataIndex: 'isApproved',
       key: 'isApproved',
-      render: isApproved => {
-        return isApproved ? (
-          <span style={{ color: 'green' }}>Đã duyệt</span>
-        ) : (
-          <span style={{ color: 'orange' }}>Chưa duyệt</span>
+      render: (isApproved, record) => {
+        const approvedStatus = isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
+        return (
+          <Space size="middle">
+            {approvedStatus ? (
+              <span style={{ color: 'green' }}>Đã duyệt</span>
+            ) : (
+              <span style={{ color: 'orange' }}>Chưa duyệt</span>
+            )}
+            <Button type="primary" size="small" onClick={() => handleApprovePost(record._id)} disabled={approvedStatus}>
+              Duyệt
+            </Button>
+          </Space>
         )
       }
     },
@@ -188,8 +201,8 @@ const PostTable = ({ onViewDetails }) => {
       rowKey="_id"
       loading={isLoading}
       pagination={{
-        current: page,
-        pageSize: perPage,
+        current: current,
+        pageSize: pageSize,
         total: total,
         showSizeChanger: true,
         pageSizeOptions: [5, 10, 20, 50, 100],

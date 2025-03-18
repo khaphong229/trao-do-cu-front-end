@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Row, Col, Input, Button } from 'antd'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
@@ -10,6 +10,8 @@ import {
 } from '../../../features/admin/post/postAdminSlice'
 import PostTable from './components/PostTable'
 import PostDetailModal from './components/PostDetailModal'
+import { setPage } from 'features/admin/user/userSlice'
+import { getPostAdminPagination } from 'features/admin/post/postAdminThunks'
 
 const Post = () => {
   const dispatch = useDispatch()
@@ -17,7 +19,16 @@ const Post = () => {
   const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
 
-  const { isModalVisible, isDetailsModalVisible, selectedPost } = useSelector(state => state.postManagement)
+  const {
+    isModalVisible,
+    isDetailsModalVisible,
+    selectedPost,
+    posts // Add default value for posts
+  } = useSelector(state => state.postManagement || {})
+  useEffect(() => {
+    dispatch(setPage(1))
+    dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
+  }, [dispatch, searchText])
 
   const handleSearch = value => {
     setSearchText(value)
@@ -30,8 +41,10 @@ const Post = () => {
   }
 
   const handleViewDetails = post => {
+    console.log('Selected post:', post)
     dispatch(setSelectedPost(post))
     dispatch(setIsDetailsModalVisible(true))
+    console.log('After dispatch:', { isDetailsModalVisible, selectedPost })
   }
 
   return (
@@ -54,7 +67,7 @@ const Post = () => {
       <PostTable onEdit={handleEditPost} onViewDetails={handleViewDetails} />
 
       <PostDetailModal
-        visible={isDetailsModalVisible}
+        open={isDetailsModalVisible}
         post={selectedPost}
         onClose={() => dispatch(setIsDetailsModalVisible(false))}
       />

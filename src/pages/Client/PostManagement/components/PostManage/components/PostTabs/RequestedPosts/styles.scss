@@ -179,6 +179,7 @@
     }
   }
 }
+
 // Item card styling
 .item-card {
   height: 100%;
@@ -195,6 +196,7 @@
   .ant-card-body {
     padding: 16px;
     height: auto;
+    margin-top: 8px;
   }
   
   .image-wrapper {
@@ -235,12 +237,28 @@
       transform: scale(1.08);
     }
     
+    // Fixed ribbon styles
+    .ant-ribbon-wrapper {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 10;
+    }
+    
     .ant-ribbon {
       font-weight: 600;
       font-size: 11px;
       padding: 2px 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       border-radius: 0 0 0 4px;
+      z-index: 10;
+    }
+    
+    .post-type-ribbon {
+      position: absolute;
+      top: 8px;
+      right: 0;
+      z-index: 10;
     }
   }
   
@@ -590,6 +608,12 @@
   }
 }
 
+.ant-space-item{
+  display: flex;
+  align-items: center;
+  margin-right: 0;
+}
+
 // Button improvements
 .ant-btn {
   &.ant-btn-primary {
@@ -618,4 +642,36 @@
       color: lighten($colorMain, 10%);
     }
   }
+}
+
+// Additional styles for ribbon
+.ant-badge-ribbon {
+  top: 0;
+  right: 0;
+  z-index: 10;
+  
+  .ant-ribbon {
+    font-weight: 600;
+    font-size: 11px;
+    padding: 2px 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    border-radius: 0 0 0 4px;
+  }
+}
+
+// Force positioning of the ribbon
+:where(.css-dev-only-do-not-override-156eax).ant-badge.ant-badge-status {
+  line-height: inherit;
+}
+
+:where(.css-dev-only-do-not-override-156eax).ant-badge.ant-ribbon-wrapper {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+// Ensure the ribbon content is visible
+.ant-ribbon-content {
+  display: block;
 }

@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { approvalStatus, getPostPagination } from './postAdminThunks'
+import { approvalStatus, getPostAdminPagination } from './postAdminThunks'
+
 const initialState = {
   posts: [],
   total: 0,
-  page: 1,
-  perPage: 10,
+  current: 1,
+  pageSize: 10,
   isLoading: false,
   isModalVisible: false,
   isDetailsModalVisible: false,
@@ -42,19 +43,33 @@ const postAdminSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(getPostPagination.pending, state => {
+      .addCase(getPostAdminPagination.pending, state => {
         state.isLoading = true
         state.error = null
       })
-      .addCase(getPostPagination.fulfilled, (state, action) => {
-        console.log('Data from API:', action.payload)
+      .addCase(getPostAdminPagination.fulfilled, (state, action) => {
         state.isLoading = false
-        state.posts = action.payload.data.posts
-        state.total = action.payload.data.total
-        state.page = action.payload.data.page
-        state.perPage = action.payload.data.per_page
+
+        if (action.payload && action.payload.data) {
+          state.posts = action.payload.data.data.map(post => ({
+            ...post,
+            isApproved: post.isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
+          }))
+          state.total = action.payload.data.total || 0
+        } else if (action.payload) {
+          state.posts = action.payload.data.map(post => ({
+            ...post,
+            isApproved: post.isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
+          }))
+          state.total = action.payload.total || 0
+        } else {
+          state.posts = []
+          state.total = 0
+        }
+        state.page = action.payload?.data?.current || action.payload?.current || 1
+        state.perPage = action.payload?.data?.pageSize || action.payload?.pageSize || 10
       })
-      .addCase(getPostPagination.rejected, (state, action) => {
+      .addCase(getPostAdminPagination.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload
       })
@@ -63,7 +78,12 @@ const postAdminSlice = createSlice({
       })
       .addCase(approvalStatus.fulfilled, (state, action) => {
         const index = state.posts.findIndex(post => post._id === action.payload._id)
-        state.posts[index] = action.payload
+        if (index !== -1) {
+          state.posts[index] = {
+            ...action.payload,
+            isApproved: action.payload.isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
+          }
+        }
       })
       .addCase(approvalStatus.rejected, (state, action) => {
         state.error = action.payload
