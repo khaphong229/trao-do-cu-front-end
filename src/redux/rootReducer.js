@@ -11,7 +11,7 @@ import surveyReducer from 'features/client/Survey/surveySlice'
 const rootReducer = combineReducers({
   auth: authReducer,
   userManagement: userReducer,
-  post: postReducer,
+  postManagement: postReducer,
   category: categoryReducer,
   giftRequest: giftRequestReducer,
   exchangeRequest: exchangeRequestReducer,

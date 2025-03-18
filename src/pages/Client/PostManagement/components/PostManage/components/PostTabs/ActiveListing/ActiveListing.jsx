@@ -202,9 +202,8 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         <Image
           src={`${URL_SERVER_IMAGE}${images[0]}`}
           alt="Sản phẩm"
-          width={100}
-          height={100}
-          style={{ objectFit: 'cover' }}
+          style={{ width: 100, height: 100, objectFit: 'cover' }}
+          preview={false}
         />
       )
     },
@@ -286,7 +285,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
             onClick={e => handlePostDetail(e, item)}
             cover={
               <div className={styles.imageContainer}>
-                <Image preview={false} src={`${URL_SERVER_IMAGE}${item.image_url[0]}`} alt={item.title} />
+                <Image preview={false} src={`${URL_SERVER_IMAGE}${item.image_url[0]}`} alt={item.title}  />
                 <div className={styles.ribbonWrapper}>
                   <Badge.Ribbon
                     text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}

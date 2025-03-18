@@ -190,17 +190,17 @@ const PostInfoDetail = () => {
         </Col>
 
         <Col xs={24} md={12}>
-          {renderTitle()}
           <Title level={3} className={styles.statusText}>
             {selectedPost.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
           </Title>
+          {renderTitle()}
           <div>
             <Text className={styles.textAdress}>
               <EnvironmentOutlined />{' '}
-              {selectedPost?.specificLocation
-                ? selectedPost.specificLocation.startsWith(',')
-                  ? selectedPost.specificLocation.slice(1)
-                  : selectedPost.specificLocation
+              {selectedPost?.city
+                ? selectedPost.city.startsWith(',')
+                  ? selectedPost.city.slice(1)
+                  : selectedPost.city
                 : 'Không rõ địa điểm'}
             </Text>
             <Text className={styles.textAdress}>

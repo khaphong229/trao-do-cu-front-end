@@ -1,40 +1,36 @@
 import React, { useState } from 'react'
 import { Row, Col, Input, Button } from 'antd'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons'
-import UserTable from './components/UserTable'
-import UserDetailModal from './components/UserDetailModal'
-import UserFormModal from './components/UserFormModal'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
-import { setIsDetailsModalVisible, setIsModalVisible, setSelectedUser } from '../../../features/admin/user/userSlice'
+import {
+  setIsDetailsModalVisible,
+  setIsModalVisible,
+  setSelectedPost
+} from '../../../features/admin/post/postAdminSlice'
+import PostTable from './components/PostTable'
+import PostDetailModal from './components/PostDetailModal'
 
 const Post = () => {
   const dispatch = useDispatch()
 
   const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
-  // const [selectedUser, setSelectedUser] = useState(null)
 
-  const { isModalVisible, isDetailsModalVisible, selectedUser } = useSelector(state => state.userManagement)
+  const { isModalVisible, isDetailsModalVisible, selectedPost } = useSelector(state => state.postManagement)
 
   const handleSearch = value => {
     setSearchText(value)
   }
 
-  const handleAddUser = () => {
-    setSelectedUser(null)
-    setIsEditing(false)
-    dispatch(setIsModalVisible(true))
-  }
-
-  const handleEditUser = user => {
-    dispatch(setSelectedUser(user))
+  const handleEditPost = post => {
+    dispatch(setSelectedPost(post))
     setIsEditing(true)
     dispatch(setIsModalVisible(true))
   }
 
-  const handleViewDetails = user => {
-    dispatch(setSelectedUser(user))
+  const handleViewDetails = post => {
+    dispatch(setSelectedPost(post))
     dispatch(setIsDetailsModalVisible(true))
   }
 
@@ -53,26 +49,14 @@ const Post = () => {
             style={{ width: '100%' }}
           />
         </Col>
-        <Col xs={24} sm={4} style={{ textAlign: 'right' }}>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAddUser} block>
-            Thêm sản phẩm
-          </Button>
-        </Col>
       </Row>
 
-      <UserTable onEdit={handleEditUser} onViewDetails={handleViewDetails} />
+      <PostTable onEdit={handleEditPost} onViewDetails={handleViewDetails} />
 
-      <UserDetailModal
+      <PostDetailModal
         visible={isDetailsModalVisible}
-        user={selectedUser}
+        post={selectedPost}
         onClose={() => dispatch(setIsDetailsModalVisible(false))}
-      />
-
-      <UserFormModal
-        visible={isModalVisible}
-        isEditing={isEditing}
-        initialUser={selectedUser}
-        onClose={() => dispatch(setIsModalVisible(false))}
       />
     </div>
   )

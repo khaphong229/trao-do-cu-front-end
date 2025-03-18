@@ -56,21 +56,32 @@
 }
 
 .imageContainer {
+  height: 200px;
   position: relative;
-  width: 100%;
-  height: 180px; // Keep a fixed height for consistency
   overflow: hidden;
+  width: 100%;
+  
+  &:hover::after {
+    opacity: 1;
+  }
+  
+  .ant-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover; // Makes the image cover the entire container
-    object-position: center; // Centers the image within the container
-    transition: transform 0.3s;
+    object-fit: cover;
+    transition: transform 0.5s ease;
   }
   
   &:hover img {
-    transform: scale(1.05);
+    transform: scale(1.08);
   }
 }
 

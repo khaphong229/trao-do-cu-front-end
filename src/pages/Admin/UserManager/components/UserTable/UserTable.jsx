@@ -80,7 +80,7 @@ const UserTable = ({ onEdit, onViewDetails }) => {
 
   const columns = [
     {
-      title: 'Ảnh bài đăng',
+      title: 'Ảnh người dùng',
       dataIndex: 'avatar',
       key: 'avatar',
       render: avatar => (
@@ -88,7 +88,7 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       )
     },
     {
-      title: 'Tên bài đăng',
+      title: 'Tên người dùng',
       dataIndex: 'name',
       key: 'name',
       sorter: {
