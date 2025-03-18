@@ -11,7 +11,7 @@ import Title from 'antd/es/skeleton/Title'
 import { useAvatar } from 'hooks/useAvatar'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import Location from 'pages/Client/Post/CreatePost/components/Modal/Location'
-
+import logger from 'utils/logger'
 const { TabPane } = Tabs
 
 const ProfilePage = () => {
@@ -34,7 +34,7 @@ const ProfilePage = () => {
     email: '',
     gender: '',
     phone: '',
-    address: '',
+    address: [],
     social_media: {
       facebook: '',
       zalo: '',
@@ -85,13 +85,9 @@ const ProfilePage = () => {
 
   const handleUpdateMe = async () => {
     try {
-      // Chuyển đổi địa chỉ từ chuỗi thành mảng ký tự để backend xử lý
-      const updatedData = {
-        ...formData,
-        address: formData.address.split('') // Chuyển thành mảng ký tự
-      }
+      delete formData.address
 
-      const response = await dispatch(updateUserProfile(updatedData)).unwrap()
+      const response = await dispatch(updateUserProfile(formData)).unwrap()
       if (response.status === 201) {
         message.success(response.message)
         // Sử dụng navigate để reload trang hiện tại
@@ -149,6 +145,7 @@ const ProfilePage = () => {
             avatar: newAvatarUrl
           })
         ).unwrap()
+        logger.log(response)
         if (response.status === 201) {
           message.success('Upload ảnh thành công')
           dispatch(getCurrentUser(false))

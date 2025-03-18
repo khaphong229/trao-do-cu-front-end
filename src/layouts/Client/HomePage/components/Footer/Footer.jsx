@@ -14,10 +14,6 @@ function AppFooter() {
     navigate('/')
   }
 
-  const handleSubscribe = values => {
-    console.log('Submitted email:', values.email)
-    // Implement subscription logic here
-  }
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const showModal = () => {
@@ -64,11 +60,8 @@ function AppFooter() {
               Về Chúng Tôi
             </Title>
             <Row gutter={[16, 8]}>
-              <Col span={12}>
+              <Col xs={24} sm={24} xl={6}>
                 <Space direction="vertical" size={0} className={styles.linkContainer}>
-                  <Link href="/" className={styles.link}>
-                    Trang Chủ
-                  </Link>
                   <Link
                     href="https://www.facebook.com/photo?fbid=122106469844798247&set=a.122101845656798247"
                     className={styles.link}
@@ -77,50 +70,13 @@ function AppFooter() {
                   </Link>
                   <Link href="/post/category/all" className={styles.link}>
                     Sản Phẩm
-                  </Link>
-                </Space>
-              </Col>
-              <Col span={12}>
-                <Space direction="vertical" size={0} className={styles.linkContainer}>
-                  <Link onClick={() => setIsModalOpen(true)} className={styles.link}>
-                    Điều khoản
-                  </Link>
-                  <Link href="https://www.facebook.com/profile.php?id=61573947424629" className={styles.link}>
-                    Tin Tức
                   </Link>
                   <Link href="https://www.facebook.com/profile.php?id=61573947424629" className={styles.link}>
                     Liên Hệ
                   </Link>
                 </Space>
               </Col>
-            </Row>
-
-            {/* Facebook Page Plugin */}
-          </Col>
-
-          {/* Cột thứ 3 */}
-          <Col xs={24} sm={8} md={8}>
-            <Title level={5} className={styles.title}>
-              Hỗ Trợ Khách Hàng
-            </Title>
-            <Row>
-              <Col xs={24} sm={6}>
-                <Space direction="vertical" size={0} className={styles.linkContainer}>
-                  <Link href="/" className={styles.link}>
-                    Trang Chủ
-                  </Link>
-                  <Link
-                    href="https://www.facebook.com/photo?fbid=122106469844798247&set=a.122101845656798247"
-                    className={styles.link}
-                  >
-                    Giới Thiệu
-                  </Link>
-                  <Link href="/post/category/all" className={styles.link}>
-                    Sản Phẩm
-                  </Link>
-                </Space>
-              </Col>
-              <Col xs={24} sm={18}>
+              <Col xs={24} sm={24} xl={18}>
                 <div className={styles.facebookContainer}>
                   <iframe
                     src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D61573947424629&tabs=timeline&width=340&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
@@ -135,6 +91,26 @@ function AppFooter() {
                 </div>
               </Col>
             </Row>
+
+            {/* Facebook Page Plugin */}
+          </Col>
+
+          {/* Cột thứ 3 */}
+          <Col xs={24} sm={8} md={8}>
+            <Title level={5} className={styles.title}>
+              Hỗ Trợ Khách Hàng
+            </Title>
+            <Space direction="vertical" size={0} className={styles.linkContainer}>
+              <Link href="/" className={styles.link}>
+                Câu Hỏi Thường Gặp (FAQ)
+              </Link>
+              <Link href="/" className={styles.link}>
+                Chính Sách Bảo Mật
+              </Link>
+              <Link onClick={() => setIsModalOpen(true)} className={styles.link}>
+                Điều khoản sử dụng
+              </Link>
+            </Space>
 
             {/* Form đăng ký */}
             {/* <div className={styles.subscribeContainer}>

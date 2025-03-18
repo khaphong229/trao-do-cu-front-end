@@ -8,6 +8,7 @@ import {
   markNotificationAsRead
 } from 'features/client/notification/notificationThunks'
 import axios from 'axios'
+import logger from 'utils/logger'
 
 const sendTelegramNotification = async message => {
   const botToken = process.env.REACT_APP_TELEGRAM_BOT_TOKEN
@@ -25,9 +26,8 @@ const sendTelegramNotification = async message => {
       chat_id: chatId,
       text: message
     })
-    console.log('Message sent successfully:', response.data)
   } catch (error) {
-    console.error('Error sending message:', error.response?.data || error.message)
+    logger.error('Error sending message:', error.response?.data || error.message)
   }
 }
 

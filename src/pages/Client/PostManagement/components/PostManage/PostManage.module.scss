@@ -17,9 +17,9 @@
       .tabHeader {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        width: 100%; /* Đảm bảo phần tử chiếm toàn bộ chiều rộng */
-        margin-bottom: 16px;
+        justify-content: center;
+        // width: 100%; /* Đảm bảo phần tử chiếm toàn bộ chiều rộng */
+        width: fit-content;
 
         @media screen and (max-width: 420px) {
           flex-direction: column;

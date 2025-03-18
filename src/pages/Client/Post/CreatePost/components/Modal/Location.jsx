@@ -6,6 +6,7 @@ import AddressSelection from 'components/common/AddressSelection'
 import { PlusOutlined, DeleteOutlined, EditOutlined, LeftOutlined } from '@ant-design/icons'
 import styles from '../../scss/LocationModal.module.scss'
 import { updateDefaultAddress, updateUserProfile } from '../../../../../../features/auth/authThunks'
+import logger from 'utils/logger'
 
 const Location = ({ location, setLocation, isInProfile = false }) => {
   const dispatch = useDispatch()
@@ -119,7 +120,7 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
       setSelectedAddressIndex(newAddresses.length - 1)
       message.success('Đã lưu địa chỉ thành công!')
     } catch (error) {
-      console.log(error)
+      logger.log(error)
       message.error('Không thể lưu địa chỉ')
     }
 

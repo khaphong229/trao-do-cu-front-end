@@ -9,18 +9,21 @@ import router from './routes/route'
 import { ConfigProvider, Empty } from 'antd'
 import { configAntd, localeConfigAntd } from './config/antd'
 import './assets/scss/common.scss'
+import { HelmetProvider } from 'react-helmet-async'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <ConfigProvider
-    renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />}
-    theme={configAntd}
-    locale={localeConfigAntd}
-  >
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </ConfigProvider>
+  <HelmetProvider>
+    <ConfigProvider
+      renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />}
+      theme={configAntd}
+      locale={localeConfigAntd}
+    >
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
+    </ConfigProvider>
+  </HelmetProvider>
 )
 
 // If you want to start measuring performance in your app, pass a function

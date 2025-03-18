@@ -1,6 +1,7 @@
+import URL_CLIENT from '../config/url_server'
 const { SitemapStream, streamToPromise } = require('sitemap')
 const fs = require('fs')
-const { default: URL_CLIENT } = require('config/url_server')
+const { default: logger } = require('utils/logger')
 
 const pages = [
   { url: '/', changefreq: 'daily', priority: 1.0 },
@@ -20,5 +21,5 @@ sitemapStream.end()
 
 streamToPromise(sitemapStream).then(data => {
   fs.writeFileSync('./public/sitemap.xml', data.toString())
-  console.log('✅ Sitemap generated successfully!')
+  logger.log('✅ Sitemap generated successfully!')
 })

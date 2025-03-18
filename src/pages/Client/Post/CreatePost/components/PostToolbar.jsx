@@ -7,12 +7,7 @@ import UploadCustom from 'components/common/UploadCustom'
 import { updatePostData } from 'features/client/post/postSlice'
 import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 
-const PostToolbar = ({
-  contentType,
-  imageRef,
-  // New tour-specific refs
-  imageToolRef
-}) => {
+const PostToolbar = ({ contentType, imageRef, imageToolRef }) => {
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState([])

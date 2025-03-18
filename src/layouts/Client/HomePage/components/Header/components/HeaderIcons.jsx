@@ -35,13 +35,13 @@ const HeaderIcons = ({ menu }) => {
 
   return (
     <>
-      <Space size="large" className={styles.contentWrapper}>
+      <Space size="middle" className={styles.contentWrapper}>
         <Dropdown
           overlay={<NotificationMenu setDropdownVisible={setDropdownVisible} />}
           trigger={['click']}
           placement="bottomRight"
           getPopupContainer={() => document.body}
-          open={dropdownVisible} // Điều khiển dropdown
+          open={dropdownVisible}
           onOpenChange={visible => {
             setDropdownVisible(visible)
             if (visible) {
@@ -56,7 +56,7 @@ const HeaderIcons = ({ menu }) => {
         <Dropdown overlay={menu} placement="bottomRight">
           <Space className={styles.Avatar} style={{ cursor: 'pointer', color: '#fff' }}>
             <Avatar className={styles.avt} src={avatar} size={32} />
-            {!isAuthenticated ? 'Tài khoản' : user.name}
+            <span className={styles.userName}>{!isAuthenticated ? 'Tài khoản' : user.name}</span>
             <DownOutlined className={styles.IconDown} />
           </Space>
         </Dropdown>

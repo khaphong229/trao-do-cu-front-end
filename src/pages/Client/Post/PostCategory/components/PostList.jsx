@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination } from 'antd'
+import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination, Tooltip } from 'antd'
 import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
@@ -146,27 +146,47 @@ const PostList = () => {
     const isMe = item?.user_id?._id === user._id
     if (item?.type === 'gift') {
       return (
-        <AuthButton
-          icon={<GiftOutlined />}
-          type="primary"
-          className={styles.ButtonChat}
-          onClick={() => handleRequest(item)}
-          disabled={item?.isRequested || isMe}
+        <Tooltip
+          title={
+            item?.isRequested
+              ? `Bạn ơi, chờ ${item.user_id?.name} xác nhận nhé!`
+              : isMe
+                ? 'Bạn không thể thao tác với sản phẩm của chính bạn'
+                : ''
+          }
         >
-          {item?.isRequested ? 'Đã yêu cầu' : 'Nhận'}
-        </AuthButton>
+          <AuthButton
+            icon={<GiftOutlined />}
+            type="primary"
+            className={styles.ButtonChat}
+            onClick={() => handleRequest(item)}
+            disabled={item?.isRequested || isMe}
+          >
+            {item?.isRequested ? 'Đã yêu cầu' : 'Nhận'}
+          </AuthButton>
+        </Tooltip>
       )
     } else if (item?.type === 'exchange') {
       return (
-        <AuthButton
-          icon={<SwapOutlined />}
-          type="default"
-          className={styles.ButtonChat}
-          onClick={() => handleRequest(item)}
-          disabled={item?.isRequested || isMe}
+        <Tooltip
+          title={
+            item?.isRequested
+              ? `Bạn ơi, chờ ${item.user_id?.name} xác nhận nhé!`
+              : isMe
+                ? 'Bạn không thể thao tác với sản phẩm của chính bạn'
+                : ''
+          }
         >
-          {item?.isRequested ? 'Đã yêu cầu' : 'Đổi'}
-        </AuthButton>
+          <AuthButton
+            icon={<SwapOutlined />}
+            type="default"
+            className={styles.ButtonChat}
+            onClick={() => handleRequest(item)}
+            disabled={item?.isRequested || isMe}
+          >
+            {item?.isRequested ? 'Đã yêu cầu' : 'Đổi'}
+          </AuthButton>
+        </Tooltip>
       )
     }
     return null
@@ -287,10 +307,9 @@ const PostList = () => {
                 }
               >
                 <div className={styles.Container}>
-                  {renderTitle(item)}
                   <span className={styles.status}>{item?.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>
+                  {renderTitle(item)}
 
-                  {/* <div className={styles.User}> */}
                   <div className={styles.userText}>
                     <Avatar className={styles.avtUser} src={getAvatarPost(item?.user_id)} />
                     <Text className={styles.TextUser}>{item?.user_id?.name}</Text>
@@ -304,7 +323,6 @@ const PostList = () => {
                   </div>
 
                   {renderButton(item)}
-                  {/* </div> */}
                 </div>
               </Card>
             </Col>

@@ -131,9 +131,11 @@ const PostNews = () => {
 
     if (item.isRequested) {
       return (
-        <Button className={styles.actionButton} disabled>
-          Đã yêu cầu
-        </Button>
+        <Tooltip title={`Bạn ơi, chờ ${item.user_id?.name} xác nhận nhé!`}>
+          <Button className={styles.actionButton} disabled>
+            Đã yêu cầu
+          </Button>
+        </Tooltip>
       )
     }
 
@@ -189,7 +191,7 @@ const PostNews = () => {
               optionFilterProp="children"
               filterOption={filterProvinces}
               onChange={handleCityChange}
-              options={VIETNAMESE_CITIES} // ✅ Sửa lỗi options
+              options={VIETNAMESE_CITIES}
               allowClear
             />
           </div>

@@ -15,21 +15,26 @@ const TopBar = () => {
       </div>
       <div className={styles.topBarContent}>
         <Button icon={<HomeOutlined />} type="text" className={styles.button}>
-          <Link to="/">Trang chủ</Link>
+          <Link className={styles.linkText} to="/">
+            Trang chủ
+          </Link>
         </Button>
         <Button icon={<UserOutlined />} type="text" className={styles.button}>
-          <Link to="/profile">Tài khoản</Link>
+          <Link className={styles.linkText} to="/profile">
+            Tài khoản
+          </Link>
         </Button>
-        {/* <Button icon={<HeartOutlined />} type="text" className={styles.button}>
-          Yêu thích
-        </Button> */}
         {!isAuthenticated ? (
           <Button icon={<LoginOutlined />} type="text" className={styles.button}>
-            <Link to="/login">Đăng nhập</Link>
+            <Link className={styles.linkText} to="/login">
+              Đăng nhập
+            </Link>
           </Button>
         ) : (
           <Button icon={<Package height={16} width={16} />} type="text" className={styles.button}>
-            <Link to="/management-post">Quản lý sản phẩm</Link>
+            <Link className={styles.linkText} to="/management-post">
+              Quản lý sản phẩm
+            </Link>
           </Button>
         )}
       </div>

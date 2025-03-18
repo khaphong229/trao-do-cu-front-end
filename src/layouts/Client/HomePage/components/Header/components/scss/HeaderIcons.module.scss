@@ -1,4 +1,5 @@
 @import '../../../../../../../assets/scss/variables.scss';
+
 .Icon {
   font-size: 20px;
   cursor: pointer;
@@ -21,4 +22,43 @@
 .avt {
   border: 2px solid $colorWhite;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+@media screen and (max-width: 390px) {
+  .Button {
+    padding: 0 8px;
+  }
+  .userName {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .contentWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .Button {
+    padding: 0 4px;
+    font-size: 12px;
+  }
+
+  .Icon {
+    font-size: 18px;
+  }
+
+  .userName {
+    -webkit-line-clamp: 2;
+  }
+
+  .avt {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+  }
 }

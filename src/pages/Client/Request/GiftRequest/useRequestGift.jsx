@@ -47,7 +47,6 @@ export const useGiftRequest = () => {
         email: user.email,
         address: values?.address
       }
-      console.log(values, 'use gifft')
 
       // Xử lý trường hợp người dùng điền cả số điện thoại và mạng xã hội
       if (values.contact_method === 'phone') {

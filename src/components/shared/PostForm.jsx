@@ -297,7 +297,10 @@ const PostForm = ({
             <Button
               type="primary"
               // className={styles.postButton}
-              style={isMobile ? { marginTop: 'auto' } : contentType === 'exchange' ? { width: '100%' } : {}}
+              style={{
+                ...(isMobile ? { marginTop: 'auto' } : {}),
+                ...(contentType === 'exchange' ? { width: '100%' } : {})
+              }}
               onClick={handleFinish}
               loading={isLoading}
             >
