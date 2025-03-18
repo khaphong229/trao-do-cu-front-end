@@ -80,13 +80,12 @@ const postAdminSlice = createSlice({
         const index = state.posts.findIndex(post => post._id === action.payload._id)
         if (index !== -1) {
           state.posts[index] = {
-            ...action.payload,
-            isApproved: action.payload.isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
+            ...state.posts[index],
+            isApproved: action.payload.isApproved, // Cập nhật trạng thái duyệt
+            reason: action.payload.reason // Cập nhật lý do (nếu có)
           }
         }
-      })
-      .addCase(approvalStatus.rejected, (state, action) => {
-        state.error = action.payload
+        state.posts = [...state.posts] // ⚡ Cập nhật lại danh sách để trigger re-render
       })
   }
 })

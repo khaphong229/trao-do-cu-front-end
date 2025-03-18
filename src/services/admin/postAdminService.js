@@ -20,8 +20,8 @@ const postAdminService = {
     return this.http.get(path)
   },
 
-  approvalStatus(id) {
-    return this.http.patch(`/admin/posts/${id}/approval`)
+  approvalStatus(id, data) {
+    return this.http.patch(`/admin/posts/${id}/approval`, data)
   }
 }
 

@@ -13,11 +13,14 @@ export const getPostAdminPagination = createAsyncThunk(
   }
 )
 
-export const approvalStatus = createAsyncThunk('postManagement/approvalStatus', async (id, { rejectWithValue }) => {
-  try {
-    const response = await postAdminService.approvalStatus(id)
-    return response.data
-  } catch (error) {
-    return rejectWithValue(error.response?.data || { message: 'Failed to approve post' })
+export const approvalStatus = createAsyncThunk(
+  'postManagement/approvalStatus',
+  async ({ id, isApproved, reason }, { rejectWithValue }) => {
+    try {
+      const response = await postAdminService.approvalStatus(id, { isApproved, reason })
+      return response.data // Trả về dữ liệu bài đăng đã được cập nhật
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: 'Failed to approve post' })
+    }
   }
-})
+)

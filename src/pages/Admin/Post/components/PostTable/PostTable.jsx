@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { EyeOutlined, SearchOutlined, EnvironmentOutlined } from '@ant-design/icons'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
 import styles from '../../styles.module.scss'
-import { approvalStatus } from 'features/admin/post/postAdminThunks'
+import { approvalStatus, getPostAdminPagination } from 'features/admin/post/postAdminThunks'
 import moment from 'moment'
 
 const PostTable = ({ onViewDetails }) => {
@@ -14,10 +14,15 @@ const PostTable = ({ onViewDetails }) => {
   const { posts, total, current, pageSize, isLoading, searchText } = useSelector(state => state.postManagement || {})
 
   const handleApprovePost = postId => {
-    dispatch(approvalStatus(postId))
+    console.log('Post ID:', postId)
+    const isApproved = true
+    const reason = 'Bài viết đúng yêu cầu chính sách'
+
+    dispatch(approvalStatus({ id: postId, isApproved, reason }))
       .unwrap()
       .then(() => {
         message.success('Bài đăng đã được duyệt')
+        dispatch(getPostAdminPagination({ current, pageSize })) // Fetch lại danh sách bài đăng
       })
       .catch(() => {
         message.error('Có lỗi xảy ra khi duyệt bài đăng')
