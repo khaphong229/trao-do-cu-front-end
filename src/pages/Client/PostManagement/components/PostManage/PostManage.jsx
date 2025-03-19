@@ -68,13 +68,13 @@ export const PostManage = ({ tabType }) => {
               ))}
             </Tabs>
 
-            <div className={styles.viewToggle}>
+            {/* <div className={styles.viewToggle}>
               <Button
                 type={viewMode === 'table' ? 'primary' : 'default'}
                 icon={viewMode === 'table' ? <TableOutlined /> : <AppstoreOutlined />}
                 onClick={() => dispatch(setViewMode(viewMode === 'table' ? 'card' : 'table'))}
               />
-            </div>
+            </div> */}
           </div>
 
           <div className={styles.contentTabs}>{renderTabContent()}</div>

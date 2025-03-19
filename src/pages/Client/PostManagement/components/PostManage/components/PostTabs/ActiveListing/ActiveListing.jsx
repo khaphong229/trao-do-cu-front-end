@@ -11,7 +11,8 @@ import dayjs from 'dayjs'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetail from '../components/PostDetail/PostDetail'
 import { ExpiredListings } from '../ExpiredListing/ExpriedListing'
-import { ClockCircleOutlined } from '@ant-design/icons'
+import { AppstoreOutlined, ClockCircleOutlined, TableOutlined } from '@ant-design/icons'
+import { setViewMode } from 'features/client/post/postSlice'
 
 const { TabPane } = Tabs
 
@@ -28,6 +29,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
   const [isModalDetail, setIsModalDetail] = useState(false)
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false)
   const [historyTabRefreshKey, setHistoryTabRefreshKey] = useState(0)
+  const [activeTab, setActiveTab] = useState(activeSubTab || 'all') // Đồng bộ với activeSubTab ban đầu
   const [tabCounts, setTabCounts] = useState({
     all: 0,
     gift: 0,
@@ -58,14 +60,47 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
       current: paginationRef.current,
       pageSize: paginationRef.pageSize,
       status: 'active',
-      type: activeSubTab !== 'all' ? activeSubTab : undefined
+      type: activeTab !== 'all' ? activeTab : undefined // Sử dụng activeTab thay vì activeSubTab
     }),
-    [activeSubTab, paginationRef]
+    [activeTab, paginationRef] // Thay đổi dependency thành activeTab
   )
+
+  // Hàm để lấy số lượng bài đăng cho từng tab
+  const fetchTabCounts = useCallback(async () => {
+    if (!isActive) return
+
+    try {
+      const response = await dispatch(
+        getPostGiftPagination({
+          current: 1,
+          pageSize: 1000, // Lấy đủ để đếm - điều chỉnh theo kích thước dữ liệu thực tế
+          status: 'active'
+        })
+      ).unwrap()
+
+      if (response?.data?.data) {
+        const allPosts = response.data.data
+        const total = response.data.total || 0
+
+        // Đếm số lượng cho từng loại
+        const giftCount = allPosts.filter(post => post.type === 'gift').length
+        const exchangeCount = allPosts.filter(post => post.type === 'exchange').length
+
+        setTabCounts({
+          all: total,
+          gift: giftCount,
+          exchange: exchangeCount
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching tab counts:', error)
+    }
+  }, [dispatch, isActive])
 
   const fetchData = useCallback(async () => {
     if (!isActive) return
 
+    setIsTabLoading(true)
     try {
       const response = await dispatch(getPostGiftPagination(fetchParams)).unwrap()
       if (response?.data?.data) {
@@ -73,19 +108,22 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         // Store active posts separately to prevent conflicts with modal
         setActivePosts(allPosts)
         setActiveTotal(response.data.total || 0)
-
-        setTabCounts({
-          all: response.data.total || 0,
-          gift: allPosts.filter(post => post.type === 'gift').length,
-          exchange: allPosts.filter(post => post.type === 'exchange').length
-        })
       }
     } catch (error) {
-      // console.error('Error fetching posts:', error)
-      throw error
+      console.error('Error fetching posts:', error)
+    } finally {
+      setIsTabLoading(false)
     }
   }, [dispatch, fetchParams, isActive])
 
+  // Chạy một lần khi component mount để lấy số lượng cho tabs
+  useEffect(() => {
+    if (isActive) {
+      fetchTabCounts()
+    }
+  }, [fetchTabCounts, isActive, refreshKey])
+
+  // Chạy mỗi khi thay đổi tab hoặc refresh
   useEffect(() => {
     fetchData()
   }, [fetchData, refreshKey])
@@ -192,17 +230,17 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
     setIsHistoryModalVisible(false)
     // Refresh the active listings after closing the modal
     fetchData()
+    fetchTabCounts() // Cập nhật lại số lượng tab khi đóng modal lịch sử
   }
 
   const handleTabChange = async key => {
-    setIsTabLoading(true) // Bật spinner loading
-    setActiveSubTab(key)
+    setIsTabLoading(true)
+    setActiveTab(key) // Cập nhật activeTab
+    setActiveSubTab(key) // Đồng bộ với activeSubTab
     setPagination(prev => ({
       ...prev,
       current: 1
     }))
-
-    setIsTabLoading(false) // Tắt spinner loading
   }
 
   const columns = [
@@ -267,17 +305,9 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
   ]
 
   const subTabItems = [
-    { key: 'all', label: 'Tất cả', count: tabCounts.all },
-    {
-      key: 'gift',
-      label: 'Trao tặng',
-      count: tabCounts.gift
-    },
-    {
-      key: 'exchange',
-      label: 'Trao đổi',
-      count: tabCounts.exchange
-    }
+    { key: 'all', label: `Tất cả ` },
+    { key: 'gift', label: `Trao tặng ` },
+    { key: 'exchange', label: `Trao đổi ` }
   ]
 
   const renderCardView = () => (
@@ -339,21 +369,34 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
   return (
     <>
       <div className={styles.tabHeader}>
-        <Tabs activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
-          {subTabItems.map(subTab => (
-            <TabPane key={subTab.key} tab={<span className={styles.subTabLabel}>{subTab.label}</span>} />
-          ))}
-        </Tabs>
-        <Button type="default" onClick={showHistoryModal}>
-          Lịch sử sản phẩm
-        </Button>
+        <Tabs
+          type="card"
+          activeKey={activeTab} // Dùng activeTab thay vì activeSubTab
+          onChange={handleTabChange}
+          items={subTabItems.map(item => ({
+            ...item,
+            label: <span>{item.label}</span>
+          }))}
+        />
+        <div className={styles.buttonGroup}>
+          <Button type="default" onClick={showHistoryModal}>
+            Lịch sử sản phẩm
+          </Button>
+          <div className={styles.viewToggle}>
+            <Button
+              type={viewMode === 'table' ? 'primary' : 'default'}
+              icon={viewMode === 'table' ? <TableOutlined /> : <AppstoreOutlined />}
+              onClick={() => dispatch(setViewMode(viewMode === 'table' ? 'card' : 'table'))}
+            />
+          </div>
+        </div>
       </div>
 
-      <Spin spinning={isTabLoading || isLoading} delay={500}>
+      <Spin spinning={isTabLoading || isLoading}>
         {viewMode === 'table' ? (
           <Table
             columns={columns}
-            dataSource={activePosts} // Use local state instead of Redux posts
+            dataSource={activePosts}
             rowKey="_id"
             pagination={{
               ...pagination,
@@ -399,7 +442,10 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         listing={selectedListing}
         receiveRequests={receiveRequests}
         refetch={getRequests}
-        onUpdateSuccess={fetchData}
+        onUpdateSuccess={() => {
+          fetchData()
+          fetchTabCounts() // Cập nhật lại số lượng khi có thay đổi
+        }}
         pagination={requestPagination}
         onPaginationChange={handleRequestPaginationChange}
       />
@@ -410,7 +456,10 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         listing={selectedListing}
         exchangeRequests={exchangeRequests}
         refetch={getRequests}
-        onUpdateSuccess={fetchData}
+        onUpdateSuccess={() => {
+          fetchData()
+          fetchTabCounts() // Cập nhật lại số lượng khi có thay đổi
+        }}
         pagination={requestPagination}
         onPaginationChange={handleRequestPaginationChange}
       />

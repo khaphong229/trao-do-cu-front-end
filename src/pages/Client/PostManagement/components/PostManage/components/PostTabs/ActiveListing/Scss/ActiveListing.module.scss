@@ -12,7 +12,15 @@
 .subTabs {
   margin-bottom: 16px;
 }
+.buttonGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.viewToggle {
+  margin-left: 10px;
+}
 .subTabLabel {
   display: flex;
   align-items: center;
