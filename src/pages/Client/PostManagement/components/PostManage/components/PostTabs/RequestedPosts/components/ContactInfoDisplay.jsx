@@ -67,7 +67,8 @@ const ContactInfoDisplay = ({ post, showInTable = false }) => {
     <div className="contact-info-card">
       {!isAccepted ? (
         <div className="contact-locked">
-          <LockOutlined /> thông tin liên hệ đã bị ẩn
+          <LockOutlined />
+          Thông tin liên hệ đã bị ẩn
         </div>
       ) : (
         <Space direction="vertical" size={4} className="contact-accepted">
