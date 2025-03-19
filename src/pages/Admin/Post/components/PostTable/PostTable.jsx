@@ -55,7 +55,7 @@ const PostTable = ({ onViewDetails }) => {
 
   // Load posts when component mounts
   useEffect(() => {
-    dispatch(getPostPagination({ current, pageSize: pageSize }))
+    dispatch(getPostAdminPagination({ current, pageSize }))
   }, [dispatch, current, pageSize])
 
   // Update table params when redux state changes
@@ -72,9 +72,7 @@ const PostTable = ({ onViewDetails }) => {
   }, [current, pageSize, total])
 
   const handleTableChange = (pagination, filters, sorter) => {
-    dispatch(setPage(pagination.current))
-    dispatch(setPerPage(pagination.pageSize))
-
+    // Cập nhật tableParams trước
     setTableParams({
       pagination,
       filters,
@@ -83,6 +81,11 @@ const PostTable = ({ onViewDetails }) => {
         order: sorter.order
       }
     })
+
+    // Sau đó dispatch các action
+    dispatch(setPage(pagination.current))
+    dispatch(setPerPage(pagination.pageSize))
+    dispatch(getPostAdminPagination({ current: pagination.current, pageSize: pagination.pageSize }))
   }
   const getImageUrl = imageUrlArr => {
     if (!imageUrlArr || imageUrlArr.length === 0) {
@@ -235,9 +238,9 @@ const PostTable = ({ onViewDetails }) => {
       rowKey="_id"
       loading={isLoading}
       pagination={{
-        current: current,
-        pageSize: pageSize,
-        total: total,
+        current: tableParams.pagination.current, // Đảm bảo dùng giá trị từ tableParams
+        pageSize: tableParams.pagination.pageSize,
+        total: tableParams.pagination.total,
         showSizeChanger: true,
         pageSizeOptions: [5, 10, 20, 50, 100],
         showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} bài viết`
