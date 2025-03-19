@@ -1,4 +1,4 @@
-import { Button, Input, message, Space, Table } from 'antd'
+import { Button, Input, message, Space, Table, Select } from 'antd'
 import { setPage, setPerPage } from 'features/admin/post/postAdminSlice'
 import { getPostPagination } from 'features/client/post/postThunks'
 import React, { useEffect, useState } from 'react'
@@ -10,34 +10,24 @@ import { approvalStatus, getPostAdminPagination } from 'features/admin/post/post
 import moment from 'moment'
 import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
 
+const { Option } = Select
+
 const PostTable = ({ onViewDetails }) => {
   const dispatch = useDispatch()
   const { posts, total, current, pageSize, isLoading, searchText } = useSelector(state => state.postManagement || {})
 
-  const handleApprovePost = postId => {
-    console.log('Post ID:', postId)
-    const isApproved = true
-    const reason = 'Bài viết đúng yêu cầu chính sách'
+  const handleApprovalChange = (value, postId) => {
+    const isApproved = value === 'approved'
+    const reason = isApproved ? 'Bài viết đúng yêu cầu chính sách' : 'Bài viết chưa đáp ứng yêu cầu'
 
     dispatch(approvalStatus({ id: postId, isApproved, reason }))
       .unwrap()
       .then(() => {
-        message.success('Bài đăng đã được duyệt')
+        message.success(`Bài đăng đã được ${isApproved ? 'duyệt' : 'từ chối'}`)
         dispatch(getPostAdminPagination({ current, pageSize })) // Fetch lại danh sách bài đăng
       })
       .catch(() => {
-        message.error('Có lỗi xảy ra khi duyệt bài đăng')
-      })
-  }
-
-  const handleReloadData = () => {
-    dispatch(getPostAdminPagination({ current, pageSize }))
-      .unwrap()
-      .then(() => {
-        message.success('Đã tải lại dữ liệu')
-      })
-      .catch(() => {
-        message.error('Có lỗi xảy ra khi tải lại dữ liệu')
+        message.error(`Có lỗi xảy ra khi ${isApproved ? 'duyệt' : 'từ chối'} bài đăng`)
       })
   }
 
@@ -87,6 +77,7 @@ const PostTable = ({ onViewDetails }) => {
     dispatch(setPerPage(pagination.pageSize))
     dispatch(getPostAdminPagination({ current: pagination.current, pageSize: pagination.pageSize }))
   }
+
   const getImageUrl = imageUrlArr => {
     if (!imageUrlArr || imageUrlArr.length === 0) {
       return avt
@@ -109,6 +100,8 @@ const PostTable = ({ onViewDetails }) => {
       title: 'Ảnh bài đăng',
       dataIndex: 'image_url',
       key: 'image_url',
+      fixed: 'left', // Add this to fix the column
+      width: 100, // Add width for fixed columns
       render: (imageUrl, record) => {
         const imageSource = getImageUrl(record.image_url)
         return <img src={imageSource} alt="Bài đăng" width={50} height={50} style={{ objectFit: 'cover' }} />
@@ -118,6 +111,8 @@ const PostTable = ({ onViewDetails }) => {
       title: 'Tên bài đăng',
       dataIndex: 'title',
       key: 'title',
+      fixed: 'left', // Add this to fix the column
+      width: 200, // Add width for fixed columns
       sorter: {
         compare: (a, b) => a.title.localeCompare(b.title)
       },
@@ -205,17 +200,20 @@ const PostTable = ({ onViewDetails }) => {
       key: 'isApproved',
       render: (isApproved, record) => {
         const approvedStatus = isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
+
         return (
-          <Space size="middle">
-            {approvedStatus ? (
-              <span style={{ color: 'green' }}>Đã duyệt</span>
-            ) : (
+          <Select
+            value={approvedStatus ? 'approved' : 'pending'}
+            style={{ width: 150 }}
+            onChange={value => handleApprovalChange(value, record._id)}
+          >
+            <Option value="pending">
               <span style={{ color: 'orange' }}>Chưa duyệt</span>
-            )}
-            <Button type="primary" size="small" onClick={() => handleApprovePost(record._id)} disabled={approvedStatus}>
-              Duyệt
-            </Button>
-          </Space>
+            </Option>
+            <Option value="approved">
+              <span style={{ color: 'green' }}>Đã duyệt</span>
+            </Option>
+          </Select>
         )
       }
     },
@@ -225,7 +223,6 @@ const PostTable = ({ onViewDetails }) => {
       render: (_, record) => (
         <Space size="middle">
           <Button icon={<EyeOutlined />} onClick={() => onViewDetails(record)} size="small" />
-          <Button icon={<ReloadOutlined />} onClick={handleReloadData} size="small" title="Tải lại dữ liệu" />
         </Space>
       )
     }

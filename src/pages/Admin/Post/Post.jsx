@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Col, Input } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { Row, Col, Input, Button, message } from 'antd'
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -23,7 +23,9 @@ const Post = () => {
     isModalVisible,
     isDetailsModalVisible,
     selectedPost,
-    posts // Add default value for posts
+    posts,
+    current,
+    pageSize // Add default value for posts
   } = useSelector(state => state.postManagement || {})
   useEffect(() => {
     dispatch(setPage(1))
@@ -46,6 +48,16 @@ const Post = () => {
     dispatch(setIsDetailsModalVisible(true))
     console.log('After dispatch:', { isDetailsModalVisible, selectedPost })
   }
+  const handleReloadData = () => {
+    dispatch(getPostAdminPagination({ current, pageSize }))
+      .unwrap()
+      .then(() => {
+        message.success('Đã tải lại dữ liệu')
+      })
+      .catch(() => {
+        message.error('Có lỗi xảy ra khi tải lại dữ liệu')
+      })
+  }
 
   return (
     <div className={styles.userManagement}>
@@ -62,6 +74,7 @@ const Post = () => {
             style={{ width: '100%' }}
           />
         </Col>
+        <Button icon={<ReloadOutlined />} onClick={handleReloadData} size="large" title="Tải lại dữ liệu" />
       </Row>
 
       <PostTable onEdit={handleEditPost} onViewDetails={handleViewDetails} />
