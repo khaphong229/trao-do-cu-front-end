@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Empty, Badge, Button } from 'antd'
+import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Empty, Badge, Button, Spin } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { TableOutlined, AppstoreOutlined, QrcodeOutlined } from '@ant-design/icons'
 import avt from 'assets/images/logo/avtDefault.webp'
@@ -12,7 +12,7 @@ import imgNotFound from 'assets/images/others/imagenotfound.webp'
 import ContactInfoDisplay from './components/ContactInfoDisplay'
 import { getAvatarPost } from 'hooks/useAvatar'
 import QRImageModal from 'components/QrModal'
-import { setViewMode } from 'features/client/post/postSlice' // Assuming this is the correct import path
+import { setViewMode } from 'features/client/post/postSlice'
 
 const { Text } = Typography
 
@@ -29,6 +29,7 @@ const RequestedPosts = () => {
     current: 1,
     pageSize: 10
   })
+  const [isTabLoading, setIsTabLoading] = useState(false)
 
   const giftRequests = useSelector(state => state.giftRequest.requests)
   const exchangeRequests = useSelector(state => state.exchangeRequest.requests)
@@ -50,7 +51,6 @@ const RequestedPosts = () => {
     a.status === 'accepted' ? -1 : b.status === 'accepted' ? 1 : 0
   )
 
-  // Define activePosts based on current tab
   const getActivePosts = () => {
     switch (activeTab) {
       case 'gifts':
@@ -218,13 +218,11 @@ const RequestedPosts = () => {
 
                 <div className="group-button-ok">
                   <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
-
                   {request.post_id.status === 'inactive' && request.status === 'accepted' && (
                     <Button className="button-qr" icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
                   )}
                 </div>
 
-                {/* User info placed before contact info */}
                 <div className="card-footer">
                   <div className="user-info">
                     <Avatar src={getAvatarPost(request?.post_id?.user_id)} size={20} />
@@ -234,7 +232,6 @@ const RequestedPosts = () => {
                   </div>
                 </div>
 
-                {/* Contact info now appears below the user info */}
                 <ContactInfoDisplay post={request} showInTable={false} />
               </div>
             </Card>
@@ -281,6 +278,15 @@ const RequestedPosts = () => {
     }
   ]
 
+  const handleTabChange = key => {
+    setIsTabLoading(true)
+    setActiveTab(key)
+
+    setTimeout(() => {
+      setIsTabLoading(false)
+    }, 500)
+  }
+
   return (
     <div className="requested-posts-container">
       <QRImageModal
@@ -290,7 +296,19 @@ const RequestedPosts = () => {
         qrImageUrl={qrCode}
       />
       <div className="view-toggle-wrapper">
-        <Tabs type="card" activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
+        <Tabs
+          type="card"
+          activeKey={activeTab}
+          onChange={handleTabChange}
+          items={tabItems.map(item => ({
+            ...item,
+            label: (
+              <Spin spinning={isTabLoading && activeTab === item.key}>
+                {item.icon} {item.label}
+              </Spin>
+            )
+          }))}
+        />
         <div className="view-toggle">
           <Button
             type={viewMode === 'table' ? 'primary' : 'default'}
@@ -300,30 +318,30 @@ const RequestedPosts = () => {
         </div>
       </div>
 
-      {/* Phần được yêu cầu thêm vào */}
-      {viewMode === 'table' ? (
-        <Table
-          columns={columns}
-          dataSource={activePosts}
-          rowKey="_id"
-          pagination={{
-            ...pagination,
-            showSizeChanger: true,
-            showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
-          }}
-          onChange={handleTableChange}
-          loading={isLoading}
-          scroll={{ x: 800 }}
-          onRow={record => ({
-            onClick: e => handlePostDetail(e, record),
-            style: { cursor: 'pointer' }
-          })}
-        />
-      ) : (
-        renderCardView()
-      )}
+      <Spin spinning={isTabLoading || isLoading}>
+        {viewMode === 'table' ? (
+          <Table
+            columns={columns}
+            dataSource={activePosts}
+            rowKey="_id"
+            pagination={{
+              ...pagination,
+              showSizeChanger: true,
+              showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
+            }}
+            onChange={handleTableChange}
+            loading={isLoading}
+            scroll={{ x: 800 }}
+            onRow={record => ({
+              onClick: e => handlePostDetail(e, record),
+              style: { cursor: 'pointer' }
+            })}
+          />
+        ) : (
+          renderCardView()
+        )}
+      </Spin>
 
-      {/* PostDetailModal for viewing selected post details */}
       <PostDetailModal isVisible={isModalVisible} onClose={handleModalClose} post={selectedPost} />
     </div>
   )

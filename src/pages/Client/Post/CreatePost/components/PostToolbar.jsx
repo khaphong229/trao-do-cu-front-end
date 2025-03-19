@@ -27,12 +27,22 @@ const PostToolbar = ({ contentType, imageRef, imageToolRef }) => {
 
   const maxImages = 10 - (imageUrls?.length || 0)
 
-  // Handle successful upload
+  // Clear loading state when fileList is empty or all files are done
+  useEffect(() => {
+    const allCompleted = fileList.every(file => file.status === 'done' || file.status === 'error')
+
+    if (fileList.length === 0 || allCompleted) {
+      setIsLoading(false)
+    } else {
+      setIsLoading(true)
+    }
+  }, [fileList])
+
   const handleUploadSuccess = uploadedUrls => {
-    setUploadedFiles(uploadedUrls)
-    setIsLoading(false)
+    setUploadedFiles(prev => [...prev, ...uploadedUrls])
   }
-  // Only update Redux after the loading is complete
+
+  // Process uploaded files only when they're available and not loading
   useEffect(() => {
     if (uploadedFiles.length > 0 && !isLoading) {
       if (contentType === 'exchange') {
@@ -48,15 +58,17 @@ const PostToolbar = ({ contentType, imageRef, imageToolRef }) => {
           })
         )
       }
+
+      // Reset uploaded files list after processing
       setUploadedFiles([])
     }
-  }, [uploadedFiles, isLoading])
+  }, [uploadedFiles, isLoading, dispatch, contentType, imageUrls])
 
-  const handleFileUpload = ({ fileList }) => {
-    setFileList(fileList)
+  const handleFileUpload = newFileList => {
+    setFileList(newFileList.fileList)
   }
 
-  const handleBeforeUpload = () => {
+  const handleBeforeUpload = file => {
     setIsLoading(true)
     return true
   }
@@ -89,6 +101,8 @@ const PostToolbar = ({ contentType, imageRef, imageToolRef }) => {
             type={contentType === 'exchange' ? 'exchange' : 'post'}
             onUploadSuccess={handleUploadSuccess}
             beforeUpload={handleBeforeUpload}
+            setIsLoading={setIsLoading} // Pass down setIsLoading function
+            showUploadList={false} // Always set to false to hide the filename display
           />
         </Spin>
       </div>
