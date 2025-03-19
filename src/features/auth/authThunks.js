@@ -136,10 +136,35 @@ export const forgotPassword = createAsyncThunk('auth/forgotPassword', async (ema
 })
 export const resetPassword = createAsyncThunk('auth/resetPassword', async (data, { rejectWithValue }) => {
   try {
-    const response = await AuthService.resetPasswordConfirm(data)
-    return response.data
+    console.log('Attempting password reset with data:', {
+      token: data.token,
+      new_password: '(password hidden for security)'
+    })
+
+    const response = await AuthService.resetPassword({
+      token: data.token,
+      new_password: data.new_password
+    })
+
+    console.log('Password reset response:', response)
+
+    if (response?.data?.status === 200 || response?.data?.status === 201) {
+      console.log('Password reset successful')
+      return response.data
+    } else {
+      console.error('Password reset failed with status:', response?.data?.status)
+      return rejectWithValue({
+        message: response?.data?.message || 'Đặt lại mật khẩu thất bại. Vui lòng thử lại.'
+      })
+    }
   } catch (error) {
-    return rejectWithValue(error.response?.data || { message: 'Đặt lại mật khẩu thất bại. Vui lòng thử lại.' })
+    console.error('Password reset error:', error)
+    return rejectWithValue(
+      error.response?.data || {
+        message: 'Đặt lại mật khẩu thất bại. Vui lòng thử lại.',
+        error: error.message
+      }
+    )
   }
 })
 

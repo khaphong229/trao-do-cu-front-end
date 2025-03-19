@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Row, Col, Image, Typography, Divider, Avatar, Tooltip } from 'antd'
+import { Button, Row, Col, Image, Typography, Divider, Avatar, Tooltip, Rate } from 'antd'
 import { ClockCircleOutlined, EnvironmentOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
 import styles from './../scss/PostInfoDetail.module.scss'
 import CreatePostModal from '../../CreatePost/CreatePost'
@@ -20,6 +20,7 @@ import { updatePostRequestStatus } from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
 import { getAvatarPost } from 'hooks/useAvatar'
 import ModalContactDetail from './Modal/ModalContactDetail/ModalContactDetail'
+import { getPostRating } from 'features/client/postRating/postRatingThunks'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -29,6 +30,7 @@ dayjs.locale('vi')
 const PostInfoDetail = () => {
   const { selectedPost } = useSelector(state => state.post)
   const { user } = useSelector(state => state.auth)
+  const { postRating, total: totalRatings } = useSelector(state => state.postRating)
   const [contactModalVisible, setContactModalVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [mainImage, setMainImage] = useState(null)
@@ -50,6 +52,14 @@ const PostInfoDetail = () => {
       batchClick(selectedPost.category_id || '')
     }
   }, [selectedPost, batchClick])
+
+  // Fetch post ratings when component mounts
+  useEffect(() => {
+    dispatch(getPostRating())
+  }, [dispatch])
+
+  // Set a default rating of 5 stars
+  const defaultRating = 5
 
   const handleRequestConfirm = async values => {
     try {
@@ -239,8 +249,10 @@ const PostInfoDetail = () => {
             </div>
 
             <div style={{ textAlign: 'center' }}>
-              <StarOutlined className={styles.StartIcon} />
-              <Text className={styles.Evaluate}>0 đánh giá</Text>
+              <div className={styles.ratingContainer}>
+                <Rate disabled defaultValue={defaultRating} value={defaultRating} />
+                <Text className={styles.Evaluate}>{totalRatings || 0} đánh giá</Text>
+              </div>
             </div>
           </div>
         </Col>
