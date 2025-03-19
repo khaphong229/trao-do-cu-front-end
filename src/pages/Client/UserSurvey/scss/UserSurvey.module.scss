@@ -141,7 +141,7 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   // Categories grid
   &__categories {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     margin-top: 0.5rem;
   }
@@ -361,8 +361,8 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
     &__categories {
       grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
     }
-
     &__actions {
       flex-direction: column-reverse;
       gap: 1rem;
