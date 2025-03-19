@@ -11,7 +11,6 @@ import imgNotFound from 'assets/images/others/imagenotfound.webp'
 import ContactInfoDisplay from './components/ContactInfoDisplay'
 import { getAvatarPost } from 'hooks/useAvatar'
 import { QrcodeOutlined } from '@ant-design/icons'
-import QRImageModal from 'components/QrModal'
 
 const { Text } = Typography
 
@@ -262,12 +261,6 @@ const RequestedPosts = () => {
 
   return (
     <>
-      <QRImageModal
-        isOpen={isOpenQrModal}
-        handleOpenQr={handleOpenQr}
-        handleCancelQR={handleCancelQR}
-        qrImageUrl={qrCode}
-      />
       <Tabs type="card" activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
       {allRequests.length === 0 &&
         giftRequests.length === 0 &&
