@@ -7,12 +7,7 @@ import UploadCustom from 'components/common/UploadCustom'
 import { updatePostData } from 'features/client/post/postSlice'
 import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 
-const PostToolbar = ({
-  contentType,
-  imageRef,
-  // New tour-specific refs
-  imageToolRef
-}) => {
+const PostToolbar = ({ contentType, imageRef, imageToolRef }) => {
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState([])
@@ -32,13 +27,22 @@ const PostToolbar = ({
 
   const maxImages = 10 - (imageUrls?.length || 0)
 
-  // Handle successful upload
+  // Clear loading state when fileList is empty or all files are done
+  useEffect(() => {
+    const allCompleted = fileList.every(file => file.status === 'done' || file.status === 'error')
+
+    if (fileList.length === 0 || allCompleted) {
+      setIsLoading(false)
+    } else {
+      setIsLoading(true)
+    }
+  }, [fileList])
+
   const handleUploadSuccess = uploadedUrls => {
-    setUploadedFiles(uploadedUrls)
-    setIsLoading(false)
+    setUploadedFiles(prev => [...prev, ...uploadedUrls])
   }
 
-  // Only update Redux after the loading is complete
+  // Process uploaded files only when they're available and not loading
   useEffect(() => {
     if (uploadedFiles.length > 0 && !isLoading) {
       if (contentType === 'exchange') {
@@ -54,15 +58,17 @@ const PostToolbar = ({
           })
         )
       }
+
+      // Reset uploaded files list after processing
       setUploadedFiles([])
     }
-  }, [uploadedFiles, isLoading])
+  }, [uploadedFiles, isLoading, dispatch, contentType, imageUrls])
 
-  const handleFileUpload = ({ fileList }) => {
-    setFileList(fileList)
+  const handleFileUpload = newFileList => {
+    setFileList(newFileList.fileList)
   }
 
-  const handleBeforeUpload = () => {
+  const handleBeforeUpload = file => {
     setIsLoading(true)
     return true
   }
@@ -91,7 +97,8 @@ const PostToolbar = ({
             type={contentType === 'exchange' ? 'exchange' : 'post'}
             onUploadSuccess={handleUploadSuccess}
             beforeUpload={handleBeforeUpload}
-            showUploadList={!isLoading} // Hide upload list during loading
+            setIsLoading={setIsLoading} // Pass down setIsLoading function
+            showUploadList={false} // Always set to false to hide the filename display
           />
         </Spin>
       </div>

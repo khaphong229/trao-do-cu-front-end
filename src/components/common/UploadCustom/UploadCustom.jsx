@@ -4,23 +4,58 @@ import { useDispatch } from 'react-redux'
 import { uploadExchangeImages, uploadPostImages } from '../../../features/upload/uploadThunks'
 
 function UploadCustom(props) {
-  const { type = 'oke', fileList, setFileList, uploadButton, disabled = false, maxCount = 5 } = props
+  const {
+    type = 'oke',
+    fileList,
+    setFileList,
+    uploadButton,
+    disabled = false,
+    maxCount = 5,
+    onUploadSuccess,
+    beforeUpload: propBeforeUpload,
+    setIsLoading
+  } = props
 
   const dispatch = useDispatch()
 
-  const handleUploadFile = async ({ file, onSuccess, onError }) => {
+  const handleUploadFile = async ({ file }) => {
     try {
+      let response
       if (type !== 'exchange') {
-        await dispatch(uploadPostImages(file)).unwrap()
+        response = await dispatch(uploadPostImages(file)).unwrap()
       } else {
-        await dispatch(uploadExchangeImages(file)).unwrap()
+        response = await dispatch(uploadExchangeImages(file)).unwrap()
+      }
+
+      message.success('Tải ảnh thành công') // Changed to "Tải ảnh thành công"
+
+      // Check if this is the last file uploading
+      const updatedFileList = fileList.map(f => (f.uid === file.uid ? { ...f, status: 'done' } : f))
+
+      if (updatedFileList.every(f => f.status === 'done' || f.status === 'error')) {
+        setIsLoading(false) // Force loading to false when all uploads complete
       }
     } catch (error) {
-      message.error(error?.message || 'Tải file thất bại')
+      message.error('Tải ảnh thất bại') // Changed to "Tải ảnh thất bại"
+
+      // Check if all files are now either done or error
+      const updatedFileList = fileList.map(f => (f.uid === file.uid ? { ...f, status: 'error' } : f))
+
+      if (updatedFileList.every(f => f.status === 'done' || f.status === 'error')) {
+        setIsLoading(false) // Force loading to false when all uploads complete with some errors
+      }
     }
   }
 
   const beforeUpload = file => {
+    // Call beforeUpload from props if available
+    if (propBeforeUpload) {
+      const result = propBeforeUpload(file)
+      if (result === false || result === Upload.LIST_IGNORE) {
+        return result
+      }
+    }
+
     const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
     const videoTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo']
 
@@ -60,11 +95,26 @@ function UploadCustom(props) {
     customRequest: handleUploadFile,
     showUploadList: false,
     onChange: info => {
+      // Update the fileList with current status
       setFileList(info)
+
       if (info.file.status === 'done') {
-        // Additional handling if needed
+        message.success(`${info.file.name} tải ảnh thành công`) // Changed message here too
+        if (onUploadSuccess) {
+          onUploadSuccess([info.file.response])
+        }
+
+        // Check if all files are complete
+        if (info.fileList.every(file => file.status === 'done' || file.status === 'error')) {
+          setIsLoading(false) // Ensure loading state is turned off when all files complete
+        }
       } else if (info.file.status === 'error') {
-        // Additional error handling if needed
+        message.error(`${info.file.name} tải ảnh thất bại`) // Changed message here too
+
+        // Check if all files are complete
+        if (info.fileList.every(file => file.status === 'done' || file.status === 'error')) {
+          setIsLoading(false) // Ensure loading state is turned off when all files complete with some errors
+        }
       }
     }
   }
