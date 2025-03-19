@@ -1,6 +1,5 @@
 @import '../../../../assets/scss/variables.scss';
 
-// Variables
 $color-main: #37c5a0;
 $color-white: #ffffff;
 $color-text-primary: rgba(0, 0, 0, 0.85);
@@ -10,7 +9,7 @@ $box-shadow-base: 0 1px 3px rgba(0, 0, 0, 0.1);
 $box-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
 $border-radius-base: 8px;
 $transition-base: all 0.3s ease;
-// Responsive Breakpoints
+
 @mixin desktop {
   @media (min-width: 1200px) {
     @content;
@@ -35,7 +34,6 @@ $transition-base: all 0.3s ease;
   }
 }
 
-// Main Container
 .postWrap {
   background: $color-white;
   padding: 10px;
@@ -54,15 +52,14 @@ $transition-base: all 0.3s ease;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
   flex-wrap: wrap;
 }
 
 // Post Title
 .postTitle {
-  margin-top: 10px;
+  margin: 10px 0;
   flex-grow: 1;
-  margin-bottom: 20px !important;
   position: relative;
   color: $color-text-primary;
 
@@ -70,6 +67,15 @@ $transition-base: all 0.3s ease;
     font-size: 16px;
     margin-bottom: 16px !important;
     padding-left: 4px;
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background-color: $colorMain;
+    margin-top: 10px;
   }
 }
 

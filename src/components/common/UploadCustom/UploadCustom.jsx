@@ -16,7 +16,7 @@ function UploadCustom(props) {
         await dispatch(uploadExchangeImages(file)).unwrap()
       }
     } catch (error) {
-      message.error(error?.message || 'Tải file thất bại')
+      message.error(error.name === 'TypeError' && 'Tải ảnh/video thất bại vui lòng thử lại')
     }
   }
 
@@ -33,9 +33,9 @@ function UploadCustom(props) {
     }
 
     if (isImage) {
-      const isValidSize = file.size / 1024 / 1024 < 2
+      const isValidSize = file.size / 1024 / 1024 < 5
       if (!isValidSize) {
-        message.error('Mỗi ảnh phải nhỏ hơn 2MB!')
+        message.error('Mỗi ảnh phải nhỏ hơn 5MB!')
         return Upload.LIST_IGNORE
       }
     }

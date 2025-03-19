@@ -4,6 +4,7 @@
   padding: 0;
   margin: 16px 0;
   border: none;
+  width: 100%;
 
   .toolsText {
     color: $colorTextPlaceholder;
@@ -14,73 +15,85 @@
   .toolsButtons {
     display: flex;
     width: 100%;
+
     :global {
       .ant-upload-wrapper {
         width: 100%;
       }
+
       .ant-upload-select {
         width: 100%;
       }
-    }
 
-    // Tùy chỉnh nút upload
-    :global(.ant-btn) {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 16px;
-      border-radius: 8px;
-      background-color: #ffffff;
-      border: 1px dashed $colorMain; /* Màu xanh lá */
-      height: auto;
-      transition: all 0.3s ease;
-      color: $colorMain; /* Màu chữ xanh lá */
-
-      &:hover {
-        background-color: rgba(76, 175, 80, 0.05);
-        border-color: $colorMain;
-        color: $colorMain !important;
+      .ant-upload-list {
+        margin-top: 12px;
       }
 
-      :global(.anticon) {
-        font-size: 20px;
-        color: $colorMain; /* Icon màu xanh lá */
-        margin-right: 8px;
+      .ant-upload-list-item {
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-top: 8px;
       }
 
-      // Tùy chỉnh text của nút
-      span {
-        font-size: 15px;
-        font-weight: 500;
-      }
+      // Tùy chỉnh nút upload
+      .ant-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 16px;
+        border-radius: 8px;
+        background-color: #ffffff;
+        border: 1px dashed $colorMain; /* Màu xanh lá */
+        height: auto;
+        transition: all 0.3s ease;
+        color: $colorMain; /* Màu chữ xanh lá */
 
-      &:disabled {
-        background-color: #f5f5f5;
-        color: rgba(0, 0, 0, 0.25);
+        &:hover {
+          background-color: rgba(76, 175, 80, 0.05);
+          border-color: $colorMain;
+          color: $colorMain !important;
+        }
 
-        :global(.anticon) {
+        .anticon {
+          font-size: 20px;
+          color: $colorMain; /* Icon màu xanh lá */
+          margin-right: 8px;
+        }
+
+        // Tùy chỉnh text của nút
+        span {
+          font-size: 15px;
+          font-weight: 500;
+        }
+
+        &:disabled {
+          background-color: #f5f5f5;
           color: rgba(0, 0, 0, 0.25);
+
+          .anticon {
+            color: rgba(0, 0, 0, 0.25);
+          }
         }
       }
     }
   }
 }
 
-// Tùy chỉnh cho danh sách file đã upload
-:global(.ant-upload-list) {
-  margin-top: 12px;
-}
+.uploadSpinner {
+  width: 100%;
 
-:global(.ant-upload-list-item) {
-  border-radius: 6px;
-  padding: 8px 12px;
-  margin-top: 8px;
+  :global {
+    .ant-spin-container {
+      width: 100%;
+    }
+  }
 }
 
 .customIcon {
   font-size: 22px;
   transition: color 0.3s ease;
+
   &:hover {
     color: $colorMain;
   }

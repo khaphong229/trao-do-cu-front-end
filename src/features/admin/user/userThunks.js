@@ -3,9 +3,13 @@ import UserService from '../../../services/admin/userService'
 
 export const getUserPagination = createAsyncThunk(
   'userManagement/getPagination',
-  async (params, { rejectWithValue }) => {
+  async ({ page, per_page, searchText = '' }, { rejectWithValue }) => {
     try {
-      const response = await UserService.getPagination(params)
+      const response = await UserService.getPagination({
+        page,
+        per_page,
+        search: searchText
+      })
       return response.data
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: 'Failed to fetch users' })

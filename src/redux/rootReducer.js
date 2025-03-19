@@ -8,6 +8,7 @@ import giftRequestReducer from '../features/client/request/giftRequest/giftReque
 import exchangeRequestReducer from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import notificationReducer from 'features/client/notification/notificationSlice'
 import surveyReducer from 'features/client/Survey/surveySlice'
+import postAdminReducer from '../features/admin/post/postAdminSlice'
 const rootReducer = combineReducers({
   auth: authReducer,
   userManagement: userReducer,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
   giftRequest: giftRequestReducer,
   exchangeRequest: exchangeRequestReducer,
   notification: notificationReducer,
-  survey: surveyReducer
+  survey: surveyReducer,
+  postManagement: postAdminReducer
 })
 
 export default rootReducer

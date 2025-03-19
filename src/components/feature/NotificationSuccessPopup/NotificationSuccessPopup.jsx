@@ -58,6 +58,32 @@ const NotificationSuccessPopup = () => {
     return `https://facebook.com/${fbUrl}`
   }
 
+  const renderContactInfo = item => {
+    const hasPhone = !!item.phone
+    const hasFacebook = !!item.facebook
+
+    if (hasPhone && hasFacebook) {
+      return (
+        <>
+          <a href={`tel:${item.phone}`}>{item.phone}</a> hoặc{' '}
+          <a href={formatFacebookUrl(item.facebook)} target="_blank" rel="noopener noreferrer">
+            Facebook
+          </a>
+        </>
+      )
+    } else if (hasPhone) {
+      return <a href={`tel:${item.phone}`}>{item.phone}</a>
+    } else if (hasFacebook) {
+      return (
+        <a href={formatFacebookUrl(item.facebook)} target="_blank" rel="noopener noreferrer">
+          Facebook
+        </a>
+      )
+    } else {
+      return 'không có thông tin liên hệ'
+    }
+  }
+
   const renderContent = item => {
     return (
       <>
@@ -65,11 +91,7 @@ const NotificationSuccessPopup = () => {
         <Text strong style={{ color: '#1890ff' }}>
           {item.title}
         </Text>{' '}
-        của <Text strong>{item.userName}</Text> vui lòng liên hệ thông qua{' '}
-        <a href={`tel:${item.phone}`}>{item.phone}</a> hoặc{' '}
-        <a href={formatFacebookUrl(item.facebook)} target="_blank" rel="noopener noreferrer">
-          Facebook
-        </a>
+        của <Text strong>{item.userName}</Text> vui lòng liên hệ thông qua {renderContactInfo(item)}
       </>
     )
   }

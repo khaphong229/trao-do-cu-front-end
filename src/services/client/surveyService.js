@@ -8,7 +8,6 @@ const surveyService = {
   },
 
   updateSurvey(data) {
-    // console.log('Dữ liệu gửi lên API:', JSON.stringify(data)) // Debug
     return this.http.put('/user-interests', data)
   },
 

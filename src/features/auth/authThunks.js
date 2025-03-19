@@ -2,7 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import AuthService from '../../services/authService'
 import { setAuthToken } from '../../utils/localStorageUtils'
 import { timeoutPromise } from 'utils/errorUtils'
-import { reject } from 'lodash'
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
   const { isAdmin, ...data } = credentials
@@ -74,27 +73,20 @@ export const updateUserProfile = createAsyncThunk(
   async (userData, { rejectWithValue, getState, dispatch }) => {
     try {
       const currentUser = getState().auth.user
-
-      // Convert address to string if it's an object
-      let currentAddress = currentUser?.address || ''
-      if (typeof currentAddress === 'object' && currentAddress !== null) {
-        if (Array.isArray(currentAddress)) {
-          currentAddress = currentAddress.join('')
-        } else {
-          currentAddress = Object.values(currentAddress).join('')
-        }
-      }
-
       const payload = {
         name: currentUser?.name || '',
         email: currentUser?.email || '',
         phone: currentUser?.phone || '',
-        address: currentAddress,
+        address: currentUser?.address || [],
+        social_media: {
+          facebook: currentUser?.social_media?.facebook || '',
+          zalo: '',
+          instagram: ''
+        },
         // Remove social_media if not required
         // ...(currentUser?.social_media?.length > 0 && { social_media: [currentUser?.social_media[0]] }),
         ...userData
       }
-
       const response = await AuthService.updateProfile(payload)
 
       if (response.status === 201) {

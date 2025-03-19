@@ -23,15 +23,7 @@ const PostContent = props => {
 }
 
 // Component for regular posts
-const RegularPostContent = ({
-  titleRef,
-  imageRef,
-  errorPost,
-  setErrorPost,
-  uploadedImages,
-  setUploadedImages,
-  ref2
-}) => {
+const RegularPostContent = ({ titleRef, imageRef, errorPost, setErrorPost, setUploadedImages, ref2 }) => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const { isShowEmoji, dataCreatePost } = useSelector(state => state.post)
@@ -107,9 +99,9 @@ const RegularPostContent = ({
           value={dataCreatePost.title || ''}
           onChange={handleTitleChange}
           style={{ width: '100%', borderRadius: '0' }}
-          ref={el => {
-            setTimeout(() => el?.focus(), 0)
-          }}
+          // ref={el => {
+          //   setTimeout(() => el?.focus(), 0)
+          // }}
         />
       </div>
 

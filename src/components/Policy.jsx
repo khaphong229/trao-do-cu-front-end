@@ -5,6 +5,7 @@ const { Title, Paragraph, Text } = Typography
 
 const Policy = ({ isOpen, handleCancel }) => {
   const termsData = [
+    'Việc quyết định sản phẩm bạn đăng lên nền tảng là của chính bạn.',
     'Giả mạo danh tính hoặc mạo danh người khác để lừa đảo.',
     'Dùng từ ngữ thiếu văn minh khi trao đổi trên nền tảng.',
     'Gửi spam, quảng cáo trái phép hoặc phát tán virus, mã độc.',

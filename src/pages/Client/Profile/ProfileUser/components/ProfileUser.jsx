@@ -11,7 +11,7 @@ import Title from 'antd/es/skeleton/Title'
 import { useAvatar } from 'hooks/useAvatar'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import Location from 'pages/Client/Post/CreatePost/components/Modal/Location'
-
+import logger from 'utils/logger'
 const { TabPane } = Tabs
 
 const ProfilePage = () => {
@@ -34,26 +34,24 @@ const ProfilePage = () => {
     email: '',
     gender: '',
     phone: '',
-    address: '',
+    address: [],
+    social_media: {
+      facebook: '',
+      zalo: '',
+      instagram: ''
+    },
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   })
   const [savePassword, setSavePassword] = useState(false)
 
-  // Hàm tiện ích để chuyển đổi địa chỉ từ mảng sang chuỗi
-  const addressToString = address => {
-    if (!address) return ''
-    if (Array.isArray(address)) return address.join('')
-    return String(address)
-  }
-
   // Sửa lại hàm getDefaultAddress để kiểm tra nếu list là một mảng
   const getDefaultAddress = list => {
     if (!list) return ''
     if (!Array.isArray(list)) return String(list)
     const defaultAddress = list.find(item => item.isDefault === true)
-    return defaultAddress?.address || ''
+    return defaultAddress?.address || 'Chưa cung cấp'
   }
 
   useEffect(() => {
@@ -64,13 +62,17 @@ const ProfilePage = () => {
         phone: userData.phone || '',
         address: getDefaultAddress(userData.address),
         gender: userData.gender || '',
+        social_media: {
+          facebook: userData?.social_media?.facebook,
+          zalo: '',
+          instagram: ''
+        },
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       })
     }
   }, [userData])
-  console.log('userData:', userData)
 
   const handleInputChange = e => {
     const { id, value } = e.target
@@ -83,13 +85,9 @@ const ProfilePage = () => {
 
   const handleUpdateMe = async () => {
     try {
-      // Chuyển đổi địa chỉ từ chuỗi thành mảng ký tự để backend xử lý
-      const updatedData = {
-        ...formData,
-        address: formData.address.split('') // Chuyển thành mảng ký tự
-      }
+      delete formData.address
 
-      const response = await dispatch(updateUserProfile(updatedData)).unwrap()
+      const response = await dispatch(updateUserProfile(formData)).unwrap()
       if (response.status === 201) {
         message.success(response.message)
         // Sử dụng navigate để reload trang hiện tại
@@ -147,6 +145,7 @@ const ProfilePage = () => {
             avatar: newAvatarUrl
           })
         ).unwrap()
+        logger.log(response)
         if (response.status === 201) {
           message.success('Upload ảnh thành công')
           dispatch(getCurrentUser(false))

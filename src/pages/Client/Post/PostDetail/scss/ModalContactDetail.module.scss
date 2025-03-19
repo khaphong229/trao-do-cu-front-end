@@ -1,12 +1,10 @@
 @import '../../../../../assets/scss/variables.scss';
 
 .contactModalContent {
-  padding: 16px;
-
+  margin: 16px 0;
   .authorSection {
     display: flex;
     align-items: center;
-    padding-bottom: 16px;
 
     .avatar {
       margin-right: 16px;
@@ -28,7 +26,9 @@
   }
 
   .contactSection {
-    padding: 8px 0;
+    .heading {
+      margin: 10px 0;
+    }
 
     h5 {
       font-size: 18px;
@@ -46,7 +46,7 @@
       transition: background 0.3s ease;
 
       &:hover {
-        background: #e6f7ff;
+        background: $colorHover;
       }
 
       .icon {
@@ -90,5 +90,22 @@
 
   .ant-divider {
     margin: 16px 0;
+  }
+}
+
+.lockedContact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 20px;
+  color: #595959;
+  font-weight: 600;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  transition: background 0.3s ease;
+  .lockIcon {
+    margin-right: 10px;
   }
 }

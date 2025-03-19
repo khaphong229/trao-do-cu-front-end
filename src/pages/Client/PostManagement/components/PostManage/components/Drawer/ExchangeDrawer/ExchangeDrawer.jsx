@@ -11,7 +11,7 @@ import {
 } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getAvatarPost } from 'hooks/useAvatar'
-// Assuming moment is already installed
+import imgNotFound from 'assets/images/others/imagenotfound.webp'
 
 export const ExchangeDrawer = ({
   visible,
@@ -116,8 +116,12 @@ export const ExchangeDrawer = ({
                 <Image
                   className={styles.imgItem}
                   key={index}
-                  src={`${URL_SERVER_IMAGE}${img}`}
+                  src={`${URL_SERVER_IMAGE}${img}` || imgNotFound}
                   alt={`Post image ${index + 1}`}
+                  onError={e => {
+                    e.target.onerror = null
+                    e.target.src = imgNotFound
+                  }}
                 />
               ))}
             </div>

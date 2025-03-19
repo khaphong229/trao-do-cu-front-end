@@ -64,7 +64,7 @@ const SearchBar = () => {
         <div className={styles['input-wrapper']}>
           <Input
             type="text"
-            placeholder="Tìm kiếm bài đăng..."
+            placeholder="Tìm kiếm sản phẩm..."
             value={searchTerm}
             onChange={handleInputChange}
             onFocus={() => setShowSuggestions(true)}

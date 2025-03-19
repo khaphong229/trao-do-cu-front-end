@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Tabs } from 'antd'
+import { Tabs } from 'antd'
 import styles from './PostManage.module.scss'
 import CreatePostModal from 'pages/Client/Post/CreatePost/CreatePost'
 import { useDispatch, useSelector } from 'react-redux'
-import { setCreateModalVisibility, setViewMode } from 'features/client/post/postSlice'
+import { setCreateModalVisibility } from 'features/client/post/postSlice'
 import { UserInfo } from './components/UserInfor/UserInfor'
 import { ActiveListings } from './components/PostTabs/ActiveListing/ActiveListing'
 import RequestedPosts from './components/PostTabs/RequestedPosts'
-import { TableOutlined, AppstoreOutlined } from '@ant-design/icons'
 
 const { TabPane } = Tabs
 
@@ -15,7 +14,6 @@ export const PostManage = ({ tabType }) => {
   const dispatch = useDispatch()
 
   const { user } = useSelector(state => state.auth)
-  const { viewMode } = useSelector(state => state.post)
   const [activeTab, setActiveTab] = useState(tabType)
   const [activeSubTab, setActiveSubTab] = useState('all')
   const [tabRefreshKey, setTabRefreshKey] = useState(0)
@@ -62,19 +60,19 @@ export const PostManage = ({ tabType }) => {
       <div className={styles.tabsContainer}>
         <div className={styles.tabsWrapper}>
           <div className={styles.tabHeader}>
-            <Tabs activeKey={activeTab} onChange={handleTabChange} className={styles.listingTabs}>
+            <Tabs type="card" activeKey={activeTab} onChange={handleTabChange} className={styles.listingTabs}>
               {tabItems.map(tab => (
                 <TabPane key={tab.key} tab={<span className={styles.tabLabel}>{tab.label}</span>} />
               ))}
             </Tabs>
 
-            <div className={styles.viewToggle}>
+            {/* <div className={styles.viewToggle}>
               <Button
                 type={viewMode === 'table' ? 'primary' : 'default'}
                 icon={viewMode === 'table' ? <TableOutlined /> : <AppstoreOutlined />}
                 onClick={() => dispatch(setViewMode(viewMode === 'table' ? 'card' : 'table'))}
               />
-            </div>
+            </div> */}
           </div>
 
           <div className={styles.contentTabs}>{renderTabContent()}</div>

@@ -31,3 +31,15 @@ export const getAvatarPost = user => {
     return avtDefault
   }
 }
+
+export const getAvatarPostNews = user => {
+  if (user?.avatar) {
+    if (user?.avatar.includes('lh3.googleusercontent.com')) {
+      return user.avatar
+    } else {
+      return `${URL_SERVER_IMAGE}${user.avatar}`
+    }
+  } else {
+    return avtDefault
+  }
+}

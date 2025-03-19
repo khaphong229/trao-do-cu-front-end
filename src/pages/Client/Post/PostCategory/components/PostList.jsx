@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination } from 'antd'
+import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination, Tooltip } from 'antd'
 import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
@@ -12,7 +12,6 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import withAuth from 'hooks/useAuth'
 import { getValidImageUrl } from 'helpers/helper'
-import avt from 'assets/images/logo/avtDefault.webp'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGiftRequest } from '../../../Request/GiftRequest/useRequestGift'
 import ContactInfoModal from '../../../Request/GiftRequest/components/ContactInfoModal'
@@ -22,6 +21,7 @@ import { setExchangeFormModalVisible } from '../../../../../features/client/requ
 import notFoundPost from 'components/feature/post/notFoundPost'
 import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
 import { locationService } from 'services/client/locationService'
+import { getAvatarPost } from 'hooks/useAvatar'
 
 const { Text } = Typography
 
@@ -146,27 +146,47 @@ const PostList = () => {
     const isMe = item?.user_id?._id === user._id
     if (item?.type === 'gift') {
       return (
-        <AuthButton
-          icon={<GiftOutlined />}
-          type="primary"
-          className={styles.ButtonChat}
-          onClick={() => handleRequest(item)}
-          disabled={item?.isRequested || isMe}
+        <Tooltip
+          title={
+            item?.isRequested
+              ? `Bạn ơi, chờ ${item.user_id?.name} xác nhận nhé!`
+              : isMe
+                ? 'Bạn không thể thao tác với sản phẩm của chính bạn'
+                : ''
+          }
         >
-          {item?.isRequested ? 'Đã yêu cầu' : 'Nhận'}
-        </AuthButton>
+          <AuthButton
+            icon={<GiftOutlined />}
+            type="primary"
+            className={styles.ButtonChat}
+            onClick={() => handleRequest(item)}
+            disabled={item?.isRequested || isMe}
+          >
+            {item?.isRequested ? 'Đã yêu cầu' : 'Nhận'}
+          </AuthButton>
+        </Tooltip>
       )
     } else if (item?.type === 'exchange') {
       return (
-        <AuthButton
-          icon={<SwapOutlined />}
-          type="default"
-          className={styles.ButtonChat}
-          onClick={() => handleRequest(item)}
-          disabled={item?.isRequested || isMe}
+        <Tooltip
+          title={
+            item?.isRequested
+              ? `Bạn ơi, chờ ${item.user_id?.name} xác nhận nhé!`
+              : isMe
+                ? 'Bạn không thể thao tác với sản phẩm của chính bạn'
+                : ''
+          }
         >
-          {item?.isRequested ? 'Đã yêu cầu' : 'Đổi'}
-        </AuthButton>
+          <AuthButton
+            icon={<SwapOutlined />}
+            type="default"
+            className={styles.ButtonChat}
+            onClick={() => handleRequest(item)}
+            disabled={item?.isRequested || isMe}
+          >
+            {item?.isRequested ? 'Đã yêu cầu' : 'Đổi'}
+          </AuthButton>
+        </Tooltip>
       )
     }
     return null
@@ -258,7 +278,7 @@ const PostList = () => {
       </div>
       {isLoading || isError ? (
         <Row gutter={[8, 8]}>
-          {[...Array(4)].map((_, index) => (
+          {[...Array(10)].map((_, index) => (
             <Col xs={24} sm={12} key={index}>
               <PostCardRowSkeleton />
             </Col>
@@ -287,8 +307,13 @@ const PostList = () => {
                 }
               >
                 <div className={styles.Container}>
-                  {renderTitle(item)}
                   <span className={styles.status}>{item?.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}</span>
+                  {renderTitle(item)}
+
+                  <div className={styles.userText}>
+                    <Avatar className={styles.avtUser} src={getAvatarPost(item?.user_id)} />
+                    <Text className={styles.TextUser}>{item?.user_id?.name}</Text>
+                  </div>
                   <div className={styles.TimeRole}>
                     <span className={styles.time}>
                       {dayjs(item?.created_at).isValid() ? dayjs(item?.created_at).fromNow() : 'Không rõ thời gian'}
@@ -296,14 +321,8 @@ const PostList = () => {
                     <span> • </span>
                     <span>{item?.city?.split(',')?.slice(-1)[0] || ''}</span>
                   </div>
-                  <div className={styles.User}>
-                    <div className={styles.userText}>
-                      <Avatar className={styles.avtUser} src={item?.avatar || avt} />
-                      <Text className={styles.TextUser}>{item?.user_id?.name}</Text>
-                    </div>
 
-                    {renderButton(item)}
-                  </div>
+                  {renderButton(item)}
                 </div>
               </Card>
             </Col>

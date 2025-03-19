@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Row, Col, Image, Typography, Divider, Avatar, Tooltip } from 'antd'
-import { ClockCircleOutlined, EnvironmentOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
+import { ClockCircleOutlined, EnvironmentOutlined, UserOutlined } from '@ant-design/icons'
 import styles from './../scss/PostInfoDetail.module.scss'
 import CreatePostModal from '../../CreatePost/CreatePost'
 import withAuth from 'hooks/useAuth'
@@ -21,7 +21,7 @@ import useInteraction from 'hooks/useInteraction'
 import { getAvatarPost } from 'hooks/useAvatar'
 import ModalContactDetail from './Modal/ModalContactDetail/ModalContactDetail'
 
-const { Title, Text, Paragraph } = Typography
+const { Title, Text } = Typography
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -190,18 +190,19 @@ const PostInfoDetail = () => {
         </Col>
 
         <Col xs={24} md={12}>
-          {renderTitle()}
           <Title level={3} className={styles.statusText}>
             {selectedPost.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
           </Title>
+          {renderTitle()}
           <div>
             <Text className={styles.textAdress}>
               <EnvironmentOutlined />{' '}
-              {selectedPost?.specificLocation
+              {/* {selectedPost?.specificLocation
                 ? selectedPost.specificLocation.startsWith(',')
                   ? selectedPost.specificLocation.slice(1)
                   : selectedPost.specificLocation
-                : 'Không rõ địa điểm'}
+                : 'Không rõ địa điểm'} */}
+              {selectedPost?.city ? selectedPost?.city : 'Không rõ địa điểm'}
             </Text>
             <Text className={styles.textAdress}>
               <ClockCircleOutlined />{' '}
@@ -238,10 +239,10 @@ const PostInfoDetail = () => {
               </div>
             </div>
 
-            <div style={{ textAlign: 'center' }}>
+            {/* <div style={{ textAlign: 'center' }}>
               <StarOutlined className={styles.StartIcon} />
               <Text className={styles.Evaluate}>0 đánh giá</Text>
-            </div>
+            </div> */}
           </div>
         </Col>
       </Row>

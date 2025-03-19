@@ -11,7 +11,8 @@ import dayjs from 'dayjs'
 import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetail from '../components/PostDetail/PostDetail'
 import { ExpiredListings } from '../ExpiredListing/ExpriedListing'
-import { ClockCircleOutlined } from '@ant-design/icons'
+import { AppstoreOutlined, ClockCircleOutlined, TableOutlined } from '@ant-design/icons'
+import { setViewMode } from 'features/client/post/postSlice'
 const { TabPane } = Tabs
 
 export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive, onShowExpired }) => {
@@ -202,9 +203,8 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         <Image
           src={`${URL_SERVER_IMAGE}${images[0]}`}
           alt="Sản phẩm"
-          width={100}
-          height={100}
-          style={{ objectFit: 'cover' }}
+          style={{ width: 100, height: 100, objectFit: 'cover' }}
+          preview={false}
         />
       )
     },
@@ -302,7 +302,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
               </Typography.Title>
 
               <Typography.Paragraph className={styles.cardDescription} ellipsis={{ rows: 2 }}>
-                {item.description}
+                {item.city}
               </Typography.Paragraph>
 
               <div className={styles.cardFooter}>
@@ -335,14 +335,23 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
   return (
     <>
       <div className={styles.tabHeader}>
-        <Tabs activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
+        <Tabs type="card" activeKey={activeSubTab} onChange={handleTabChange} className={styles.subTabs}>
           {subTabItems.map(subTab => (
             <TabPane key={subTab.key} tab={<span className={styles.subTabLabel}>{subTab.label}</span>} />
           ))}
         </Tabs>
-        <Button type="default" onClick={showHistoryModal}>
-          Lịch sử sản phẩm
-        </Button>
+        <div className={styles.buttonGroup}>
+          <Button type="default" onClick={showHistoryModal}>
+            Lịch sử sản phẩm
+          </Button>
+          <div className={styles.viewToggle}>
+            <Button
+              type={viewMode === 'table' ? 'primary' : 'default'}
+              icon={viewMode === 'table' ? <TableOutlined /> : <AppstoreOutlined />}
+              onClick={() => dispatch(setViewMode(viewMode === 'table' ? 'card' : 'table'))}
+            />
+          </div>
+        </div>
       </div>
 
       {viewMode === 'table' ? (
@@ -378,7 +387,6 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         onCancel={handleHistoryModalClose}
         footer={null}
         width={1000}
-        style={{ top: 20 }}
         bodyStyle={{ padding: '12px', maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}
       >
         <ExpiredListings

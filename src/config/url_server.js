@@ -5,4 +5,7 @@ const URL_SERVER =
 
 export default URL_SERVER
 
+export const URL_CLIENT =
+  process.env.REACT_APP_BUILD_MODE === 'production' ? 'https://traodocu.vn' : 'http://localhost:3000'
+
 export const URL_SERVER_IMAGE = URL_SERVER + '/static/'

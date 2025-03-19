@@ -1,9 +1,10 @@
 import React from 'react'
 import { Button } from 'antd'
-import { UserOutlined, LoginOutlined, BarsOutlined, HomeOutlined } from '@ant-design/icons'
+import { UserOutlined, LoginOutlined, HomeOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import styles from './scss/TopBar.module.scss'
 import { useSelector } from 'react-redux'
+import { Package } from 'lucide-react'
 
 const TopBar = () => {
   const { isAuthenticated } = useSelector(state => state.auth)
@@ -14,21 +15,26 @@ const TopBar = () => {
       </div>
       <div className={styles.topBarContent}>
         <Button icon={<HomeOutlined />} type="text" className={styles.button}>
-          <Link to="/">Trang chủ</Link>
+          <Link className={styles.linkText} to="/">
+            Trang chủ
+          </Link>
         </Button>
         <Button icon={<UserOutlined />} type="text" className={styles.button}>
-          <Link to="/profile">Tài khoản</Link>
+          <Link className={styles.linkText} to="/profile">
+            Tài khoản
+          </Link>
         </Button>
-        {/* <Button icon={<HeartOutlined />} type="text" className={styles.button}>
-          Yêu thích
-        </Button> */}
         {!isAuthenticated ? (
           <Button icon={<LoginOutlined />} type="text" className={styles.button}>
-            <Link to="/login">Đăng nhập</Link>
+            <Link className={styles.linkText} to="/login">
+              Đăng nhập
+            </Link>
           </Button>
         ) : (
-          <Button icon={<BarsOutlined />} type="text" className={styles.button}>
-            <Link to="/management-post">Quản lý sản phẩm</Link>
+          <Button icon={<Package height={16} width={16} />} type="text" className={styles.button}>
+            <Link className={styles.linkText} to="/management-post">
+              Quản lý sản phẩm
+            </Link>
           </Button>
         )}
       </div>

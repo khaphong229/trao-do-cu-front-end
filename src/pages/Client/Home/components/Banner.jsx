@@ -15,7 +15,15 @@ const Banner = () => {
         <div>
           <img src={banner1} alt="Banner 1" className={styles.bannerCarousel} />
         </div>
-
+        <div>
+          <img src={banner7} alt="Banner 7" className={styles.bannerCarousel} />
+        </div>
+        <div>
+          <img src={banner5} alt="Banner 5" className={styles.bannerCarousel} />
+        </div>
+        <div>
+          <img src={banner8} alt="Banner 8" className={styles.bannerCarousel} />
+        </div>
         <div>
           <img src={banner2} alt="Banner 2" className={styles.bannerCarousel} />
         </div>
@@ -24,9 +32,6 @@ const Banner = () => {
         </div>
         <div>
           <img src={banner5} alt="Banner 5" className={styles.bannerCarousel} />
-        </div>
-        <div>
-          <img src={banner7} alt="Banner 7" className={styles.bannerCarousel} />
         </div>
         <div>
           <img src={banner8} alt="Banner 8" className={styles.bannerCarousel} />

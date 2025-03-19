@@ -23,7 +23,7 @@ import { getAllCategory } from 'features/client/category/categoryThunks'
 import { setCategory } from 'features/client/category/categorySlice'
 
 const imgCategory = [
-  { title: 'Tất cả danh mục', image: tatcadanhmuc },
+  { title: 'Tất cả', image: tatcadanhmuc },
   { title: 'Xe cộ', image: xeco },
   { title: 'Đồ điện tử', image: dodientu },
   { title: 'Đồ gia dụng, nội thất, cây cảnh', image: dogiadung },
@@ -39,44 +39,49 @@ const imgCategory = [
 // Dữ liệu mặc định ban đầu
 const initialDefaultCategory = [
   {
-    category_id: '67c6c553f83ba5fb6ecfa97a',
+    category_id: 'all',
+    title: 'Tất cả'
+  },
+  {
+    category_id: '67d83e83ef2ba34d2c1b4222',
     title: 'Học tập'
   },
   {
-    category_id: '67852bfc6ee1505482c7252c',
+    category_id: '67d83eaeef2ba34d2c1b4233',
     title: 'Đồ điện tử'
   },
   {
-    category_id: '67852bd46ee1505482c72513',
-    title: 'Xe cộ'
-  },
-  {
-    category_id: '67852d2a6ee1505482c725ce',
-    title: 'Thời trang'
-  },
-  {
-    category_id: '67852e346ee1505482c72679',
-    title: 'Đồ ăn, thực phẩm'
-  },
-  {
-    category_id: '67852d736ee1505482c725fe',
-    title: 'Thú cưng'
-  },
-  {
-    category_id: '67852e9c6ee1505482c726cc',
-    title: 'Giải trí, thể thao'
-  },
-  {
-    category_id: '67852c896ee1505482c72562',
+    category_id: '67d83f35ef2ba34d2c1b425a',
     title: 'Đồ gia dụng, nội thất, cây cảnh'
   },
   {
-    category_id: '67852ce66ee1505482c72589',
+    category_id: '67d83f8def2ba34d2c1b4287',
+    title: 'Xe cộ'
+  },
+  {
+    category_id: '67d84029ef2ba34d2c1b42d2',
+    title: 'Thời trang'
+  },
+  {
+    category_id: '67d8406aef2ba34d2c1b4317',
+    title: 'Đồ ăn, thực phẩm'
+  },
+  {
+    category_id: '67d8407cef2ba34d2c1b431a',
+    title: 'Giải trí, thể thao'
+  },
+
+  {
+    category_id: '67d840eaef2ba34d2c1b4369',
     title: 'Tủ lạnh, máy giặt, điều hòa'
   },
   {
-    category_id: '67852d086ee1505482c725ae',
+    category_id: '67d84111ef2ba34d2c1b4398',
     title: 'Mẹ và bé'
+  },
+  {
+    category_id: '67d8429bef2ba34d2c1b4418',
+    title: 'Thú cưng'
   }
 ]
 
@@ -112,20 +117,13 @@ const Categories = () => {
     const mappedCategory = dataDefaultCategory.map(cate => {
       const matchingImg = imgCategory.find(imgItem => imgItem.title === cate.title)
       return {
-        category_id: cate.category_id,
+        category_id: cate.title !== 'Tất cả' ? cate.category_id : 'all',
         title: cate.title,
         image: matchingImg ? matchingImg.image : imgNotFound
       }
     })
 
-    return [
-      {
-        category_id: 'all',
-        title: 'Tất cả danh mục',
-        image: imgCategory[0].image
-      },
-      ...mappedCategory
-    ]
+    return mappedCategory
   }, [dataDefaultCategory])
 
   const scroll = useCallback(direction => {

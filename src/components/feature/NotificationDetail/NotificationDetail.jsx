@@ -94,7 +94,7 @@ const NotificationDetail = ({ notification }) => {
           onClick={() => goToManagementPost(receiverName)}
           className={styles.managementButton}
         >
-          Di chuyển tới quản lý sản phẩm
+          Di chuyển tới quản lý sản phẩm <RightOutlined />
         </Button>
       </div>
     )
@@ -106,16 +106,17 @@ const NotificationDetail = ({ notification }) => {
       onCancel={onClose}
       footer={renderModalFooter()}
       bodyStyle={{ padding: 0 }}
-      width={500}
+      width="90%"
+      style={{ maxWidth: 700 }}
       centered
       destroyOnClose
       className={styles.notificationModal}
     >
-      <Row gutter={[0, 0]}>
+      <Row gutter={[0, 0]} className={styles.modalRow}>
         {/* Phần ảnh sản phẩm - responsive */}
         <Col xs={24} sm={24} md={12} lg={12} xl={10}>
           <div className={styles.imageContainer}>
-            {imageUrl.length > 0 ? (
+            {imageUrl && imageUrl.length > 0 ? (
               <>
                 <Carousel ref={carouselRef} afterChange={afterChange} dots={false} className={styles.carousel}>
                   {imageUrl.map((img, index) => (

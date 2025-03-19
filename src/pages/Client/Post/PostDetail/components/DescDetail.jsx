@@ -5,7 +5,7 @@ import styles from './../scss/PostDescriptionDetail.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCreateModalVisibility } from 'features/client/post/postSlice'
 
-const { Text, Link, Paragraph } = Typography
+const { Text, Link } = Typography
 
 const DescDetail = () => {
   const dispatch = useDispatch()

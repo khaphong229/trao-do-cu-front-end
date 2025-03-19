@@ -144,8 +144,6 @@ const authSlice = createSlice({
         state.changePassWordMessage = action?.payload?.message || 'Reset Password Failed'
       })
     builder.addCase(updateDefaultAddress.fulfilled, (state, action) => {
-      console.log(action.payload)
-
       state.user = {
         ...state.user,
         ...action.payload.data

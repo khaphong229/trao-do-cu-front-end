@@ -11,16 +11,19 @@
   font-size: 14px;
   color: $colorWhite;
 }
+
 .TopBarLeft {
   text-align: left;
   font-size: 14px;
   color: $textColor;
 }
+
 .TopBarRight {
   display: flex;
   text-align: right;
   font-size: 10px;
 }
+
 .IconColor {
   color: $textColor;
 }
@@ -31,6 +34,7 @@
     color: $colorHover !important;
   }
 }
+
 .topBarContent {
   display: flex;
   text-align: right;
@@ -42,7 +46,7 @@
     display: none;
   }
   .TopBarWrap {
-    justify-content: end;
+    justify-content: flex-end;
   }
 }
 
@@ -54,6 +58,32 @@
 
 @media screen and (max-width: 390px) {
   .button {
-    padding: 4px;
+    padding: 4px 2px;
+  }
+  .linkText {
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .topBarContent {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .button {
+    padding: 2px;
+    min-width: auto;
+  }
+  .linkText {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 340px) {
+  .button {
+    padding: 1px;
+  }
+  .linkText {
+    font-size: 10px;
   }
 }
