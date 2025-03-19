@@ -1,4 +1,4 @@
-import { Button, Descriptions, Modal, Form, Card, Image, Typography } from 'antd'
+import { Button, Modal, Form, Card, Image, Typography } from 'antd'
 import React from 'react'
 import moment from 'moment'
 import { URL_SERVER_IMAGE } from '../../../../../config/url_server' // Import URL_SERVER_IMAGE
