@@ -190,7 +190,7 @@ const RequestedPosts = () => {
                 <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
 
                 {request.post_id.status === 'inactive' && request.status === 'accepted' && (
-                  <Button icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
+                  <Button className="button-qr" icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
                 )}
               </div>
 

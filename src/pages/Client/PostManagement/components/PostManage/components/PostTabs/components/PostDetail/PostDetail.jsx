@@ -20,7 +20,7 @@ const PostDetail = ({ isVisible, onClose, post }) => {
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Title level={4} style={{ margin: 0 }}>
-            Chi tiết bài đăng
+            Chi tiết sản phẩm
           </Title>
           <Tag color={post.status === 'active' ? 'processing' : 'success'}>
             {post.status === 'active' ? 'Đang trao đi' : 'Đã thành công'}
@@ -71,7 +71,6 @@ const PostDetail = ({ isVisible, onClose, post }) => {
               <Descriptions.Item label="Tiêu đề">
                 <Text strong>{post.title}</Text>
               </Descriptions.Item>
-              <Descriptions.Item label="Địa chỉ">{post.specificLocation}</Descriptions.Item>
               <Descriptions.Item label="Thành phố">{post.city}</Descriptions.Item>
               <Descriptions.Item label="Loại">
                 <Tag color={post.type === 'gift' ? 'blue' : 'green'}>
