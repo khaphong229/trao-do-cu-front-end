@@ -2,6 +2,9 @@
 
 .group-button-ok {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .request-list {
@@ -279,7 +282,6 @@
     }
 
     .status-tags {
-      margin-bottom: 10px;
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
