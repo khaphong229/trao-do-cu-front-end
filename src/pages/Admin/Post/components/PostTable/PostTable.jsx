@@ -3,11 +3,12 @@ import { setPage, setPerPage } from 'features/admin/post/postAdminSlice'
 import { getPostPagination } from 'features/client/post/postThunks'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EyeOutlined, SearchOutlined, EnvironmentOutlined } from '@ant-design/icons'
+import { EyeOutlined, SearchOutlined, EnvironmentOutlined, ReloadOutlined } from '@ant-design/icons'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
 import styles from '../../styles.module.scss'
 import { approvalStatus, getPostAdminPagination } from 'features/admin/post/postAdminThunks'
 import moment from 'moment'
+import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
 
 const PostTable = ({ onViewDetails }) => {
   const dispatch = useDispatch()
@@ -26,6 +27,17 @@ const PostTable = ({ onViewDetails }) => {
       })
       .catch(() => {
         message.error('Có lỗi xảy ra khi duyệt bài đăng')
+      })
+  }
+
+  const handleReloadData = () => {
+    dispatch(getPostAdminPagination({ current, pageSize }))
+      .unwrap()
+      .then(() => {
+        message.success('Đã tải lại dữ liệu')
+      })
+      .catch(() => {
+        message.error('Có lỗi xảy ra khi tải lại dữ liệu')
       })
   }
 
@@ -72,6 +84,22 @@ const PostTable = ({ onViewDetails }) => {
       }
     })
   }
+  const getImageUrl = imageUrlArr => {
+    if (!imageUrlArr || imageUrlArr.length === 0) {
+      return avt
+    }
+
+    // Lấy URL đầu tiên từ mảng image_url
+    const imageUrl = imageUrlArr[0]
+
+    // Kiểm tra nếu URL đã bắt đầu bằng http hoặc https
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl
+    }
+
+    // Sử dụng URL_SERVER_IMAGE để xây dựng đường dẫn đầy đủ
+    return `${URL_SERVER_IMAGE}${imageUrl}`
+  }
 
   const columns = [
     {
@@ -79,7 +107,7 @@ const PostTable = ({ onViewDetails }) => {
       dataIndex: 'image_url',
       key: 'image_url',
       render: (imageUrl, record) => {
-        const imageSource = record.image_url && record.image_url.length > 0 ? record.image_url[0] : avt
+        const imageSource = getImageUrl(record.image_url)
         return <img src={imageSource} alt="Bài đăng" width={50} height={50} style={{ objectFit: 'cover' }} />
       }
     },
@@ -194,6 +222,7 @@ const PostTable = ({ onViewDetails }) => {
       render: (_, record) => (
         <Space size="middle">
           <Button icon={<EyeOutlined />} onClick={() => onViewDetails(record)} size="small" />
+          <Button icon={<ReloadOutlined />} onClick={handleReloadData} size="small" title="Tải lại dữ liệu" />
         </Space>
       )
     }
