@@ -81,15 +81,21 @@
 }
 
 .uploadSpinner {
+  display: block;
   width: 100%;
-
-  :global {
-    .ant-spin-container {
-      width: 100%;
-    }
+  
+  :global(.ant-spin-container) {
+    display: block;
+    width: 100%;
+  }
+  
+  :global(.ant-spin-spinning) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: none;
   }
 }
-
 .customIcon {
   font-size: 22px;
   transition: color 0.3s ease;

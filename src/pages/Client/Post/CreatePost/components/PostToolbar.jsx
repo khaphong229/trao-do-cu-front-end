@@ -32,7 +32,6 @@ const PostToolbar = ({ contentType, imageRef, imageToolRef }) => {
     setUploadedFiles(uploadedUrls)
     setIsLoading(false)
   }
-
   // Only update Redux after the loading is complete
   useEffect(() => {
     if (uploadedFiles.length > 0 && !isLoading) {
@@ -61,7 +60,6 @@ const PostToolbar = ({ contentType, imageRef, imageToolRef }) => {
     setIsLoading(true)
     return true
   }
-
   const uploadButton = (
     <Button
       ref={imageToolRef || imageRef}
@@ -76,7 +74,12 @@ const PostToolbar = ({ contentType, imageRef, imageToolRef }) => {
   return (
     <div className={styles.postTools}>
       <div className={styles.toolsButtons}>
-        <Spin spinning={isLoading} tip="Đang tải ảnh lên..." wrapperClassName={styles.uploadSpinner}>
+        <Spin
+          spinning={isLoading}
+          tip="Đang tải ảnh lên..."
+          wrapperClassName={styles.uploadSpinner}
+          indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
+        >
           <UploadCustom
             fileList={fileList}
             setFileList={handleFileUpload}
@@ -86,7 +89,6 @@ const PostToolbar = ({ contentType, imageRef, imageToolRef }) => {
             type={contentType === 'exchange' ? 'exchange' : 'post'}
             onUploadSuccess={handleUploadSuccess}
             beforeUpload={handleBeforeUpload}
-            showUploadList={!isLoading} // Hide upload list during loading
           />
         </Spin>
       </div>
