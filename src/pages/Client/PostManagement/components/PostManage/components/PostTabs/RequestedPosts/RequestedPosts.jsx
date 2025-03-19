@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Space, Empty, Badge } from 'antd'
+import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Empty, Badge, Button } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import avt from 'assets/images/logo/avtDefault.webp'
 import './styles.scss'
@@ -9,6 +9,9 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetailModal from './components/PostDetailModal'
 import imgNotFound from 'assets/images/others/imagenotfound.webp'
 import ContactInfoDisplay from './components/ContactInfoDisplay'
+import { getAvatarPost } from 'hooks/useAvatar'
+import { QrcodeOutlined } from '@ant-design/icons'
+import QRImageModal from 'components/QrModal'
 
 const { Text } = Typography
 
@@ -18,6 +21,8 @@ const RequestedPosts = () => {
   const [activeTab, setActiveTab] = useState('all')
   const [selectedPost, setSelectedPost] = useState(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isOpenQrModal, setOpenQrModal] = useState(false)
+  const [qrCode, setQrCode] = useState('')
   const viewMode = useSelector(state => state.post.viewMode)
 
   const giftRequests = useSelector(state => state.giftRequest.requests)
@@ -27,6 +32,14 @@ const RequestedPosts = () => {
     dispatch(getMyRequestedGift(null))
     dispatch(getMyRequestedExchange(null))
   }, [dispatch])
+
+  const handleOpenQr = post => {
+    setQrCode(post.qrCode)
+    setOpenQrModal(true)
+  }
+  const handleCancelQR = () => {
+    setOpenQrModal(false)
+  }
 
   const allRequests = [...giftRequests, ...exchangeRequests].sort((a, b) =>
     a.status === 'accepted' ? -1 : b.status === 'accepted' ? 1 : 0
@@ -173,21 +186,18 @@ const RequestedPosts = () => {
                 {request.post_id.title}
               </Typography.Title>
 
-              <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
+              <div className="group-button-ok">
+                <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
 
-              <Typography.Paragraph className="desc-post" ellipsis={{ rows: 2 }}>
-                {request.post_id.description}
-              </Typography.Paragraph>
+                {request.post_id.status === 'inactive' && request.status === 'accepted' && (
+                  <Button className="button-qr" icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
+                )}
+              </div>
 
               {/* User info placed before contact info */}
               <div className="card-footer">
                 <div className="user-info">
-                  <Avatar
-                    src={
-                      request?.post_id?.user_id?.avatar ? `${URL_SERVER_IMAGE}${request.post_id.user_id.avatar}` : avt
-                    }
-                    size={20}
-                  />
+                  <Avatar src={getAvatarPost(request?.post_id?.user_id)} size={20} />
                   <Typography.Text className="user-name" ellipsis>
                     {request?.post_id?.user_id?.name || 'Không xác định'}
                   </Typography.Text>
@@ -252,7 +262,13 @@ const RequestedPosts = () => {
 
   return (
     <>
-      <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
+      <QRImageModal
+        isOpen={isOpenQrModal}
+        handleOpenQr={handleOpenQr}
+        handleCancelQR={handleCancelQR}
+        qrImageUrl={qrCode}
+      />
+      <Tabs type="card" activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
       {allRequests.length === 0 &&
         giftRequests.length === 0 &&
         exchangeRequests.length === 0 &&

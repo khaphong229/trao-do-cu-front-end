@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Tabs, Typography, Badge, Button, Table, Image, Space, Card, Row, Col, Empty, Modal } from 'antd'
+import { Tabs, Typography, Badge, Button, Table, Image, Space, Card, Row, Col, Empty, Modal, Spin } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { getPostGiftPagination } from 'features/client/post/postThunks'
@@ -12,6 +12,7 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import PostDetail from '../components/PostDetail/PostDetail'
 import { ExpiredListings } from '../ExpiredListing/ExpriedListing'
 import { ClockCircleOutlined } from '@ant-design/icons'
+
 const { TabPane } = Tabs
 
 export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive, onShowExpired }) => {
@@ -42,6 +43,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
     pageSize: 10,
     total: 0
   })
+  const [isTabLoading, setIsTabLoading] = useState(false) // State for tab loading spinner
 
   const paginationRef = useMemo(
     () => ({
@@ -192,6 +194,17 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
     fetchData()
   }
 
+  const handleTabChange = async key => {
+    setIsTabLoading(true) // Bật spinner loading
+    setActiveSubTab(key)
+    setPagination(prev => ({
+      ...prev,
+      current: 1
+    }))
+
+    setIsTabLoading(false) // Tắt spinner loading
+  }
+
   const columns = [
     {
       title: 'Hình ảnh',
@@ -267,14 +280,6 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
     }
   ]
 
-  const handleTabChange = key => {
-    setActiveSubTab(key)
-    setPagination(prev => ({
-      ...prev,
-      current: 1
-    }))
-  }
-
   const renderCardView = () => (
     <Row gutter={[16, 16]} className={styles.cardGrid}>
       {activePosts.map(item => (
@@ -344,31 +349,33 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         </Button>
       </div>
 
-      {viewMode === 'table' ? (
-        <Table
-          columns={columns}
-          dataSource={activePosts} // Use local state instead of Redux posts
-          rowKey="_id"
-          pagination={{
-            ...pagination,
-            showSizeChanger: true,
-            showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
-          }}
-          onChange={handleTableChange}
-          loading={isLoading}
-          scroll={{ x: 800 }}
-          onRow={record => ({
-            onClick: e => handlePostDetail(e, record),
-            style: { cursor: 'pointer' }
-          })}
-        />
-      ) : (
-        renderCardView()
-      )}
+      <Spin spinning={isTabLoading || isLoading} delay={500}>
+        {viewMode === 'table' ? (
+          <Table
+            columns={columns}
+            dataSource={activePosts} // Use local state instead of Redux posts
+            rowKey="_id"
+            pagination={{
+              ...pagination,
+              showSizeChanger: true,
+              showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
+            }}
+            onChange={handleTableChange}
+            loading={isLoading}
+            scroll={{ x: 800 }}
+            onRow={record => ({
+              onClick: e => handlePostDetail(e, record),
+              style: { cursor: 'pointer' }
+            })}
+          />
+        ) : (
+          renderCardView()
+        )}
 
-      {activePosts.length === 0 && viewMode === 'card' && (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
-      )}
+        {activePosts.length === 0 && viewMode === 'card' && (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
+        )}
+      </Spin>
 
       {/* Modal lịch sử bài đăng */}
       <Modal
