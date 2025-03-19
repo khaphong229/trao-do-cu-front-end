@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table, Button, Space, Modal, message, Input } from 'antd'
 import {
   EditOutlined,
@@ -8,84 +8,47 @@ import {
   SearchOutlined,
   MailOutlined
 } from '@ant-design/icons'
+import { useDispatch, useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
-const initialUsers = [
-  {
-    _id: '1',
-    avatar: null,
-    name: '🌹Nhà sổ riêng 2,55 tỷ Gần cầu Phú Xuân Q7',
-    address: 'Ha Noi',
-    phone: '0123456789',
-    status: 'active',
-    typePost: 'gift'
-  },
-  {
-    _id: '2',
-    avatar: null,
-    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
-    address: 'Ninh bình',
-    phone: '0987654321',
-    status: 'inactive',
-    typePost: 'exchange'
-  },
-  {
-    _id: '3',
-    avatar: null,
-    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
-    address: 'Ninh bình',
-    phone: '0987654321',
-    status: 'inactive',
-    typePost: 'exchange'
-  },
-  {
-    _id: '4',
-    avatar: null,
-    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
-    address: 'Ninh bình',
-    phone: '0987654321',
-    status: 'inactive',
-    typePost: 'exchange'
-  },
-  {
-    _id: '5',
-    avatar: null,
-    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
-    address: 'Ninh bình',
-    phone: '0987654321',
-    status: 'inactive',
-    typePost: 'exchange'
-  },
-  {
-    _id: '6',
-    avatar: null,
-    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
-    address: 'Ninh bình',
-    phone: '0987654321',
-    status: 'inactive',
-    typePost: 'exchange'
-  },
-  {
-    _id: '7',
-    avatar: null,
-    name: 'Bộ quần áo đá bóng, đồ đá banh nam nữ Man City, thun lạnh cao cấp',
-    address: 'Ninh bình',
-    phone: '0987654321',
-    status: 'inactive',
-    typePost: 'exchange'
-  }
-]
+import { deleteUser, getUserPagination } from 'features/admin/user/userThunks'
+import { setPage, setPerPage } from 'features/admin/user/userSlice'
 
 const UserTable = ({ onEdit, onViewDetails }) => {
-  const [setData] = useState(initialUsers)
+  const dispatch = useDispatch()
+  const { users, total, page, perPage, isLoading, searchText } = useSelector(state => state.userManagement)
+
   const [tableParams, setTableParams] = useState({
     pagination: {
-      current: 1,
-      pageSize: 10
+      current: page,
+      pageSize: perPage,
+      total: total
     }
   })
+  const filteredUsers = users.filter(user => user.name.toLowerCase().includes(searchText.toLowerCase()))
+
+  // Load users when component mounts
+  useEffect(() => {
+    dispatch(getUserPagination({ page, per_page: perPage }))
+  }, [dispatch, page, perPage])
+
+  // Update table params when redux state changes
+  useEffect(() => {
+    setTableParams({
+      ...tableParams,
+      pagination: {
+        ...tableParams.pagination,
+        current: page,
+        pageSize: perPage,
+        total: total
+      }
+    })
+  }, [page, perPage, total])
 
   const handleTableChange = (pagination, filters, sorter) => {
+    dispatch(setPage(pagination.current))
+    dispatch(setPerPage(pagination.pageSize))
+
     setTableParams({
       pagination,
       filters,
@@ -101,36 +64,23 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       title: 'Bạn có chắc chắn muốn xóa người dùng này?',
       content: 'Hành động này không thể hoàn tác.',
       onOk() {
-        setData(prevData => prevData.filter(user => user._id !== userId))
-        message.success('Xóa người dùng thành công')
+        dispatch(deleteUser(userId))
+          .unwrap()
+          .then(() => {
+            message.success('Xóa người dùng thành công')
+            // Reload the current page
+            dispatch(getUserPagination({ page, per_page: perPage }))
+          })
+          .catch(error => {
+            message.error(error.message || 'Có lỗi xảy ra khi xóa người dùng')
+          })
       }
     })
   }
 
-  // const handleAdd = () => {
-  //   const newUser = {
-  //     _id: Date.now().toString(),
-  //     avatar: null,
-  //     name: 'Người dùng mới',
-  //     email: 'newuser@example.com',
-  //     phone: '0000000000',
-  //     status: 'active',
-  //     gender: 'other'
-  //   }
-  //   setData(prevData => [...prevData, newUser])
-  //   message.success('Thêm người dùng thành công')
-  // }
-
-  // const handleEdit = user => {
-  //   const newName = prompt('Nhập tên mới:', user.name)
-  //   if (newName) {
-  //     setData(prevData => prevData.map(item => (item._id === user._id ? { ...item, name: newName } : item)))
-  //     message.success('Sửa thông tin bài đăng thành công')
-  //   }
-  // }
   const columns = [
     {
-      title: 'Ảnh bài đăng',
+      title: 'Ảnh người dùng',
       dataIndex: 'avatar',
       key: 'avatar',
       render: avatar => (
@@ -138,13 +88,12 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       )
     },
     {
-      title: 'Tên bài đăng',
+      title: 'Tên người dùng',
       dataIndex: 'name',
       key: 'name',
       sorter: {
-        compare: (a, b) => a.name - b.name
+        compare: (a, b) => a.name.localeCompare(b.name)
       },
-      // responsive: ['xs'],
       render: (name, record) => (
         <div className={styles.nameRow} onClick={() => onViewDetails(record)} style={{ cursor: 'pointer' }}>
           {name}
@@ -177,10 +126,28 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       dataIndex: 'address',
       key: 'address',
       sorter: {
-        compare: (a, b) => a.address - b.address
+        compare: (a, b) => {
+          // Check if address is a string or an object
+          const addressA = typeof a.address === 'string' ? a.address : JSON.stringify(a.address)
+          const addressB = typeof b.address === 'string' ? b.address : JSON.stringify(b.address)
+          return addressA.localeCompare(addressB)
+        }
       },
-      // responsive: ['md'],
-      render: address => <div className="truncate">{address}</div>,
+      render: address => {
+        // Handle the case where address is an object
+        if (typeof address === 'object' && address !== null) {
+          // You can format the address object however you want
+          // For example, if it has a property like 'text'
+          return (
+            <div className="truncate">
+              {address.isDefault ? '(Mặc định) ' : ''}
+              {address.address || 'Không có địa chỉ'}
+            </div>
+          )
+        }
+        // If address is a string, render it as is
+        return <div className="truncate">{address || 'Không có địa chỉ'}</div>
+      },
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
         <div style={{ padding: 8 }}>
           <Input
@@ -200,7 +167,7 @@ const UserTable = ({ onEdit, onViewDetails }) => {
           </Space>
         </div>
       ),
-      onFilter: (value, record) => record.email.toString().toLowerCase().includes(value.toLowerCase()),
+      onFilter: (value, record) => record.address.toString().toLowerCase().includes(value.toLowerCase()),
       filterIcon: filtered => <MailOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     },
     {
@@ -208,7 +175,6 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       dataIndex: 'phone',
       key: 'phone',
       sorter: true,
-      // responsive: ['lg'],
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
         <div style={{ padding: 8 }}>
           <Input
@@ -232,40 +198,6 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       filterIcon: filtered => <PhoneOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     },
     {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      filters: [
-        { text: 'Hoạt động', value: 'active' },
-        { text: 'Ngừng hoạt động', value: 'inactive' }
-      ],
-      onFilter: (value, record) => record.status === value,
-      render: status => (
-        <span className={status === 'active' ? styles.statusActive : styles.statusInactive}>
-          {status === 'active' ? 'Hoạt động' : 'Ngừng hoạt động'}
-        </span>
-      )
-    },
-    {
-      title: 'loại bài đăng',
-      dataIndex: 'typePost',
-      key: 'typePost',
-      filters: [
-        { text: 'Cho', value: 'gift' },
-        { text: 'Tặng', value: 'exchange' },
-        { text: 'Khác', value: 'other' }
-      ],
-      onFilter: (value, record) => record.typePost === value,
-      render: typePost => {
-        const genderMap = {
-          male: 'Cho',
-          female: 'Tặng',
-          other: 'Khác'
-        }
-        return genderMap[typePost] || typePost
-      }
-    },
-    {
       title: 'Thao tác',
       key: 'actions',
       render: (_, record) => (
@@ -282,11 +214,13 @@ const UserTable = ({ onEdit, onViewDetails }) => {
     <Table
       className={styles.responsiveTable}
       columns={columns}
-      dataSource={initialUsers}
+      dataSource={filteredUsers} // Sử dụng dữ liệu đã lọc
       rowKey="_id"
+      loading={isLoading}
       pagination={{
         current: tableParams.pagination.current,
         pageSize: tableParams.pagination.pageSize,
+        total: tableParams.pagination.total,
         showSizeChanger: true,
         pageSizeOptions: [5, 10, 20, 50, 100],
         showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} người dùng`

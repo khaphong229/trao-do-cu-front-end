@@ -11,10 +11,10 @@ const ContactInfoDisplay = ({ post, showInTable = false }) => {
   // For table view - compact display
   if (showInTable) {
     return (
-      <Space direction="vertical" size={4} className="contact-info-compact">
+      <Space direction="vertical" size={2} className="contact-info-compact">
         {phone && (
           <div className="contact-item">
-            <PhoneOutlined style={{ marginRight: 8, color: isAccepted ? '#1890ff' : '#bfbfbf' }} />
+            <PhoneOutlined className="contact-icon" style={{ color: isAccepted ? '#1890ff' : '#bfbfbf' }} />
             {isAccepted ? (
               <span className="contact-value">{phone}</span>
             ) : (
@@ -27,7 +27,7 @@ const ContactInfoDisplay = ({ post, showInTable = false }) => {
 
         {facebook && (
           <div className="contact-item">
-            <FacebookOutlined style={{ marginRight: 8, color: '#1890ff' }} />
+            <FacebookOutlined className="contact-icon" style={{ color: '#1890ff' }} />
             {isAccepted ? (
               <a
                 href={facebook}
@@ -48,9 +48,9 @@ const ContactInfoDisplay = ({ post, showInTable = false }) => {
 
         {location && (
           <div className="contact-item">
-            <EnvironmentOutlined style={{ marginRight: 8, color: isAccepted ? '#52c41a' : '#bfbfbf' }} />
+            <EnvironmentOutlined className="contact-icon" style={{ color: isAccepted ? '#52c41a' : '#bfbfbf' }} />
             {isAccepted ? (
-              <span className="contact-value">{location}</span>
+              <span className="contact-value location-text">{location}</span>
             ) : (
               <Tooltip title="Hiển thị khi được chấp nhận">
                 <span className="contact-value masked">***</span>
@@ -65,14 +65,12 @@ const ContactInfoDisplay = ({ post, showInTable = false }) => {
   // For card view - prettier display with status indication
   return (
     <div className="contact-info-card">
-      {!isAccepted && (
+      {!isAccepted ? (
         <div className="contact-locked">
           <LockOutlined /> Chấp nhận để xem thông tin liên hệ
         </div>
-      )}
-
-      {isAccepted && (
-        <Space direction="vertical" size={8} className="contact-accepted">
+      ) : (
+        <Space direction="vertical" size={4} className="contact-accepted">
           {phone && (
             <Button
               type="link"
@@ -101,8 +99,8 @@ const ContactInfoDisplay = ({ post, showInTable = false }) => {
 
           {location && (
             <div className="location-info">
-              <EnvironmentOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-              <span>{location}</span>
+              <EnvironmentOutlined className="location-icon" />
+              <span className="location-text">{location}</span>
             </div>
           )}
         </Space>

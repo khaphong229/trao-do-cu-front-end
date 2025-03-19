@@ -109,7 +109,7 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
 
     // Call API immediately when adding a new address
     try {
-      await dispatch(
+      const response = await dispatch(
         updateUserProfile({
           address: newAddresses
         })
@@ -120,8 +120,13 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
       setSelectedAddressIndex(newAddresses.length - 1)
       message.success('Đã lưu địa chỉ thành công!')
     } catch (error) {
-      logger.log(error)
-      message.error('Không thể lưu địa chỉ')
+      console.log(error)
+      // Display the specific error message from the server response
+      if (error.detail && error.detail['']) {
+        message.error(error.detail[''])
+      } else {
+        message.error('Không thể lưu địa chỉ')
+      }
     }
 
     setShowAddressForm(false)
@@ -149,7 +154,7 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
 
     // Call API immediately when updating an address
     try {
-      await dispatch(
+      const response = await dispatch(
         updateUserProfile({
           address: newAddresses
         })
@@ -159,7 +164,12 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
       setAddresses(newAddresses)
       message.success('Đã cập nhật địa chỉ thành công!')
     } catch (error) {
-      message.error('Không thể cập nhật địa chỉ')
+      // Display the specific error message from the server response
+      if (error.detail && error.detail['']) {
+        message.error(error.detail[''])
+      } else {
+        message.error('Không thể cập nhật địa chỉ')
+      }
     }
 
     setEditingIndex(-1)
@@ -190,7 +200,7 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
 
     // Call API immediately when deleting an address
     try {
-      await dispatch(
+      const response = await dispatch(
         updateUserProfile({
           address: newAddresses
         })
@@ -208,7 +218,12 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
 
       message.success('Đã xóa địa chỉ thành công')
     } catch (error) {
-      message.error('Không thể xóa địa chỉ')
+      // Display the specific error message from the server response
+      if (error.detail && error.detail['']) {
+        message.error(error.detail[''])
+      } else {
+        message.error('Không thể xóa địa chỉ')
+      }
     }
   }
 

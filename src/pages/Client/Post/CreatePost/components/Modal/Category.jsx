@@ -109,11 +109,7 @@ const CategoryModal = ({ categoryId, setCategory, error, embeddedMode = false, o
       return
     }
 
-    if (nonLeafSelected) {
-      message.error('Vui lòng chọn danh mục cấp thấp nhất (không có danh mục con)')
-      return
-    }
-
+    dispatch(setCategoryModalVisibility(false))
     if (onComplete) {
       onComplete()
     }
@@ -166,11 +162,6 @@ const CategoryModal = ({ categoryId, setCategory, error, embeddedMode = false, o
               <Button type="primary" onClick={handleConfirmCategory}>
                 Xác nhận danh mục
               </Button>
-              {nonLeafSelected && (
-                <div style={{ color: 'red', marginTop: '10px' }}>
-                  Vui lòng chọn danh mục cấp thấp nhất (không có danh mục con)
-                </div>
-              )}
             </div>
           )}
         </div>

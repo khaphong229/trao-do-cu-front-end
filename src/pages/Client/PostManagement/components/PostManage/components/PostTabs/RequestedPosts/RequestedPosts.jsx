@@ -175,6 +175,7 @@ const RequestedPosts = () => {
                 <Badge.Ribbon
                   text={request.post_id.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
                   color={request.post_id.type === 'exchange' ? 'green' : 'blue'}
+                  className="post-type-ribbon"
                 />
               </div>
             }
@@ -193,6 +194,9 @@ const RequestedPosts = () => {
 
               <Button icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
 
+              <Button icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
+
+              {/* User info placed before contact info */}
               <div className="card-footer">
                 <div className="user-info">
                   <Avatar src={getAvatarPost(request?.post_id?.user_id)} size={20} />
@@ -200,8 +204,10 @@ const RequestedPosts = () => {
                     {request?.post_id?.user_id?.name || 'Không xác định'}
                   </Typography.Text>
                 </div>
-                <ContactInfoDisplay post={request} showInTable={false} />
               </div>
+
+              {/* Contact info now appears below the user info */}
+              <ContactInfoDisplay post={request} showInTable={false} />
             </div>
           </Card>
         </Col>

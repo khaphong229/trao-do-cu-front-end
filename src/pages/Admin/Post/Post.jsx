@@ -1,41 +1,50 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Row, Col, Input, Button } from 'antd'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons'
-import UserTable from './components/UserTable'
-import UserDetailModal from './components/UserDetailModal'
-import UserFormModal from './components/UserFormModal'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
-import { setIsDetailsModalVisible, setIsModalVisible, setSelectedUser } from '../../../features/admin/user/userSlice'
+import {
+  setIsDetailsModalVisible,
+  setIsModalVisible,
+  setSelectedPost
+} from '../../../features/admin/post/postAdminSlice'
+import PostTable from './components/PostTable'
+import PostDetailModal from './components/PostDetailModal'
+import { setPage } from 'features/admin/user/userSlice'
+import { getPostAdminPagination } from 'features/admin/post/postAdminThunks'
 
 const Post = () => {
   const dispatch = useDispatch()
 
   const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
-  // const [selectedUser, setSelectedUser] = useState(null)
 
-  const { isModalVisible, isDetailsModalVisible, selectedUser } = useSelector(state => state.userManagement)
+  const {
+    isModalVisible,
+    isDetailsModalVisible,
+    selectedPost,
+    posts // Add default value for posts
+  } = useSelector(state => state.postManagement || {})
+  useEffect(() => {
+    dispatch(setPage(1))
+    dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
+  }, [dispatch, searchText])
 
   const handleSearch = value => {
     setSearchText(value)
   }
 
-  const handleAddUser = () => {
-    setSelectedUser(null)
-    setIsEditing(false)
-    dispatch(setIsModalVisible(true))
-  }
-
-  const handleEditUser = user => {
-    dispatch(setSelectedUser(user))
+  const handleEditPost = post => {
+    dispatch(setSelectedPost(post))
     setIsEditing(true)
     dispatch(setIsModalVisible(true))
   }
 
-  const handleViewDetails = user => {
-    dispatch(setSelectedUser(user))
+  const handleViewDetails = post => {
+    console.log('Selected post:', post)
+    dispatch(setSelectedPost(post))
     dispatch(setIsDetailsModalVisible(true))
+    console.log('After dispatch:', { isDetailsModalVisible, selectedPost })
   }
 
   return (
@@ -53,26 +62,14 @@ const Post = () => {
             style={{ width: '100%' }}
           />
         </Col>
-        <Col xs={24} sm={4} style={{ textAlign: 'right' }}>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAddUser} block>
-            Thêm sản phẩm
-          </Button>
-        </Col>
       </Row>
 
-      <UserTable onEdit={handleEditUser} onViewDetails={handleViewDetails} />
+      <PostTable onEdit={handleEditPost} onViewDetails={handleViewDetails} />
 
-      <UserDetailModal
-        visible={isDetailsModalVisible}
-        user={selectedUser}
+      <PostDetailModal
+        open={isDetailsModalVisible}
+        post={selectedPost}
         onClose={() => dispatch(setIsDetailsModalVisible(false))}
-      />
-
-      <UserFormModal
-        visible={isModalVisible}
-        isEditing={isEditing}
-        initialUser={selectedUser}
-        onClose={() => dispatch(setIsModalVisible(false))}
       />
     </div>
   )

@@ -38,19 +38,31 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+
+    .contact-icon {
+      margin-right: 8px;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
 
     .contact-value {
-      color: rgba(0, 0, 0, 0.65);
+      color: rgba(0, 0, 0, 0.75);
 
       &.masked {
         color: #bfbfbf;
         font-style: italic;
       }
+
+      &.location-text {
+        white-space: normal;
+        line-height: 1.3;
+      }
     }
 
     .facebook-link {
       color: #1890ff;
+      font-weight: 500;
 
       &:hover {
         text-decoration: underline;
@@ -60,63 +72,110 @@
 }
 
 .contact-info-card {
-  margin-top: 8px;
+  margin-top: 12px;
+  border-radius: 6px;
+  overflow: hidden;
 
   .contact-locked {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #d9d9d9;
-    background-color: rgba(0, 0, 0, 0.02);
+    color: #8c8c8c;
+    background-color: #f5f5f5;
     border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 12px;
+    padding: 8px 12px;
+    font-size: 13px;
+    border: 1px dashed #d9d9d9;
 
     .anticon {
-      margin-right: 4px;
-      font-size: 10px;
+      margin-right: 8px;
+      font-size: 12px;
     }
   }
 
   .contact-accepted {
     width: 100%;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    padding: 10px;
 
     .contact-button {
       height: auto;
-      padding: 0;
+      padding: 4px 0;
       display: flex;
       align-items: center;
-      font-size: 12px;
-      line-height: 1.2;
+      font-size: 14px;
+      line-height: 1.4;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
 
       &.phone {
-        color: #1890ff;
+        color: $colorMain;
+        font-weight: 500;
       }
 
       &.facebook {
         color: #4267b2;
+        font-weight: 500;
       }
 
       .anticon {
-        margin-right: 4px;
-        font-size: 12px;
+        margin-right: 8px;
+        font-size: 16px;
       }
     }
 
     .location-info {
       display: flex;
       align-items: flex-start;
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.65);
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.75);
+      padding: 4px 0;
 
-      span {
+      .location-icon {
+        color: #52c41a;
+        margin-right: 8px;
+        font-size: 16px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .location-text {
         flex: 1;
         white-space: normal;
-        line-height: 1.3;
+        line-height: 1.4;
       }
+    }
+  }
+}
+
+.contact-info-section {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.09);
+
+  .contact-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .contact-label {
+      min-width: 80px;
+      text-align: right;
+      padding-right: 12px;
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 13px;
+    }
+
+    .contact-value {
+      flex: 1;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }
@@ -137,6 +196,7 @@
   .ant-card-body {
     padding: 16px;
     height: auto;
+    margin-top: 8px;
   }
 
   .image-wrapper {
@@ -177,12 +237,28 @@
       transform: scale(1.08);
     }
 
+    // Fixed ribbon styles
+    .ant-ribbon-wrapper {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 10;
+    }
+
     .ant-ribbon {
       font-weight: 600;
       font-size: 11px;
       padding: 2px 8px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
       border-radius: 0 0 0 4px;
+      z-index: 10;
+    }
+
+    .post-type-ribbon {
+      position: absolute;
+      top: 8px;
+      right: 0;
+      z-index: 10;
     }
   }
 
@@ -255,7 +331,6 @@
 
     .card-footer {
       margin-top: auto;
-      padding-top: 10px;
       border-top: 1px solid rgba(0, 0, 0, 0.06);
       display: flex;
       justify-content: space-between;
@@ -533,6 +608,12 @@
   }
 }
 
+.ant-space-item {
+  display: flex;
+  align-items: center;
+  margin-right: 0;
+}
+
 // Button improvements
 .ant-btn {
   &.ant-btn-primary {
@@ -563,4 +644,36 @@
       color: lighten($colorMain, 10%);
     }
   }
+}
+
+// Additional styles for ribbon
+.ant-badge-ribbon {
+  top: 0;
+  right: 0;
+  z-index: 10;
+
+  .ant-ribbon {
+    font-weight: 600;
+    font-size: 11px;
+    padding: 2px 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 0 0 0 4px;
+  }
+}
+
+// Force positioning of the ribbon
+:where(.css-dev-only-do-not-override-156eax).ant-badge.ant-badge-status {
+  line-height: inherit;
+}
+
+:where(.css-dev-only-do-not-override-156eax).ant-badge.ant-ribbon-wrapper {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+// Ensure the ribbon content is visible
+.ant-ribbon-content {
+  display: block;
 }

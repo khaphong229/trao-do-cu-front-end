@@ -1,8 +1,18 @@
 .notificationModal {
-  :global(.ant-modal-content) {
-    overflow: hidden;
-    border-radius: 8px;
-    padding: 0;
+  @media (max-width: 576px) {
+    width: 95% !important;
+    margin: 0 auto;
+    
+    :global(.ant-modal-content) {
+      border-radius: 8px;
+      padding: 0; // Already good
+    }
+  }
+}
+.modalRow {
+  // For better mobile layout
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
 }
 
@@ -10,24 +20,33 @@
   height: 100%;
   min-height: 300px;
   position: relative;
+  padding: 16px; // Thêm padding để tạo khoảng cách với mép
+  @media (max-width: 576px) {
+    padding: 8px; // Reduce padding for mobile
+    min-height: 220px; // Consider reducing height too
+  }
 
   .image {
     object-fit: cover;
     width: 100%;
     height: 200px;
-    border-radius: 4px 0 0 4px;
+    border-radius: 8px; // Làm tròn góc ảnh để đẹp hơn
   }
 
   .timeLabel {
     position: absolute;
-    bottom: 12px;
-    right: 12px;
+    bottom: 28px; // Điều chỉnh vị trí label thời gian do đã thêm padding
+    right: 28px; // Điều chỉnh vị trí label thời gian do đã thêm padding
     background: rgba(0, 0, 0, 0.6);
     padding: 4px 8px;
     border-radius: 4px;
     color: white;
     font-size: 12px;
     z-index: 2;
+    @media (max-width: 576px) {
+      bottom: 16px;
+      right: 16px;
+    }
   }
 
   .carousel {
@@ -51,6 +70,9 @@
     display: flex !important;
     align-items: center;
     justify-content: center;
+    @media (max-width: 576px) {
+      min-height: 180px;
+    }
   }
 
   .carouselButton {
@@ -58,33 +80,56 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.8);
     border: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.9);
+      background: white;
     }
 
     &Left {
-      left: 10px;
+      left: 24px;
     }
 
     &Right {
-      right: 10px;
+      right: 24px;
+    }
+    
+    // Make buttons smaller on mobile
+    @media (max-width: 576px) {
+      width: 28px;
+      height: 28px;
+      
+      &Left {
+        left: 20px;
+      }
+      
+      &Right {
+        right: 20px;
+      }
     }
   }
 
   .imagePagination {
     position: absolute;
-    bottom: 12px;
-    left: 12px;
+    bottom: 28px; // Điều chỉnh vị trí phân trang do đã thêm padding
+    left: 28px; // Điều chỉnh vị trí phân trang do đã thêm padding
     background: rgba(0, 0, 0, 0.6);
     padding: 4px 8px;
     border-radius: 4px;
     color: white;
     font-size: 12px;
     z-index: 2;
+    @media (max-width: 576px) {
+      bottom: 16px;
+      left: 16px;
+    }
   }
 
   .previewMask {
@@ -104,6 +149,7 @@
     align-items: center;
     justify-content: center;
     background-color: #f5f5f5;
+    padding: 16px; // Thêm padding cho phần không có ảnh
 
     .image {
       max-height: 300px;
@@ -117,17 +163,30 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  @media (max-width: 768px) {
+    padding: 16px 12px; // Reduce from 20px 16px
+  }
 
   .statusContainer {
     margin-bottom: 16px;
+    margin-right: 70px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center; // Căn giữa theo chiều ngang
+    align-items: center; // Căn giữa theo chiều dọc
+    gap: 5px; // Khoảng cách giữa các phần tử
+    @media (max-width: 768px) {
+      margin-right: 0; // Remove right margin on mobile
+      margin-bottom: 12px;
+    }
   }
 
   .postTitle {
     margin-top: 0;
     margin-bottom: 16px;
+    @media (max-width: 576px) {
+      font-size: 20px;
+      margin-bottom: 12px; // Reduce bottom margin
+    }
   }
 
   .infoSection {
@@ -193,12 +252,30 @@
 
 .modalFooter {
   display: flex;
-  justify-content: center;
+  justify-content:flex-end;
   padding: 12px 24px;
   border-top: 1px solid #f0f0f0;
+  @media (max-width: 576px) {
+    padding: 10px 16px;
+  }
 }
 
 .managementButton {
   width: 100%;
   max-width: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; // You could change this to center or flex-start
+  
+  // Adjust this to create less space between text and icon
+  :global(.anticon) {
+    margin-left: 4px; // Reduce from 8px to 4px
+  }
+  
+}
+
+// You can also adjust or remove this if it's causing additional spacing
+.managementButton .anticon-right {
+  margin-left: 4px; // Reduce from 8px to 4px
+  font-size: 14px;
 }

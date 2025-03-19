@@ -194,6 +194,7 @@ const PostInfoDetail = () => {
             {selectedPost.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
           </Title>
           {renderTitle()}
+          {renderTitle()}
           <div>
             <Text className={styles.textAdress}>
               <EnvironmentOutlined />{' '}

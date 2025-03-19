@@ -203,9 +203,8 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
         <Image
           src={`${URL_SERVER_IMAGE}${images[0]}`}
           alt="Sản phẩm"
-          width={100}
-          height={100}
-          style={{ objectFit: 'cover' }}
+          style={{ width: 100, height: 100, objectFit: 'cover' }}
+          preview={false}
         />
       )
     },
@@ -301,6 +300,10 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
               <Typography.Title level={5} ellipsis={{ rows: 1 }} className={styles.cardTitle}>
                 {item.title}
               </Typography.Title>
+
+              <Typography.Paragraph className={styles.cardDescription} ellipsis={{ rows: 2 }}>
+                {item.city}
+              </Typography.Paragraph>
 
               <div className={styles.cardFooter}>
                 <Typography.Text type="secondary" className={styles.dateInfo}>
