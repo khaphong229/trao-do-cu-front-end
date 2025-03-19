@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Input, Button } from 'antd'
-import { SearchOutlined, PlusOutlined } from '@ant-design/icons'
+import { Row, Col, Input } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
 import UserTable from './components/UserTable'
 import UserDetailModal from './components/UserDetailModal'
 import UserFormModal from './components/UserFormModal'

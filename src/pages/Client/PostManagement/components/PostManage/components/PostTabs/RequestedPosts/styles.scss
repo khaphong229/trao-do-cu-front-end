@@ -1,6 +1,9 @@
 @import '../../../../../../../../assets/scss/variables.scss';
 
-// Main container styles
+.group-button-ok {
+  display: flex;
+}
+
 .request-list {
   max-width: 1200px;
   margin: 0 auto;
@@ -196,11 +199,10 @@
   .ant-card-body {
     padding: 16px;
     height: auto;
-    margin-top: 8px;
   }
 
   .image-wrapper {
-    height: 200px;
+    height: 160px;
     position: relative;
     overflow: hidden;
 
@@ -246,17 +248,12 @@
     }
 
     .ant-ribbon {
-      font-weight: 600;
-      font-size: 11px;
-      padding: 2px 8px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      border-radius: 0 0 0 4px;
-      z-index: 10;
     }
 
     .post-type-ribbon {
       position: absolute;
-      top: 8px;
+      top: 0;
       right: 0;
       z-index: 10;
     }
@@ -268,7 +265,8 @@
     height: 100%;
 
     .card-title {
-      margin-bottom: 8px !important;
+      margin-top: 0;
+      margin-bottom: 6px;
       font-size: 15px;
       line-height: 1.4;
       font-weight: 600;
@@ -331,7 +329,6 @@
 
     .card-footer {
       margin-top: auto;
-      border-top: 1px solid rgba(0, 0, 0, 0.06);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -391,10 +388,6 @@
     .ant-tabs-tab {
       padding: 8px 16px;
       font-weight: 500;
-
-      &:hover {
-        color: #1890ff;
-      }
 
       &.ant-tabs-tab-active .ant-tabs-tab-btn {
         font-weight: 600;

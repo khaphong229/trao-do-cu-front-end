@@ -51,7 +51,7 @@ const ProfilePage = () => {
     if (!list) return ''
     if (!Array.isArray(list)) return String(list)
     const defaultAddress = list.find(item => item.isDefault === true)
-    return defaultAddress?.address || ''
+    return defaultAddress?.address || 'Chưa cung cấp'
   }
 
   useEffect(() => {

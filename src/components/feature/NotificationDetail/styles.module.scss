@@ -2,7 +2,7 @@
   @media (max-width: 576px) {
     width: 95% !important;
     margin: 0 auto;
-    
+
     :global(.ant-modal-content) {
       border-radius: 8px;
       padding: 0; // Already good
@@ -100,16 +100,16 @@
     &Right {
       right: 24px;
     }
-    
+
     // Make buttons smaller on mobile
     @media (max-width: 576px) {
       width: 28px;
       height: 28px;
-      
+
       &Left {
         left: 20px;
       }
-      
+
       &Right {
         right: 20px;
       }
@@ -252,7 +252,7 @@
 
 .modalFooter {
   display: flex;
-  justify-content:flex-end;
+  justify-content: flex-end;
   padding: 12px 24px;
   border-top: 1px solid #f0f0f0;
   @media (max-width: 576px) {
@@ -266,12 +266,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between; // You could change this to center or flex-start
-  
+
   // Adjust this to create less space between text and icon
   :global(.anticon) {
     margin-left: 4px; // Reduce from 8px to 4px
   }
-  
 }
 
 // You can also adjust or remove this if it's causing additional spacing

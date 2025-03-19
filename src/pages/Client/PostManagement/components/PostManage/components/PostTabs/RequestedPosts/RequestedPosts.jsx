@@ -186,15 +186,13 @@ const RequestedPosts = () => {
                 {request.post_id.title}
               </Typography.Title>
 
-              <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
+              <div className="group-button-ok">
+                <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
 
-              <Typography.Paragraph className="desc-post" ellipsis={{ rows: 2 }}>
-                {request.post_id.description}
-              </Typography.Paragraph>
-
-              <Button icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
-
-              <Button icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
+                {request.post_id.status === 'inactive' && request.status === 'accepted' && (
+                  <Button icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
+                )}
+              </div>
 
               {/* User info placed before contact info */}
               <div className="card-footer">
@@ -270,7 +268,7 @@ const RequestedPosts = () => {
         handleCancelQR={handleCancelQR}
         qrImageUrl={qrCode}
       />
-      <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
+      <Tabs type="card" activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
       {allRequests.length === 0 &&
         giftRequests.length === 0 &&
         exchangeRequests.length === 0 &&
