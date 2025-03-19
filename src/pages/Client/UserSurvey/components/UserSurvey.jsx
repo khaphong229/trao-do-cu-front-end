@@ -128,7 +128,7 @@ export default function SurveyForm() {
         <div className={styles.survey__info}>
           <h1 className={styles['survey__info-title']}>Khám phá sở thích của bạn</h1>
           <p className={styles['survey__info-subtitle']}>Tìm kiếm sản phẩm phù hợp dựa trên sở thích cá nhân</p>
-          {!isMobile && (
+          {!isMobile.isMobile && (
             <div className={styles['survey__info-description']}>
               <p>
                 Chào mừng bạn đến với khảo sát người dùng của chúng tôi. Bằng cách chia sẻ sở thích của bạn, chúng tôi
@@ -139,7 +139,6 @@ export default function SurveyForm() {
             </div>
           )}
         </div>
-
         <Card className={styles.survey__card}>
           <div className={styles['survey__step-content']}>
             <div className={styles.survey__field}>
