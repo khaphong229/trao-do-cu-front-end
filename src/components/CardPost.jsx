@@ -8,21 +8,38 @@ import { getValidImageUrl } from 'helpers/helper'
 import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
 import { FaMapMarkerAlt } from 'react-icons/fa'
 import { getAvatarPostNews } from 'hooks/useAvatar'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
 import withAuth from 'hooks/useAuth'
 import styles from './CardPost.module.scss'
 import logoPtit from 'assets/images/common/ptit_logo.png'
 
 const { Text, Paragraph } = Typography
-function CardPost({ item }) {
+function CardPost({ item, onRequestComplete }) {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
+  const { query } = useSelector(state => state.post)
+
   const goDetail = _id => {
     navigate(`/post/${_id}/detail`)
   }
+
   const AuthButton = withAuth(Button)
-  const { handleGiftRequest } = useGiftRequest()
+
+  // Modify the useGiftRequest hook usage to handle the callback
+  const { handleGiftRequest: originalHandleGiftRequest } = useGiftRequest()
+
+  // Create a new handler that calls the original and then refreshes data
+  const handleGiftRequest = async (item, type) => {
+    await originalHandleGiftRequest(item, type)
+
+    // After the request is complete, refresh the data
+    if (onRequestComplete) {
+      onRequestComplete()
+    }
+  }
+
   const renderActionButton = item => {
     if (!user) {
       return item.type === 'gift' ? (

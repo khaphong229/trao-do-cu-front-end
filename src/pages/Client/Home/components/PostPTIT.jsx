@@ -69,6 +69,12 @@ const PostPTIT = () => {
     )
   }, [dispatch, query])
 
+  // Function to handle post request completion
+  const handleRequestComplete = useCallback(() => {
+    // Refresh the posts data
+    fetchPost()
+  }, [fetchPost])
+
   useEffect(() => {
     dispatch(resetPosts())
     fetchPost()
@@ -127,7 +133,7 @@ const PostPTIT = () => {
         <OwlCarousel className="owl-theme" {...owlOptions}>
           {ptitPosts.map(item => (
             <div key={item._id} className={styles.owlItem}>
-              <CardPost item={item} />
+              <CardPost item={item} onRequestComplete={handleRequestComplete} />
             </div>
           ))}
         </OwlCarousel>
@@ -138,7 +144,7 @@ const PostPTIT = () => {
         <Row gutter={[16, 16]}>
           {ptitPosts.map(item => (
             <Col xs={12} sm={12} md={8} lg={6} key={item._id}>
-              <CardPost item={item} />
+              <CardPost item={item} onRequestComplete={handleRequestComplete} />
             </Col>
           ))}
         </Row>
