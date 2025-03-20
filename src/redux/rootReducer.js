@@ -9,6 +9,7 @@ import exchangeRequestReducer from 'features/client/request/exchangeRequest/exch
 import notificationReducer from 'features/client/notification/notificationSlice'
 import surveyReducer from 'features/client/Survey/surveySlice'
 import postAdminReducer from '../features/admin/post/postAdminSlice'
+import postRatingReducer from 'features/client/postRating/postRatingSlice'
 const rootReducer = combineReducers({
   auth: authReducer,
   userManagement: userReducer,
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   exchangeRequest: exchangeRequestReducer,
   notification: notificationReducer,
   survey: surveyReducer,
-  postManagement: postAdminReducer
+  postManagement: postAdminReducer,
+  postRating: postRatingReducer
 })
 
 export default rootReducer

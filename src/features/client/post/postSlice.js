@@ -49,6 +49,7 @@ const initialState = {
   pageSize: 16,
   hasMore: true,
   query: '',
+  isApproved: false,
   // get my post
   requestStatuses: {},
   statusCache: {},
@@ -165,7 +166,14 @@ const postSlice = createSlice({
       state.cityFilter = action.payload
     }
   },
+  updatePostApprovalStatus: (state, action) => {
+    const { postId, isApproved } = action.payload
 
+    const post = state.posts.find(post => post._id === postId)
+    if (post) {
+      post.isApproved = isApproved
+    }
+  },
   //get my post & post management
   extraReducers: builder => {
     // Create Post Reducers
@@ -209,13 +217,12 @@ const postSlice = createSlice({
         const newPosts = action.payload?.data?.data || []
         const currentPage = action.payload?.data?.current || 1
 
+        // Không lọc posts ở đây, hiển thị tất cả posts với trạng thái duyệt
         if (currentPage === 1) {
           state.posts = newPosts
         } else {
           const existingPostIds = new Map(state.posts.map(post => [post._id, true]))
-
           const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
-
           state.posts = [...state.posts, ...uniqueNewPosts]
         }
 
@@ -309,7 +316,9 @@ const postSlice = createSlice({
       .addCase(getPostGiftPagination.fulfilled, (state, action) => {
         state.isLoading = false
         if (action.payload) {
-          state.posts = Array.isArray(action.payload.data.data) ? action.payload.data.data : []
+          const posts = Array.isArray(action.payload.data.data) ? action.payload.data.data : []
+          // Lưu tất cả posts mà không lọc
+          state.posts = posts
           state.total = action.payload.data.total || 0
           state.current = action.payload.data.current || 1
           state.limit = action.payload.data.limit || 5

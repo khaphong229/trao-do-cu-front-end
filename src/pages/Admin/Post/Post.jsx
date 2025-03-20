@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Col, Input, Button, message } from 'antd'
-import { ReloadOutlined, SearchOutlined } from '@ant-design/icons'
+import { Row, Col, Input, Button } from 'antd'
+import { SearchOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   setIsDetailsModalVisible,
   setIsModalVisible,
+  setSearchText,
   setSelectedPost
 } from '../../../features/admin/post/postAdminSlice'
 import PostTable from './components/PostTable'
@@ -15,8 +16,6 @@ import { getPostAdminPagination } from 'features/admin/post/postAdminThunks'
 
 const Post = () => {
   const dispatch = useDispatch()
-
-  const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
 
   const {
@@ -24,16 +23,16 @@ const Post = () => {
     isDetailsModalVisible,
     selectedPost,
     posts,
-    current,
-    pageSize // Add default value for posts
+    searchText // Add default value for posts
   } = useSelector(state => state.postManagement || {})
+
   useEffect(() => {
     dispatch(setPage(1))
     dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
   }, [dispatch, searchText])
 
   const handleSearch = value => {
-    setSearchText(value)
+    dispatch(setSearchText(value))
   }
 
   const handleEditPost = post => {
@@ -48,15 +47,9 @@ const Post = () => {
     dispatch(setIsDetailsModalVisible(true))
     console.log('After dispatch:', { isDetailsModalVisible, selectedPost })
   }
-  const handleReloadData = () => {
-    dispatch(getPostAdminPagination({ current, pageSize }))
-      .unwrap()
-      .then(() => {
-        message.success('Đã tải lại dữ liệu')
-      })
-      .catch(() => {
-        message.error('Có lỗi xảy ra khi tải lại dữ liệu')
-      })
+
+  const handleReload = () => {
+    dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
   }
 
   return (
@@ -74,7 +67,9 @@ const Post = () => {
             style={{ width: '100%' }}
           />
         </Col>
-        <Button icon={<ReloadOutlined />} onClick={handleReloadData} size="large" title="Tải lại dữ liệu" />
+        <Col>
+          <Button icon={<ReloadOutlined />} onClick={handleReload} size="large" title="Tải lại dữ liệu" />
+        </Col>
       </Row>
 
       <PostTable onEdit={handleEditPost} onViewDetails={handleViewDetails} />

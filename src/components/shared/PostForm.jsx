@@ -190,7 +190,8 @@ const PostForm = ({
   }
 
   const handleFinish = () => {
-    // Final submission
+    // Hiển thị modal xác nhận trước khi đăng bài
+
     handleSubmit()
   }
 
@@ -324,6 +325,12 @@ const PostForm = ({
             </Button>
           )}
         </div>
+        {current === steps.length - 1 && !isExchangeForm && (
+          <div style={{ marginTop: 16, color: '#666', fontSize: '13px' }}>
+            <p>* Lưu ý: Bài đăng sẽ được admin xét duyệt trước khi hiển thị công khai.</p>
+            <p>* Thời gian duyệt bài thường trong vòng 24h.</p>
+          </div>
+        )}
       </Modal>
     </>
   )

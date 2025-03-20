@@ -33,15 +33,20 @@ const CreatePostModal = () => {
   }, [isCreateModalVisible, dispatch])
 
   const validateSubmit = async formData => {
+    const postData = {
+      ...formData,
+      isApproved: false // Mặc định bài đăng chưa được duyệt
+    }
+
     const response = await dispatch(
-      createPost(formData.category_id === null ? omit(formData, ['category_id']) : formData)
+      createPost(postData.category_id === null ? omit(postData, ['category_id']) : postData)
     ).unwrap()
 
     const { status, message: msg } = response
     if (status === 201) {
-      message.success(msg)
+      // Thay đổi message thành thông báo chi tiết hơn
+      message.success('Bài đăng đã được gửi và đang chờ admin phê duyệt')
       dispatch(setCreateModalVisibility(false))
-      // Full reset after successful post creation
       dispatch(resetPostData())
     }
     return response

@@ -102,8 +102,9 @@ const PostNews = () => {
 
   const filteredPosts = posts?.filter(
     post =>
-      (!query || post.title.toLowerCase().includes(query.toLowerCase())) && // Lọc theo từ khóa
-      (!cityFilter || post.city === cityFilter) // Lọc theo thành phố nếu có chọn
+      post.isApproved && // Thêm điều kiện này để chỉ hiện bài đã được duyệt
+      (!query || post.title.toLowerCase().includes(query.toLowerCase())) &&
+      (!cityFilter || post.city === cityFilter)
   )
 
   const renderActionButton = item => {

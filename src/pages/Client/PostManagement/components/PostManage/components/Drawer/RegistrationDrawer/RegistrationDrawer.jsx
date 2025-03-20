@@ -1,6 +1,21 @@
-import React, { useState } from 'react'
-import { Drawer, Card, List, Avatar, Button, message, Badge, Descriptions, Image, Pagination, Tag, Space } from 'antd'
-import { UserOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import React, { useState, useEffect, useCallback } from 'react'
+import {
+  Drawer,
+  Card,
+  List,
+  Avatar,
+  Button,
+  message,
+  Badge,
+  Descriptions,
+  Image,
+  Pagination,
+  Tag,
+  Space,
+  Input,
+  Select
+} from 'antd'
+import { UserOutlined, ClockCircleOutlined, SearchOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './RegistrationDrawer.module.scss'
 import dayjs from 'dayjs'
@@ -8,7 +23,7 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getAvatarPost } from 'hooks/useAvatar'
-import imgNotFound from 'assets/images/others/imagenotfound.webp'
+import { locationService } from 'services/client/locationService'
 
 export const RegistrationDrawer = ({
   visible,
@@ -22,14 +37,51 @@ export const RegistrationDrawer = ({
   const dispatch = useDispatch()
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const [searchText, setSearchText] = useState('')
+  const [filteredRequests, setFilteredRequests] = useState([])
+  const [activeTab, setActiveTab] = useState('all')
+  const [sortOrder, setSortOrder] = useState('newest')
   const isMobile = useCheckMobileScreen()
 
   const sortedRequests = React.useMemo(() => {
     if (!receiveRequests) return []
-    const accepted = receiveRequests.filter(req => req.status === 'accepted')
-    const pending = receiveRequests.filter(req => req.status === 'pending')
-    return [...accepted, ...pending]
-  }, [receiveRequests])
+
+    let sorted = [...receiveRequests]
+
+    // Sắp xếp theo trạng thái trước (accepted luôn lên đầu)
+    sorted.sort((a, b) => {
+      if (a.status === 'accepted' && b.status !== 'accepted') return -1
+      if (a.status !== 'accepted' && b.status === 'accepted') return 1
+      return 0
+    })
+
+    // Sau đó sắp xếp theo thời gian trong mỗi nhóm
+    sorted = sorted.sort((a, b) => {
+      if (sortOrder === 'newest') {
+        return new Date(b.created_at) - new Date(a.created_at)
+      } else {
+        return new Date(a.created_at) - new Date(b.created_at)
+      }
+    })
+
+    return sorted
+  }, [receiveRequests, sortOrder])
+
+  useEffect(() => {
+    if (searchText.trim() === '') {
+      setFilteredRequests(sortedRequests)
+    } else {
+      const searchLower = searchText.toLowerCase()
+      const filtered = sortedRequests.filter(
+        request =>
+          (request.user_req_id?.name || '').toLowerCase().includes(searchLower) ||
+          (request.contact_phone || '').includes(searchText) ||
+          (request.contact_address || '').toLowerCase().includes(searchLower) ||
+          (request.reason_receive || '').toLowerCase().includes(searchLower)
+      )
+      setFilteredRequests(filtered)
+    }
+  }, [searchText, sortedRequests])
 
   const hasAccepted = React.useMemo(() => {
     return sortedRequests.some(req => req.status === 'accepted')
@@ -80,8 +132,14 @@ export const RegistrationDrawer = ({
     }
   }
 
-  if (!listing) return null
+  const handleSearch = e => {
+    setSearchText(e.target.value)
+  }
 
+  if (!listing) return null
+  const handleSortChange = value => {
+    setSortOrder(value)
+  }
   return (
     <Drawer
       title="Chi tiết danh sách"
@@ -122,9 +180,34 @@ export const RegistrationDrawer = ({
         </div>
       </Card>
 
+      <div className={styles.searchAndFilterContainer}>
+        <div className={styles.searchContainer}>
+          <Input
+            placeholder="Tìm kiếm người yêu cầu trao tặng..."
+            prefix={<SearchOutlined />}
+            value={searchText}
+            onChange={handleSearch}
+            className={styles.searchInput}
+            allowClear
+          />
+        </div>
+
+        <div className={styles.filterContainer}>
+          <Select
+            value={sortOrder}
+            onChange={handleSortChange}
+            options={[
+              { value: 'newest', label: 'Mới nhất' },
+              { value: 'oldest', label: 'Cũ nhất' }
+            ]}
+          />
+        </div>
+      </div>
+
       <List
         className={styles.requestsList}
-        dataSource={sortedRequests}
+        dataSource={filteredRequests}
+        locale={{ emptyText: 'Không tìm thấy yêu cầu nào' }}
         renderItem={request => (
           <div className={styles.requestItem}>
             <div className={styles.requestHeader}>

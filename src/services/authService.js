@@ -26,15 +26,20 @@ const authService = {
   getAdminCurrentUser() {
     return this.http.get('/admin/auth/me')
   },
+
   changePassWord(data) {
     return this.http.patch('/auth/change-password', {
-      password: data.currentPassword, // Chuyển thành `password`
-      new_password: data.newPassword // Chuyển thành `new_password`
+      password: data.currentPassword,
+      new_password: data.newPassword
     })
   },
 
-  resetPassword(token) {
-    return this.http.post('/auth/reset-password', { token })
+  resetPassword(data) {
+    // Using only new_password field as per backend validation
+    // Using token in the URL path parameter
+    return this.http.post(`/auth/reset-password/${data.token}`, {
+      new_password: data.new_password
+    })
   },
 
   updateProfile(userData) {
@@ -44,15 +49,11 @@ const authService = {
   loginGoogle(id) {
     return this.http.post('/auth/login-success', { googleId: id })
   },
+
   forgotPassword(email) {
     return this.http.post('/auth/forgot-password', { email })
   },
-  resetPasswordConfirm(data) {
-    return this.http.post('/auth/reset-password-confirm', {
-      token: data.token,
-      password: data.password
-    })
-  },
+
   updateDefaultAddress(data) {
     return this.http.post('/auth/update-default-address', { address_id: data })
   }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   updateRequestData,
@@ -14,9 +14,11 @@ const FormExchangeModal = () => {
   const { requestData, isExchangeFormModalVisible, isLoading } = useSelector(state => state.exchangeRequest)
   const { user } = useSelector(state => state.auth)
   const { handleExchangeConfirm } = useGiftRequest()
+  const [submitting, setSubmitting] = useState(false)
 
   const validateSubmit = async formData => {
     try {
+      setSubmitting(true)
       const response = await handleExchangeConfirm(formData)
 
       const { status, message: msg } = response
@@ -25,8 +27,10 @@ const FormExchangeModal = () => {
         dispatch(setExchangeFormModalVisible(false))
       }
 
+      setSubmitting(false)
       return response
     } catch (error) {
+      setSubmitting(false)
       return Promise.reject(error)
     }
   }
@@ -47,11 +51,12 @@ const FormExchangeModal = () => {
       isVisible={isExchangeFormModalVisible}
       onCancel={() => dispatch(setExchangeFormModalVisible(false))}
       formData={requestData}
-      isLoading={isLoading}
+      isLoading={isLoading || submitting}
       user={user}
       onSubmit={formUtils.handleSubmit}
       formUtils={formUtils}
       submitButtonText="Gửi"
+      showSpinner={submitting}
     />
   )
 }
