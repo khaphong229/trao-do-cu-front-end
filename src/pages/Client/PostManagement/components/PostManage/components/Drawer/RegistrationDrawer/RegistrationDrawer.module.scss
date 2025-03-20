@@ -1,3 +1,6 @@
+$success-color: #52c41a;
+
+
 .registrationDrawer {
   :global {
     .ant-drawer-content-wrapper {
@@ -275,6 +278,51 @@
 
       .ant-pagination-options {
         margin-left: 8px;
+      }
+    }
+  }
+}
+.searchAndFilterContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchContainer {
+    flex: 1;
+    margin: 0; // Remove margin since it's handled by parent
+    
+    .searchInput {
+      width: 100%;
+      height: 40px;
+      border-radius: 4px;
+      
+      &:hover, &:focus {
+        border-color: $success-color;
+        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+      }
+    }
+  }
+
+  .filterContainer {
+    display: flex;
+    gap: 8px;
+    min-width: 280px;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    :global {
+      .ant-select {
+        min-width: 130px;
       }
     }
   }

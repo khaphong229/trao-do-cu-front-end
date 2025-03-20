@@ -301,6 +301,19 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
           </Button>
         )
       }
+    },
+    {
+      title: 'Trạng thái duyệt',
+      dataIndex: 'isApproved',
+      key: 'isApproved',
+      width: 150,
+      render: isApproved => (
+        <Badge
+          status={isApproved ? 'success' : 'warning'}
+          text={isApproved ? 'Đã duyệt' : 'Chưa duyệt'}
+          className={styles.approvalBadge}
+        />
+      )
     }
   ]
 
@@ -314,30 +327,28 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
     <Row gutter={[16, 16]} className={styles.cardGrid}>
       {activePosts.map(item => (
         <Col xs={24} sm={12} md={8} lg={6} key={item._id}>
-          <Card
-            hoverable
-            className={styles.itemCard}
-            onClick={e => handlePostDetail(e, item)}
-            cover={
-              <div className={styles.imageContainer}>
-                <Image preview={false} src={`${URL_SERVER_IMAGE}${item.image_url[0]}`} alt={item.title} />
-                <div className={styles.ribbonWrapper}>
-                  <Badge.Ribbon
-                    text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
-                    color={item.type === 'exchange' ? 'green' : 'blue'}
-                  />
-                </div>
+          <Card hoverable className={styles.itemCard} onClick={e => handlePostDetail(e, item)}>
+            <div className={styles.imageContainer}>
+              <Image preview={false} src={`${URL_SERVER_IMAGE}${item.image_url[0]}`} alt={item.title} />
+              <div className={styles.ribbonWrapper}>
+                <Badge.Ribbon
+                  text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
+                  color={item.type === 'exchange' ? 'green' : 'blue'}
+                />
               </div>
-            }
-          >
+            </div>
             <div className={styles.cardContent}>
               <Typography.Title level={5} ellipsis={{ rows: 1 }} className={styles.cardTitle}>
                 {item.title}
               </Typography.Title>
 
-              <Typography.Paragraph className={styles.cardDescription} ellipsis={{ rows: 2 }}>
-                {item.city}
-              </Typography.Paragraph>
+              {/* Thêm badge trạng thái duyệt */}
+              <div className={styles.approvalStatus}>
+                <Badge
+                  status={item.isApproved ? 'success' : 'warning'}
+                  text={item.isApproved ? 'Đã duyệt' : 'Chưa duyệt'}
+                />
+              </div>
 
               <div className={styles.cardFooter}>
                 <Typography.Text type="secondary" className={styles.dateInfo}>
