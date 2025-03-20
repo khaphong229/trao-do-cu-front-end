@@ -19,6 +19,10 @@ $breakpoint-lg: 992px;
 $breakpoint-xl: 1200px;
 @import '../../../../../assets/scss/variables.scss';
 
+:global(.ant-checkbox-wrapper) {
+  display: flex !important;
+}
+
 .profile-page {
   min-height: auto;
   background-color: $colorWhite;
