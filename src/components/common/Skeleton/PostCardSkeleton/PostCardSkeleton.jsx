@@ -1,9 +1,10 @@
 import { Card, Skeleton } from 'antd'
 import styles from 'pages/Client/Home/scss/PostNews.module.scss'
 
-export const PostCardSkeleton = () => (
+export const PostCardSkeleton = ({ isPtit = false }) => (
   <Card
     hoverable
+    style={isPtit ? { height: 280 } : {}}
     className={styles.itemCard}
     cover={
       <div className={styles.imageWrapper}>

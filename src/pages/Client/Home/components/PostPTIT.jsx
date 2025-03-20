@@ -144,7 +144,8 @@ const PostPTIT = () => {
     margin: 14,
     nav: true,
     dots: false,
-    autoplay: false, // Disabled autoplay to make pagination work better
+    // autoplay: true, // Disabled autoplay to make pagination work better
+    // autoplayTimeout: 2000,
     smartSpeed: 500,
     responsive: {
       0: {
@@ -190,7 +191,7 @@ const PostPTIT = () => {
           ))}
           {isLoadingMore && (
             <div className={styles.owlItem}>
-              <PostCardSkeleton />
+              <PostCardSkeleton isPtit={true} />
             </div>
           )}
         </OwlCarousel>
