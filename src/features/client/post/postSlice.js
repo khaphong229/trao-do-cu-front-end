@@ -45,6 +45,8 @@ const initialState = {
   selectedPost: null,
   isLoading: false,
   isError: false,
+  isLoadingPtit: false,
+  isErrorPtit: false,
   current: 1,
   pageSize: 8,
   hasMore: true,
@@ -237,12 +239,12 @@ const postSlice = createSlice({
 
       //get post ptit
       .addCase(getPostPtitPagination.pending, state => {
-        state.isLoading = true
-        state.isError = null
+        state.isLoadingPtit = true
+        state.isErrorPtit = null
       })
       .addCase(getPostPtitPagination.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.isError = null
+        state.isLoadingPtit = false
+        state.isErrorPtit = null
 
         // const newPosts = action.payload?.posts || []
         // const currentPage = action.payload?.current || 1
@@ -258,13 +260,13 @@ const postSlice = createSlice({
         // }
 
         // state.hasMore = newPosts.length === action.payload?.limit
-        state.ptitPosts = action.payload?.posts || []
+        state.ptitPosts = action.payload?.data || []
         state.current = action.payload?.current || 1
         state.total = action.payload?.total || 0
       })
       .addCase(getPostPtitPagination.rejected, (state, action) => {
-        state.isLoading = false
-        state.isError = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
+        state.isLoadingPtit = false
+        state.isErrorPtit = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
       })
 
       .addCase(getPostCategory.pending, state => {
