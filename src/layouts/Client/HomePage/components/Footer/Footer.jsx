@@ -107,11 +107,7 @@ function AppFooter() {
               Hỗ Trợ Khách Hàng
             </Title>
             <Space direction="vertical" size={0} className={styles.linkContainer}>
-              <Link
-                href="https://tus-organization-14.gitbook.io/cau-hoi-thuong-gap-faq/"
-                target="_blank"
-                className={styles.link}
-              >
+              <Link href="https://help.traodocu.vn/" target="_blank" className={styles.link}>
                 Câu Hỏi Thường Gặp (FAQ)
               </Link>
               <Link onClick={() => setIsPrivacyOpen(true)} className={styles.link}>
