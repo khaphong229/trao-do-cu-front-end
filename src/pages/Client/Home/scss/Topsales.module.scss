@@ -1,12 +1,13 @@
 @import '../../../../assets/scss/variables.scss';
 
 .carouselWrap {
-  background: $textColor;
-  padding: 10px;
+  // background: $textColor;
+  // padding: 10px;
+  margin-top: 10px;
 }
 .bannerCarousel {
   width: 100% !important;
-  max-width: 1000px !important;
+  // max-width: 1000px !important;
   border-radius: 8px !important;
   max-height: 250px !important;
   object-fit: cover !important;

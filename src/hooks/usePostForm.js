@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { message } from 'antd'
 import { uploadPostImages } from 'features/upload/uploadThunks'
 import useDefaultLocation from './useDefaultLocation'
+import notifi from 'utils/notifi'
 
 export const usePostForm = ({ type, updateData, validateSubmit, formData, user, isModalVisible, dispatch }) => {
   const [errorPost, setErrorPost] = useState(null)
@@ -130,7 +131,8 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
           newErrors[field] = msg
 
           if (!hasDisplayedError) {
-            message.error(String(msg)) // Ensure this is a string
+            // message.error(String(msg)) // Ensure this is a string
+            notifi.error('Tạo bài đăng sản phẩm thất bại', String(msg))
             hasDisplayedError = true
           }
         })

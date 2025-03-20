@@ -1,6 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { uploadPostImages } from '../../upload/uploadThunks'
-import { createPost, getPostCategory, getPostGiftPagination, getPostId, getPostPagination } from './postThunks'
+import {
+  createPost,
+  getPostCategory,
+  getPostGiftPagination,
+  getPostId,
+  getPostPagination,
+  getPostPtitPagination
+} from './postThunks'
 
 const initialState = {
   // create post initial state
@@ -18,7 +25,8 @@ const initialState = {
       facebook: '',
       instagram: '',
       zalo: ''
-    }
+    },
+    isPtiterOnly: false
   },
   isPendingPostOpen: false, // Thêm state để theo dõi trạng thái chờ mở form đăng bài
   isShowTour: false,
@@ -52,7 +60,9 @@ const initialState = {
   sortOrder: 'newest',
   cityFilter: null, // Thêm state lưu thành phố đang lọc,
 
-  isEdittingAddress: false
+  isEdittingAddress: false,
+
+  ptitPosts: []
 }
 
 const postSlice = createSlice({
@@ -214,6 +224,38 @@ const postSlice = createSlice({
         state.total = action.payload?.data?.total || 0
       })
       .addCase(getPostPagination.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
+      })
+
+      //get post ptit
+      .addCase(getPostPtitPagination.pending, state => {
+        state.isLoading = true
+        state.isError = null
+      })
+      .addCase(getPostPtitPagination.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isError = null
+        console.log(action.payload)
+
+        const newPosts = action.payload?.posts || []
+        const currentPage = action.payload?.current || 1
+
+        if (currentPage === 1) {
+          state.ptitPosts = newPosts
+        } else {
+          const existingPostIds = new Map(state.ptitPosts.map(post => [post._id, true]))
+
+          const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
+
+          state.ptitPosts = [...state.ptitPosts, ...uniqueNewPosts]
+        }
+
+        state.hasMore = newPosts.length === action.payload?.limit
+        state.current = currentPage
+        state.total = action.payload?.total || 0
+      })
+      .addCase(getPostPtitPagination.rejected, (state, action) => {
         state.isLoading = false
         state.isError = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
       })

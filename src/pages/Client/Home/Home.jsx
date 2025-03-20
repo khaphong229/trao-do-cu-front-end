@@ -4,9 +4,12 @@ import TopSales from './components/Banner'
 import NotificationSuccessPopup from 'components/feature/NotificationSuccessPopup'
 import SEO from 'config/seo'
 import thumbnail from 'assets/images/banner/thumbnail.jpg'
+import PostPTIT from './components/PostPTIT'
+import { useSelector } from 'react-redux'
 
 const PostNews = lazy(() => import('./components/PostNews'))
 const Home = () => {
+  const { user } = useSelector(state => state.auth)
   return (
     <div className={`container`}>
       <SEO
@@ -19,8 +22,8 @@ const Home = () => {
       <TopSales />
       <Categories />
       <PostNews />
+      {user.isPtiter && <PostPTIT />}
       <NotificationSuccessPopup />
-      {/* <ChatBot /> */}
     </div>
   )
 }

@@ -43,7 +43,7 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   &__container {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 0;
     max-width: 1200px;
     margin: 0 auto;
 
@@ -55,7 +55,7 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
   // Left column - Survey info
   &__info {
-    @include flex($dir: column, $justify: center, $gap: 1rem);
+    @include flex($dir: column, $justify: center, $gap: 8px);
     padding: 1rem;
     text-align: center;
 
@@ -198,7 +198,7 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   // Category items
   &__category {
     @include card-style;
-    padding: 1rem;
+    padding: 6px;
     border-radius: 12px;
     cursor: pointer;
     position: relative;
@@ -368,7 +368,7 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       text-align: center;
 
       &-title {
-        font-size: 1.5rem;
+        font-size: 20px;
       }
 
       &-image {
@@ -392,7 +392,7 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     &__actions {
-      margin-top: 2.5rem;
+      margin-top: 16px;
     }
 
     &__button {
@@ -413,8 +413,12 @@ $box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     padding: 0.5rem;
 
     &__card {
-      padding: 1rem;
       border-radius: 12px;
+      :global {
+        .ant-card-body {
+          padding: 0 !important;
+        }
+      }
     }
 
     &__categories {

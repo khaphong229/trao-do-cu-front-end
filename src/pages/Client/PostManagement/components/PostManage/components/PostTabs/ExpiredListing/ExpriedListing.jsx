@@ -236,9 +236,10 @@ export const ExpiredListings = ({ refreshKey, isActive }) => {
       )
     },
     {
-      title: 'Tiêu đề',
+      title: 'Sản phẩm',
       dataIndex: 'title',
       key: 'title',
+      fixed: 'left',
       render: text => (
         <Space direction="vertical" size="small">
           <Typography.Text strong>{text}</Typography.Text>
@@ -257,7 +258,7 @@ export const ExpiredListings = ({ refreshKey, isActive }) => {
       }
     },
     {
-      title: 'thành công',
+      title: 'Thời gian',
       dataIndex: 'created_at',
       key: 'created_at',
       width: 150,

@@ -103,28 +103,32 @@ const RequestedPosts = () => {
 
   const columns = [
     {
-      title: 'Tiêu đề',
+      title: 'Ảnh bài viết',
+      key: 'postImage',
+      width: 120,
+      render: (_, record) => (
+        <Image
+          src={record?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : imgNotFound}
+          alt="Post image"
+          style={{ width: 100, height: 100, objectFit: 'cover' }}
+          fallback={avt}
+          preview={false}
+          onClick={e => handlePostClick(record, e)}
+        />
+      )
+    },
+    {
+      title: 'Sản phẩm',
       dataIndex: ['post_id', 'title'],
       key: 'title',
-      width: 200,
+      width: 150,
+      fixed: 'left',
       render: text => <Text strong>{text}</Text>
     },
     {
-      title: 'Trạng thái',
-      key: 'status',
-      width: 120,
-      render: (_, record) => getStatusTag(record.post_id.status, record.status)
-    },
-    {
-      title: 'Thông tin liên hệ',
-      key: 'contact',
-      width: 150,
-      render: (_, record) => <ContactInfoDisplay post={record} showInTable={true} />
-    },
-    {
-      title: 'Chủ bài đăng',
+      title: 'Người trao đồ',
       key: 'owner',
-      width: 300,
+      width: 200,
       render: (_, record) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Avatar
@@ -142,19 +146,17 @@ const RequestedPosts = () => {
       )
     },
     {
-      title: 'Ảnh bài viết',
-      key: 'postImage',
-      width: 120,
-      render: (_, record) => (
-        <Image
-          src={record?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : imgNotFound}
-          alt="Post image"
-          style={{ width: 100, height: 100, objectFit: 'cover' }}
-          fallback={avt}
-          preview={false}
-          onClick={e => handlePostClick(record, e)}
-        />
-      )
+      title: 'Thông tin liên hệ',
+      key: 'contact',
+      width: 150,
+      render: (_, record) => <ContactInfoDisplay post={record} showInTable={true} />
+    },
+
+    {
+      title: 'Địa chỉ',
+      key: 'address',
+      width: 200,
+      render: (_, record) => <Text>{record?.post_id?.city || 'Không rõ địa chỉ'}</Text>
     },
     {
       title: 'Loại',
@@ -166,18 +168,12 @@ const RequestedPosts = () => {
         </Tag>
       )
     },
+
     {
-      title: 'Mô tả',
-      dataIndex: ['post_id', 'description'],
-      key: 'description',
-      ellipsis: true,
-      width: 200
-    },
-    {
-      title: 'Địa chỉ',
-      key: 'address',
-      width: 200,
-      render: (_, record) => <Text>{record?.post_id?.specificLocation || 'Không rõ địa chỉ'}</Text>
+      title: 'Trạng thái',
+      key: 'status',
+      width: 120,
+      render: (_, record) => getStatusTag(record.post_id.status, record.status)
     }
   ]
 

@@ -110,15 +110,15 @@ export const UseListNotification = () => {
     [dispatch, isAuthenticated, lastPolledCount]
   )
 
-  useEffect(() => {
-    if (!isAuthenticated) return
+  // useEffect(() => {
+  //   if (!isAuthenticated) return
 
-    const pollInterval = setInterval(() => {
-      loadNotifications(1, true)
-    }, 60000) // Poll every minute
+  //   const pollInterval = setInterval(() => {
+  //     loadNotifications(1, true)
+  //   }, 60000) // Poll every minute
 
-    return () => clearInterval(pollInterval)
-  }, [isAuthenticated, loadNotifications])
+  //   return () => clearInterval(pollInterval)
+  // }, [isAuthenticated, loadNotifications])
 
   useEffect(() => {
     if (isAuthenticated && !isLoaded) {
