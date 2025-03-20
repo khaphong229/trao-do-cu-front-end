@@ -3,11 +3,12 @@ import { setPage, setPerPage } from 'features/admin/post/postAdminSlice'
 import { getPostPagination } from 'features/client/post/postThunks'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EyeOutlined, SearchOutlined, EnvironmentOutlined } from '@ant-design/icons'
+import { EyeOutlined, SearchOutlined, EnvironmentOutlined, ReloadOutlined } from '@ant-design/icons'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
 import styles from '../../styles.module.scss'
 import { approvalStatus, getPostAdminPagination } from 'features/admin/post/postAdminThunks'
 import moment from 'moment'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 
 const PostTable = ({ onViewDetails }) => {
   const dispatch = useDispatch()
@@ -28,7 +29,6 @@ const PostTable = ({ onViewDetails }) => {
         message.error('Có lỗi xảy ra khi duyệt bài đăng')
       })
   }
-
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: current,
@@ -73,20 +73,53 @@ const PostTable = ({ onViewDetails }) => {
     })
   }
 
+  // Hàm xử lý hiển thị ảnh
+  const getImageUrl = imageUrlArr => {
+    if (!imageUrlArr || imageUrlArr.length === 0) {
+      return avt
+    }
+
+    // Lấy URL đầu tiên từ mảng image_url
+    const imageUrl = imageUrlArr[0]
+
+    // Kiểm tra nếu URL đã bắt đầu bằng http hoặc https
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl
+    }
+
+    // Sử dụng URL_SERVER_IMAGE để xây dựng đường dẫn đầy đủ
+    return `${URL_SERVER_IMAGE}${imageUrl}`
+  }
+
   const columns = [
     {
       title: 'Ảnh bài đăng',
       dataIndex: 'image_url',
       key: 'image_url',
+      fixed: 'left', // Fix this column to the left
+      width: 100, // Give it a fixed width
       render: (imageUrl, record) => {
-        const imageSource = record.image_url && record.image_url.length > 0 ? record.image_url[0] : avt
-        return <img src={imageSource} alt="Bài đăng" width={50} height={50} style={{ objectFit: 'cover' }} />
+        const imageSource = getImageUrl(record.image_url)
+        return (
+          <img
+            src={imageSource}
+            alt="Bài đăng"
+            width={50}
+            height={50}
+            style={{ objectFit: 'cover' }}
+            onError={e => {
+              e.target.src = avt
+            }}
+          />
+        )
       }
     },
     {
       title: 'Tên bài đăng',
       dataIndex: 'title',
       key: 'title',
+      fixed: 'left', // Fix this column to the left
+      width: 250, // Give it a fixed width
       sorter: {
         compare: (a, b) => a.title.localeCompare(b.title)
       },
@@ -193,7 +226,7 @@ const PostTable = ({ onViewDetails }) => {
       key: 'actions',
       render: (_, record) => (
         <Space size="middle">
-          <Button icon={<EyeOutlined />} onClick={() => onViewDetails(record)} size="small" />
+          <Button icon={<EyeOutlined />} onClick={() => onViewDetails(record)} size="small" title="Xem chi tiết" />
         </Space>
       )
     }
