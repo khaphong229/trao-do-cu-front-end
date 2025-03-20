@@ -4,6 +4,7 @@ import { MailOutlined, EnvironmentOutlined, PhoneOutlined } from '@ant-design/ic
 import styles from './styles.module.scss'
 import { useNavigate } from 'react-router-dom'
 import Policy from 'components/Policy'
+import PrivacyPolicy from 'components/PrivacyPolicy'
 
 const { Title, Text, Link } = Typography
 
@@ -15,13 +16,17 @@ function AppFooter() {
   }
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false)
   const showModal = () => {
     setIsModalOpen(true)
   }
 
   const handleCancel = () => {
     setIsModalOpen(false)
+  }
+
+  const handlePrivacyCancel = () => {
+    setIsPrivacyOpen(false)
   }
 
   return (
@@ -102,10 +107,14 @@ function AppFooter() {
               Hỗ Trợ Khách Hàng
             </Title>
             <Space direction="vertical" size={0} className={styles.linkContainer}>
-              <Link href="/" className={styles.link}>
+              <Link
+                href="https://tus-organization-14.gitbook.io/cau-hoi-thuong-gap-faq/"
+                target="_blank"
+                className={styles.link}
+              >
                 Câu Hỏi Thường Gặp (FAQ)
               </Link>
-              <Link href="/" className={styles.link}>
+              <Link onClick={() => setIsPrivacyOpen(true)} className={styles.link}>
                 Chính Sách Bảo Mật
               </Link>
               <Link onClick={() => setIsModalOpen(true)} className={styles.link}>
@@ -142,6 +151,7 @@ function AppFooter() {
 
         <Divider style={{ borderColor: 'rgba(255,255,255,0.1)', margin: '30px 0 20px' }} />
         <Policy isOpen={isModalOpen} handleCancel={handleCancel} />
+        <PrivacyPolicy isOpen={isPrivacyOpen} handleCancel={handlePrivacyCancel} />
         <div style={{ textAlign: 'center', fontSize: 14, color: '#adb5bd' }}>
           © {new Date().getFullYear()} TRAO ĐỒ CŨ. Tất cả các quyền được bảo lưu.
         </div>
