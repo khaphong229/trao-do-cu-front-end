@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Button, Avatar, Tooltip, Typography, Badge } from 'antd'
+import { Card, Button, Avatar, Tooltip, Typography, Badge, ConfigProvider } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
@@ -43,23 +43,45 @@ function CardPost({ item, onRequestComplete }) {
   const renderActionButton = item => {
     if (!user) {
       return item.type === 'gift' ? (
-        <AuthButton
-          icon={<GiftOutlined />}
-          className={styles.actionButton}
-          type="primary"
-          onClick={() => handleGiftRequest(item, item.type)}
+        <ConfigProvider
+          theme={{
+            components: {
+              Button: {
+                colorPrimary: '#ff4d4f'
+              }
+            }
+          }}
         >
-          Nhận
-        </AuthButton>
+          <AuthButton
+            icon={<GiftOutlined />}
+            className={styles.actionButton}
+            type="primary"
+            onClick={() => handleGiftRequest(item, item.type)}
+          >
+            Nhận
+          </AuthButton>
+        </ConfigProvider>
       ) : (
-        <AuthButton
-          icon={<SwapOutlined />}
-          className={styles.actionButton}
-          type="default"
-          onClick={() => handleGiftRequest(item, item.type)}
+        <ConfigProvider
+          theme={{
+            components: {
+              Button: {
+                colorPrimary: '#ff4d4f',
+                colorPrimaryHover: '#ff7875',
+                colorPrimaryActive: '#ff7875'
+              }
+            }
+          }}
         >
-          Đổi
-        </AuthButton>
+          <AuthButton
+            icon={<SwapOutlined />}
+            className={styles.actionButton}
+            type="default"
+            onClick={() => handleGiftRequest(item, item.type)}
+          >
+            Đổi
+          </AuthButton>
+        </ConfigProvider>
       )
     }
 
@@ -78,25 +100,49 @@ function CardPost({ item, onRequestComplete }) {
     return (
       <Tooltip title={isMe ? 'Không thể thực hiện thao tác với bài đăng của bạn' : ''}>
         {item.type === 'gift' ? (
-          <AuthButton
-            icon={<GiftOutlined />}
-            className={styles.actionButton}
-            type="primary"
-            disabled={isMe}
-            onClick={() => handleGiftRequest(item, item.type)}
+          <ConfigProvider
+            theme={{
+              components: {
+                Button: {
+                  colorPrimary: '#ff4d4f',
+                  colorPrimaryHover: '#ff7875',
+                  colorPrimaryActive: '#ff7875'
+                }
+              }
+            }}
           >
-            Nhận
-          </AuthButton>
+            <AuthButton
+              icon={<GiftOutlined />}
+              className={styles.actionButton}
+              type="primary"
+              disabled={isMe}
+              onClick={() => handleGiftRequest(item, item.type)}
+            >
+              Nhận
+            </AuthButton>
+          </ConfigProvider>
         ) : (
-          <AuthButton
-            icon={<SwapOutlined />}
-            className={styles.actionButton}
-            type="default"
-            disabled={isMe}
-            onClick={() => handleGiftRequest(item, item.type)}
+          <ConfigProvider
+            theme={{
+              components: {
+                Button: {
+                  colorPrimary: '#ff4d4f',
+                  colorPrimaryHover: '#ff7875',
+                  colorPrimaryActive: '#ff7875'
+                }
+              }
+            }}
           >
-            Đổi
-          </AuthButton>
+            <AuthButton
+              icon={<SwapOutlined />}
+              className={styles.actionButton}
+              type="default"
+              disabled={isMe}
+              onClick={() => handleGiftRequest(item, item.type)}
+            >
+              Đổi
+            </AuthButton>
+          </ConfigProvider>
         )}
       </Tooltip>
     )

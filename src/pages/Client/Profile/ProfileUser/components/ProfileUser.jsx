@@ -40,6 +40,7 @@ const ProfilePage = () => {
       zalo: '',
       instagram: ''
     },
+    isPtiter: false,
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
@@ -62,6 +63,7 @@ const ProfilePage = () => {
         phone: userData.phone || '',
         address: getDefaultAddress(userData.address),
         gender: userData.gender || '',
+        isPtiter: userData.isPtiter || false,
         social_media: {
           facebook: userData?.social_media?.facebook,
           zalo: '',
@@ -83,6 +85,10 @@ const ProfilePage = () => {
     setFormData(prev => ({ ...prev, gender: value }))
   }
 
+  const handleCheckboxChange = e => {
+    setFormData(prev => ({ ...prev, isPtiter: e.target.checked }))
+  }
+
   const handleUpdateMe = async () => {
     try {
       delete formData.address
@@ -90,10 +96,6 @@ const ProfilePage = () => {
       const response = await dispatch(updateUserProfile(formData)).unwrap()
       if (response.status === 201) {
         message.success(response.message)
-        // Sử dụng navigate để reload trang hiện tại
-        setTimeout(() => {
-          navigate(0)
-        }, 1500)
       }
     } catch (error) {
       message.error('Cập nhật thông tin thất bại', error.message)
@@ -302,6 +304,11 @@ const ProfilePage = () => {
                 <label htmlFor="dob">Ngày, tháng, năm sinh</label>
                 <Input id="dob" type="date" />
               </div> */}
+              <div className={styles['form-group']}>
+                <Checkbox id="isPtiter" checked={formData.isPtiter} onChange={handleCheckboxChange}>
+                  Là sinh viên PTIT
+                </Checkbox>
+              </div>
               <div className={styles['form-actions1']}>
                 <Button type="primary" block style={{ width: '100px' }} onClick={handleUpdateMe}>
                   Thay đổi
