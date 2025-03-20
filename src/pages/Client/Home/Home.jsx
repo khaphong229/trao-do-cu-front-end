@@ -6,6 +6,7 @@ import SEO from 'config/seo'
 import thumbnail from 'assets/images/banner/thumbnail.jpg'
 import PostPTIT from './components/PostPTIT'
 import { useSelector } from 'react-redux'
+import ReviewUser from './components/ReviewUser'
 
 const PostNews = lazy(() => import('./components/PostNews'))
 const Home = () => {
@@ -24,6 +25,7 @@ const Home = () => {
       <PostNews />
       {user.isPtiter && <PostPTIT />}
       <NotificationSuccessPopup />
+      <ReviewUser />
     </div>
   )
 }
