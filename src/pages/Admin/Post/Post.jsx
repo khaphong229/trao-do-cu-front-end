@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   setIsDetailsModalVisible,
   setIsModalVisible,
+  setSearchText,
   setSelectedPost
 } from '../../../features/admin/post/postAdminSlice'
 import PostTable from './components/PostTable'
@@ -15,15 +16,14 @@ import { getPostAdminPagination } from 'features/admin/post/postAdminThunks'
 
 const Post = () => {
   const dispatch = useDispatch()
-
-  const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
 
   const {
     isModalVisible,
     isDetailsModalVisible,
     selectedPost,
-    posts // Add default value for posts
+    posts,
+    searchText // Add default value for posts
   } = useSelector(state => state.postManagement || {})
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const Post = () => {
   }, [dispatch, searchText])
 
   const handleSearch = value => {
-    setSearchText(value)
+    dispatch(setSearchText(value))
   }
 
   const handleEditPost = post => {

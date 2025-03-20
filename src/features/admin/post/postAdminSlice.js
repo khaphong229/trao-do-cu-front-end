@@ -31,10 +31,10 @@ const postAdminSlice = createSlice({
       state.selectedPost = action.payload
     },
     setPage: (state, action) => {
-      state.current = action.payload // Changed from page to current to match API response
+      state.current = action.payload
     },
     setPerPage: (state, action) => {
-      state.pageSize = action.payload // Changed from perPage to pageSize to match API response
+      state.pageSize = action.payload
     },
     clearError: state => {
       state.error = null
@@ -54,7 +54,7 @@ const postAdminSlice = createSlice({
           // Extract posts from data.data
           state.posts = action.payload.data.data.map(post => ({
             ...post,
-            isApproved: post.isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
+            isApproved: post.isApproved || false // Ensure isApproved is not null or undefined
           }))
           // Extract pagination info from correct places
           state.total = action.payload.data.total || 0
@@ -79,11 +79,11 @@ const postAdminSlice = createSlice({
         if (index !== -1) {
           state.posts[index] = {
             ...state.posts[index],
-            isApproved: action.payload.isApproved, // Cập nhật trạng thái duyệt
-            reason: action.payload.reason // Cập nhật lý do (nếu có)
+            isApproved: action.payload.isApproved,
+            reason: action.payload.reason
           }
         }
-        state.posts = [...state.posts] // ⚡ Cập nhật lại danh sách để trigger re-render
+        state.posts = [...state.posts] // Update list to trigger re-render
       })
   }
 })
@@ -98,4 +98,5 @@ export const {
   resetState,
   setSearchText
 } = postAdminSlice.actions
+
 export default postAdminSlice.reducer
