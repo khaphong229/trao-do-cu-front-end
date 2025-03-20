@@ -46,7 +46,7 @@ const initialState = {
   isLoading: false,
   isError: false,
   current: 1,
-  pageSize: 16,
+  pageSize: 8,
   hasMore: true,
   query: '',
   isApproved: false,
@@ -243,23 +243,23 @@ const postSlice = createSlice({
       .addCase(getPostPtitPagination.fulfilled, (state, action) => {
         state.isLoading = false
         state.isError = null
-        console.log(action.payload)
 
-        const newPosts = action.payload?.posts || []
-        const currentPage = action.payload?.current || 1
+        // const newPosts = action.payload?.posts || []
+        // const currentPage = action.payload?.current || 1
 
-        if (currentPage === 1) {
-          state.ptitPosts = newPosts
-        } else {
-          const existingPostIds = new Map(state.ptitPosts.map(post => [post._id, true]))
+        // if (currentPage === 1) {
+        //   state.ptitPosts = newPosts
+        // } else {
+        //   const existingPostIds = new Map(state.ptitPosts.map(post => [post._id, true]))
 
-          const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
+        //   const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
 
-          state.ptitPosts = [...state.ptitPosts, ...uniqueNewPosts]
-        }
+        //   state.ptitPosts = [...state.ptitPosts, ...uniqueNewPosts]
+        // }
 
-        state.hasMore = newPosts.length === action.payload?.limit
-        state.current = currentPage
+        // state.hasMore = newPosts.length === action.payload?.limit
+        state.ptitPosts = action.payload?.posts || []
+        state.current = action.payload?.current || 1
         state.total = action.payload?.total || 0
       })
       .addCase(getPostPtitPagination.rejected, (state, action) => {

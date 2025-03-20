@@ -97,7 +97,7 @@
 }
 
 .imageContainer {
-  max-height: 160px;
+  height: 160px;
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -115,8 +115,9 @@
 
   :global(.ant-image-img) {
     width: 100%;
-    max-height: 50%;
+    height: 100%;
     transition: transform 0.5s ease;
+    object-fit: cover;
   }
 
   &:hover :global(.ant-image-img) {
@@ -142,7 +143,7 @@
 }
 
 .cardTitle {
-  margin-top: 0 !important;
+  margin-top: 6px !important;
   margin-bottom: 8px !important;
   font-weight: 600;
   cursor: pointer;

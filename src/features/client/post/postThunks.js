@@ -41,13 +41,12 @@ export const getPostPagination = createAsyncThunk(
 
 export const getPostPtitPagination = createAsyncThunk(
   'post/getPostPtitPagination',
-  async ({ current, pageSize, query = '', category_id = null, type = null, city = null }, { rejectWithValue }) => {
+  async ({ current, pageSize, query = '', type = null, city = null }, { rejectWithValue }) => {
     try {
       const response = await postService.getPostPtitPagination({
         current,
         pageSize,
         q: query,
-        category_id,
         type,
         city,
         status: 'active'

@@ -76,7 +76,6 @@
 }
 
 .owlItem {
-  padding: 5px;
   @media screen and (max-width: 576px) {
     margin: 0 10px;
   }
@@ -260,18 +259,19 @@
   }
 
   @media (max-width: 576px) {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 .emptyState {
   padding: 40px 0;
-  background-color: white;
-  border-radius: 8px;
 }
 
 /* Owl Carousel Custom Styles */
 :global {
+  // .owl-item {
+  //   margin-right: 16px !important;
+  // }
   .owl-theme .owl-nav {
     margin-top: 10px;
     position: absolute;
@@ -318,4 +318,10 @@
     right: -15px;
     position: relative;
   }
+}
+
+.viewAllButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
 }

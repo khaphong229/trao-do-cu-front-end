@@ -1,17 +1,15 @@
 import React, { useEffect, useCallback, useState } from 'react'
-import { Button, Typography, Empty, Tooltip } from 'antd'
-import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
+import { Button, Typography, Empty, Row, Col } from 'antd'
+import { RightOutlined } from '@ant-design/icons'
 import styles from '../scss/PostPTIT.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPostPtitPagination } from 'features/client/post/postThunks'
 import { resetPosts } from 'features/client/post/postSlice'
 import { useNavigate } from 'react-router-dom'
-import withAuth from 'hooks/useAuth'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
-import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
 // Import OwlCarousel conditionally
 import 'owl.carousel/dist/assets/owl.carousel.css'
 import 'owl.carousel/dist/assets/owl.theme.default.css'
@@ -26,10 +24,9 @@ const PostPTIT = () => {
   const navigate = useNavigate()
   const [OwlCarousel, setOwlCarousel] = useState(null)
 
-  const { ptitPosts: posts, isError, isLoading, query } = useSelector(state => state.post)
-  const { user } = useSelector(state => state.auth)
+  const { ptitPosts, isError, isLoading, query } = useSelector(state => state.post)
 
-  const pageSizeContanst = 30
+  const pageSizeContanst = 8
 
   // Import OwlCarousel dynamically
   useEffect(() => {
@@ -77,32 +74,24 @@ const PostPTIT = () => {
     fetchPost()
   }, [fetchPost, dispatch])
 
-  const goDetail = _id => {
-    navigate(`/post/${_id}/detail`)
+  const viewAllPosts = () => {
+    navigate('/post/category/ptit')
   }
 
-  const AuthButton = withAuth(Button)
-
-  const formatPrice = price => {
-    return new Intl.NumberFormat('vi-VN').format(price) + 'đ'
-  }
-
-  const { handleGiftRequest } = useGiftRequest()
-
-  // Owl Carousel options with autoplay
+  // Updated Owl Carousel options with fixed 2 items for mobile
   const owlOptions = {
     items: 4,
-    loop: true, // Changed to true to allow continuous looping
+    loop: true,
     margin: 16,
     nav: true,
     dots: false,
-    autoplay: true, // Enable autoplay
-    autoplayTimeout: 2000, // Time between slides in ms (2 seconds)
-    autoplayHoverPause: true, // Pause on hover
-    smartSpeed: 500, // Transition speed
+    autoplay: true,
+    autoplayTimeout: 2000,
+    autoplayHoverPause: true,
+    smartSpeed: 500,
     responsive: {
       0: {
-        items: 1
+        items: 2 // Changed from 1 to 2 for mobile phones
       },
       576: {
         items: 2
@@ -116,232 +105,43 @@ const PostPTIT = () => {
     }
   }
 
-  const renderActionButton = item => {
-    if (!user) {
-      return item.type === 'gift' ? (
-        <AuthButton
-          icon={<GiftOutlined />}
-          className={styles.actionButton}
-          type="primary"
-          danger
-          onClick={() => handleGiftRequest(item, item.type)}
-        >
-          Nhận
-        </AuthButton>
-      ) : (
-        <AuthButton
-          icon={<SwapOutlined />}
-          className={styles.actionButton}
-          type="default"
-          danger
-          onClick={() => handleGiftRequest(item, item.type)}
-        >
-          Đổi
-        </AuthButton>
-      )
-    }
-
-    if (item.isRequested) {
-      return (
-        <Tooltip title={`Bạn ơi, chờ ${item.user_id?.name} xác nhận nhé!`}>
-          <Button className={styles.actionButton} disabled>
-            Đã yêu cầu
-          </Button>
-        </Tooltip>
-      )
-    }
-
-    const isMe = item?.user_id?._id === user._id
-
-    return (
-      <Tooltip title={isMe ? 'Không thể thực hiện thao tác với bài đăng của bạn' : ''}>
-        {item.type === 'gift' ? (
-          <AuthButton
-            icon={<GiftOutlined />}
-            className={styles.actionButton}
-            type="primary"
-            danger
-            disabled={isMe}
-            onClick={() => handleGiftRequest(item, item.type)}
-          >
-            Nhận
-          </AuthButton>
-        ) : (
-          <AuthButton
-            icon={<SwapOutlined />}
-            className={styles.actionButton}
-            type="default"
-            danger
-            disabled={isMe}
-            onClick={() => handleGiftRequest(item, item.type)}
-          >
-            Đổi
-          </AuthButton>
-        )}
-      </Tooltip>
-    )
-  }
-
   const renderProducts = () => {
     if (isLoading || isError) {
       return (
-        <div className={styles.itemsGrid}>
+        <Row gutter={[16, 16]}>
           {[...Array(4)].map((_, index) => (
-            <PostCardSkeleton key={index} />
+            <Col xs={12} sm={12} md={8} lg={6} key={index}>
+              <PostCardSkeleton />
+            </Col>
           ))}
-        </div>
+        </Row>
       )
     }
 
-    if (!posts || posts.length === 0) {
+    if (!ptitPosts || ptitPosts.length === 0) {
       return !isLoading && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
     }
 
     if (OwlCarousel) {
       return (
         <OwlCarousel className="owl-theme" {...owlOptions}>
-          {posts.map(item => (
+          {ptitPosts.map(item => (
             <div key={item._id} className={styles.owlItem}>
-              {/* <Card
-                className={`${styles.productCard} ${styles.glowingCard}`}
-                cover={
-                  <div className={styles.productImageContainer} onClick={() => goDetail(item._id)}>
-                    <div
-                      className={`${styles.discountBadge} ${
-                        item.type === 'gift' ? styles.giftBadge : styles.exchangeBadge
-                      }`}
-                    >
-                      {item.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
-                    </div>
-                    <img src={logoPtit} alt="logo_ptit" className={styles.logo_ptit} />
-                    <img
-                      loading="lazy"
-                      alt={item.title}
-                      src={getValidImageUrl(item.image_url) || '/placeholder.svg'}
-                      onError={e => {
-                        e.target.onerror = null
-                        e.target.src = imageNotFound
-                      }}
-                      className={styles.productImage}
-                    />
-                  </div>
-                }
-              >
-                <Tooltip title={item.title}>
-                  <div className={styles.productName} onClick={() => goDetail(item._id)}>
-                    {item.title}
-                  </div>
-                </Tooltip>
-
-                {(item.salePrice || item.originalPrice) && (
-                  <div className={styles.priceContainer}>
-                    {item.salePrice && <div className={styles.salePrice}>{formatPrice(item.salePrice)}</div>}
-                    {item.originalPrice && (
-                      <div className={styles.originalPrice}>{formatPrice(item.originalPrice)}</div>
-                    )}
-                  </div>
-                )}
-
-                <div className={styles.locationRow}>
-                  <div className={styles.userGroup}>
-                    <Avatar size="small" className={styles.avtUser} src={getAvatarPostNews(item?.user_id)} />
-                    <Text type="secondary" className={styles.time}>
-                      {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
-                    </Text>
-                  </div>
-                  {item?.city && (item.city.includes('Thành phố') || item.city.includes('Tỉnh')) ? (
-                    <Text type="secondary" className={styles.location}>
-                      <FaMapMarkerAlt style={{ marginRight: 4, fontSize: '14px' }} />
-                      {item.city.split('Thành phố')[1] || item.city.split('Tỉnh')[1]}
-                    </Text>
-                  ) : (
-                    item?.city && (
-                      <Text type="secondary" className={styles.location}>
-                        <FaMapMarkerAlt style={{ marginRight: 4, fontSize: '14px' }} />
-                        {item.city}
-                      </Text>
-                    )
-                  )}
-                </div>
-
-                <div className={styles.productFooter}>{renderActionButton(item)}</div>
-              </Card> */}
               <CardPost item={item} />
             </div>
           ))}
         </OwlCarousel>
       )
     } else {
-      // Fallback to grid view if OwlCarousel is not loaded
+      // Fallback to Ant Design Row/Col grid view - always 2 items on mobile
       return (
-        <div className={styles.itemsGrid}>
-          {posts.map(item => (
-            // <Card
-            //   key={item._id}
-            //   className={`${styles.productCard} ${styles.glowingCard}`}
-            //   cover={
-            //     <div className={styles.productImageContainer} onClick={() => goDetail(item._id)}>
-            //       <div
-            //         className={`${styles.discountBadge} ${
-            //           item.type === 'gift' ? styles.giftBadge : styles.exchangeBadge
-            //         }`}
-            //       >
-            //         {item.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
-            //       </div>
-            //       <img src={logoPtit} alt="logo_ptit" className={styles.logo_ptit} />
-            //       <img
-            //         loading="lazy"
-            //         alt={item.title}
-            //         src={getValidImageUrl(item.image_url) || '/placeholder.svg'}
-            //         onError={e => {
-            //           e.target.onerror = null
-            //           e.target.src = imageNotFound
-            //         }}
-            //         className={styles.productImage}
-            //       />
-            //     </div>
-            //   }
-            // >
-            //   <Tooltip title={item.title}>
-            //     <div className={styles.productName} onClick={() => goDetail(item._id)}>
-            //       {item.title}
-            //     </div>
-            //   </Tooltip>
-
-            //   {(item.salePrice || item.originalPrice) && (
-            //     <div className={styles.priceContainer}>
-            //       {item.salePrice && <div className={styles.salePrice}>{formatPrice(item.salePrice)}</div>}
-            //       {item.originalPrice && <div className={styles.originalPrice}>{formatPrice(item.originalPrice)}</div>}
-            //     </div>
-            //   )}
-
-            //   <div className={styles.locationRow}>
-            //     <div className={styles.userGroup}>
-            //       <Avatar size="small" className={styles.avtUser} src={getAvatarPostNews(item?.user_id)} />
-            //       <Text type="secondary" className={styles.time}>
-            //         {dayjs(item.created_at).isValid() ? dayjs(item.created_at).fromNow() : 'Không rõ thời gian'}
-            //       </Text>
-            //     </div>
-            //     {item?.city && (item.city.includes('Thành phố') || item.city.includes('Tỉnh')) ? (
-            //       <Text type="secondary" className={styles.location}>
-            //         <FaMapMarkerAlt style={{ marginRight: 4, fontSize: '14px' }} />
-            //         {item.city.split('Thành phố')[1] || item.city.split('Tỉnh')[1]}
-            //       </Text>
-            //     ) : (
-            //       item?.city && (
-            //         <Text type="secondary" className={styles.location}>
-            //           <FaMapMarkerAlt style={{ marginRight: 4, fontSize: '14px' }} />
-            //           {item.city}
-            //         </Text>
-            //       )
-            //     )}
-            //   </div>
-
-            //   <div className={styles.productFooter}>{renderActionButton(item)}</div>
-            // </Card>
-            <CardPost item={item} />
+        <Row gutter={[16, 16]}>
+          {ptitPosts.map(item => (
+            <Col xs={12} sm={12} md={8} lg={6} key={item._id}>
+              <CardPost item={item} />
+            </Col>
           ))}
-        </div>
+        </Row>
       )
     }
   }
@@ -353,6 +153,19 @@ const PostPTIT = () => {
       </div>
 
       {renderProducts()}
+
+      <div className={styles.viewAllButtonContainer}>
+        <Button
+          type="default"
+          size="middle"
+          danger
+          icon={<RightOutlined />}
+          onClick={viewAllPosts}
+          className={styles.viewAllButton}
+        >
+          Xem tất cả
+        </Button>
+      </div>
     </div>
   )
 }

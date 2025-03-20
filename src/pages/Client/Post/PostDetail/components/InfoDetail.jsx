@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Row, Col, Image, Typography, Divider, Avatar, Tooltip, Rate } from 'antd'
-import { ClockCircleOutlined, EnvironmentOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
+import { ClockCircleOutlined, EnvironmentOutlined, UserOutlined } from '@ant-design/icons'
 import styles from './../scss/PostInfoDetail.module.scss'
 import CreatePostModal from '../../CreatePost/CreatePost'
 import withAuth from 'hooks/useAuth'

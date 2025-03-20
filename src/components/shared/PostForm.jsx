@@ -301,7 +301,7 @@ const PostForm = ({
                 )
               }}
             >
-              Đăng trong nội bộ PTIT
+              Đăng trong góc PTIT
             </Checkbox>
           )}
           {current < steps.length - 1 && (

@@ -38,7 +38,7 @@ const PostNews = () => {
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
-  const pageSizeContanst = 16
+  const pageSizeContanst = 8
 
   const fetchCity = useCallback(async () => {
     const cachedCities = localStorage.getItem('vietnameseCities')
@@ -200,7 +200,7 @@ const PostNews = () => {
 
         {(isLoading || isError) && (
           <Row gutter={[16, 0]} className={styles.itemsGrid}>
-            {[...Array(16)].map((_, index) => (
+            {[...Array(8)].map((_, index) => (
               <Col key={index} xs={24} sm={12} md={8} lg={6}>
                 <PostCardSkeleton />
               </Col>
@@ -276,6 +276,7 @@ const PostNews = () => {
         ) : (
           !isLoading && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
         )}
+        {/* )} */}
 
         {hasMore && !isSearchMode && (
           <div className={styles.buttonWrapper}>

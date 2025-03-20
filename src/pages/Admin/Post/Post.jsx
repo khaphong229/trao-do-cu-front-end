@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Row, Col, Input, Button } from 'antd'
-import { SearchOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons'
+import { SearchOutlined, ReloadOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import {
