@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react'
-import { Button, Typography, Empty, Row, Col } from 'antd'
+import { Button, Empty, Row, Col } from 'antd'
 import { RightOutlined } from '@ant-design/icons'
 import styles from '../scss/PostPTIT.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,7 +15,6 @@ import 'owl.carousel/dist/assets/owl.carousel.css'
 import 'owl.carousel/dist/assets/owl.theme.default.css'
 import CardPost from 'components/CardPost'
 
-const { Text } = Typography
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
 
@@ -24,7 +23,7 @@ const PostPTIT = () => {
   const navigate = useNavigate()
   const [OwlCarousel, setOwlCarousel] = useState(null)
 
-  const { ptitPosts, isError, isLoading, query } = useSelector(state => state.post)
+  const { ptitPosts, isErrorPtit, isLoadingPtit, query } = useSelector(state => state.post)
 
   const pageSizeContanst = 8
 
@@ -87,8 +86,8 @@ const PostPTIT = () => {
   // Updated Owl Carousel options with fixed 2 items for mobile
   const owlOptions = {
     items: 4,
-    loop: true,
-    margin: 16,
+    // loop: true,
+    margin: 14,
     nav: true,
     dots: false,
     autoplay: true,
@@ -112,7 +111,7 @@ const PostPTIT = () => {
   }
 
   const renderProducts = () => {
-    if (isLoading || isError) {
+    if (isLoadingPtit || isErrorPtit) {
       return (
         <Row gutter={[16, 16]}>
           {[...Array(4)].map((_, index) => (
@@ -125,7 +124,7 @@ const PostPTIT = () => {
     }
 
     if (!ptitPosts || ptitPosts.length === 0) {
-      return !isLoading && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
+      return !isLoadingPtit && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
     }
 
     if (OwlCarousel) {

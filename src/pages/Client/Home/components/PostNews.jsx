@@ -198,7 +198,7 @@ const PostNews = () => {
           </div>
         </div>
 
-        {(isLoading || isError || filteredPosts.length === 0) && (
+        {(isLoading || isError) && (
           <Row gutter={[16, 0]} className={styles.itemsGrid}>
             {[...Array(8)].map((_, index) => (
               <Col key={index} xs={24} sm={12} md={8} lg={6}>
