@@ -27,16 +27,26 @@ function CardPost({ item, onRequestComplete }) {
 
   const AuthButton = withAuth(Button)
 
-  // Modify the useGiftRequest hook usage to handle the callback
-  const { handleGiftRequest: originalHandleGiftRequest } = useGiftRequest()
+  // Use the useGiftRequest hook
+  const { handleGiftRequest: originalHandleGiftRequest, isLoading } = useGiftRequest()
 
   // Create a new handler that calls the original and then refreshes data
   const handleGiftRequest = async (item, type) => {
-    await originalHandleGiftRequest(item, type)
+    try {
+      // Call the original request handler
+      const result = await originalHandleGiftRequest(item, type)
+      console.log(result)
 
-    // After the request is complete, refresh the data
-    if (onRequestComplete) {
-      onRequestComplete()
+      // Only refresh if the request was successful
+      if (result && result.success) {
+        // After the request is complete, refresh the data
+        if (onRequestComplete) {
+          onRequestComplete()
+        }
+      }
+    } catch (error) {
+      console.error('Error handling gift request:', error)
+      // Error handling could be added here
     }
   }
 
@@ -56,6 +66,7 @@ function CardPost({ item, onRequestComplete }) {
             icon={<GiftOutlined />}
             className={styles.actionButton}
             type="primary"
+            loading={isLoading}
             onClick={() => handleGiftRequest(item, item.type)}
           >
             Nhận
@@ -77,6 +88,7 @@ function CardPost({ item, onRequestComplete }) {
             icon={<SwapOutlined />}
             className={styles.actionButton}
             type="default"
+            loading={isLoading}
             onClick={() => handleGiftRequest(item, item.type)}
           >
             Đổi
@@ -116,6 +128,7 @@ function CardPost({ item, onRequestComplete }) {
               className={styles.actionButton}
               type="primary"
               disabled={isMe}
+              loading={isLoading}
               onClick={() => handleGiftRequest(item, item.type)}
             >
               Nhận
@@ -138,6 +151,7 @@ function CardPost({ item, onRequestComplete }) {
               className={styles.actionButton}
               type="default"
               disabled={isMe}
+              loading={isLoading}
               onClick={() => handleGiftRequest(item, item.type)}
             >
               Đổi
@@ -197,7 +211,8 @@ function CardPost({ item, onRequestComplete }) {
             ) : (
               item?.city && (
                 <Text type="secondary" className={styles.location}>
-                  {item.city.split('Thành phố')[1] || item.city.split('Tỉnh')[1]}
+                  <FaMapMarkerAlt style={{ marginRight: 4, fontSize: '14px' }} />
+                  {item.city}
                 </Text>
               )
             )}
