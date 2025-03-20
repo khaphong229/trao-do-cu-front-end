@@ -72,7 +72,7 @@ const ReviewUser = () => {
     const stars = []
     for (let i = 1; i <= 5; i++) {
       if (i <= rating) {
-        stars.push(<StarFilled key={i} className="star-icon filled" />)
+        stars.push(<StarFilled key={i} className="filled star-icon" />)
       } else {
         stars.push(<StarOutlined key={i} className="star-icon" />)
       }
@@ -147,11 +147,11 @@ const ReviewUser = () => {
   return (
     <div className={styles['testimonials-container']}>
       <div className={styles['testimonials-header']}>
-        <h2>Đánh giá của người dùng</h2>
+        <h2>Phản hồi của người dùng</h2>
         <div className={styles['header-underline']}></div>
         <p className={styles['header-description']}>
-          🎁 Hơn 10.000 món đồ đã được trao đổi thành công <br /> 👥 Cộng đồng 50.000+ thành viên tích cực <br /> 🌱
-          Tiết kiệm hàng tấn rác thải mỗi năm, góp phần bảo vệ môi trường
+          🎁 Hơn 1.000 món đồ đã được trao đi thành công <br /> 👥 Cộng đồng 5.000+ thành viên tích cực <br /> 🌱 Tiết
+          kiệm hàng đồ dùng, rác thả mỗi năm, góp phần bảo vệ môi trường
         </p>
       </div>
 

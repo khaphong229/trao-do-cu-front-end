@@ -1,27 +1,27 @@
 // Variables
-$primary-color: #2A9D8F;
-$secondary-color: #3083DC;
+$primary-color: #2a9d8f;
+$secondary-color: #3083dc;
 $text-color: #333333;
 $light-text: #555555;
 $card-bg: #ffffff;
-$accent-color: #F4A261;
+$accent-color: #f4a261;
 $border-radius: 16px;
 $box-shadow: 0 8px 20px rgba(42, 157, 143, 0.08);
 $transition-time: 0.3s;
 
 .testimonials-container {
-  padding: 70px 30px;
+  padding: 20px 30px 50px;
   background-color: #f8f9fa;
   position: relative;
   overflow: hidden;
   font-family: 'Arial', sans-serif;
-  
+
   // Decorative background shapes
   .bg-shape {
     position: absolute;
     border-radius: 50%;
   }
-  
+
   .shape-1 {
     width: 150px;
     height: 150px;
@@ -30,7 +30,7 @@ $transition-time: 0.3s;
     background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
     opacity: 0.1;
   }
-  
+
   .shape-2 {
     width: 100px;
     height: 100px;
@@ -39,7 +39,7 @@ $transition-time: 0.3s;
     background: linear-gradient(135deg, $accent-color 0%, #ff9800 100%);
     opacity: 0.15;
   }
-  
+
   .shape-3 {
     width: 70px;
     height: 70px;
@@ -48,7 +48,7 @@ $transition-time: 0.3s;
     background: linear-gradient(135deg, #9c27b0 0%, #673ab7 100%);
     opacity: 0.1;
   }
-  
+
   .shape-4 {
     width: 200px;
     height: 200px;
@@ -64,7 +64,7 @@ $transition-time: 0.3s;
   margin-bottom: 50px;
   position: relative;
   z-index: 1;
-  
+
   h2 {
     font-size: 30px;
     font-weight: 700;
@@ -72,7 +72,7 @@ $transition-time: 0.3s;
     margin-bottom: 15px;
     letter-spacing: 1px;
   }
-  
+
   .header-underline {
     width: 80px;
     height: 4px;
@@ -80,7 +80,7 @@ $transition-time: 0.3s;
     margin: 0 auto 25px;
     border-radius: 2px;
   }
-  
+
   .header-description {
     max-width: 700px;
     margin: 0 auto;
@@ -94,27 +94,27 @@ $transition-time: 0.3s;
 .testimonials-desktop {
   position: relative;
   overflow: hidden;
-  
+
   .testimonial-row {
     transition: transform 0.5s ease;
   }
-  
+
   .testimonial-col {
     transition: all 0.4s ease;
     opacity: 0.8;
     transform: scale(0.95);
-    
+
     &.active {
       opacity: 1;
       transform: scale(1);
     }
   }
-  
+
   .testimonial-dots {
     display: flex;
     justify-content: center;
     margin-top: 25px;
-    
+
     .dot {
       width: 10px;
       height: 10px;
@@ -123,12 +123,12 @@ $transition-time: 0.3s;
       margin: 0 5px;
       cursor: pointer;
       transition: all 0.3s ease;
-      
+
       &.active {
         background: linear-gradient(135deg, $primary-color, $secondary-color);
         transform: scale(1.2);
       }
-      
+
       &:hover {
         background-color: #ccc;
       }
@@ -143,12 +143,12 @@ $transition-time: 0.3s;
       button {
         background: #ddd;
         border-radius: 50%;
-        
+
         &:before {
           content: '';
         }
       }
-      
+
       &.slick-active button {
         background: linear-gradient(135deg, $primary-color, $secondary-color);
       }
@@ -167,7 +167,7 @@ $transition-time: 0.3s;
   position: relative;
   z-index: 1;
   overflow: hidden;
-  
+
   &:before {
     content: '';
     position: absolute;
@@ -179,30 +179,30 @@ $transition-time: 0.3s;
     opacity: 0;
     transition: opacity $transition-time ease;
   }
-  
+
   &:hover {
     transform: translateY(-3px);
   }
-  
+
   &.active {
     transform: translateY(-5px);
     box-shadow: 0 12px 30px rgba(42, 157, 143, 0.12);
-    
+
     &:before {
       opacity: 1;
     }
   }
-  
+
   &.mobile {
     margin: 10px;
     padding: 25px 15px;
   }
-  
+
   .testimonial-avatar {
     margin-bottom: 15px;
     position: relative;
     display: inline-block;
-    
+
     &:after {
       content: '';
       position: absolute;
@@ -214,34 +214,34 @@ $transition-time: 0.3s;
       left: -5%;
       opacity: 0.3;
     }
-    
+
     .ant-avatar {
       border: 3px solid #fff;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
   }
-  
+
   .testimonial-name {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 8px;
     color: $text-color;
   }
-  
+
   .rating {
     margin-bottom: 15px;
-    
+
     .star-icon {
       font-size: 18px;
       margin: 0 2px;
       color: #e0e0e0;
-      
+
       &.filled {
         color: $accent-color;
       }
     }
   }
-  
+
   .testimonial-text {
     color: $light-text;
     font-size: 14px;
@@ -255,26 +255,26 @@ $transition-time: 0.3s;
   .testimonials-container {
     padding: 50px 15px;
   }
-  
+
   .testimonials-header {
     margin-bottom: 30px;
-    
+
     h2 {
       font-size: 26px;
     }
-    
+
     .header-description {
       font-size: 15px;
     }
   }
-  
+
   .testimonial-card {
     padding: 25px 15px;
-    
+
     .testimonial-name {
       font-size: 17px;
     }
-    
+
     .testimonial-text {
       font-size: 13px;
     }
@@ -313,11 +313,11 @@ $transition-time: 0.3s;
 .testimonial-card {
   animation: fadeIn 0.7s ease-out forwards;
   animation-delay: 0.2s;
-  
+
   &:nth-child(2) {
     animation-delay: 0.4s;
   }
-  
+
   &:nth-child(3) {
     animation-delay: 0.6s;
   }
