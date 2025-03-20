@@ -73,13 +73,13 @@ const PostPTIT = () => {
         getPostPtitPagination({
           current: page,
           pageSize: pageSizeConstant,
-          query
+          query,
+          isPtiterOnly: true // Add this parameter to only fetch PTIT posts
         })
       )
     },
     [dispatch, query]
   )
-
   // Handle pagination and append new posts to existing ones
   useEffect(() => {
     if (!isLoadingPtit && ptitPosts) {

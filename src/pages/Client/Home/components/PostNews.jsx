@@ -102,7 +102,8 @@ const PostNews = () => {
 
   const filteredPosts = posts?.filter(
     post =>
-      post.isApproved && // Thêm điều kiện này để chỉ hiện bài đã được duyệt
+      post.isApproved && // Only show approved posts
+      !post.isPtiterOnly && // Add this condition to exclude PTIT posts
       (!query || post.title.toLowerCase().includes(query.toLowerCase())) &&
       (!cityFilter || post.city === cityFilter)
   )

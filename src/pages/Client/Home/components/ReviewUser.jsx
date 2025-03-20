@@ -68,9 +68,9 @@ const ReviewUser = () => {
     const stars = []
     for (let i = 1; i <= 5; i++) {
       if (i <= rating) {
-        stars.push(<StarFilled key={i} className="filled star-icon" />)
+        stars.push(<StarFilled key={i} className="star-icon filled" style={{ color: '#FFD700' }} />)
       } else {
-        stars.push(<StarOutlined key={i} className="star-icon" />)
+        stars.push(<StarOutlined key={i} className="star-icon" style={{ color: '#FFD700' }} />)
       }
     }
     return stars

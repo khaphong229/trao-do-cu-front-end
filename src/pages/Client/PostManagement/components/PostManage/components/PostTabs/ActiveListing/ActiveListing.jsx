@@ -345,7 +345,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
               <div className={styles.approvalStatus}>
                 <Badge
                   status={item.isApproved ? 'success' : 'warning'}
-                  text={item.isApproved ? 'Đã duyệt' : 'Chưa duyệt'}
+                  text={item.isApproved ? 'Đã duyệt' : 'Đang chờ duyệt'}
                 />
               </div>
 
