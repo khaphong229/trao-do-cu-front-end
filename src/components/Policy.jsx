@@ -22,7 +22,9 @@ const Policy = ({ isOpen, handleCancel }) => {
     'Chúng tôi không chịu trách nhiệm với các tranh chấp giữa người dùng trong quá trình trao đổi đồ.',
     'Nếu có hành vi vi phạm nghiêm trọng, chúng tôi có quyền báo cáo cơ quan chức năng để xử lý theo pháp luật.',
     'Chúng tôi có thể cập nhật các điều khoản sử dụng theo thời gian. Nếu có thay đổi quan trọng, người dùng sẽ được thông báo trước khi áp dụng.',
-    'Đồ các bạn là do người chủ sở hữu cho không phải ban tổ chức chọn random , mình chỉ là nền tảng trung gian thôi.'
+    'Đồ các bạn là do người chủ sở hữu cho không phải ban tổ chức chọn random , mình chỉ là nền tảng trung gian thôi.',
+    'Trong ngày diễn ra sự kiện trao đổi đồ, nếu không có người trực tiếp kiểm duyệt, quyền phê duyệt sẽ thuộc về quản trị viên (admin).',
+    'Cam kết bảo vệ thông tin cá nhân của người dùng, đảm bảo dữ liệu không bị lộ ra ngoài hoặc sử dụng sai mục đích.'
   ]
 
   return (
