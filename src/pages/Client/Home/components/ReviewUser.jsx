@@ -2,42 +2,38 @@ import React, { useEffect, useState } from 'react'
 import { Row, Col, Card, Avatar, Carousel } from 'antd'
 import { StarFilled, StarOutlined } from '@ant-design/icons'
 import styles from '../scss/ReviewUser.module.scss'
-
+import linh from 'assets/images/review/linh.jpg'
+import tthuong from 'assets/images/review/tthuong.png'
+import tu from 'assets/images/review/tu.png'
+import danh from 'assets/images/review/đanh.jpg'
 const ReviewUser = () => {
   // Sample testimonial data
   const testimonials = [
     {
       id: 1,
       name: 'Đinh Phương Linh',
-      avatar: 'https://randomuser.me/api/portraits/women/64.jpg',
+      avatar: linh,
       text: 'Mình rất thích trang web này! Trước đây mình thường vứt đồ cũ đi, nhưng giờ có thể tìm được người cần chúng. Giao diện dễ dùng, chỉ mất vài phút để đăng tin.',
       rating: 5
     },
     {
       id: 2,
-      name: 'Phạm Đức Anh ',
-      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+      name: 'Phạm Đức Anh',
+      avatar: danh,
       text: 'Tôi đã nhận được rất nhiều món đồ hữu ích như sách và đồ gia dụng mà không tốn chi phí. Cảm ơn traodocu.vn vì đã giúp tôi tiết kiệm và góp phần bảo vệ môi trường!"',
       rating: 5
     },
     {
-      id: 3,
-      name: 'Đỗ Huyền Trang',
-      avatar: 'https://randomuser.me/api/portraits/women/45.jpg',
-      text: 'Tính năng tìm kiếm theo danh mục rất hữu ích, giúp mình nhanh chóng tìm được đồ mình cần. Hy vọng trong tương lai có thêm chức năng đánh giá người dùng!',
-      rating: 5
-    },
-    {
       id: 4,
-      name: 'Nguyễn Văn Huy',
-      avatar: 'https://randomuser.me/api/portraits/men/36.jpg',
+      name: 'Lê Anh Tú',
+      avatar: tu,
       text: 'Ý tưởng rất hay, nhưng đôi khi có người đăng bài nhưng không phản hồi khi mình nhắn tin. Nếu có hệ thống xác thực người dùng thì sẽ tốt hơn!',
       rating: 4
     },
     {
       id: 5,
-      name: 'Trần Mai Anh',
-      avatar: 'https://randomuser.me/api/portraits/women/28.jpg',
+      name: 'Vũ Văn Thương',
+      avatar: tthuong,
       text: 'Mình đã thử trao đổi vài món đồ nhưng có chút khó khăn khi sắp xếp thời gian gặp mặt. Nếu có hỗ trợ vận chuyển thì sẽ tiện lợi hơn!',
       rating: 5
     }
