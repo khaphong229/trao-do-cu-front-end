@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Drawer,
   Card,
@@ -23,8 +23,7 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import { acceptGiftRequest, rejectGiftRequest } from 'features/client/request/giftRequest/giftRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getAvatarPost } from 'hooks/useAvatar'
-import { locationService } from 'services/client/locationService'
-
+import imgNotFound from 'assets/images/others/imagenotfound.webp'
 export const RegistrationDrawer = ({
   visible,
   onClose,
