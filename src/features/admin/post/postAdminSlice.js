@@ -31,10 +31,10 @@ const postAdminSlice = createSlice({
       state.selectedPost = action.payload
     },
     setPage: (state, action) => {
-      state.page = action.payload
+      state.current = action.payload // Changed from page to current to match API response
     },
     setPerPage: (state, action) => {
-      state.perPage = action.payload
+      state.pageSize = action.payload // Changed from perPage to pageSize to match API response
     },
     clearError: state => {
       state.error = null
@@ -51,23 +51,21 @@ const postAdminSlice = createSlice({
         state.isLoading = false
 
         if (action.payload && action.payload.data) {
+          // Extract posts from data.data
           state.posts = action.payload.data.data.map(post => ({
             ...post,
             isApproved: post.isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
           }))
+          // Extract pagination info from correct places
           state.total = action.payload.data.total || 0
-        } else if (action.payload) {
-          state.posts = action.payload.data.map(post => ({
-            ...post,
-            isApproved: post.isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
-          }))
-          state.total = action.payload.total || 0
+          state.current = action.payload.data.current || 1
+          state.pageSize = action.payload.data.limit || 10
         } else {
           state.posts = []
           state.total = 0
+          state.current = 1
+          state.pageSize = 10
         }
-        state.page = action.payload?.data?.current || action.payload?.current || 1
-        state.perPage = action.payload?.data?.pageSize || action.payload?.pageSize || 10
       })
       .addCase(getPostAdminPagination.rejected, (state, action) => {
         state.isLoading = false

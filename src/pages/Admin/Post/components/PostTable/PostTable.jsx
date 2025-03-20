@@ -1,4 +1,4 @@
-import { Button, Input, message, Space, Table } from 'antd'
+import { Button, Input, message, Space, Table, Select } from 'antd'
 import { setPage, setPerPage } from 'features/admin/post/postAdminSlice'
 import { getPostPagination } from 'features/client/post/postThunks'
 import React, { useEffect, useState } from 'react'
@@ -14,21 +14,21 @@ const PostTable = ({ onViewDetails }) => {
   const dispatch = useDispatch()
   const { posts, total, current, pageSize, isLoading, searchText } = useSelector(state => state.postManagement || {})
 
-  const handleApprovePost = postId => {
-    console.log('Post ID:', postId)
-    const isApproved = true
-    const reason = 'Bài viết đúng yêu cầu chính sách'
+  const handleApprovalChange = (value, record) => {
+    const isApproved = value === 'approved'
+    const reason = isApproved ? 'Bài viết đúng yêu cầu chính sách' : 'Bài viết không đạt yêu cầu'
 
-    dispatch(approvalStatus({ id: postId, isApproved, reason }))
+    dispatch(approvalStatus({ id: record._id, isApproved, reason }))
       .unwrap()
       .then(() => {
-        message.success('Bài đăng đã được duyệt')
+        message.success(isApproved ? 'Bài đăng đã được duyệt' : 'Bài đăng đã bị từ chối')
         dispatch(getPostAdminPagination({ current, pageSize })) // Fetch lại danh sách bài đăng
       })
       .catch(() => {
-        message.error('Có lỗi xảy ra khi duyệt bài đăng')
+        message.error('Có lỗi xảy ra khi cập nhật trạng thái bài đăng')
       })
   }
+
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: current,
@@ -43,7 +43,7 @@ const PostTable = ({ onViewDetails }) => {
 
   // Load posts when component mounts
   useEffect(() => {
-    dispatch(getPostPagination({ current, pageSize: pageSize }))
+    dispatch(getPostAdminPagination({ current, pageSize }))
   }, [dispatch, current, pageSize])
 
   // Update table params when redux state changes
@@ -60,9 +60,7 @@ const PostTable = ({ onViewDetails }) => {
   }, [current, pageSize, total])
 
   const handleTableChange = (pagination, filters, sorter) => {
-    dispatch(setPage(pagination.current))
-    dispatch(setPerPage(pagination.pageSize))
-
+    // Cập nhật tableParams trước
     setTableParams({
       pagination,
       filters,
@@ -71,8 +69,12 @@ const PostTable = ({ onViewDetails }) => {
         order: sorter.order
       }
     })
-  }
 
+    // Sau đó dispatch các action
+    dispatch(setPage(pagination.current))
+    dispatch(setPerPage(pagination.pageSize))
+    dispatch(getPostAdminPagination({ current: pagination.current, pageSize: pagination.pageSize }))
+  }
   // Hàm xử lý hiển thị ảnh
   const getImageUrl = imageUrlArr => {
     if (!imageUrlArr || imageUrlArr.length === 0) {
@@ -208,25 +210,40 @@ const PostTable = ({ onViewDetails }) => {
       render: (isApproved, record) => {
         const approvedStatus = isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
         return (
-          <Space size="middle">
-            {approvedStatus ? (
-              <span style={{ color: 'green' }}>Đã duyệt</span>
-            ) : (
-              <span style={{ color: 'orange' }}>Chưa duyệt</span>
-            )}
-            <Button type="primary" size="small" onClick={() => handleApprovePost(record._id)} disabled={approvedStatus}>
-              Duyệt
-            </Button>
-          </Space>
+          <Select
+            value={approvedStatus ? 'approved' : 'pending'}
+            style={{ width: 120 }}
+            onChange={value => handleApprovalChange(value, record)}
+            options={[
+              {
+                value: 'approved',
+                label: 'Đã duyệt',
+                style: { color: '#52c41a', fontWeight: 'bold' }
+              },
+              {
+                value: 'pending',
+                label: 'Chưa duyệt',
+                style: { color: '#fa8c16', fontWeight: 'bold' }
+              }
+            ]}
+          />
         )
       }
     },
     {
       title: 'Thao tác',
       key: 'actions',
+      fixed: 'right', // Fix this column to the right
+      width: 100, // Give it a fixed width
       render: (_, record) => (
         <Space size="middle">
-          <Button icon={<EyeOutlined />} onClick={() => onViewDetails(record)} size="small" title="Xem chi tiết" />
+          <Button
+            icon={<EyeOutlined />}
+            onClick={() => onViewDetails(record)}
+            size="small"
+            title="Xem chi tiết"
+            type="primary"
+          />
         </Space>
       )
     }
@@ -239,9 +256,9 @@ const PostTable = ({ onViewDetails }) => {
       rowKey="_id"
       loading={isLoading}
       pagination={{
-        current: current,
-        pageSize: pageSize,
-        total: total,
+        current: tableParams.pagination.current,
+        pageSize: tableParams.pagination.pageSize,
+        total: tableParams.pagination.total,
         showSizeChanger: true,
         pageSizeOptions: [5, 10, 20, 50, 100],
         showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} bài viết`
