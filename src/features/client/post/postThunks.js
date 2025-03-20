@@ -39,6 +39,25 @@ export const getPostPagination = createAsyncThunk(
   }
 )
 
+export const getPostPtitPagination = createAsyncThunk(
+  'post/getPostPtitPagination',
+  async ({ current, pageSize, query = '', type = null, city = null }, { rejectWithValue }) => {
+    try {
+      const response = await postService.getPostPtitPagination({
+        current,
+        pageSize,
+        q: query,
+        type,
+        city,
+        status: 'active'
+      })
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Đã xảy ra lỗi không xác định')
+    }
+  }
+)
+
 export const getPostCategory = createAsyncThunk(
   'post/getPostCategory',
   async ({ current, pageSize, category_id = null, type = null, city = null }, { rejectWithValue }) => {

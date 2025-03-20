@@ -45,7 +45,8 @@ export const useGiftRequest = () => {
       const dataUserUpdate = {
         name: user.name,
         email: user.email,
-        address: values?.address
+        address: values?.address,
+        isPtiter: values.isPtiter
       }
 
       // Xử lý trường hợp người dùng điền cả số điện thoại và mạng xã hội

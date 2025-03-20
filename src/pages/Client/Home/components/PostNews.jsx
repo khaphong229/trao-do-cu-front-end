@@ -38,7 +38,7 @@ const PostNews = () => {
   const { user } = useSelector(state => state.auth)
   const { handleGiftRequest, handleInfoSubmit, handleRequestConfirm } = useGiftRequest()
 
-  const pageSizeContanst = 16
+  const pageSizeContanst = 8
 
   const fetchCity = useCallback(async () => {
     const cachedCities = localStorage.getItem('vietnameseCities')
@@ -102,8 +102,9 @@ const PostNews = () => {
 
   const filteredPosts = posts?.filter(
     post =>
-      (!query || post.title.toLowerCase().includes(query.toLowerCase())) && // Lọc theo từ khóa
-      (!cityFilter || post.city === cityFilter) // Lọc theo thành phố nếu có chọn
+      post.isApproved && // Thêm điều kiện này để chỉ hiện bài đã được duyệt
+      (!query || post.title.toLowerCase().includes(query.toLowerCase())) &&
+      (!cityFilter || post.city === cityFilter)
   )
 
   const renderActionButton = item => {
@@ -197,9 +198,9 @@ const PostNews = () => {
           </div>
         </div>
 
-        {(isLoading || isError) && (
+        {(isLoading || isError || filteredPosts.length === 0) && (
           <Row gutter={[16, 0]} className={styles.itemsGrid}>
-            {[...Array(16)].map((_, index) => (
+            {[...Array(8)].map((_, index) => (
               <Col key={index} xs={24} sm={12} md={8} lg={6}>
                 <PostCardSkeleton />
               </Col>
@@ -275,6 +276,7 @@ const PostNews = () => {
         ) : (
           !isLoading && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
         )}
+        {/* )} */}
 
         {hasMore && !isSearchMode && (
           <div className={styles.buttonWrapper}>

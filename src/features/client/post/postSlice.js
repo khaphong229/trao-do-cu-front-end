@@ -1,6 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { uploadPostImages } from '../../upload/uploadThunks'
-import { createPost, getPostCategory, getPostGiftPagination, getPostId, getPostPagination } from './postThunks'
+import {
+  createPost,
+  getPostCategory,
+  getPostGiftPagination,
+  getPostId,
+  getPostPagination,
+  getPostPtitPagination
+} from './postThunks'
 
 const initialState = {
   // create post initial state
@@ -18,7 +25,8 @@ const initialState = {
       facebook: '',
       instagram: '',
       zalo: ''
-    }
+    },
+    isPtiterOnly: false
   },
   isPendingPostOpen: false, // Thêm state để theo dõi trạng thái chờ mở form đăng bài
   isShowTour: false,
@@ -38,9 +46,10 @@ const initialState = {
   isLoading: false,
   isError: false,
   current: 1,
-  pageSize: 16,
+  pageSize: 8,
   hasMore: true,
   query: '',
+  isApproved: false,
   // get my post
   requestStatuses: {},
   statusCache: {},
@@ -52,7 +61,9 @@ const initialState = {
   sortOrder: 'newest',
   cityFilter: null, // Thêm state lưu thành phố đang lọc,
 
-  isEdittingAddress: false
+  isEdittingAddress: false,
+
+  ptitPosts: []
 }
 
 const postSlice = createSlice({
@@ -155,7 +166,14 @@ const postSlice = createSlice({
       state.cityFilter = action.payload
     }
   },
+  updatePostApprovalStatus: (state, action) => {
+    const { postId, isApproved } = action.payload
 
+    const post = state.posts.find(post => post._id === postId)
+    if (post) {
+      post.isApproved = isApproved
+    }
+  },
   //get my post & post management
   extraReducers: builder => {
     // Create Post Reducers
@@ -199,13 +217,12 @@ const postSlice = createSlice({
         const newPosts = action.payload?.data?.data || []
         const currentPage = action.payload?.data?.current || 1
 
+        // Không lọc posts ở đây, hiển thị tất cả posts với trạng thái duyệt
         if (currentPage === 1) {
           state.posts = newPosts
         } else {
           const existingPostIds = new Map(state.posts.map(post => [post._id, true]))
-
           const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
-
           state.posts = [...state.posts, ...uniqueNewPosts]
         }
 
@@ -214,6 +231,38 @@ const postSlice = createSlice({
         state.total = action.payload?.data?.total || 0
       })
       .addCase(getPostPagination.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
+      })
+
+      //get post ptit
+      .addCase(getPostPtitPagination.pending, state => {
+        state.isLoading = true
+        state.isError = null
+      })
+      .addCase(getPostPtitPagination.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isError = null
+
+        // const newPosts = action.payload?.posts || []
+        // const currentPage = action.payload?.current || 1
+
+        // if (currentPage === 1) {
+        //   state.ptitPosts = newPosts
+        // } else {
+        //   const existingPostIds = new Map(state.ptitPosts.map(post => [post._id, true]))
+
+        //   const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
+
+        //   state.ptitPosts = [...state.ptitPosts, ...uniqueNewPosts]
+        // }
+
+        // state.hasMore = newPosts.length === action.payload?.limit
+        state.ptitPosts = action.payload?.posts || []
+        state.current = action.payload?.current || 1
+        state.total = action.payload?.total || 0
+      })
+      .addCase(getPostPtitPagination.rejected, (state, action) => {
         state.isLoading = false
         state.isError = action.payload || 'Đã xảy ra lỗi khi tải dữ liệu!'
       })
@@ -267,7 +316,9 @@ const postSlice = createSlice({
       .addCase(getPostGiftPagination.fulfilled, (state, action) => {
         state.isLoading = false
         if (action.payload) {
-          state.posts = Array.isArray(action.payload.data.data) ? action.payload.data.data : []
+          const posts = Array.isArray(action.payload.data.data) ? action.payload.data.data : []
+          // Lưu tất cả posts mà không lọc
+          state.posts = posts
           state.total = action.payload.data.total || 0
           state.current = action.payload.data.current || 1
           state.limit = action.payload.data.limit || 5

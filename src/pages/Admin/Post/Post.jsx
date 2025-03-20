@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Col, Input } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { Row, Col, Input, Button } from 'antd'
+import { SearchOutlined, ReloadOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   setIsDetailsModalVisible,
   setIsModalVisible,
+  setSearchText,
   setSelectedPost
 } from '../../../features/admin/post/postAdminSlice'
 import PostTable from './components/PostTable'
@@ -15,23 +16,23 @@ import { getPostAdminPagination } from 'features/admin/post/postAdminThunks'
 
 const Post = () => {
   const dispatch = useDispatch()
-
-  const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
 
   const {
     isModalVisible,
     isDetailsModalVisible,
     selectedPost,
-    posts // Add default value for posts
+    posts,
+    searchText // Add default value for posts
   } = useSelector(state => state.postManagement || {})
+
   useEffect(() => {
     dispatch(setPage(1))
     dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
   }, [dispatch, searchText])
 
   const handleSearch = value => {
-    setSearchText(value)
+    dispatch(setSearchText(value))
   }
 
   const handleEditPost = post => {
@@ -45,6 +46,10 @@ const Post = () => {
     dispatch(setSelectedPost(post))
     dispatch(setIsDetailsModalVisible(true))
     console.log('After dispatch:', { isDetailsModalVisible, selectedPost })
+  }
+
+  const handleReload = () => {
+    dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
   }
 
   return (
@@ -61,6 +66,9 @@ const Post = () => {
             value={searchText}
             style={{ width: '100%' }}
           />
+        </Col>
+        <Col>
+          <Button icon={<ReloadOutlined />} onClick={handleReload} size="large" title="Tải lại dữ liệu" />
         </Col>
       </Row>
 

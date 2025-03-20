@@ -4,6 +4,7 @@ import PostDescriptionDetail from './components/DescDetail'
 import { useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { getPostId } from 'features/client/post/postThunks'
+import SEO from 'config/seo'
 
 const PostDetail = () => {
   const params = useParams()
@@ -16,6 +17,12 @@ const PostDetail = () => {
 
   return (
     <div className="container">
+      <SEO
+        title="Trao Đồ Cũ - Chi tiết sản phẩm"
+        description="Chi tiết thông tin sản phẩm bạn muốn nhận, trao đổi."
+        keywords={['trao đồ cũ, trao đổi, trao tặng, xin đồ, chợ đồ cũ']}
+        url="https://traodocu.vn"
+      />
       <PostInfoDetail />
       <PostDescriptionDetail />
     </div>

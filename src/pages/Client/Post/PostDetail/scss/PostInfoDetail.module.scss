@@ -117,3 +117,13 @@
   font-weight: normal;
   height: auto;
 }
+.ratingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  :global(.ant-rate) {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+}

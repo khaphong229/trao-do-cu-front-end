@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, Form, Modal, Input, message, Tooltip, Typography } from 'antd'
+import { Button, Form, Modal, Input, message, Tooltip, Typography, Checkbox } from 'antd'
 import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
 import { getCurrentUser } from 'features/auth/authThunks'
 import AddressSelection from 'components/common/AddressSelection'
-
+import styles from './styles.module.scss'
 const { Text } = Typography
 
 export const ContactInfoModal = ({ onSubmit }) => {
@@ -12,6 +12,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
   const [form] = Form.useForm()
   const [fullAddress, setFullAddress] = useState('')
   const [addressTouched, setAddressTouched] = useState(false)
+  const [isPtiterChecked, setIsPtiterChecked] = useState(false)
 
   const { isInfoModalVisible, isLoading } = useSelector(state => state.giftRequest)
   const { user } = useSelector(state => state.auth)
@@ -26,13 +27,16 @@ export const ContactInfoModal = ({ onSubmit }) => {
     if (user && isInfoModalVisible) {
       const existingFacebook = user.social_media?.facebook
       const existingPhone = user.phone
+      const wasPtiter = user.isPtiter
 
       setFullAddress(user?.address || '')
       setAddressTouched(false)
+      setIsPtiterChecked(wasPtiter || false)
 
       form.setFieldsValue({
         phone: existingPhone || '',
-        social_media: existingFacebook || ''
+        social_media: existingFacebook || '',
+        isPtiter: wasPtiter || false
       })
     }
   }, [user, isInfoModalVisible, form])
@@ -59,6 +63,11 @@ export const ContactInfoModal = ({ onSubmit }) => {
   // Kiểm tra xem có ít nhất một phương thức liên hệ
   const validateContactMethod = (phone, facebook) => {
     return !!(phone || facebook)
+  }
+
+  const handleCheckboxChange = e => {
+    setIsPtiterChecked(e.target.checked)
+    form.setFieldsValue({ isPtiter: e.target.checked })
   }
 
   const handleSubmit = async values => {
@@ -104,7 +113,8 @@ export const ContactInfoModal = ({ onSubmit }) => {
 
       // Tạo dữ liệu gửi đi
       const submissionData = {
-        ...values,
+        phone: values.phone,
+        isPtiter: isPtiterChecked, // Use the state variable instead of form value
         address: [
           {
             address: fullAddress,
@@ -128,49 +138,51 @@ export const ContactInfoModal = ({ onSubmit }) => {
     form.resetFields()
     setFullAddress('')
     setAddressTouched(false)
+    setIsPtiterChecked(false)
     dispatch(setInfoModalVisible(false))
   }
 
   return (
-    <Modal title="Cập nhật thông tin liên hệ" open={isInfoModalVisible} onCancel={handleCancel} footer={null}>
+    <Modal title="Cập nhật thông tin" open={isInfoModalVisible} onCancel={handleCancel} footer={null}>
       <Form form={form} onFinish={handleSubmit} layout="vertical">
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 10 }}>
           <span style={{ color: '#ff4d4f', marginRight: 4 }}>*</span>
           <Tooltip title="Cung cấp ít nhất một phương thức liên hệ của bạn">Phương thức liên hệ</Tooltip>
         </div>
+        <div style={{ paddingLeft: 20 }}>
+          <Form.Item
+            name="phone"
+            label="Số điện thoại"
+            rules={[
+              {
+                required: false,
+                message: 'Vui lòng nhập số điện thoại của bạn'
+              }
+            ]}
+            style={{ marginTop: 0, marginBottom: 16 }}
+          >
+            <Input placeholder="Nhập số điện thoại của bạn" />
+          </Form.Item>
 
-        <Form.Item
-          name="phone"
-          label="Số điện thoại"
-          rules={[
-            {
-              required: false,
-              message: 'Vui lòng nhập số điện thoại của bạn'
-            }
-          ]}
-          style={{ marginTop: 0, marginBottom: 16 }}
-        >
-          <Input placeholder="Nhập số điện thoại của bạn" />
-        </Form.Item>
+          <Form.Item
+            name="social_media"
+            label="Link mạng xã hội Facebook"
+            rules={[
+              {
+                required: false,
+                message: 'Vui lòng nhập link mạng xã hội của bạn'
+              }
+            ]}
+            style={{ marginBottom: 8 }}
+          >
+            <Input placeholder="Nhập link mạng xã hội của bạn" />
+          </Form.Item>
 
-        <Form.Item
-          name="social_media"
-          label="Link mạng xã hội Facebook"
-          rules={[
-            {
-              required: false,
-              message: 'Vui lòng nhập link mạng xã hội của bạn'
-            }
-          ]}
-          style={{ marginBottom: 8 }}
-        >
-          <Input placeholder="Nhập link mạng xã hội của bạn" />
-        </Form.Item>
-
-        <div style={{ marginTop: -8, marginBottom: 16 }}>
-          <Text type="secondary" style={{ fontSize: '12px', color: '#2E8B57' }}>
-            * Chọn ít nhất 1 trong 2 phương thức liên hệ
-          </Text>
+          <div className={styles.note} style={{ marginTop: -8, marginBottom: 16 }}>
+            <Text type="secondary" style={{ fontSize: '12px', color: '#2E8B57' }}>
+              * Chọn ít nhất 1 trong 2 phương thức liên hệ
+            </Text>
+          </div>
         </div>
 
         <Form.Item
@@ -184,6 +196,12 @@ export const ContactInfoModal = ({ onSubmit }) => {
             onAddressChange={handleAddressChange}
             showEditButton={true}
           />
+        </Form.Item>
+
+        <Form.Item name="isPtiter" label={null} valuePropName="checked">
+          <Checkbox onChange={handleCheckboxChange} checked={isPtiterChecked}>
+            Đang là sinh viên PTIT
+          </Checkbox>
         </Form.Item>
 
         <Form.Item className="form-actions">

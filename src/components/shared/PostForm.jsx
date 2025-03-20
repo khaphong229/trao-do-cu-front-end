@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, message, Modal, Steps, theme } from 'antd'
+import { Button, Checkbox, message, Modal, Steps, theme } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
@@ -190,7 +190,8 @@ const PostForm = ({
   }
 
   const handleFinish = () => {
-    // Final submission
+    // Hiển thị modal xác nhận trước khi đăng bài
+
     handleSubmit()
   }
 
@@ -286,7 +287,23 @@ const PostForm = ({
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, width: '100%' }}>
           {current > 0 && <Button onClick={handlePrevStep}>Quay lại</Button>}
-
+          {current === 0 && contentType === 'post' && (
+            <Checkbox
+              style={{
+                display: 'flex',
+                alignItems: 'center'
+              }}
+              onChange={e => {
+                dispatch(
+                  updatePostData({
+                    isPtiterOnly: e.target.checked
+                  })
+                )
+              }}
+            >
+              Đăng trong góc PTIT
+            </Checkbox>
+          )}
           {current < steps.length - 1 && (
             <Button type="primary" onClick={handleNextStep} style={{ marginLeft: 'auto' }} disabled={isEdittingAddress}>
               Tiếp theo
@@ -308,6 +325,12 @@ const PostForm = ({
             </Button>
           )}
         </div>
+        {current === steps.length - 1 && !isExchangeForm && (
+          <div style={{ marginTop: 16, color: '#666', fontSize: '13px' }}>
+            <p>* Lưu ý: Bài đăng sẽ được admin xét duyệt trước khi hiển thị công khai.</p>
+            <p>* Thời gian duyệt bài thường trong vòng 24h.</p>
+          </div>
+        )}
       </Modal>
     </>
   )

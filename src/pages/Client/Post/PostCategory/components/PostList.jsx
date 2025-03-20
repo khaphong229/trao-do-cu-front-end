@@ -5,7 +5,7 @@ import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import { useSelector, useDispatch } from 'react-redux'
-import { getPostCategory } from '../../../../../features/client/post/postThunks'
+import { getPostCategory, getPostPtitPagination } from '../../../../../features/client/post/postThunks'
 import { resetPage, clearPosts } from '../../../../../features/client/post/postSlice'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -40,7 +40,7 @@ const PostList = () => {
   const [expandedTitles, setExpandedTitles] = useState({})
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
-  const { posts, isError, isLoading, total } = useSelector(state => state.post)
+  const { posts, ptitPosts, isError, isLoading, total, query } = useSelector(state => state.post)
 
   // Fetch city data only once
   const fetchCity = useCallback(async () => {
@@ -79,15 +79,18 @@ const PostList = () => {
       pageSize: 10,
       category_id: category_id !== 'all' ? category_id : null,
       city: selectedCity,
-      type: activeTab === 'all' ? null : activeTab
+      type: activeTab === 'all' ? null : activeTab,
+      query: query || ''
     }
 
-    // Single API call to fetch posts
-    dispatch(getPostCategory(params))
-
-    // Using the pagination API is not needed here since getPostCategory already fetches the data
-    // This eliminates the duplicate API calls
-  }, [dispatch, currentPage, category_id, selectedCity, activeTab])
+    // Check if category is PTIT to use the specific API
+    if (category_id === 'ptit') {
+      dispatch(getPostPtitPagination(params))
+    } else {
+      // Use the regular API for other categories
+      dispatch(getPostCategory(params))
+    }
+  }, [dispatch, currentPage, category_id, selectedCity, activeTab, query])
 
   const handleTabChange = key => {
     setActiveTab(key)
@@ -107,7 +110,10 @@ const PostList = () => {
     setCurrentPage(page)
   }
 
-  const filteredPosts = posts.filter(post => {
+  // Determine which posts array to use based on category_id
+  const postsToUse = category_id === 'ptit' ? ptitPosts : posts
+
+  const filteredPosts = postsToUse.filter(post => {
     if (activeTab === 'all') return true
     return post.type === activeTab
   })

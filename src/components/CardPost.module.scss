@@ -1,4 +1,4 @@
-@import '../../../../assets/scss/variables.scss';
+@import '../assets/scss/variables.scss';
 
 $color-main: #37c5a0;
 $color-white: #ffffff;
@@ -223,7 +223,16 @@ $transition-base: all 0.3s ease;
 .imageWrapper {
   position: relative;
   padding-top: 100%;
-  background: #f5f5f5;
+  // background: #f5f5f5;
+  background: #ffffff;
+
+  .logo_ptit {
+    position: absolute;
+    width: 60px !important;
+    height: 60px;
+    top: 6px;
+    left: 4px;
+  }
 
   @include mobile {
     padding-top: 75%;
@@ -293,7 +302,7 @@ $transition-base: all 0.3s ease;
   }
 
   &:hover {
-    color: $color-main;
+    color: $colorPtit;
   }
 }
 

@@ -14,6 +14,7 @@ const ResetPassword = () => {
   const [token, setToken] = useState('')
   const { isLoading, changePassWordSuccess, changePassWordMessage, error } = useSelector(state => state.auth)
   const [invalidToken, setInvalidToken] = useState(false)
+  const [formSubmitted, setFormSubmitted] = useState(false)
 
   useEffect(() => {
     // Extract token from URL query parameters
@@ -22,7 +23,9 @@ const ResetPassword = () => {
 
     if (!tokenFromUrl) {
       setInvalidToken(true)
+      message.error('Không tìm thấy token đặt lại mật khẩu trong URL')
     } else {
+      console.log('Token found:', tokenFromUrl)
       setToken(tokenFromUrl)
     }
   }, [location])
@@ -34,7 +37,7 @@ const ResetPassword = () => {
   }, [dispatch])
 
   useEffect(() => {
-    if (changePassWordSuccess) {
+    if (changePassWordSuccess && formSubmitted) {
       message.success(changePassWordMessage || 'Mật khẩu đã được đặt lại thành công!')
       // Redirect to login page after successful password reset
       setTimeout(() => {
@@ -42,24 +45,31 @@ const ResetPassword = () => {
       }, 2000)
     }
 
-    if (error) {
+    if (error && formSubmitted) {
       message.error(error)
+      setFormSubmitted(false)
     }
-  }, [changePassWordSuccess, changePassWordMessage, error, navigate])
+  }, [changePassWordSuccess, changePassWordMessage, error, navigate, formSubmitted])
 
   const onFinish = values => {
-    if (values.password !== values.confirmPassword) {
-      message.error('Mật khẩu xác nhận không khớp!')
+    if (!token) {
+      message.error('Token đặt lại mật khẩu không hợp lệ hoặc thiếu')
       return
     }
 
+    console.log('Form submitted with token:', token)
+    setFormSubmitted(true)
+
+    // Dispatch reset password action with proper payload
     dispatch(
       resetPassword({
         token: token,
-        password: values.password
+        new_password: values.password
       })
     )
   }
+
+  // Password regex pattern to match backend validation
 
   if (invalidToken) {
     return (
@@ -86,13 +96,14 @@ const ResetPassword = () => {
       <div className={styles['reset-password-card']}>
         <h2>Đặt Lại Mật Khẩu</h2>
         <p>Vui lòng nhập mật khẩu mới của bạn.</p>
+
         <Form name="reset_password" onFinish={onFinish} layout="vertical">
           <Form.Item
             name="password"
             rules={[
               {
                 required: true,
-                message: 'Vui lòng nhập mật khẩu!'
+                message: 'Vui lòng nhập mật khẩu mới!'
               },
               {
                 min: 6,
@@ -109,7 +120,7 @@ const ResetPassword = () => {
           </Form.Item>
 
           <Form.Item
-            name="confirm"
+            name="confirm_password"
             dependencies={['password']}
             hasFeedback
             rules={[
@@ -117,16 +128,11 @@ const ResetPassword = () => {
                 required: true,
                 message: 'Vui lòng xác nhận lại mật khẩu!'
               },
-              {
-                min: 6,
-                message: 'Mật khẩu tối thiểu 6 kí tự.'
-              },
               ({ getFieldValue }) => ({
-                validator(rule, value) {
+                validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve()
                   }
-
                   return Promise.reject('Mật khẩu không khớp. Vui lòng nhập lại!')
                 }
               })
@@ -140,7 +146,14 @@ const ResetPassword = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isLoading} block className={styles['submit-button']}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={isLoading}
+              block
+              className={styles['submit-button']}
+              disabled={!token}
+            >
               Đặt Lại Mật Khẩu
             </Button>
           </Form.Item>
