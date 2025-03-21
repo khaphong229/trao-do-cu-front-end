@@ -338,7 +338,7 @@ export const ExchangeDrawer = ({
       </div>
 
       <List
-        dataSource={sortedRequests}
+        dataSource={filteredRequests}
         locale={{ emptyText: 'Không tìm thấy yêu cầu nào' }}
         renderItem={request => (
           <div className={styles.requestItem}>
