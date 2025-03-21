@@ -293,6 +293,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
       key: 'action',
       width: 150,
       render: (_, record) => {
+        if (!record.isApproved) return null
         const typeButton = record.type === 'gift' ? 'primary' : 'dashed'
         return (
           <Button type={typeButton} onClick={() => handleViewRegistrations(record)}>
