@@ -150,9 +150,25 @@ const postSlice = createSlice({
     updatePostRequestStatus: (state, action) => {
       const { postId } = action.payload
       const post = state.posts.find(post => post._id === postId)
+      console.log(post, 'ppostit')
       if (post) {
         post.isRequested = true
       }
+      console.log(post, 'ppostit11')
+
+      if (state.selectedPost && state.selectedPost._id === postId) {
+        state.selectedPost.isRequested = true
+      }
+    },
+    updatePostPtitRequestStatus: (state, action) => {
+      const { postId } = action.payload
+      const post = state.ptitPosts.find(post => post._id === postId)
+      console.log(post, 'ptit')
+
+      if (post) {
+        post.isRequested = true
+      }
+      console.log(post, 'ptit2')
 
       if (state.selectedPost && state.selectedPost._id === postId) {
         state.selectedPost.isRequested = true
@@ -360,6 +376,7 @@ export const {
   updatePostStatus,
   setSelectedPost,
   updatePostRequestStatus,
+  updatePostPtitRequestStatus,
   setViewMode,
   setSortOrder,
   setCityFilter,

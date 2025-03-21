@@ -152,10 +152,6 @@ const ProfilePage = () => {
           message.success('Upload ảnh thành công')
           dispatch(getCurrentUser(false))
           onSuccess(uploadResponse)
-          // Sử dụng setTimeout để hiển thị message trước khi reload
-          setTimeout(() => {
-            navigate(0)
-          }, 1500)
         } else {
           message.error('Upload ảnh thất bại')
         }
@@ -261,6 +257,11 @@ const ProfilePage = () => {
             <TabPane tab="Thông tin cá nhân" key="personal">
               <Title level={3}>Hồ sơ cá nhân</Title>
               <div className={styles['form-group']}>
+                <Checkbox id="isPtiter" checked={formData.isPtiter} onChange={handleCheckboxChange}>
+                  Là sinh viên PTIT
+                </Checkbox>
+              </div>
+              <div className={styles['form-group']}>
                 <label htmlFor="name">Họ và tên</label>
                 <Input id="name" value={formData.name} onChange={handleInputChange} />
               </div>
@@ -304,11 +305,7 @@ const ProfilePage = () => {
                 <label htmlFor="dob">Ngày, tháng, năm sinh</label>
                 <Input id="dob" type="date" />
               </div> */}
-              <div className={styles['form-group']}>
-                <Checkbox id="isPtiter" checked={formData.isPtiter} onChange={handleCheckboxChange}>
-                  Là sinh viên PTIT
-                </Checkbox>
-              </div>
+
               <div className={styles['form-actions1']}>
                 <Button type="primary" block style={{ width: '100px' }} onClick={handleUpdateMe}>
                   Thay đổi

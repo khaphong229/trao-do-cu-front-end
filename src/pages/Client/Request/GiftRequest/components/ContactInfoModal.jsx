@@ -145,6 +145,11 @@ export const ContactInfoModal = ({ onSubmit }) => {
   return (
     <Modal title="Cập nhật thông tin" open={isInfoModalVisible} onCancel={handleCancel} footer={null}>
       <Form form={form} onFinish={handleSubmit} layout="vertical">
+        <Form.Item name="isPtiter" label={null} valuePropName="checked">
+          <Checkbox onChange={handleCheckboxChange} checked={isPtiterChecked}>
+            Là sinh viên PTIT
+          </Checkbox>
+        </Form.Item>
         <div style={{ marginBottom: 10 }}>
           <span style={{ color: '#ff4d4f', marginRight: 4 }}>*</span>
           <Tooltip title="Cung cấp ít nhất một phương thức liên hệ của bạn">Phương thức liên hệ</Tooltip>
@@ -196,12 +201,6 @@ export const ContactInfoModal = ({ onSubmit }) => {
             onAddressChange={handleAddressChange}
             showEditButton={true}
           />
-        </Form.Item>
-
-        <Form.Item name="isPtiter" label={null} valuePropName="checked">
-          <Checkbox onChange={handleCheckboxChange} checked={isPtiterChecked}>
-            Đang là sinh viên PTIT
-          </Checkbox>
         </Form.Item>
 
         <Form.Item className="form-actions">

@@ -1,6 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { requestGift } from 'features/client/request/giftRequest/giftRequestThunks'
-import { setInfoModalVisible, setAcceptModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
+import {
+  setInfoModalVisible,
+  setAcceptModalVisible,
+  setRequestNotificationModal
+} from 'features/client/request/giftRequest/giftRequestSlice'
 import { updateUserProfile } from 'features/auth/authThunks'
 import { message } from 'antd'
 import {
@@ -9,9 +13,14 @@ import {
   setSelectedPostExchange
 } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import { setSocialLinkModalVisibility, updatePostRequestStatus } from 'features/client/post/postSlice'
+import {
+  setSocialLinkModalVisibility,
+  updatePostPtitRequestStatus,
+  updatePostRequestStatus
+} from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
 import useDefaultLocation from 'hooks/useDefaultLocation'
+import notifi from 'utils/notifi'
 const isObject = require('lodash/isObject')
 
 export const useGiftRequest = () => {
@@ -120,13 +129,23 @@ export const useGiftRequest = () => {
       if (status === 201) {
         message.success(msg)
 
-        dispatch(
-          updatePostRequestStatus({
-            postId: selectedPostExchange._id
-          })
-        )
+        if (selectedPostExchange.isPtiterOnly === false) {
+          dispatch(
+            updatePostRequestStatus({
+              postId: selectedPostExchange._id
+            })
+          )
+        } else {
+          dispatch(
+            updatePostPtitRequestStatus({
+              postId: selectedPostExchange._id
+            })
+          )
+        }
 
         dispatch(setAcceptModalVisible(false))
+
+        dispatch(setRequestNotificationModal(true))
       }
     } catch (error) {
       const { status, message: msg } = error
@@ -136,6 +155,9 @@ export const useGiftRequest = () => {
         } else {
           message.error(msg || 'Có lỗi xảy ra khi gửi yêu cầu')
         }
+      } else if (status === 403) {
+        notifi.warning(msg)
+        dispatch(setAcceptModalVisible(false))
       }
     }
   }
@@ -167,14 +189,23 @@ export const useGiftRequest = () => {
 
       const { status, message: msg } = response
       if (status === 201) {
-        dispatch(
-          updatePostRequestStatus({
-            postId: selectedPostExchange._id
-          })
-        )
+        if (selectedPostExchange.isPtiterOnly === false) {
+          dispatch(
+            updatePostRequestStatus({
+              postId: selectedPostExchange._id
+            })
+          )
+        } else {
+          dispatch(
+            updatePostPtitRequestStatus({
+              postId: selectedPostExchange._id
+            })
+          )
+        }
         message.success(msg)
         dispatch(setExchangeFormModalVisible(false))
         dispatch(resetRequestData())
+        dispatch(setRequestNotificationModal(true))
       }
     } catch (error) {
       if (error.status === 400) {

@@ -56,7 +56,9 @@ function AppFooter() {
                 <PhoneOutlined style={{ marginRight: 8 }} />
                 Hotline: 0869 800 725
               </Text>
-              <Text className={styles.text}>Sản phẩm được bảo trợ bởi Đoàn Thanh Niên</Text>
+              <Text className={styles.text}>
+                Sản phẩm được bảo trợ bởi Đoàn Thanh Niên Học viện Công nghệ Bưu Chính Viễn Thông
+              </Text>
             </div>
           </Col>
 

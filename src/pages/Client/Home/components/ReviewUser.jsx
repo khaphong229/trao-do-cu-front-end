@@ -147,7 +147,7 @@ const ReviewUser = () => {
         <div className={styles['header-underline']}></div>
         <p className={styles['header-description']}>
           🎁 Hơn 1.000 món đồ đã được trao đi thành công <br /> 👥 Cộng đồng 5.000+ thành viên tích cực <br /> 🌱 Tiết
-          kiệm hàng đồ dùng, rác thả mỗi năm, góp phần bảo vệ môi trường
+          kiệm nghìn đồ dùng, tấn rác thả mỗi năm, góp phần bảo vệ môi trường
         </p>
       </div>
 

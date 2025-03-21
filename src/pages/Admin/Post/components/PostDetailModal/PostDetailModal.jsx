@@ -59,7 +59,7 @@ const PostDetailModal = ({ open, post, onClose }) => {
         <Descriptions.Item label="Thể loại">{post.category_id?.name || 'Không có thể loại'}</Descriptions.Item>
 
         <Descriptions.Item label="Trạng thái">
-          <Tag color={post.isApproved ? 'green' : 'orange'}>{post.isApproved ? 'Đã duyệt' : 'Chưa duyệt'}</Tag>
+          <Tag color={post.isApproved ? 'green' : 'orange'}>{post.isApproved ? 'Đã duyệt' : 'Đang chờ duyệt'}</Tag>
         </Descriptions.Item>
 
         <Descriptions.Item label="Ngày đăng">

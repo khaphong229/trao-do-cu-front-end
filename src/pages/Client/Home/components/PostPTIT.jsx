@@ -4,7 +4,6 @@ import { RightOutlined } from '@ant-design/icons'
 import styles from '../scss/PostPTIT.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPostPtitPagination } from 'features/client/post/postThunks'
-import { resetPosts } from 'features/client/post/postSlice'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -101,7 +100,6 @@ const PostPTIT = () => {
 
   // Initial fetch on mount
   useEffect(() => {
-    dispatch(resetPosts())
     setCurrentPage(1)
     fetchPost(1)
   }, [fetchPost, dispatch])
