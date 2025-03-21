@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Input } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { Row, Col, Input, Button } from 'antd'
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons'
 import UserTable from './components/UserTable'
 import UserDetailModal from './components/UserDetailModal'
 import UserFormModal from './components/UserFormModal'
@@ -48,6 +48,9 @@ const UserManager = () => {
     dispatch(setSelectedUser(user))
     dispatch(setIsDetailsModalVisible(true))
   }
+  const handleReload = () => {
+    dispatch(getUserPagination({ current: 1, pageSize: 10, searchText }))
+  }
 
   return (
     <div className={styles.userManagement}>
@@ -64,6 +67,9 @@ const UserManager = () => {
             style={{ width: '100%' }}
           />
         </Col>
+        <Col>
+          <Button icon={<ReloadOutlined />} onClick={handleReload} size="large" title="Tải lại dữ liệu" />
+        </Col>
       </Row>
 
       <UserTable onEdit={handleEditUser} onViewDetails={handleViewDetails} />
@@ -74,12 +80,12 @@ const UserManager = () => {
         onClose={() => dispatch(setIsDetailsModalVisible(false))}
       />
 
-      <UserFormModal
+      {/* <UserFormModal
         visible={isModalVisible}
         isEditing={isEditing}
         initialUser={selectedUser}
         onClose={() => dispatch(setIsModalVisible(false))}
-      />
+      /> */}
     </div>
   )
 }

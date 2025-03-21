@@ -23,7 +23,8 @@ const App = ({ children }) => {
   const {
     token: { colorBgContainer, borderRadiusLG }
   } = theme.useToken()
-  const handleLogout = async () => {
+  const handleLogout = async e => {
+    e.preventDefault()
     try {
       await dispatch(logoutUser()).unwrap()
       removeAuthToken()

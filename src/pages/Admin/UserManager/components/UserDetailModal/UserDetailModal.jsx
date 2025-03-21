@@ -53,7 +53,17 @@ const UserDetailModal = ({ visible, user, onClose }) => {
         <Descriptions.Item label="Chăm sóc khách hàng">
           {customerCareMap[user.category_care] || 'Chưa xác định'}
         </Descriptions.Item>
-        <Descriptions.Item label="Mạng xã hội">{user.social_media || 'Chưa cung cấp'}</Descriptions.Item>
+        <Descriptions.Item label="Mạng xã hội">
+          {user.social_media ? (
+            <div>
+              {user.social_media.facebook && <div>Facebook: {user.social_media.facebook}</div>}
+              {user.social_media.zalo && <div>Zalo: {user.social_media.zalo}</div>}
+              {user.social_media.instagram && <div>Instagram: {user.social_media.instagram}</div>}
+            </div>
+          ) : (
+            'Chưa cung cấp'
+          )}
+        </Descriptions.Item>
         <Descriptions.Item label="Ngày tạo" span={2}>
           {moment(user.createdAt).format('DD/MM/YYYY HH:mm:ss')}
         </Descriptions.Item>
