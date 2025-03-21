@@ -52,6 +52,7 @@ function UploadCustom(props) {
     if (propBeforeUpload) {
       const result = propBeforeUpload(file)
       if (result === false || result === Upload.LIST_IGNORE) {
+        setIsLoading(false)
         return result
       }
     }
@@ -64,6 +65,7 @@ function UploadCustom(props) {
 
     if (!isImage && !isVideo) {
       message.error('Chỉ được tải JPG/PNG/GIF/WEBP hoặc video MP4/MOV/AVI!')
+      setIsLoading(false)
       return Upload.LIST_IGNORE
     }
 
@@ -71,6 +73,7 @@ function UploadCustom(props) {
       const isValidSize = file.size / 1024 / 1024 < 5
       if (!isValidSize) {
         message.error('Mỗi ảnh phải nhỏ hơn 5MB!')
+        setIsLoading(false)
         return Upload.LIST_IGNORE
       }
     }
@@ -79,6 +82,7 @@ function UploadCustom(props) {
       const isValidSize = file.size / 1024 / 1024 < 10
       if (!isValidSize) {
         message.error('Mỗi video phải nhỏ hơn 10MB!')
+        setIsLoading(false)
         return Upload.LIST_IGNORE
       }
     }
@@ -88,7 +92,7 @@ function UploadCustom(props) {
 
   const uploadProps = {
     multiple: true,
-    fileList: fileList,
+    fileList: fileList.fileList || [],
     beforeUpload: beforeUpload,
     disabled: disabled,
     maxCount: maxCount,
