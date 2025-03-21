@@ -39,7 +39,7 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "cross-env REACT_APP_BUILD_MODE=dev react-scripts start",
+    "start": "cross-env REACT_APP_BUILD_MODE=dev BROWSER=none && react-scripts start",
     "build": "cross-env REACT_APP_BUILD_MODE=production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

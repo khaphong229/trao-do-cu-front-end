@@ -3,7 +3,6 @@ import { Row, Col, Input, Button } from 'antd'
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons'
 import UserTable from './components/UserTable'
 import UserDetailModal from './components/UserDetailModal'
-import UserFormModal from './components/UserFormModal'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import {

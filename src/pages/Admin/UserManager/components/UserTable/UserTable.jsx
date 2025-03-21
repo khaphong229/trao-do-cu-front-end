@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Table, Button, Space, Modal, message, Input } from 'antd'
-import {
-  EditOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-  PhoneOutlined,
-  SearchOutlined,
-  MailOutlined
-} from '@ant-design/icons'
+import { EyeOutlined, PhoneOutlined, SearchOutlined, MailOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'

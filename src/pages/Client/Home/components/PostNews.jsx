@@ -221,7 +221,7 @@ const PostNews = () => {
                     hoverable
                     className={styles.itemCard}
                     cover={
-                      <div className={styles.imageWrapper} onClick={() => goDetail(item._id)}>
+                      <div className={styles.imageWrapper} onClick={() => goDetail(item.slug || item._id)}>
                         <img
                           loading="lazy"
                           alt={item.title}
@@ -240,7 +240,7 @@ const PostNews = () => {
                         <Tooltip title={item.title}>
                           <Paragraph
                             className={styles.itemTitle}
-                            onClick={() => goDetail(item._id)}
+                            onClick={() => goDetail(item.slug || item._id)}
                             ellipsis={{ rows: 2 }}
                           >
                             {item.title}

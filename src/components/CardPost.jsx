@@ -171,7 +171,7 @@ function CardPost({ item, onRequestComplete }) {
           hoverable
           className={styles.itemCard}
           cover={
-            <div className={styles.imageWrapper} onClick={() => goDetail(item._id)}>
+            <div className={styles.imageWrapper} onClick={() => goDetail(item.slug || item._id)}>
               <img
                 loading="lazy"
                 alt={item.title}
@@ -189,7 +189,11 @@ function CardPost({ item, onRequestComplete }) {
           <Card.Meta
             title={
               <Tooltip title={item.title}>
-                <Paragraph className={styles.itemTitle} onClick={() => goDetail(item._id)} ellipsis={{ rows: 2 }}>
+                <Paragraph
+                  className={styles.itemTitle}
+                  onClick={() => goDetail(item.slug || item._id)}
+                  ellipsis={{ rows: 2 }}
+                >
                   {item.title}
                 </Paragraph>
                 <Paragraph className={styles.itemLove}>

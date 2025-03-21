@@ -109,8 +109,6 @@ export const useGiftRequest = () => {
         return { success: false }
       }
 
-      console.log('Preparing request for post ID:', selectedPostExchange._id)
-
       let requestData = {
         post_id: selectedPostExchange._id,
         user_req_id: user._id,
@@ -136,19 +134,13 @@ export const useGiftRequest = () => {
       if (status === 201) {
         message.success(msg)
 
-        // Update UI to show the request was successful
-        console.log('Request successful, updating UI for post:', selectedPostExchange._id)
-        console.log('isPtiterOnly:', selectedPostExchange.isPtiterOnly)
-
         if (selectedPostExchange.isPtiterOnly) {
-          console.log('Dispatching updatePostPtitRequestStatus')
           dispatch(
             updatePostPtitRequestStatus({
               postId: selectedPostExchange._id
             })
           )
         } else {
-          console.log('Dispatching updatePostRequestStatus')
           dispatch(
             updatePostRequestStatus({
               postId: selectedPostExchange._id
@@ -187,8 +179,6 @@ export const useGiftRequest = () => {
         return { success: false }
       }
 
-      console.log('Preparing exchange request for post ID:', selectedPostExchange._id)
-
       let requestData = {
         post_id: selectedPostExchange._id,
         user_req_id: user._id,
@@ -209,18 +199,13 @@ export const useGiftRequest = () => {
 
       const { status, message: msg } = response
       if (status === 201) {
-        console.log('Exchange request successful, updating UI for post:', selectedPostExchange._id)
-        console.log('isPtiterOnly:', selectedPostExchange.isPtiterOnly)
-
         if (selectedPostExchange.isPtiterOnly) {
-          console.log('Dispatching updatePostPtitRequestStatus')
           dispatch(
             updatePostPtitRequestStatus({
               postId: selectedPostExchange._id
             })
           )
         } else {
-          console.log('Dispatching updatePostRequestStatus')
           dispatch(
             updatePostRequestStatus({
               postId: selectedPostExchange._id

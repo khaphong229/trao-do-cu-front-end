@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getDatetimeNow } from 'utils/getDatetime'
 import { getInteractionUser, removeInteractionUser, setInteractionUser } from 'utils/localStorageUtils'
-
+import isString from 'lodash/isString'
 const useInteraction = () => {
   const [interactions, setInteractions] = useState([])
   const dispatch = useDispatch()
@@ -44,7 +44,7 @@ const useInteraction = () => {
   }, [interactions.length, requestInteraction])
 
   const batchClick = useCallback(categoryId => {
-    if (categoryId === null || categoryId === '') return
+    if (categoryId === null || categoryId === '' || !isString(categoryId)) return
     const now = getDatetimeNow()
     const newObj = { category: categoryId, time_event: now, event_type: 'click' }
 

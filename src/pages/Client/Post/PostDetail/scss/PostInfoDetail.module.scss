@@ -125,5 +125,8 @@
   :global(.ant-rate) {
     font-size: 16px;
     margin-bottom: 4px;
+    @media screen and (max-width: 370px) {
+      font-size: 14px;
+    }
   }
 }
