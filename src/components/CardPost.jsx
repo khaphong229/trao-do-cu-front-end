@@ -22,7 +22,7 @@ function CardPost({ item, onRequestComplete }) {
   const { query } = useSelector(state => state.post)
 
   const goDetail = _id => {
-    navigate(`/post/${_id}/detail`)
+    navigate(`/${_id}`)
   }
 
   const AuthButton = withAuth(Button)
@@ -35,7 +35,6 @@ function CardPost({ item, onRequestComplete }) {
     try {
       // Call the original request handler
       const result = await originalHandleGiftRequest(item, type)
-      console.log(result)
 
       // Only refresh if the request was successful
       if (result && result.success) {

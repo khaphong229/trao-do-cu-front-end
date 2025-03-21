@@ -13,7 +13,7 @@ import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 import 'owl.carousel/dist/assets/owl.carousel.css'
 import 'owl.carousel/dist/assets/owl.theme.default.css'
 import CardPost from 'components/CardPost'
-
+import gocPtit from 'assets/images/banner/goc_ptit.jpg'
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
 
@@ -76,7 +76,6 @@ const PostPTIT = () => {
 
   // Function to handle post request completion
   const handleRequestComplete = useCallback(() => {
-    console.log('Request complete, refreshing post data...')
     // Refresh the posts data
     fetchPost()
   }, [fetchPost])
@@ -154,6 +153,9 @@ const PostPTIT = () => {
 
   return (
     <div className={styles.saleBannerContainer}>
+      <div className={styles.ptitContainer}>
+        <img loading="lazy" className={styles.imgPtit} src={gocPtit} alt="goc_ptit_thumbnail" />
+      </div>
       <div className={styles.header}>
         <h1 className={styles.headerTitle}>góc ptit</h1>
       </div>

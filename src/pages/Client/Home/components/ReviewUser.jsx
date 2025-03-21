@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { Row, Col, Card, Avatar, Carousel } from 'antd'
 import { StarFilled, StarOutlined } from '@ant-design/icons'
 import styles from '../scss/ReviewUser.module.scss'
-import linh from 'assets/images/review/linh.jpg'
-import tthuong from 'assets/images/review/tthuong.png'
-import tu from 'assets/images/review/tu.png'
 import danh from 'assets/images/review/đanh.jpg'
+import tlinh from 'assets/images/review/tlinh.jpg'
+import hoa from 'assets/images/review/hoa.jpg'
+import lien from 'assets/images/review/lien.jpg'
 const ReviewUser = () => {
   // Sample testimonial data
   const testimonials = [
     {
       id: 1,
-      name: 'Đinh Phương Linh',
-      avatar: linh,
+      name: 'Hoàng Thị Hoa',
+      avatar: hoa,
       text: 'Mình rất thích trang web này! Trước đây mình thường vứt đồ cũ đi, nhưng giờ có thể tìm được người cần chúng. Giao diện dễ dùng, chỉ mất vài phút để đăng tin.',
       rating: 5
     },
@@ -25,15 +25,15 @@ const ReviewUser = () => {
     },
     {
       id: 4,
-      name: 'Lê Anh Tú',
-      avatar: tu,
+      name: 'Tống Diệu Linh',
+      avatar: tlinh,
       text: 'Ý tưởng rất hay, nhưng đôi khi có người đăng bài nhưng không phản hồi khi mình nhắn tin. Nếu có hệ thống xác thực người dùng thì sẽ tốt hơn!',
       rating: 4
     },
     {
       id: 5,
-      name: 'Vũ Văn Thương',
-      avatar: tthuong,
+      name: 'Đỗ Thị Liên',
+      avatar: lien,
       text: 'Mình đã thử trao đổi vài món đồ nhưng có chút khó khăn khi sắp xếp thời gian gặp mặt. Nếu có hỗ trợ vận chuyển thì sẽ tiện lợi hơn!',
       rating: 5
     }

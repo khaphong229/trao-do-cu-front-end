@@ -55,7 +55,6 @@ const PostInfoDetail = () => {
 
   useEffect(() => {
     const postUserId = selectedPost?.user_id?._id
-    console.log('Post User ID:', postUserId) // Debug log
     if (postUserId) {
       dispatch(getPostRating(postUserId))
     }

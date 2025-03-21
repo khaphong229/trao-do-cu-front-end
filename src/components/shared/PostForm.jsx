@@ -301,7 +301,7 @@ const PostForm = ({
                 )
               }}
             >
-              Dành riêng cho sinh viên PTIT
+              Dành cho sinh viên PTIT
             </Checkbox>
           )}
           {current < steps.length - 1 && (

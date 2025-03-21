@@ -162,11 +162,9 @@ const postSlice = createSlice({
     },
     updatePostPtitRequestStatus: (state, action) => {
       const { postId } = action.payload
-      console.log('postID', postId)
 
       // Update post in ptitPosts array
       const ptitPost = state.ptitPosts.find(post => post._id === postId)
-      console.log('post', ptitPost)
 
       if (ptitPost) {
         ptitPost.isRequested = true

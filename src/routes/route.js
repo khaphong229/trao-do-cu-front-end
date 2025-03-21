@@ -92,7 +92,7 @@ const router = createBrowserRouter([
             )
           },
           {
-            path: 'post/:id/detail',
+            path: ':id',
             element: (
               <Suspense>
                 <ClientLayout>

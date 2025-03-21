@@ -1,15 +1,10 @@
-import { Modal, Button, Typography, Space, Avatar, Badge, Divider, Row, Col } from 'antd'
-import { UserOutlined, InfoCircleOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import { Modal, Button, Typography, Space, Divider, Row, Col } from 'antd'
+import { InfoCircleOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { setRequestNotificationModal } from 'features/client/request/giftRequest/giftRequestSlice'
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getCountReceive } from 'features/client/request/giftRequest/giftRequestThunks'
 import { getCountExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import linh from 'assets/images/review/linh.jpg'
-import { useAvatar } from 'hooks/useAvatar'
-import tthuong from 'assets/images/review/tthuong.png'
-import tu from 'assets/images/review/tu.png'
-import danh from 'assets/images/review/đanh.jpg'
 const { Text, Title } = Typography
 
 const RequestNotificationModal = () => {
@@ -17,30 +12,9 @@ const RequestNotificationModal = () => {
   const dispatch = useDispatch()
   const { selectedPostExchange } = useSelector(state => state.exchangeRequest)
   const [count, setCount] = useState(5)
-  const { user } = useSelector(state => state.auth)
   const handleOk = () => {
     dispatch(setRequestNotificationModal(false))
   }
-  const { avatar } = useAvatar()
-
-  // Create array of avatar components and shuffle them
-  const randomizedAvatars = useMemo(() => {
-    const avatarElements = [
-      { key: 'linh', element: <Avatar src={linh} /> },
-      { key: 'default', element: <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} /> },
-      { key: 'tu', element: <Avatar src={tu} /> },
-      { key: 'danh', element: <Avatar src={danh} /> },
-      { key: 'tthuong', element: <Avatar src={tthuong} /> }
-    ]
-
-    // Fisher-Yates shuffle algorithm
-    for (let i = avatarElements.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[avatarElements[i], avatarElements[j]] = [avatarElements[j], avatarElements[i]]
-    }
-
-    return avatarElements
-  }, [avatar])
 
   const fetchCounts = useCallback(async () => {
     if (!selectedPostExchange?._id) return
@@ -52,8 +26,8 @@ const RequestNotificationModal = () => {
       const res = await dispatch(action(id)).unwrap()
 
       if (res.status === 200) {
-        const countRes = res.data.display_request_count
-        setCount(countRes === 0 ? countRes + 5 : countRes)
+        const countRes = res.data.actual_total
+        setCount(countRes === 0 ? countRes + 1 : countRes)
       }
     } catch (error) {}
   }, [selectedPostExchange, dispatch])
@@ -97,8 +71,8 @@ const RequestNotificationModal = () => {
           border: '1px solid #d6e4ff'
         }}
       >
-        <Row justify="center" gutter={[0, 12]}>
-          <Col>
+        <Row justify="center" gutter={[0, 0]}>
+          {/* <Col>
             <Badge
               count={count}
               overflowCount={99}
@@ -122,7 +96,7 @@ const RequestNotificationModal = () => {
                 {randomizedAvatars.map(item => item.element)}
               </Avatar.Group>
             </Badge>
-          </Col>
+          </Col> */}
 
           <Col span={24}>
             <Title level={5} style={{ marginTop: '8px', marginBottom: '4px', color: '#262626' }}>

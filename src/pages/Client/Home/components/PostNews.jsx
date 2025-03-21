@@ -95,7 +95,7 @@ const PostNews = () => {
   }
 
   const goDetail = _id => {
-    navigate(`/post/${_id}/detail`)
+    navigate(`/${_id}`)
   }
 
   const AuthButton = withAuth(Button)
