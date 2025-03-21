@@ -293,6 +293,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
       key: 'action',
       width: 150,
       render: (_, record) => {
+        if (!record.isApproved) return null
         const typeButton = record.type === 'gift' ? 'primary' : 'dashed'
         return (
           <Button type={typeButton} onClick={() => handleViewRegistrations(record)}>
@@ -357,17 +358,19 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
                   {dayjs(item.created_at).format('DD/MM/YYYY')}
                 </Typography.Text>
 
-                <Button
-                  type={item.type === 'gift' ? 'primary' : 'default'}
-                  size="small"
-                  className={styles.actionButton}
-                  onClick={e => {
-                    e.stopPropagation()
-                    handleViewRegistrations(item)
-                  }}
-                >
-                  Xem yêu cầu
-                </Button>
+                {item.isApproved && (
+                  <Button
+                    type={item.type === 'gift' ? 'primary' : 'default'}
+                    size="small"
+                    className={styles.actionButton}
+                    onClick={e => {
+                      e.stopPropagation()
+                      handleViewRegistrations(item)
+                    }}
+                  >
+                    Xem yêu cầu
+                  </Button>
+                )}
               </div>
             </div>
           </Card>

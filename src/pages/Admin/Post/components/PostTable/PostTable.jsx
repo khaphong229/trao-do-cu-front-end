@@ -142,7 +142,7 @@ const PostTable = ({ onViewDetails }) => {
       dataIndex: 'title',
       key: 'title',
       fixed: !isMobile ? 'left' : undefined, // Chỉ fixed trên desktop và dùng undefined thay vì false
-      width: isMobile ? 130 : 250,
+      width: isMobile ? 130 : 190,
       sorter: {
         compare: (a, b) => a.title.localeCompare(b.title)
       },
@@ -242,30 +242,297 @@ const PostTable = ({ onViewDetails }) => {
       }
     },
     {
+      title: 'Sản Phẩm góc PTIT',
+      dataIndex: 'isPtiterOnly',
+      key: 'isPtiterOnly',
+      width: isMobile ? 120 : 150,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8, width: 200 }}>
+          <div style={{ marginBottom: 8 }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 0',
+                cursor: 'pointer'
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedKeys.includes(true)}
+                onChange={e => {
+                  const newKeys = [...selectedKeys]
+                  if (e.target.checked) {
+                    if (!newKeys.includes(true)) newKeys.push(true)
+                  } else {
+                    const index = newKeys.indexOf(true)
+                    if (index > -1) newKeys.splice(index, 1)
+                  }
+                  setSelectedKeys(newKeys)
+                }}
+                style={{ marginRight: 8 }}
+              />
+              <span
+                style={{
+                  backgroundColor: '#1890ff',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontWeight: 'bold'
+                }}
+              >
+                True
+              </span>
+            </label>
+
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 0',
+                cursor: 'pointer'
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedKeys.includes(false)}
+                onChange={e => {
+                  const newKeys = [...selectedKeys]
+                  if (e.target.checked) {
+                    if (!newKeys.includes(false)) newKeys.push(false)
+                  } else {
+                    const index = newKeys.indexOf(false)
+                    if (index > -1) newKeys.splice(index, 1)
+                  }
+                  setSelectedKeys(newKeys)
+                }}
+                style={{ marginRight: 8 }}
+              />
+              <span
+                style={{
+                  backgroundColor: '#ff4d4f',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontWeight: 'bold'
+                }}
+              >
+                False
+              </span>
+            </label>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button type="primary" onClick={() => confirm()} size="small" style={{ width: 90 }}>
+              Lọc
+            </Button>
+            <Button
+              onClick={() => {
+                clearFilters()
+                confirm()
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Đặt lại
+            </Button>
+          </div>
+        </div>
+      ),
+      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+      onFilter: (value, record) => record.isPtiterOnly === value,
+      render: isPtiterOnly => {
+        return (
+          <span
+            style={{
+              backgroundColor: isPtiterOnly ? '#1890ff' : '#ff4d4f',
+              color: 'white',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              fontWeight: 'bold'
+            }}
+          >
+            {isPtiterOnly ? 'true' : 'false'}
+          </span>
+        )
+      }
+    },
+    {
       title: 'Trạng thái',
       dataIndex: 'isApproved',
       key: 'isApproved',
       width: isMobile ? 120 : 150,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8, width: 200 }}>
+          <div style={{ marginBottom: 8 }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 0',
+                cursor: 'pointer'
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedKeys.includes(true)}
+                onChange={e => {
+                  const newKeys = [...selectedKeys]
+                  if (e.target.checked) {
+                    if (!newKeys.includes(true)) newKeys.push(true)
+                  } else {
+                    const index = newKeys.indexOf(true)
+                    if (index > -1) newKeys.splice(index, 1)
+                  }
+                  setSelectedKeys(newKeys)
+                }}
+                style={{ marginRight: 8 }}
+              />
+              <span
+                style={{
+                  backgroundColor: '#52c41a',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontWeight: 'bold'
+                }}
+              >
+                Đã duyệt
+              </span>
+            </label>
+
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 0',
+                cursor: 'pointer'
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedKeys.includes(false)}
+                onChange={e => {
+                  const newKeys = [...selectedKeys]
+                  if (e.target.checked) {
+                    if (!newKeys.includes(false)) newKeys.push(false)
+                  } else {
+                    const index = newKeys.indexOf(false)
+                    if (index > -1) newKeys.splice(index, 1)
+                  }
+                  setSelectedKeys(newKeys)
+                }}
+                style={{ marginRight: 8 }}
+              />
+              <span
+                style={{
+                  backgroundColor: '#fa8c16',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontWeight: 'bold'
+                }}
+              >
+                Chưa duyệt
+              </span>
+            </label>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button type="primary" onClick={() => confirm()} size="small" style={{ width: 90 }}>
+              Lọc
+            </Button>
+            <Button
+              onClick={() => {
+                clearFilters()
+                confirm()
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Đặt lại
+            </Button>
+          </div>
+        </div>
+      ),
+      filterIcon: filtered => (
+        <div style={{ position: 'relative' }}>
+          <div
+            style={{
+              position: 'absolute',
+              top: -8,
+              right: -8,
+              backgroundColor: filtered ? '#1890ff' : 'transparent',
+              color: '#fff',
+              width: 16,
+              height: 16,
+              borderRadius: '50%',
+              display: filtered ? 'flex' : 'none',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 12,
+              fontWeight: 'bold'
+            }}
+          >
+            {filtered ? '!' : ''}
+          </div>
+          <svg
+            width="1em"
+            height="1em"
+            fill="currentColor"
+            viewBox="0 0 1024 1024"
+            style={{ color: filtered ? '#1890ff' : undefined }}
+          >
+            <path d="M819.2 486.4c-25.6 0-44.8-19.2-44.8-44.8V108.8c0-25.6 19.2-44.8 44.8-44.8s44.8 19.2 44.8 44.8v332.8c0 25.6-19.2 44.8-44.8 44.8zM512 486.4c-25.6 0-44.8-19.2-44.8-44.8V108.8c0-25.6 19.2-44.8 44.8-44.8s44.8 19.2 44.8 44.8v332.8c0 25.6-19.2 44.8-44.8 44.8zM204.8 486.4c-25.6 0-44.8-19.2-44.8-44.8V108.8c0-25.6 19.2-44.8 44.8-44.8s44.8 19.2 44.8 44.8v332.8c0 25.6-19.2 44.8-44.8 44.8z" />
+            <path d="M932.8 179.2H91.2c-25.6 0-44.8-19.2-44.8-44.8s19.2-44.8 44.8-44.8h841.6c25.6 0 44.8 19.2 44.8 44.8s-19.2 44.8-44.8 44.8zM284.8 966.4c-32 0-57.6-25.6-57.6-57.6V537.6c0-32 25.6-57.6 57.6-57.6s57.6 25.6 57.6 57.6v364.8c0 38.4-25.6 64-57.6 64zM512 966.4c-32 0-57.6-25.6-57.6-57.6V537.6c0-32 25.6-57.6 57.6-57.6s57.6 25.6 57.6 57.6v364.8c6.4 38.4-25.6 64-57.6 64zM742.4 966.4c-32 0-57.6-25.6-57.6-57.6V537.6c0-32 25.6-57.6 57.6-57.6s57.6 25.6 57.6 57.6v364.8c0 38.4-25.6 64-57.6 64z" />
+            <path d="M838.4 966.4H185.6c-70.4 0-128-57.6-128-128V390.4c0-25.6 19.2-44.8 44.8-44.8s44.8 19.2 44.8 44.8v448c0 19.2 16 38.4 38.4 38.4h652.8c19.2 0 38.4-16 38.4-38.4V390.4c0-25.6 19.2-44.8 44.8-44.8s44.8 19.2 44.8 44.8v448c0 70.4-57.6 128-128 128z" />
+          </svg>
+        </div>
+      ),
+      onFilter: (value, record) => {
+        return record.isApproved === value
+      },
       render: (isApproved, record) => {
-        const approvedStatus = isApproved || false // Đảm bảo isApproved không bị null hoặc undefined
+        const approvedStatus = isApproved || false
+
+        const backgroundColor = approvedStatus ? '#52c41a' : '#fa8c16'
 
         return (
           <Select
             value={approvedStatus ? 'approved' : 'pending'}
-            style={{ width: isMobile ? 110 : 120 }}
+            style={{
+              width: isMobile ? 110 : 120,
+              backgroundColor: backgroundColor,
+              borderColor: backgroundColor
+            }}
+            className={styles.statusSelect}
             onChange={value => handleApprovalChange(value, record)}
             options={[
               {
                 value: 'approved',
                 label: 'Đã duyệt',
-                style: { color: '#52c41a', fontWeight: 'bold' }
+                style: {
+                  color: '#ffffff',
+                  fontWeight: 'bold',
+                  backgroundColor: '#52c41a',
+                  padding: '2px 8px',
+                  borderRadius: '4px'
+                }
               },
               {
                 value: 'pending',
                 label: 'Chưa duyệt',
-                style: { color: '#fa8c16', fontWeight: 'bold' }
+                style: {
+                  color: '#ffffff',
+                  fontWeight: 'bold',
+                  backgroundColor: '#fa8c16',
+                  padding: '2px 8px',
+                  borderRadius: '4px'
+                }
               }
             ]}
+            dropdownStyle={{ minWidth: 120 }}
+            dropdownMatchSelectWidth={false}
           />
         )
       }
