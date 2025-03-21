@@ -1,7 +1,7 @@
 import React from 'react'
 import { Carousel } from 'antd'
 import styles from '../scss/Topsales.module.scss'
-import banner1 from 'assets/images/banner/banner1.webp'
+import banner1 from 'assets/images/banner/banner2.webp'
 import banner2 from 'assets/images/banner/banner3.webp'
 import banner4 from 'assets/images/Banner2/4.webp'
 import banner5 from 'assets/images/Banner2/5.webp'

@@ -602,8 +602,7 @@ const PostTable = ({ onViewDetails }) => {
             total: tableParams.pagination.total,
             showSizeChanger: true,
             pageSizeOptions: [5, 10, 20, 50, 100],
-            showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} bài viết`,
-            position: ['bottomCenter']
+            showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} bài viết`
           }}
           onChange={handleTableChange}
           scroll={{

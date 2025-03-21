@@ -69,6 +69,14 @@
   .hidden {
     display: none;
   }
+
+  :global {
+    .ant-pagination {
+      display: flex;
+      justify-content: flex-end !important;
+      margin: 16px 0;
+    }
+  }
 }
 
 // Kiểu dáng cho thiết bị di động
@@ -127,7 +135,7 @@
     .ant-pagination {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-end;
       margin: 16px 0;
 
       .ant-pagination-options {
