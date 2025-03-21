@@ -333,7 +333,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
               <div className={styles.ribbonWrapper}>
                 <Badge.Ribbon
                   text={item.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
-                  color={item.type === 'exchange' ? 'green' : 'blue'}
+                  color={item.type === 'exchange' ? 'blue' : 'red'}
                 />
               </div>
               {item.isPtiterOnly && <img className={styles.logoptit} src={logoptit} alt="logo_ptit" />}

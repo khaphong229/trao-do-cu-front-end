@@ -201,7 +201,7 @@ const RequestedPosts = () => {
                   />
                   <Badge.Ribbon
                     text={request.post_id.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
-                    color={request.post_id.type === 'exchange' ? 'green' : 'blue'}
+                    color={request.post_id.type === 'exchange' ? 'blue' : 'red'}
                     className="post-type-ribbon"
                   />
                   {request.post_id.isPtiterOnly && <img className="logo_ptit_req" src={logoptit} alt="logo_ptit" />}
