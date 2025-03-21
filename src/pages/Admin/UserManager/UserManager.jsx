@@ -80,12 +80,12 @@ const UserManager = () => {
         onClose={() => dispatch(setIsDetailsModalVisible(false))}
       />
 
-      <UserFormModal
+      {/* <UserFormModal
         visible={isModalVisible}
         isEditing={isEditing}
         initialUser={selectedUser}
         onClose={() => dispatch(setIsModalVisible(false))}
-      />
+      /> */}
     </div>
   )
 }

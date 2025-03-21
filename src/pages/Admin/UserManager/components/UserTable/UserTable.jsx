@@ -226,8 +226,6 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       render: (_, record) => (
         <Space size="middle">
           <Button icon={<EyeOutlined />} onClick={() => onViewDetails(record)} size="small" />
-          <Button icon={<EditOutlined />} onClick={() => onEdit(record)} size="small" />
-          <Button icon={<DeleteOutlined />} onClick={() => handleDelete(record._id)} danger size="small" />
         </Space>
       )
     }
