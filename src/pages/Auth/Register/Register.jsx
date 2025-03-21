@@ -1,49 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { Form, Input, Checkbox, Button, Divider, message } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { registerUser } from 'features/auth/authThunks'
 import Policy from 'components/Policy'
+import ReCAPTCHA from 'react-google-recaptcha'
 import { SITE_KEY } from 'config/url_server'
 
 const Register = () => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  useEffect(() => {
-    const script = document.createElement('script')
-    script.src = 'https://www.google.com/recaptcha/api.js'
-    script.async = true
-    script.defer = true
-
-    document.head.appendChild(script)
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script)
-      }
-    }
-  }, [])
-
-  const showModal = () => {
-    setIsModalOpen(true)
-  }
-
-  const handleCancel = () => {
-    setIsModalOpen(false)
-  }
-
+  const recaptchaRef = useRef(null)
   const dispatch = useDispatch()
+
+  const showModal = () => setIsModalOpen(true)
+  const handleCancel = () => setIsModalOpen(false)
+
   const onFinish = async values => {
     try {
-      if (!window.grecaptcha) {
-        message.error('reCAPTCHA chưa được tải. Vui lòng tải lại trang')
-        return
-      }
-
-      const recaptchaToken = window.grecaptcha.getResponse()
-
+      const recaptchaToken = recaptchaRef.current?.getValue()
       if (!recaptchaToken) {
         message.error('Vui lòng xác nhận bạn không phải là robot')
         return
@@ -72,10 +48,7 @@ const Register = () => {
       } else {
         message.error(error.response?.data?.message || 'Có lỗi xảy ra')
       }
-
-      if (window.grecaptcha && typeof window.grecaptcha.reset === 'function') {
-        window.grecaptcha.reset()
-      }
+      recaptchaRef.current?.reset()
     }
   }
 
@@ -88,18 +61,9 @@ const Register = () => {
             name="name"
             label="Họ và tên"
             rules={[
-              {
-                required: true,
-                message: 'Vui lòng nhập Họ và tên!'
-              },
-              {
-                min: 6,
-                message: 'Họ và tên tối thiểu 6 kí tự.'
-              },
-              {
-                max: 255,
-                message: 'Họ và tên tối đa 255 kí tự.'
-              }
+              { required: true, message: 'Vui lòng nhập Họ và tên!' },
+              { min: 6, message: 'Họ và tên tối thiểu 6 kí tự.' },
+              { max: 255, message: 'Họ và tên tối đa 255 kí tự.' }
             ]}
           >
             <Input />
@@ -109,18 +73,9 @@ const Register = () => {
             name="email"
             label="E-mail"
             rules={[
-              {
-                type: 'email',
-                message: 'Dữ liệu nhập không hợp lệ!'
-              },
-              {
-                required: true,
-                message: 'Vui lòng nhập email!'
-              },
-              {
-                min: 10,
-                message: 'Email tối thiểu 10 kí tự.'
-              }
+              { type: 'email', message: 'Dữ liệu nhập không hợp lệ!' },
+              { required: true, message: 'Vui lòng nhập email!' },
+              { min: 10, message: 'Email tối thiểu 10 kí tự.' }
             ]}
           >
             <Input />
@@ -130,14 +85,8 @@ const Register = () => {
             name="password"
             label="Mật khẩu"
             rules={[
-              {
-                required: true,
-                message: 'Vui lòng nhập mật khẩu!'
-              },
-              {
-                min: 6,
-                message: 'Mật khẩu tối thiểu 6 kí tự.'
-              }
+              { required: true, message: 'Vui lòng nhập mật khẩu!' },
+              { min: 6, message: 'Mật khẩu tối thiểu 6 kí tự.' }
             ]}
             hasFeedback
           >
@@ -150,20 +99,13 @@ const Register = () => {
             dependencies={['password']}
             hasFeedback
             rules={[
-              {
-                required: true,
-                message: 'Vui lòng xác nhận lại mật khẩu!'
-              },
-              {
-                min: 6,
-                message: 'Mật khẩu tối thiểu 6 kí tự.'
-              },
+              { required: true, message: 'Vui lòng xác nhận lại mật khẩu!' },
+              { min: 6, message: 'Mật khẩu tối thiểu 6 kí tự.' },
               ({ getFieldValue }) => ({
-                validator(rule, value) {
+                validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve()
                   }
-
                   return Promise.reject('Mật khẩu không khớp. Vui lòng nhập lại!')
                 }
               })
@@ -189,8 +131,9 @@ const Register = () => {
             </Checkbox>
           </Form.Item>
 
+          {/* Thay đổi từ div cũ sang ReCAPTCHA component */}
           <Form.Item>
-            <div className="g-recaptcha" data-sitekey={SITE_KEY}></div>
+            <ReCAPTCHA sitekey={SITE_KEY} ref={recaptchaRef} />
           </Form.Item>
 
           <Form.Item>
