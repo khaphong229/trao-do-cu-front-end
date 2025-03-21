@@ -119,7 +119,6 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
       setSelectedAddressIndex(newAddresses.length - 1)
       message.success('Đã lưu địa chỉ thành công!')
     } catch (error) {
-      console.log(error)
       // Display the specific error message from the server response
       if (error.detail && error.detail['']) {
         message.error(error.detail[''])

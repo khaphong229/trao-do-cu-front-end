@@ -19,7 +19,7 @@ const QRImageModal = ({ isOpen, handleCancelQR, qrImageUrl }) => {
     >
       <p>
         <CircleAlert width={16} height={16} style={{ marginRight: 6 }} />
-        Vui lòng đưa QR này cho Ban Tổ Chức kiểm tra bạn đã trao đồ thành công!
+        Vui lòng đưa QR này cho Ban Tổ Chức kiểm tra bạn đã được nhận đồ thành công!
       </p>
       <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
         <Image src={`${URL_SERVER_IMAGE}${qrImageUrl}`} alt="QR Code" width={200} preview={false} />

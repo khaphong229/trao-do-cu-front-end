@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Table, Button, Space, Modal, message, Input } from 'antd'
-import {
-  EditOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-  PhoneOutlined,
-  SearchOutlined,
-  MailOutlined
-} from '@ant-design/icons'
+import { EyeOutlined, PhoneOutlined, SearchOutlined, MailOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
@@ -127,25 +120,38 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       key: 'address',
       sorter: {
         compare: (a, b) => {
-          // Check if address is a string or an object
-          const addressA = typeof a.address === 'string' ? a.address : JSON.stringify(a.address)
-          const addressB = typeof b.address === 'string' ? b.address : JSON.stringify(b.address)
-          return addressA.localeCompare(addressB)
+          // Check if address is an array
+          const addressA =
+            Array.isArray(a.address) && a.address.length > 0
+              ? a.address.find(addr => addr.isDefault) || a.address[0]
+              : a.address
+
+          const addressB =
+            Array.isArray(b.address) && b.address.length > 0
+              ? b.address.find(addr => addr.isDefault) || b.address[0]
+              : b.address
+
+          // Get the address string for comparison
+          const addressAStr = typeof addressA === 'object' ? addressA.address : String(addressA || '')
+          const addressBStr = typeof addressB === 'object' ? addressB.address : String(addressB || '')
+
+          return addressAStr.localeCompare(addressBStr)
         }
       },
       render: address => {
-        // Handle the case where address is an object
-        if (typeof address === 'object' && address !== null) {
-          // You can format the address object however you want
-          // For example, if it has a property like 'text'
-          return (
-            <div className="truncate">
-              {address.isDefault ? '(Mặc định) ' : ''}
-              {address.address || 'Không có địa chỉ'}
-            </div>
-          )
+        // Handle the case where address is an array of address objects
+        if (Array.isArray(address) && address.length > 0) {
+          // Try to find the default address first
+          const defaultAddress = address.find(addr => addr.isDefault)
+          const addressToShow = defaultAddress || address[0]
+
+          return <div className="truncate">{addressToShow.address || 'Không có địa chỉ'}</div>
         }
-        // If address is a string, render it as is
+        // Handle the case where address is a single object
+        else if (typeof address === 'object' && address !== null && address.address) {
+          return <div className="truncate">{address.address || 'Không có địa chỉ'}</div>
+        }
+        // If address is a string or null/undefined, render it as is
         return <div className="truncate">{address || 'Không có địa chỉ'}</div>
       },
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -167,7 +173,17 @@ const UserTable = ({ onEdit, onViewDetails }) => {
           </Space>
         </div>
       ),
-      onFilter: (value, record) => record.address.toString().toLowerCase().includes(value.toLowerCase()),
+      onFilter: (value, record) => {
+        if (Array.isArray(record.address) && record.address.length > 0) {
+          // Search through all addresses in the array
+          return record.address.some(addr => addr.address && addr.address.toLowerCase().includes(value.toLowerCase()))
+        } else if (typeof record.address === 'object' && record.address !== null) {
+          return record.address.address && record.address.address.toLowerCase().includes(value.toLowerCase())
+        }
+        return String(record.address || '')
+          .toLowerCase()
+          .includes(value.toLowerCase())
+      },
       filterIcon: filtered => <MailOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     },
     {
@@ -203,8 +219,6 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       render: (_, record) => (
         <Space size="middle">
           <Button icon={<EyeOutlined />} onClick={() => onViewDetails(record)} size="small" />
-          <Button icon={<EditOutlined />} onClick={() => onEdit(record)} size="small" />
-          <Button icon={<DeleteOutlined />} onClick={() => handleDelete(record._id)} danger size="small" />
         </Space>
       )
     }

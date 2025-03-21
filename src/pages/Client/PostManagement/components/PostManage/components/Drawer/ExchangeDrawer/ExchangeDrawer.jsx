@@ -12,9 +12,12 @@ import {
   Descriptions,
   Pagination,
   Tag,
-  Select
+  Select,
+  Input,
+  Modal,
+  Radio
 } from 'antd'
-import { UserOutlined, ClockCircleOutlined, SearchOutlined } from '@ant-design/icons'
+import { UserOutlined, ClockCircleOutlined, SearchOutlined, GiftOutlined, AimOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import styles from './ExchangeDrawer.module.scss'
 import dayjs from 'dayjs'
@@ -25,8 +28,6 @@ import {
 } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { getAvatarPost } from 'hooks/useAvatar'
-import { Input } from 'postcss'
-// Assuming moment is already installed
 
 export const ExchangeDrawer = ({
   visible,
@@ -45,6 +46,11 @@ export const ExchangeDrawer = ({
   const [activeTab, setActiveTab] = useState('all')
   const [sortOrder, setSortOrder] = useState('newest')
   const isMobile = useCheckMobileScreen()
+  const [isRandomModalVisible, setIsRandomModalVisible] = useState(false)
+  const [randomMode, setRandomMode] = useState('currentPage')
+  const [isRandomizing, setIsRandomizing] = useState(false)
+  const [selectedWinner, setSelectedWinner] = useState(null)
+  const [allRequests, setAllRequests] = useState([])
 
   const sortedRequests = React.useMemo(() => {
     if (!exchangeRequests) return []
@@ -69,6 +75,7 @@ export const ExchangeDrawer = ({
 
     return sorted
   }, [exchangeRequests, sortOrder])
+
   useEffect(() => {
     if (searchText.trim() === '') {
       setFilteredRequests(sortedRequests)
@@ -140,10 +147,121 @@ export const ExchangeDrawer = ({
     setSearchText(e.target.value)
   }
 
-  if (!listing) return null
   const handleSortChange = value => {
     setSortOrder(value)
   }
+
+  // Hàm lấy tất cả requests từ tất cả các trang
+  const fetchAllRequests = async () => {
+    try {
+      setIsRandomizing(true)
+      const totalPages = Math.ceil(pagination.total / pagination.pageSize)
+      let allRequestsData = []
+
+      // Lưu lại trang hiện tại để sau khi fetch xong có thể quay lại
+      const originalPage = currentPage
+
+      for (let page = 1; page <= totalPages; page++) {
+        const response = await refetch(listing, {
+          current: page,
+          pageSize: pagination.pageSize,
+          post_id: listing._id
+        })
+
+        // Giả định rằng response chứa dữ liệu mới và cách để lấy danh sách requests
+        // Điều chỉnh dựa trên cấu trúc dữ liệu thực tế của bạn
+        if (response && response.data) {
+          const pendingRequests = response.data.filter(req => req.status === 'pending')
+          allRequestsData = [...allRequestsData, ...pendingRequests]
+        }
+      }
+
+      // Quay lại trang ban đầu
+      await refetch(listing, {
+        current: originalPage,
+        pageSize: pagination.pageSize,
+        post_id: listing._id
+      })
+
+      setAllRequests(allRequestsData)
+      return allRequestsData
+    } catch (error) {
+      message.error('Lỗi khi tải tất cả yêu cầu: ' + (error.message || 'Đã xảy ra lỗi'))
+      return []
+    } finally {
+      setIsRandomizing(false)
+    }
+  }
+
+  // Mở modal random
+  const showRandomModal = () => {
+    setIsRandomModalVisible(true)
+    setSelectedWinner(null)
+  }
+
+  // Hàm chọn người nhận ngẫu nhiên
+  const selectRandomWinner = async () => {
+    setIsRandomizing(true)
+    setSelectedWinner(null)
+
+    try {
+      let eligibleRequests = []
+
+      if (randomMode === 'currentPage') {
+        // Chỉ lấy các yêu cầu ở trang hiện tại với trạng thái 'pending'
+        eligibleRequests = sortedRequests.filter(req => req.status === 'pending')
+      } else if (randomMode === 'allPages') {
+        // Lấy tất cả yêu cầu từ tất cả các trang
+        const allRequestsData = await fetchAllRequests()
+        eligibleRequests = allRequestsData
+      }
+
+      if (eligibleRequests.length === 0) {
+        message.warning('Không có yêu cầu nào đủ điều kiện để chọn')
+        setIsRandomizing(false)
+        return
+      }
+
+      // Hiệu ứng quay số ngẫu nhiên
+      let counter = 0
+      const maxIterations = 15
+      const animationInterval = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * eligibleRequests.length)
+        setSelectedWinner(eligibleRequests[randomIndex])
+
+        counter++
+        if (counter >= maxIterations) {
+          clearInterval(animationInterval)
+
+          // Chọn người thắng cuối cùng
+          const finalIndex = Math.floor(Math.random() * eligibleRequests.length)
+          const winner = eligibleRequests[finalIndex]
+          setSelectedWinner(winner)
+          setIsRandomizing(false)
+        }
+      }, 150)
+    } catch (error) {
+      message.error('Lỗi khi chọn ngẫu nhiên: ' + (error.message || 'Đã xảy ra lỗi'))
+      setIsRandomizing(false)
+    }
+  }
+
+  // Hàm xác nhận chọn người thắng
+  const confirmWinner = async () => {
+    if (selectedWinner) {
+      try {
+        await handleAccept(selectedWinner._id)
+        setIsRandomModalVisible(false)
+        message.success(`Đã chọn ${selectedWinner.user_req_id?.name || 'Người dùng'} làm người nhận!`)
+      } catch (error) {
+        message.error('Lỗi khi xác nhận người nhận: ' + (error.message || 'Đã xảy ra lỗi'))
+      }
+    } else {
+      message.warning('Vui lòng chọn ngẫu nhiên một người nhận trước')
+    }
+  }
+
+  if (!listing) return null
 
   return (
     <Drawer
@@ -182,71 +300,71 @@ export const ExchangeDrawer = ({
           </div>
         </div>
       </Card>
-      <div className={styles.searchAndFilterContainer}>
-        <div className={styles.searchContainer}>
-          <Input
-            placeholder="Tìm kiếm người yêu cầu trao tặng..."
-            prefix={<SearchOutlined />}
-            value={searchText}
-            onChange={handleSearch}
-            className={styles.searchInput}
-            allowClear
-          />
+
+      <div className={styles.controlsContainer}>
+        <div className={styles.searchAndFilterContainer}>
+          <div className={styles.searchContainer}>
+            <Input
+              placeholder="Tìm kiếm người yêu cầu trao tặng..."
+              prefix={<SearchOutlined />}
+              value={searchText}
+              onChange={handleSearch}
+              className={styles.searchInput}
+              allowClear
+            />
+          </div>
+
+          <div className={styles.filterContainer}>
+            <Select
+              value={sortOrder}
+              onChange={handleSortChange}
+              options={[
+                { value: 'newest', label: 'Mới nhất' },
+                { value: 'oldest', label: 'Cũ nhất' }
+              ]}
+            />
+          </div>
         </div>
 
-        <div className={styles.filterContainer}>
-          <Select
-            value={sortOrder}
-            onChange={handleSortChange}
-            options={[
-              { value: 'newest', label: 'Mới nhất' },
-              { value: 'oldest', label: 'Cũ nhất' }
-            ]}
-          />
-        </div>
+        <Button
+          type="primary"
+          icon={<GiftOutlined />}
+          onClick={showRandomModal}
+          disabled={hasAccepted || sortedRequests.filter(req => req.status === 'pending').length === 0}
+          className={styles.randomButton}
+        >
+          Chọn người nhận ngẫu nhiên
+        </Button>
       </div>
 
       <List
-        dataSource={sortedRequests}
+        dataSource={filteredRequests}
+        locale={{ emptyText: 'Không tìm thấy yêu cầu nào' }}
         renderItem={request => (
-          <Card className={styles.requestCard} key={request._id}>
-            <div className={styles.userInfo}>
-              <Avatar src={getAvatarPost(request.user_req_id)} icon={<UserOutlined />} />
-              <Space>
-                <span>{request.user_req_id?.name}</span>
-                {request.status === 'accepted' && <Badge status="success" text="Đã chấp nhận" />}
-              </Space>
+          <div className={styles.requestItem}>
+            <div className={styles.requestHeader}>
+              <div className={styles.userInfo}>
+                <Avatar src={getAvatarPost(request.user_req_id)} icon={<UserOutlined />} size={40} />
+                <span className={styles.userName}>{request.user_req_id?.name || 'Không xác định'}</span>
+              </div>
+              <Badge
+                status={request.status === 'accepted' ? 'success' : 'processing'}
+                text={request.status === 'accepted' ? 'Được nhận' : 'Chờ duyệt'}
+                className={`${styles.statusBadge} ${styles[request.status]}`}
+              />
             </div>
 
-            <Descriptions
-              title="Chi tiết trao đổi"
-              bordered
-              column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
-              className={styles.exchangeDetails}
-            >
-              <Descriptions.Item label="Tiêu đề">{request.title || 'Không có tiêu đề'}</Descriptions.Item>
-              <Descriptions.Item label="Số điện thoại">{request.contact_phone || 'Không có'}</Descriptions.Item>
-              <Descriptions.Item label="Địa chỉ">{request.contact_address || 'Không có'}</Descriptions.Item>
-              <Descriptions.Item label="Facebook">
-                {request.contact_social_media?.facebook || 'Không có'}
-              </Descriptions.Item>
-              <Descriptions.Item label="Mô tả" span={2}>
-                {request.description || 'Không có mô tả'}
-              </Descriptions.Item>
-            </Descriptions>
+            <div className={styles.requestContent}>
+              <Descriptions column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }} bordered size="small">
+                <Descriptions.Item label="Số điện thoại">{request.contact_phone}</Descriptions.Item>
+                <Descriptions.Item label="Địa chỉ">{request.contact_address}</Descriptions.Item>
+                <Descriptions.Item label="Lý do nhận" span={2}>
+                  {request.reason_receive || 'Không có'}
+                </Descriptions.Item>
+              </Descriptions>
+            </div>
 
-            {request.image_url && request.image_url.length > 0 && (
-              <div className={styles.imageSection}>
-                <div className={styles.imageTitle}>Hình ảnh trao đổi</div>
-                <div className={styles.imageGrid}>
-                  {request.image_url.map((img, index) => (
-                    <Image key={index} src={`${URL_SERVER_IMAGE}${img}`} alt={`Exchange item ${index + 1}`} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className={styles.actions}>
+            <div className={styles.requestActions}>
               {request.status === 'accepted' ? (
                 <Button danger onClick={() => handleAccept(request._id, 'pending')}>
                   Hủy yêu cầu
@@ -261,16 +379,16 @@ export const ExchangeDrawer = ({
                     Chấp nhận
                   </Button>
                   <Button
-                    onClick={() => handleDelete(request._id)}
                     danger
                     disabled={hasAccepted || request.status !== 'pending'}
+                    onClick={() => handleDelete(request._id)}
                   >
                     Từ chối
                   </Button>
                 </>
               )}
             </div>
-          </Card>
+          </div>
         )}
       />
 
@@ -287,6 +405,77 @@ export const ExchangeDrawer = ({
           style={{ margin: '40px 0' }}
         />
       </div>
+
+      {/* Modal chọn người nhận ngẫu nhiên */}
+      <Modal
+        title={
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <AimOutlined style={{ marginRight: '8px' }} /> Chọn người nhận ngẫu nhiên
+          </div>
+        }
+        open={isRandomModalVisible}
+        onCancel={() => setIsRandomModalVisible(false)}
+        footer={[
+          <Button key="back" onClick={() => setIsRandomModalVisible(false)}>
+            Hủy
+          </Button>,
+          <Button
+            key="random"
+            type="primary"
+            onClick={selectRandomWinner}
+            loading={isRandomizing}
+            disabled={isRandomizing}
+          >
+            {isRandomizing ? 'Đang chọn...' : 'Chọn ngẫu nhiên'}
+          </Button>,
+          <Button key="confirm" type="primary" onClick={confirmWinner} disabled={!selectedWinner || isRandomizing}>
+            Xác nhận người được chọn
+          </Button>
+        ]}
+        width={500}
+      >
+        <div className={styles.randomModalContent}>
+          <div className={styles.randomModeSelector}>
+            <Radio.Group value={randomMode} onChange={e => setRandomMode(e.target.value)}>
+              <Radio value="currentPage">Chỉ chọn từ trang hiện tại</Radio>
+              <Radio value="allPages">Chọn từ tất cả các trang</Radio>
+            </Radio.Group>
+          </div>
+
+          {isRandomizing && (
+            <div className={styles.randomizingAnimation}>
+              <div className={styles.spinner}></div>
+              <p>Đang chọn ngẫu nhiên...</p>
+            </div>
+          )}
+
+          {selectedWinner && !isRandomizing && (
+            <div className={styles.winnerDisplay}>
+              <div className={styles.winnerHeader}>
+                <Avatar src={getAvatarPost(selectedWinner.user_req_id)} icon={<UserOutlined />} size={64} />
+                <div className={styles.winnerInfo}>
+                  <h3>{selectedWinner.user_req_id?.name || 'Không xác định'}</h3>
+                  <p>{selectedWinner.contact_phone}</p>
+                </div>
+              </div>
+              <div className={styles.winnerDetails}>
+                <p>
+                  <strong>Địa chỉ:</strong> {selectedWinner.contact_address}
+                </p>
+                <p>
+                  <strong>Lý do nhận:</strong> {selectedWinner.reason_receive || 'Không có'}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {!selectedWinner && !isRandomizing && (
+            <div className={styles.noWinnerYet}>
+              <p>Nhấn "Chọn ngẫu nhiên" để bắt đầu quá trình chọn người nhận</p>
+            </div>
+          )}
+        </div>
+      </Modal>
     </Drawer>
   )
 }

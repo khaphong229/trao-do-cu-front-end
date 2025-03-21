@@ -13,6 +13,7 @@ import ContactInfoDisplay from './components/ContactInfoDisplay'
 import { getAvatarPost } from 'hooks/useAvatar'
 import QRImageModal from 'components/QrModal'
 import { setViewMode } from 'features/client/post/postSlice'
+import logoptit from 'assets/images/logo/Ptit-penannt.png'
 
 const { Text } = Typography
 
@@ -103,7 +104,7 @@ const RequestedPosts = () => {
 
   const columns = [
     {
-      title: 'Ảnh bài viết',
+      title: 'Hình ảnh',
       key: 'postImage',
       width: 120,
       render: (_, record) => (
@@ -131,10 +132,7 @@ const RequestedPosts = () => {
       width: 200,
       render: (_, record) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Avatar
-            src={record?.post_id?.user_id?.avatar ? `${URL_SERVER_IMAGE}${record.post_id.user_id.avatar}` : avt}
-            size={40}
-          />
+          <Avatar src={getAvatarPost(record?.post_id?.user_id)} size={40} />
           <div>
             <Text strong>{record?.post_id?.user_id?.name || 'Không xác định'}</Text>
             <br />
@@ -168,12 +166,21 @@ const RequestedPosts = () => {
         </Tag>
       )
     },
-
     {
       title: 'Trạng thái',
       key: 'status',
       width: 120,
       render: (_, record) => getStatusTag(record.post_id.status, record.status)
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      width: 120,
+      render: (_, record) => {
+        record.post_id.status === 'inactive' && record.status === 'accepted' && (
+          <Button className="button-qr" icon={<QrcodeOutlined />} onClick={() => handleOpenQr(record)} />
+        )
+      }
     }
   ]
 
@@ -203,6 +210,7 @@ const RequestedPosts = () => {
                     color={request.post_id.type === 'exchange' ? 'green' : 'blue'}
                     className="post-type-ribbon"
                   />
+                  {request.post_id.isPtiterOnly && <img className="logo_ptit_req" src={logoptit} alt="logo_ptit" />}
                 </div>
               }
               bodyStyle={{ padding: '12px', height: 'auto' }}

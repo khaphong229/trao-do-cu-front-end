@@ -53,11 +53,12 @@ const PostInfoDetail = () => {
     }
   }, [selectedPost, batchClick])
 
-  // Fetch post ratings when component mounts
   useEffect(() => {
-    dispatch(getPostRating())
-  }, [dispatch])
-
+    const postUserId = selectedPost?.user_id?._id
+    if (postUserId) {
+      dispatch(getPostRating(postUserId))
+    }
+  }, [dispatch, selectedPost])
   // Set a default rating of 5 stars
   const defaultRating = 5
 

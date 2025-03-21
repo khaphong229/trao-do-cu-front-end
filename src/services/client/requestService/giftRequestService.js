@@ -58,6 +58,9 @@ const giftRequestService = {
   },
   rejectRequestGift(id) {
     return this.http.delete(`/request_gift/${id}`)
+  },
+  getCountReceive(id) {
+    return this.http.get(`/request_gift/requesters-count/${id}`)
   }
 }
 

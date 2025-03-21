@@ -23,13 +23,18 @@ const initialState = {
   current: 1,
   limit: 20,
   isError: false,
-  errorMessage: ''
+  errorMessage: '',
+
+  isRequestNotificationModal: false
 }
 
 const giftRequestSlice = createSlice({
   name: 'giftRequest',
   initialState,
   reducers: {
+    setRequestNotificationModal: (state, action) => {
+      state.isRequestNotificationModal = action.payload
+    },
     setInfoModalVisible: (state, action) => {
       state.isInfoModalVisible = action.payload
     },
@@ -102,5 +107,6 @@ const giftRequestSlice = createSlice({
   }
 })
 
-export const { setInfoModalVisible, setAcceptModalVisible, resetPosts } = giftRequestSlice.actions
+export const { setInfoModalVisible, setAcceptModalVisible, resetPosts, setRequestNotificationModal } =
+  giftRequestSlice.actions
 export default giftRequestSlice.reducer

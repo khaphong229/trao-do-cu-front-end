@@ -431,7 +431,7 @@ $screen-xl: 1200px;
 }
 .searchAndFilterContainer {
   display: flex;
-  justify-content: flex-end; // Align content to the right
+  justify-content: flex-start; // Align content to the right
   gap: 12px;
   margin-bottom: 16px;
 
@@ -469,4 +469,130 @@ $screen-xl: 1200px;
       }
     }
   }
+}
+
+.controlsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.searchAndFilterContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.searchContainer {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filterContainer {
+  min-width: 120px;
+}
+
+.randomButton {
+  white-space: nowrap;
+}
+
+// CSS responsive cho màn hình nhỏ
+@media (max-width: 768px) {
+  .controlsContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchAndFilterContainer {
+    width: 100%;
+  }
+
+  .randomButton {
+    align-self: flex-end;
+  }
+}
+
+// Các styles cho modal random (giữ nguyên)
+.randomModalContent {
+  padding: 16px 0;
+}
+
+.randomModeSelector {
+  margin-bottom: 24px;
+}
+
+.randomizingAnimation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #1890ff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.winnerDisplay {
+  padding: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+}
+
+.winnerHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.winnerInfo {
+  margin-left: 16px;
+}
+
+.winnerInfo h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+}
+
+.winnerInfo p {
+  margin: 0;
+  color: #666;
+}
+
+.winnerDetails {
+  padding-top: 8px;
+  border-top: 1px dashed #e8e8e8;
+}
+
+.winnerDetails p {
+  margin: 8px 0;
+}
+
+.noWinnerYet {
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #888;
 }

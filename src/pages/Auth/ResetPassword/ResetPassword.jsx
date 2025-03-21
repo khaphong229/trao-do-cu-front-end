@@ -25,7 +25,6 @@ const ResetPassword = () => {
       setInvalidToken(true)
       message.error('Không tìm thấy token đặt lại mật khẩu trong URL')
     } else {
-      console.log('Token found:', tokenFromUrl)
       setToken(tokenFromUrl)
     }
   }, [location])
@@ -57,7 +56,6 @@ const ResetPassword = () => {
       return
     }
 
-    console.log('Form submitted with token:', token)
     setFormSubmitted(true)
 
     // Dispatch reset password action with proper payload

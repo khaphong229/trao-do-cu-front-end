@@ -69,6 +69,14 @@
   .hidden {
     display: none;
   }
+
+  :global {
+    .ant-pagination {
+      display: flex;
+      justify-content: flex-end !important;
+      margin: 16px 0;
+    }
+  }
 }
 
 // Kiểu dáng cho thiết bị di động
@@ -127,7 +135,7 @@
     .ant-pagination {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-end;
       margin: 16px 0;
 
       .ant-pagination-options {
@@ -189,6 +197,25 @@
     .ant-table-cell-fix-left,
     .ant-table-cell-fix-right {
       background-color: #fafafa;
+    }
+  }
+}
+.statusSelect {
+  :global {
+    .ant-select-selector {
+      background-color: transparent !important;
+      border-color: transparent !important;
+      color: white !important;
+      font-weight: bold;
+      padding: 0 8px !important;
+    }
+
+    .ant-select-selection-item {
+      color: white !important;
+    }
+
+    .ant-select-arrow {
+      color: white !important;
     }
   }
 }

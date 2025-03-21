@@ -9,6 +9,7 @@ import { message } from 'antd'
 import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
 import ContactInfoModal from './components/Modal/Contact'
+import RequestNotificationModal from 'components/RequestNotificationModal'
 
 const CreatePostModal = () => {
   const dispatch = useDispatch()
@@ -138,6 +139,7 @@ const CreatePostModal = () => {
         submitButtonText="Đăng"
         onContactInfoSubmit={handleContactInfoSubmit}
       />
+      <RequestNotificationModal />
     </>
   )
 }

@@ -28,7 +28,7 @@ const initialState = {
     },
     isPtiterOnly: false
   },
-  isPendingPostOpen: false, // Thêm state để theo dõi trạng thái chờ mở form đăng bài
+  isPendingPostOpen: false,
   isShowTour: false,
   isLoadingModal: false,
   isLoadingButton: false,
@@ -61,7 +61,7 @@ const initialState = {
 
   viewMode: 'card',
   sortOrder: 'newest',
-  cityFilter: null, // Thêm state lưu thành phố đang lọc,
+  cityFilter: null,
 
   isEdittingAddress: false,
 
@@ -152,8 +152,32 @@ const postSlice = createSlice({
       const post = state.posts.find(post => post._id === postId)
       if (post) {
         post.isRequested = true
+        post.display_request_count += 1
       }
 
+      if (state.selectedPost && state.selectedPost._id === postId) {
+        state.selectedPost.isRequested = true
+        state.selectedPost.display_request_count += 1
+      }
+    },
+    updatePostPtitRequestStatus: (state, action) => {
+      const { postId } = action.payload
+
+      // Update post in ptitPosts array
+      const ptitPost = state.ptitPosts.find(post => post._id === postId)
+
+      if (ptitPost) {
+        ptitPost.isRequested = true
+        ptitPost.display_request_count += 1
+      }
+
+      // Also check and update in regular posts array
+      const regularPost = state.posts.find(post => post._id === postId)
+      if (regularPost) {
+        regularPost.isRequested = true
+      }
+
+      // Also update selectedPost if it matches
       if (state.selectedPost && state.selectedPost._id === postId) {
         state.selectedPost.isRequested = true
       }
@@ -162,21 +186,19 @@ const postSlice = createSlice({
       state.viewMode = action.payload
     },
     setSortOrder: (state, action) => {
-      state.sortOrder = action.payload // Cập nhật giá trị sắp xếp
+      state.sortOrder = action.payload
     },
     setCityFilter: (state, action) => {
       state.cityFilter = action.payload
+    },
+    updatePostApprovalStatus: (state, action) => {
+      const { postId, isApproved } = action.payload
+      const post = state.posts.find(post => post._id === postId)
+      if (post) {
+        post.isApproved = isApproved
+      }
     }
   },
-  updatePostApprovalStatus: (state, action) => {
-    const { postId, isApproved } = action.payload
-
-    const post = state.posts.find(post => post._id === postId)
-    if (post) {
-      post.isApproved = isApproved
-    }
-  },
-  //get my post & post management
   extraReducers: builder => {
     // Create Post Reducers
     builder
@@ -219,7 +241,6 @@ const postSlice = createSlice({
         const newPosts = action.payload?.data?.data || []
         const currentPage = action.payload?.data?.current || 1
 
-        // Không lọc posts ở đây, hiển thị tất cả posts với trạng thái duyệt
         if (currentPage === 1) {
           state.posts = newPosts
         } else {
@@ -245,21 +266,6 @@ const postSlice = createSlice({
       .addCase(getPostPtitPagination.fulfilled, (state, action) => {
         state.isLoadingPtit = false
         state.isErrorPtit = null
-
-        // const newPosts = action.payload?.posts || []
-        // const currentPage = action.payload?.current || 1
-
-        // if (currentPage === 1) {
-        //   state.ptitPosts = newPosts
-        // } else {
-        //   const existingPostIds = new Map(state.ptitPosts.map(post => [post._id, true]))
-
-        //   const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
-
-        //   state.ptitPosts = [...state.ptitPosts, ...uniqueNewPosts]
-        // }
-
-        // state.hasMore = newPosts.length === action.payload?.limit
         state.ptitPosts = action.payload?.data || []
         state.current = action.payload?.current || 1
         state.total = action.payload?.total || 0
@@ -284,9 +290,7 @@ const postSlice = createSlice({
           state.posts = newPosts
         } else {
           const existingPostIds = new Map(state.posts.map(post => [post._id, true]))
-
           const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post._id))
-
           state.posts = [...state.posts, ...uniqueNewPosts]
         }
 
@@ -319,7 +323,6 @@ const postSlice = createSlice({
         state.isLoading = false
         if (action.payload) {
           const posts = Array.isArray(action.payload.data.data) ? action.payload.data.data : []
-          // Lưu tất cả posts mà không lọc
           state.posts = posts
           state.total = action.payload.data.total || 0
           state.current = action.payload.data.current || 1
@@ -357,9 +360,9 @@ export const {
   clearPosts,
   setRequestStatuses,
   clearExpiredCache,
-  updatePostStatus,
-  setSelectedPost,
+  updatePostApprovalStatus,
   updatePostRequestStatus,
+  updatePostPtitRequestStatus,
   setViewMode,
   setSortOrder,
   setCityFilter,

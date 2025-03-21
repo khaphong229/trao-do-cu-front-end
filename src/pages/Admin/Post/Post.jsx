@@ -42,10 +42,8 @@ const Post = () => {
   }
 
   const handleViewDetails = post => {
-    console.log('Selected post:', post)
     dispatch(setSelectedPost(post))
     dispatch(setIsDetailsModalVisible(true))
-    console.log('After dispatch:', { isDetailsModalVisible, selectedPost })
   }
 
   const handleReload = () => {

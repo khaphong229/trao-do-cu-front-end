@@ -10,19 +10,22 @@ import { ConfigProvider, Empty } from 'antd'
 import { configAntd, localeConfigAntd } from './config/antd'
 import './assets/scss/common.scss'
 import { HelmetProvider } from 'react-helmet-async'
+import ErrorBoundary from './components/common/ErrorBoundary'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <HelmetProvider>
-    <ConfigProvider
-      renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />}
-      theme={configAntd}
-      locale={localeConfigAntd}
-    >
-      <Provider store={store}>
-        <RouterProvider router={router} />
-      </Provider>
-    </ConfigProvider>
+    <ErrorBoundary>
+      <ConfigProvider
+        renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />}
+        theme={configAntd}
+        locale={localeConfigAntd}
+      >
+        <Provider store={store}>
+          <RouterProvider router={router} />
+        </Provider>
+      </ConfigProvider>
+    </ErrorBoundary>
   </HelmetProvider>
 )
 

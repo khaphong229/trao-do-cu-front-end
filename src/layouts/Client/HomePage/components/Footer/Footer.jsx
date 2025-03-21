@@ -56,7 +56,9 @@ function AppFooter() {
                 <PhoneOutlined style={{ marginRight: 8 }} />
                 Hotline: 0869 800 725
               </Text>
-              <Text className={styles.text}>Sản phẩm được bảo trợ bởi Đoàn Thanh Niên</Text>
+              <Text className={styles.text}>
+                Sản phẩm được bảo trợ bởi Đoàn Thanh Niên Học viện Công nghệ Bưu Chính Viễn Thông
+              </Text>
             </div>
           </Col>
 
@@ -107,11 +109,7 @@ function AppFooter() {
               Hỗ Trợ Khách Hàng
             </Title>
             <Space direction="vertical" size={0} className={styles.linkContainer}>
-              <Link
-                href="https://tus-organization-14.gitbook.io/cau-hoi-thuong-gap-faq/"
-                target="_blank"
-                className={styles.link}
-              >
+              <Link href="https://help.traodocu.vn/" target="_blank" className={styles.link}>
                 Câu Hỏi Thường Gặp (FAQ)
               </Link>
               <Link onClick={() => setIsPrivacyOpen(true)} className={styles.link}>

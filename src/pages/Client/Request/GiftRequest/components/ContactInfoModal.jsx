@@ -13,6 +13,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
   const [fullAddress, setFullAddress] = useState('')
   const [addressTouched, setAddressTouched] = useState(false)
   const [isPtiterChecked, setIsPtiterChecked] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { isInfoModalVisible, isLoading } = useSelector(state => state.giftRequest)
   const { user } = useSelector(state => state.auth)
@@ -72,6 +73,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
 
   const handleSubmit = async values => {
     try {
+      setIsSubmitting(true)
       setAddressTouched(true)
       let hasError = false
 
@@ -79,6 +81,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
       if (!fullAddress) {
         message.error('Vui lòng nhập địa chỉ đầy đủ')
         hasError = true
+        setIsSubmitting(false)
         return
       }
 
@@ -87,6 +90,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
         if (!validatePhoneNumber(values.phone)) {
           message.error('Số điện thoại không đúng định dạng (VD: 0912345678)')
           hasError = true
+          setIsSubmitting(false)
           return
         }
       }
@@ -96,6 +100,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
         if (!validateFacebookLink(values.social_media)) {
           message.error('Link Facebook không hợp lệ, phải chứa facebook.com hoặc fb.com')
           hasError = true
+          setIsSubmitting(false)
           return
         }
       }
@@ -104,10 +109,12 @@ export const ContactInfoModal = ({ onSubmit }) => {
       if (!validateContactMethod(values.phone, values.social_media)) {
         message.error('Vui lòng cung cấp ít nhất một phương thức liên hệ (Số điện thoại hoặc Facebook)')
         hasError = true
+        setIsSubmitting(false)
         return
       }
 
       if (hasError) {
+        setIsSubmitting(false)
         return
       }
 
@@ -131,6 +138,8 @@ export const ContactInfoModal = ({ onSubmit }) => {
       await onSubmit(submissionData)
     } catch (error) {
       message.error('Có lỗi xảy ra khi cập nhật thông tin')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -145,6 +154,11 @@ export const ContactInfoModal = ({ onSubmit }) => {
   return (
     <Modal title="Cập nhật thông tin" open={isInfoModalVisible} onCancel={handleCancel} footer={null}>
       <Form form={form} onFinish={handleSubmit} layout="vertical">
+        <Form.Item name="isPtiter" label={null} valuePropName="checked">
+          <Checkbox onChange={handleCheckboxChange} checked={isPtiterChecked}>
+            Là sinh viên PTIT
+          </Checkbox>
+        </Form.Item>
         <div style={{ marginBottom: 10 }}>
           <span style={{ color: '#ff4d4f', marginRight: 4 }}>*</span>
           <Tooltip title="Cung cấp ít nhất một phương thức liên hệ của bạn">Phương thức liên hệ</Tooltip>
@@ -198,14 +212,8 @@ export const ContactInfoModal = ({ onSubmit }) => {
           />
         </Form.Item>
 
-        <Form.Item name="isPtiter" label={null} valuePropName="checked">
-          <Checkbox onChange={handleCheckboxChange} checked={isPtiterChecked}>
-            Đang là sinh viên PTIT
-          </Checkbox>
-        </Form.Item>
-
         <Form.Item className="form-actions">
-          <Button type="primary" htmlType="submit" loading={isLoading}>
+          <Button type="primary" htmlType="submit" loading={isSubmitting}>
             Cập nhật
           </Button>
         </Form.Item>

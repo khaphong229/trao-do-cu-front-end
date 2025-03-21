@@ -229,9 +229,13 @@ $transition-base: all 0.3s ease;
   .logo_ptit {
     position: absolute;
     width: 60px !important;
-    height: 60px;
+    height: auto;
     top: 6px;
     left: 4px;
+
+    @include mobile {
+      width: 40px !important;
+    }
   }
 
   @include mobile {
@@ -293,6 +297,7 @@ $transition-base: all 0.3s ease;
   max-height: 4.5em; // Approximately 3 lines of text (1.5em line height)
   line-height: 1.5;
   transition: all 0.3s;
+  margin-bottom: 4px !important;
 
   @include mobile {
     font-size: 13px;
@@ -304,6 +309,11 @@ $transition-base: all 0.3s ease;
   &:hover {
     color: $colorPtit;
   }
+}
+
+.itemLove {
+  color: #ff4d4f;
+  margin-bottom: 8px !important;
 }
 
 // Description Styles

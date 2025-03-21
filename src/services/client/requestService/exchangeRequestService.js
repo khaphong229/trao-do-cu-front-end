@@ -57,6 +57,9 @@ const exchangeRequestService = {
   },
   rejectRequestExchange(id) {
     return this.http.delete(`/request_exchange/${id}`)
+  },
+  getCountExchange(id) {
+    return this.http.get(`/request_exchange/requesters-count/${id}`)
   }
 }
 

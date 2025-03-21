@@ -1,6 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { requestGift } from 'features/client/request/giftRequest/giftRequestThunks'
-import { setInfoModalVisible, setAcceptModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
+import {
+  setInfoModalVisible,
+  setAcceptModalVisible,
+  setRequestNotificationModal
+} from 'features/client/request/giftRequest/giftRequestSlice'
 import { updateUserProfile } from 'features/auth/authThunks'
 import { message } from 'antd'
 import {
@@ -9,9 +13,15 @@ import {
   setSelectedPostExchange
 } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { requestExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
-import { setSocialLinkModalVisibility, updatePostRequestStatus } from 'features/client/post/postSlice'
+import {
+  setSocialLinkModalVisibility,
+  updatePostPtitRequestStatus,
+  updatePostRequestStatus
+} from 'features/client/post/postSlice'
 import useInteraction from 'hooks/useInteraction'
 import useDefaultLocation from 'hooks/useDefaultLocation'
+import notifi from 'utils/notifi'
+import { useState } from 'react'
 const isObject = require('lodash/isObject')
 
 export const useGiftRequest = () => {
@@ -20,6 +30,7 @@ export const useGiftRequest = () => {
   const selectedPostExchange = useSelector(state => state.exchangeRequest?.selectedPostExchange) || null
   const { batchClick } = useInteraction()
   const { addressDefault } = useDefaultLocation()
+  const [isLoading, setIsLoading] = useState(false)
 
   const checkUserContactInfo = () => {
     return (user?.phone || user?.social_media?.facebook) && user?.address
@@ -27,7 +38,6 @@ export const useGiftRequest = () => {
 
   const handleGiftRequest = (post, type) => {
     batchClick(isObject(post.category_id) ? post.category_id._id : post.category_id)
-    // setSelectedPost(post)
     dispatch(setSelectedPostExchange(post))
     if (!checkUserContactInfo()) {
       dispatch(setInfoModalVisible(true))
@@ -42,6 +52,7 @@ export const useGiftRequest = () => {
 
   const handleInfoSubmit = async values => {
     try {
+      setIsLoading(true)
       const dataUserUpdate = {
         name: user.name,
         email: user.email,
@@ -85,49 +96,63 @@ export const useGiftRequest = () => {
       }
     } catch (error) {
       message.error('Không thể cập nhật thông tin liên hệ')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const handleRequestConfirm = async values => {
-    if (!selectedPostExchange) {
-      message.error('Không tìm thấy bài viết được chọn')
-      return
-    }
+    try {
+      setIsLoading(true)
+      if (!selectedPostExchange) {
+        message.error('Không tìm thấy bài viết được chọn')
+        return { success: false }
+      }
 
-    let requestData = {
-      post_id: selectedPostExchange._id,
-      user_req_id: user._id,
-      reason_receive: values.reason_receive === undefined ? '' : values.reason_receive,
-      status: 'pending',
-      contact_phone: user?.phone ? user.phone : '',
-      contact_address: user?.address.length !== 0 ? addressDefault : '',
-      contact_name: user.name
-    }
+      let requestData = {
+        post_id: selectedPostExchange._id,
+        user_req_id: user._id,
+        reason_receive: values.reason_receive === undefined ? '' : values.reason_receive,
+        status: 'pending',
+        contact_phone: user?.phone ? user.phone : '',
+        contact_address: user?.address.length !== 0 ? addressDefault : '',
+        contact_name: user.name
+      }
 
-    if (user?.social_media?.facebook) {
-      requestData = {
-        ...requestData,
-        contact_social_media: {
-          facebook: user?.social_media?.facebook
+      if (user?.social_media?.facebook) {
+        requestData = {
+          ...requestData,
+          contact_social_media: {
+            facebook: user?.social_media?.facebook
+          }
         }
       }
-    }
 
-    try {
       const response = await dispatch(requestGift(requestData)).unwrap()
 
       const { status, message: msg } = response
       if (status === 201) {
         message.success(msg)
 
-        dispatch(
-          updatePostRequestStatus({
-            postId: selectedPostExchange._id
-          })
-        )
+        if (selectedPostExchange.isPtiterOnly) {
+          dispatch(
+            updatePostPtitRequestStatus({
+              postId: selectedPostExchange._id
+            })
+          )
+        } else {
+          dispatch(
+            updatePostRequestStatus({
+              postId: selectedPostExchange._id
+            })
+          )
+        }
 
         dispatch(setAcceptModalVisible(false))
+        dispatch(setRequestNotificationModal(true))
+        return { success: true }
       }
+      return { success: false }
     } catch (error) {
       const { status, message: msg } = error
       if (status === 400) {
@@ -136,52 +161,74 @@ export const useGiftRequest = () => {
         } else {
           message.error(msg || 'Có lỗi xảy ra khi gửi yêu cầu')
         }
+      } else if (status === 403) {
+        notifi.warning(msg)
+        dispatch(setAcceptModalVisible(false))
       }
+      return { success: false }
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const handleExchangeConfirm = async data => {
-    if (!selectedPostExchange) {
-      message.error('Không tìm thấy bài viết được chọn')
-      return
-    }
-
-    let requestData = {
-      post_id: selectedPostExchange._id,
-      user_req_id: user._id,
-      title: data.title,
-      description: data.description,
-      status: 'pending',
-      image_url: data.image_url,
-      contact_phone: user?.phone ? user.phone : '',
-      contact_social_media: {
-        facebook: user.social_media?.facebook,
-        zalo: '',
-        instagram: ''
-      },
-      contact_address: user?.address.length !== 0 ? addressDefault : ''
-    }
-
     try {
+      setIsLoading(true)
+      if (!selectedPostExchange) {
+        message.error('Không tìm thấy bài viết được chọn')
+        return { success: false }
+      }
+
+      let requestData = {
+        post_id: selectedPostExchange._id,
+        user_req_id: user._id,
+        title: data.title,
+        description: data.description,
+        status: 'pending',
+        image_url: data.image_url,
+        contact_phone: user?.phone ? user.phone : '',
+        contact_social_media: {
+          facebook: user.social_media?.facebook,
+          zalo: '',
+          instagram: ''
+        },
+        contact_address: user?.address.length !== 0 ? addressDefault : ''
+      }
+
       const response = await dispatch(requestExchange(requestData)).unwrap()
 
       const { status, message: msg } = response
       if (status === 201) {
-        dispatch(
-          updatePostRequestStatus({
-            postId: selectedPostExchange._id
-          })
-        )
+        if (selectedPostExchange.isPtiterOnly) {
+          dispatch(
+            updatePostPtitRequestStatus({
+              postId: selectedPostExchange._id
+            })
+          )
+        } else {
+          dispatch(
+            updatePostRequestStatus({
+              postId: selectedPostExchange._id
+            })
+          )
+        }
+
         message.success(msg)
         dispatch(setExchangeFormModalVisible(false))
         dispatch(resetRequestData())
+        dispatch(setRequestNotificationModal(true))
+        return { success: true }
       }
+      return { success: false }
     } catch (error) {
       if (error.status === 400) {
         Object.values(error?.detail).forEach(err => {
           message.error(err)
         })
       }
+      return { success: false }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -189,6 +236,7 @@ export const useGiftRequest = () => {
     handleGiftRequest,
     handleInfoSubmit,
     handleRequestConfirm,
-    handleExchangeConfirm
+    handleExchangeConfirm,
+    isLoading
   }
 }

@@ -16,7 +16,7 @@ import { ContactInfoModal } from 'pages/Client/Request/GiftRequest/components/Co
 import { GiftRequestConfirmModal } from 'pages/Client/Request/GiftRequest/components/GiftRequestConfirmModal'
 import FormExchangeModal from 'pages/Client/Request/ExchangeRequest/FormExchange/FormExchange'
 import { setExchangeFormModalVisible } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
-import { ArrowDownOutlined, GiftOutlined, SwapOutlined } from '@ant-design/icons'
+import { ArrowDownOutlined, GiftOutlined, HeartFilled, HeartOutlined, SwapOutlined } from '@ant-design/icons'
 import PostCardSkeleton from 'components/common/Skeleton/PostCardSkeleton'
 import { FaMapMarkerAlt } from 'react-icons/fa'
 import { locationService } from 'services/client/locationService'
@@ -95,14 +95,15 @@ const PostNews = () => {
   }
 
   const goDetail = _id => {
-    navigate(`/post/${_id}/detail`)
+    navigate(`/${_id}`)
   }
 
   const AuthButton = withAuth(Button)
 
   const filteredPosts = posts?.filter(
     post =>
-      post.isApproved && // Thêm điều kiện này để chỉ hiện bài đã được duyệt
+      post.isApproved && // Only show approved posts
+      !post.isPtiterOnly && // Add this condition to exclude PTIT posts
       (!query || post.title.toLowerCase().includes(query.toLowerCase())) &&
       (!cityFilter || post.city === cityFilter)
   )
@@ -220,7 +221,7 @@ const PostNews = () => {
                     hoverable
                     className={styles.itemCard}
                     cover={
-                      <div className={styles.imageWrapper} onClick={() => goDetail(item._id)}>
+                      <div className={styles.imageWrapper} onClick={() => goDetail(item.slug || item._id)}>
                         <img
                           loading="lazy"
                           alt={item.title}
@@ -239,10 +240,27 @@ const PostNews = () => {
                         <Tooltip title={item.title}>
                           <Paragraph
                             className={styles.itemTitle}
-                            onClick={() => goDetail(item._id)}
+                            onClick={() => goDetail(item.slug || item._id)}
                             ellipsis={{ rows: 2 }}
                           >
                             {item.title}
+                          </Paragraph>
+                          <Paragraph className={styles.itemLove}>
+                            {item.display_request_count > 0 ? (
+                              <>
+                                <HeartFilled style={{ marginRight: 8, color: '#f5222d' }} />
+                                <span style={{ color: '#f5222d' }}>
+                                  {item.display_request_count || 0} người yêu thích
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <HeartOutlined style={{ marginRight: 8, color: '#bfbfbf' }} />
+                                <span style={{ color: '#bfbfbf' }}>
+                                  {item.display_request_count || 0} người yêu thích
+                                </span>
+                              </>
+                            )}
                           </Paragraph>
                         </Tooltip>
                       }

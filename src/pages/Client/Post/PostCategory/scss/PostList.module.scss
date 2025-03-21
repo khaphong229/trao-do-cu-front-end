@@ -108,6 +108,13 @@ $transition-base: all 0.3s ease;
   position: relative;
   overflow: hidden;
   border-radius: 0;
+  .logoptit {
+    position: absolute;
+    top: 8px;
+    width: 40px !important;
+    height: auto;
+    left: 4px;
+  }
 
   img {
     position: absolute;

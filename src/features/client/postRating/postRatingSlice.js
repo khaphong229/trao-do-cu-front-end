@@ -17,6 +17,7 @@ const postRatingSlice = createSlice({
       state.isLoading = true
     })
     builder.addCase(getPostRating.fulfilled, (state, action) => {
+      state.isLoading = false
       state.postRating = action.payload.data
       state.total = action.payload.total
     })

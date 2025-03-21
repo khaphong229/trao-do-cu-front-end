@@ -3,12 +3,9 @@ import UploadService from 'services/uploadService'
 
 export const uploadPostImages = createAsyncThunk('post/uploadPostImages', async (file, { rejectWithValue }) => {
   try {
-    console.log('uploadPostImages thunk called for:', file.name)
     const response = await UploadService.uploadImage(file)
-    console.log('uploadPostImages success:', response.data)
     return response.data
   } catch (error) {
-    console.error('uploadPostImages error:', error)
     return rejectWithValue(error.response?.data || { message: 'Tải ảnh thất bại' })
   }
 })
