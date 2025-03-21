@@ -152,10 +152,12 @@ const postSlice = createSlice({
       const post = state.posts.find(post => post._id === postId)
       if (post) {
         post.isRequested = true
+        post.display_request_count += 1
       }
 
       if (state.selectedPost && state.selectedPost._id === postId) {
         state.selectedPost.isRequested = true
+        state.selectedPost.display_request_count += 1
       }
     },
     updatePostPtitRequestStatus: (state, action) => {

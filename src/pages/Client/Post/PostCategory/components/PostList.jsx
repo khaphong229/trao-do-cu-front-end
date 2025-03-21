@@ -22,7 +22,7 @@ import notFoundPost from 'components/feature/post/notFoundPost'
 import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
 import { locationService } from 'services/client/locationService'
 import { getAvatarPost } from 'hooks/useAvatar'
-
+import logoptit from 'assets/images/logo/Ptit-penannt.png'
 const { Text } = Typography
 
 dayjs.extend(relativeTime)
@@ -309,6 +309,7 @@ const PostList = () => {
                       }}
                       onClick={() => goDetail(item?._id)}
                     />
+                    {item.isPtiterOnly && <img className={styles.logoptit} alt="logo-ptit" src={logoptit} />}
                   </div>
                 }
               >
