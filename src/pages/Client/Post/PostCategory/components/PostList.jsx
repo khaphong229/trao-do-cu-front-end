@@ -127,7 +127,7 @@ const PostList = () => {
   })
 
   const goDetail = id => {
-    navigate(`/post/${id}/detail`)
+    navigate(`/${id}`)
   }
 
   const AuthButton = withAuth(Button)
@@ -208,7 +208,7 @@ const PostList = () => {
     if (!isTitleLong || isExpanded) {
       return (
         <div className={styles.titleContainer}>
-          <Text strong onClick={() => goDetail(post?._id)} className={styles.title}>
+          <Text strong onClick={() => goDetail(post?.slug || post?._id)} className={styles.title}>
             {title}
           </Text>
           {isTitleLong && (
@@ -229,7 +229,7 @@ const PostList = () => {
     } else {
       return (
         <div className={styles.titleContainer}>
-          <Text strong onClick={() => goDetail(post?._id)} className={styles.title}>
+          <Text strong onClick={() => goDetail(post?.slug || post?._id)} className={styles.title}>
             {title.substring(0, 50)}...
           </Text>
           <Button

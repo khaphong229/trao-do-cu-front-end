@@ -1,14 +1,30 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Input, Checkbox, Button, Divider, message } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { registerUser } from 'features/auth/authThunks'
 import Policy from 'components/Policy'
+import { SITE_KEY } from 'config/url_server'
 
 const Register = () => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://www.google.com/recaptcha/api.js'
+    script.async = true
+    script.defer = true
+
+    document.head.appendChild(script)
+
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script)
+      }
+    }
+  }, [])
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -20,12 +36,26 @@ const Register = () => {
 
   const dispatch = useDispatch()
   const onFinish = async values => {
-    const dataRegister = {
-      name: values.name,
-      email: values.email,
-      password: values.password
-    }
     try {
+      if (!window.grecaptcha) {
+        message.error('reCAPTCHA chưa được tải. Vui lòng tải lại trang')
+        return
+      }
+
+      const recaptchaToken = window.grecaptcha.getResponse()
+
+      if (!recaptchaToken) {
+        message.error('Vui lòng xác nhận bạn không phải là robot')
+        return
+      }
+
+      const dataRegister = {
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        recaptchaToken
+      }
+
       const response = await dispatch(registerUser(dataRegister)).unwrap()
       const { status, message: msg } = response
       if (status === 201) {
@@ -39,6 +69,12 @@ const Register = () => {
           errors: [msg]
         }))
         form.setFields(errorListForm)
+      } else {
+        message.error(error.response?.data?.message || 'Có lỗi xảy ra')
+      }
+
+      if (window.grecaptcha && typeof window.grecaptcha.reset === 'function') {
+        window.grecaptcha.reset()
       }
     }
   }
@@ -68,6 +104,7 @@ const Register = () => {
           >
             <Input />
           </Form.Item>
+
           <Form.Item
             name="email"
             label="E-mail"
@@ -151,6 +188,11 @@ const Register = () => {
               </Button>
             </Checkbox>
           </Form.Item>
+
+          <Form.Item>
+            <div className="g-recaptcha" data-sitekey={SITE_KEY}></div>
+          </Form.Item>
+
           <Form.Item>
             <Button type="primary" htmlType="submit" className="authFormButton">
               Đăng ký
