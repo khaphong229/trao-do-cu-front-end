@@ -208,6 +208,14 @@
     height: 160px;
     position: relative;
     overflow: hidden;
+    .logo_ptit_req {
+      position: absolute;
+      width: 40px;
+      height: auto;
+      top: 8px;
+      left: 6px;
+      z-index: 2;
+    }
 
     &::after {
       content: '';

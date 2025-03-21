@@ -13,7 +13,7 @@ import PostDetail from '../components/PostDetail/PostDetail'
 import { ExpiredListings } from '../ExpiredListing/ExpriedListing'
 import { AppstoreOutlined, ClockCircleOutlined, TableOutlined } from '@ant-design/icons'
 import { setViewMode } from 'features/client/post/postSlice'
-
+import logoptit from 'assets/images/logo/Ptit-penannt.png'
 const { TabPane } = Tabs
 
 export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isActive, onShowExpired }) => {
@@ -335,6 +335,7 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
                   color={item.type === 'exchange' ? 'green' : 'blue'}
                 />
               </div>
+              {item.isPtiterOnly && <img className={styles.logoptit} src={logoptit} alt="logo_ptit" />}
             </div>
             <div className={styles.cardContent}>
               <Typography.Title level={5} ellipsis={{ rows: 1 }} className={styles.cardTitle}>
@@ -357,17 +358,19 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
                   {dayjs(item.created_at).format('DD/MM/YYYY')}
                 </Typography.Text>
 
-                <Button
-                  type={item.type === 'gift' ? 'primary' : 'default'}
-                  size="small"
-                  className={styles.actionButton}
-                  onClick={e => {
-                    e.stopPropagation()
-                    handleViewRegistrations(item)
-                  }}
-                >
-                  Xem yêu cầu
-                </Button>
+                {item.isApproved && (
+                  <Button
+                    type={item.type === 'gift' ? 'primary' : 'default'}
+                    size="small"
+                    className={styles.actionButton}
+                    onClick={e => {
+                      e.stopPropagation()
+                      handleViewRegistrations(item)
+                    }}
+                  >
+                    Xem yêu cầu
+                  </Button>
+                )}
               </div>
             </div>
           </Card>

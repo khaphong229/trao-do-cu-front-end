@@ -13,6 +13,7 @@ import ContactInfoDisplay from './components/ContactInfoDisplay'
 import { getAvatarPost } from 'hooks/useAvatar'
 import QRImageModal from 'components/QrModal'
 import { setViewMode } from 'features/client/post/postSlice'
+import logoptit from 'assets/images/logo/Ptit-penannt.png'
 
 const { Text } = Typography
 
@@ -203,6 +204,7 @@ const RequestedPosts = () => {
                     color={request.post_id.type === 'exchange' ? 'green' : 'blue'}
                     className="post-type-ribbon"
                   />
+                  {request.post_id.isPtiterOnly && <img className="logo_ptit_req" src={logoptit} alt="logo_ptit" />}
                 </div>
               }
               bodyStyle={{ padding: '12px', height: 'auto' }}

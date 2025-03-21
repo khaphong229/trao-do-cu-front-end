@@ -21,18 +21,11 @@ const PostPTIT = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [OwlCarousel, setOwlCarousel] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [isLastPage, setIsLastPage] = useState(false)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const owlCarouselRef = useRef(null)
-  const allLoadedPosts = useRef([])
 
-  const { ptitPosts, isErrorPtit, isLoadingPtit, query, total } = useSelector(state => state.post)
+  const { ptitPosts, isErrorPtit, isLoadingPtit, query } = useSelector(state => state.post)
 
-  const pageSizeConstant = 8
-
-  // Calculate max pages based on total
-  const maxPages = Math.ceil(total / pageSizeConstant) || 1
+  const pageSizeConstant = 16
 
   // Import OwlCarousel dynamically
   useEffect(() => {
@@ -65,86 +58,43 @@ const PostPTIT = () => {
     }
   }, [])
 
-  const fetchPost = useCallback(
-    (page = 1) => {
-      setIsLoadingMore(page > 1)
-      dispatch(
-        getPostPtitPagination({
-          current: page,
-          pageSize: pageSizeConstant,
-          query,
-          isPtiterOnly: true // Add this parameter to only fetch PTIT posts
-        })
-      )
-    },
-    [dispatch, query]
-  )
-  // Handle pagination and append new posts to existing ones
-  useEffect(() => {
-    if (!isLoadingPtit && ptitPosts) {
-      if (currentPage === 1) {
-        allLoadedPosts.current = [...ptitPosts]
-      } else {
-        // Filter out duplicates by ID
-        const existingPostIds = new Set(allLoadedPosts.current.map(post => post._id))
-        const uniqueNewPosts = ptitPosts.filter(post => !existingPostIds.has(post._id))
-
-        allLoadedPosts.current = [...allLoadedPosts.current, ...uniqueNewPosts]
-      }
-      setIsLoadingMore(false)
-
-      // Check if we've reached the last page
-      setIsLastPage(currentPage >= maxPages)
-    }
-  }, [ptitPosts, isLoadingPtit, currentPage, maxPages])
+  const fetchPost = useCallback(() => {
+    dispatch(
+      getPostPtitPagination({
+        current: 1,
+        pageSize: pageSizeConstant,
+        query,
+        isPtiterOnly: true // Add this parameter to only fetch PTIT posts
+      })
+    )
+  }, [dispatch, query])
 
   // Initial fetch on mount
   useEffect(() => {
-    setCurrentPage(1)
-    fetchPost(1)
-  }, [fetchPost, dispatch])
+    fetchPost()
+  }, [fetchPost])
 
   // Function to handle post request completion
   const handleRequestComplete = useCallback(() => {
+    console.log('Request complete, refreshing post data...')
     // Refresh the posts data
-    fetchPost(1)
+    fetchPost()
   }, [fetchPost])
 
   const viewAllPosts = () => {
     navigate('/post/category/ptit')
   }
 
-  // Handler for carousel events to detect when to load more
-  const handleCarouselChange = useCallback(
-    event => {
-      if (!owlCarouselRef.current || isLoadingMore || isLastPage) return
-
-      const carousel = owlCarouselRef.current
-      if (!carousel) return
-
-      // Get current item index and total items
-      const currentIndex = event.item.index
-      const totalItems = event.item.count
-
-      // If we're near the end (last 3 items), load more posts
-      if (currentIndex >= totalItems - 3 && currentPage < maxPages) {
-        const nextPage = currentPage + 1
-        setCurrentPage(nextPage)
-        fetchPost(nextPage)
-      }
-    },
-    [currentPage, fetchPost, isLastPage, isLoadingMore, maxPages]
-  )
-
-  // Updated Owl Carousel options with fixed 2 items for mobile and event binding
+  // Updated Owl Carousel options with autoplay enabled and loop
   const owlOptions = {
     items: 4,
     margin: 14,
     nav: true,
     dots: false,
-    // autoplay: true, // Disabled autoplay to make pagination work better
-    // autoplayTimeout: 2000,
+    autoplay: true,
+    autoplayTimeout: 3000,
     smartSpeed: 500,
+    loop: true,
     responsive: {
       0: {
         items: 2
@@ -158,12 +108,11 @@ const PostPTIT = () => {
       992: {
         items: 4
       }
-    },
-    onChanged: handleCarouselChange
+    }
   }
 
   const renderProducts = () => {
-    if ((isLoadingPtit && currentPage === 1) || isErrorPtit) {
+    if (isLoadingPtit || isErrorPtit) {
       return (
         <Row gutter={[16, 16]}>
           {[...Array(4)].map((_, index) => (
@@ -175,43 +124,29 @@ const PostPTIT = () => {
       )
     }
 
-    if (!allLoadedPosts.current || allLoadedPosts.current.length === 0) {
+    if (!ptitPosts || ptitPosts.length === 0) {
       return !isLoadingPtit && <Empty description="Không tìm thấy bài đăng nào" className={styles.emptyState} />
     }
 
     if (OwlCarousel) {
       return (
         <OwlCarousel className="owl-theme" {...owlOptions} ref={ref => (owlCarouselRef.current = ref)}>
-          {allLoadedPosts.current.map(item => (
+          {ptitPosts.map(item => (
             <div key={item._id} className={styles.owlItem}>
               <CardPost item={item} onRequestComplete={handleRequestComplete} />
             </div>
           ))}
-          {isLoadingMore && (
-            <div className={styles.owlItem}>
-              <PostCardSkeleton isPtit={true} />
-            </div>
-          )}
         </OwlCarousel>
       )
     } else {
       // Fallback to Ant Design Row/Col grid view - always 2 items on mobile
       return (
         <Row gutter={[16, 16]}>
-          {allLoadedPosts.current.map(item => (
+          {ptitPosts.map(item => (
             <Col xs={12} sm={12} md={8} lg={6} key={item._id}>
               <CardPost item={item} onRequestComplete={handleRequestComplete} />
             </Col>
           ))}
-          {isLoadingMore && (
-            <>
-              {[...Array(2)].map((_, index) => (
-                <Col xs={12} sm={12} md={8} lg={6} key={`loading-${index}`}>
-                  <PostCardSkeleton />
-                </Col>
-              ))}
-            </>
-          )}
         </Row>
       )
     }

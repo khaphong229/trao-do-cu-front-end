@@ -1,8 +1,16 @@
-import React from 'react'
-import { Modal, Button, Typography, Space, Avatar, Badge, Tooltip } from 'antd'
-import { UserOutlined, InfoCircleOutlined, AntDesignOutlined } from '@ant-design/icons'
+import { Modal, Button, Typography, Space, Avatar, Badge, Tooltip, Divider, Row, Col } from 'antd'
+import {
+  UserOutlined,
+  InfoCircleOutlined,
+  AntDesignOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined
+} from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { setRequestNotificationModal } from 'features/client/request/giftRequest/giftRequestSlice'
+import { useCallback, useEffect, useState } from 'react'
+import { getCountReceive } from 'features/client/request/giftRequest/giftRequestThunks'
+import { getCountExchange } from 'features/client/request/exchangeRequest/exchangeRequestThunks'
 
 const { Text, Title } = Typography
 
@@ -10,64 +18,122 @@ const RequestNotificationModal = () => {
   const { isRequestNotificationModal } = useSelector(state => state.giftRequest)
   const dispatch = useDispatch()
   const { selectedPostExchange } = useSelector(state => state.exchangeRequest)
+  const [count, setCount] = useState(5)
   const handleOk = () => {
     dispatch(setRequestNotificationModal(false))
   }
 
+  const fetchCounts = useCallback(async () => {
+    if (!selectedPostExchange?._id) return
+
+    const id = selectedPostExchange._id
+    const action = selectedPostExchange.type === 'gift' ? getCountReceive : getCountExchange
+
+    try {
+      const res = await dispatch(action(id)).unwrap()
+
+      if (res.status === 200) {
+        const countRes = res.data.display_request_count
+        setCount(countRes === 0 ? countRes + 5 : countRes)
+      }
+    } catch (error) {}
+  }, [selectedPostExchange, dispatch])
+
+  useEffect(() => {
+    fetchCounts()
+  }, [selectedPostExchange, fetchCounts])
+
   return (
-    <>
-      <Modal
-        title={
-          <Space>
-            <InfoCircleOutlined style={{ color: '#1890ff' }} />
-            <span>Thông Báo</span>
-          </Space>
-        }
-        open={isRequestNotificationModal}
-        onOk={handleOk}
-        onCancel={handleOk}
-        footer={[
-          <Button key="back" onClick={handleOk}>
-            Đóng
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
-            Đã Hiểu
-          </Button>
-        ]}
-        width={400}
+    <Modal
+      title={
+        <Space size="small" align="center">
+          <InfoCircleOutlined style={{ color: '#1890ff', fontSize: '16px' }} />
+          <span style={{ fontSize: '14px', fontWeight: 600 }}>Thông Báo</span>
+        </Space>
+      }
+      open={isRequestNotificationModal}
+      onOk={handleOk}
+      onCancel={handleOk}
+      footer={[
+        <Button key="back" onClick={handleOk}>
+          Đóng
+        </Button>,
+        <Button key="submit" type="primary" onClick={handleOk} icon={<CheckCircleOutlined />}>
+          Đã Hiểu
+        </Button>
+      ]}
+      width={380}
+      centered
+      bodyStyle={{ padding: '16px' }}
+      maskClosable={false}
+    >
+      <div
+        style={{
+          padding: '16px 12px',
+          textAlign: 'center',
+          background: 'linear-gradient(to right, #f0f5ff,rgb(230, 253, 255))',
+          borderRadius: '8px',
+          margin: '10px 0',
+          boxShadow: '0 1px 4px rgba(0, 0, 0, 0.05)',
+          border: '1px solid #d6e4ff'
+        }}
       >
-        <div
-          style={{
-            padding: '20px 0',
-            textAlign: 'center',
-            background: '#f8f8f8',
-            borderRadius: '8px',
-            margin: '15px 0'
-          }}
-        >
-          <Badge count={23} overflowCount={99}>
-            <Avatar.Group>
-              <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
-              <a href="https://ant.design">
+        <Row justify="center" gutter={[0, 12]}>
+          <Col>
+            <Badge
+              count={count}
+              overflowCount={99}
+              style={{
+                backgroundColor: '#ff4d4f',
+                boxShadow: '0 0 0 2px #fff'
+              }}
+            >
+              <Avatar.Group
+                maxCount={3}
+                maxPopoverTrigger="click"
+                size="default"
+                maxStyle={{
+                  color: '#1890ff',
+                  backgroundColor: '#e6f7ff',
+                  cursor: 'pointer',
+                  border: '1px solid #1890ff'
+                }}
+              >
+                <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
                 <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
-              </a>
-              <Tooltip title="Ant User" placement="top">
-                <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} />
-              </Tooltip>
-              <Avatar style={{ backgroundColor: '#1677ff' }} icon={<AntDesignOutlined />} />
-            </Avatar.Group>
-          </Badge>
+                <Tooltip title="Ant User" placement="top">
+                  <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} />
+                </Tooltip>
+                <Avatar style={{ backgroundColor: '#1677ff' }} icon={<AntDesignOutlined />} />
+                <Avatar style={{ backgroundColor: '#722ed1' }}>N</Avatar>
+              </Avatar.Group>
+            </Badge>
+          </Col>
 
-          <Title level={4} style={{ marginTop: '16px', marginBottom: '8px' }}>
-            Bạn và 23 người khác đã xin đồ
-          </Title>
-        </div>
+          <Col span={24}>
+            <Title level={5} style={{ marginTop: '8px', marginBottom: '4px', color: '#262626' }}>
+              Bạn và <span style={{ color: '#1890ff' }}>{count} người khác</span> đã xin đồ
+            </Title>
+          </Col>
+        </Row>
+      </div>
 
-        <Text style={{ display: 'block', textAlign: 'center', marginTop: '10px' }}>
-          Vui lòng chờ phản hồi từ {selectedPostExchange?.user_id?.name || 'người đăng'}
-        </Text>
-      </Modal>
-    </>
+      <Divider style={{ margin: '12px 0' }} />
+
+      <Row justify="center" align="middle" gutter={[0, 8]}>
+        <Col span={24} style={{ textAlign: 'center' }}>
+          <Space align="center" size="small">
+            <ClockCircleOutlined style={{ color: '#faad14', fontSize: '16px' }} />
+            <Text style={{ fontSize: '14px' }}>
+              Vui lòng chờ phản hồi từ{' '}
+              <Text strong style={{ color: '#1890ff' }}>
+                {selectedPostExchange?.user_id?.name || 'người đăng'}
+              </Text>
+            </Text>
+          </Space>
+        </Col>
+      </Row>
+    </Modal>
   )
 }
 

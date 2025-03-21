@@ -5,14 +5,14 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
 import { getValidImageUrl } from 'helpers/helper'
-import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
+import { GiftOutlined, HeartFilled, HeartOutlined, SwapOutlined } from '@ant-design/icons'
 import { FaMapMarkerAlt } from 'react-icons/fa'
 import { getAvatarPostNews } from 'hooks/useAvatar'
 import { useSelector, useDispatch } from 'react-redux'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
 import withAuth from 'hooks/useAuth'
 import styles from './CardPost.module.scss'
-import logoPtit from 'assets/images/common/ptit_logo.png'
+import logoPtit from 'assets/images/logo/Ptit-penannt.png'
 
 const { Text, Paragraph } = Typography
 function CardPost({ item, onRequestComplete }) {
@@ -191,6 +191,19 @@ function CardPost({ item, onRequestComplete }) {
               <Tooltip title={item.title}>
                 <Paragraph className={styles.itemTitle} onClick={() => goDetail(item._id)} ellipsis={{ rows: 2 }}>
                   {item.title}
+                </Paragraph>
+                <Paragraph className={styles.itemLove}>
+                  {item.display_request_count > 0 ? (
+                    <>
+                      <HeartFilled style={{ marginRight: 8, color: '#f5222d' }} />
+                      <span style={{ color: '#f5222d' }}>{item.display_request_count || 0} người yêu thích</span>
+                    </>
+                  ) : (
+                    <>
+                      <HeartOutlined style={{ marginRight: 8, color: '#bfbfbf' }} />
+                      <span style={{ color: '#bfbfbf' }}>{item.display_request_count || 0} người yêu thích</span>
+                    </>
+                  )}
                 </Paragraph>
               </Tooltip>
             }

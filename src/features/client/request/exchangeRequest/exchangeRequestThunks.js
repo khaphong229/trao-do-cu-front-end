@@ -83,3 +83,15 @@ export const rejectExchangeRequest = createAsyncThunk(
     }
   }
 )
+
+export const getCountExchange = createAsyncThunk(
+  'exchangeRequest/getCountExchange',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await exchangeRequestService.getCountExchange(id)
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response.data || 'An error occurred while accepting the request')
+    }
+  }
+)

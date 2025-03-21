@@ -76,3 +76,12 @@ export const rejectGiftRequest = createAsyncThunk('giftRequest/rejectGiftRequest
     return rejectWithValue(error.response.data || 'An error occurred while accepting the request')
   }
 })
+
+export const getCountReceive = createAsyncThunk('giftRequest/getCountReceive', async (id, { rejectWithValue }) => {
+  try {
+    const response = await giftRequestService.getCountReceive(id)
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response.data || 'An error occurred while accepting the request')
+  }
+})

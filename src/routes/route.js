@@ -25,7 +25,9 @@ const router = createBrowserRouter([
   {
     element: (
       <ErrorBoundary>
-        <ProtectedRoute requireAuth={false} adminOnly={false} />
+        <Suspense>
+          <ProtectedRoute requireAuth={false} adminOnly={false} />
+        </Suspense>
       </ErrorBoundary>
     ),
     errorElement: (
