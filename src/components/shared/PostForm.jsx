@@ -292,7 +292,7 @@ const PostForm = ({
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, width: '100%' }}>
           {current > 0 && <Button onClick={handlePrevStep}>Quay lại</Button>}
-          {current === 0 && contentType === 'post' && user.isPtiter && (
+          {current === 0 && contentType === 'post' && user?.isPtiter && (
             <Checkbox
               style={{
                 display: 'flex',

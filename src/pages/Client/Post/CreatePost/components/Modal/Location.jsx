@@ -294,17 +294,31 @@ const Location = ({ location, setLocation, isInProfile = false, isPtiterOnly = f
 
   // Sửa lại displayAddresses
   const displayAddresses = React.useMemo(() => {
-    if (isPtiterOnly) {
-      return [
-        {
-          address: 'Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội',
-          isDefault: true,
-          isPtitAddress: true
-        }
-      ]
+    const ptitAddress = {
+      address: 'Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội',
+      isDefault: false,
+      isPtitAddress: true
     }
-    return addresses.filter(addr => addr.address !== 'Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội')
-  }, [isPtiterOnly, addresses])
+
+    if (isPtiterOnly) {
+      return [ptitAddress]
+    }
+
+    let filteredAddresses = [...addresses]
+
+    // Sắp xếp địa chỉ với địa chỉ mặc định lên đầu
+    filteredAddresses.sort((a, b) => {
+      if (a.isDefault === b.isDefault) return 0
+      return a.isDefault ? -1 : 1
+    })
+
+    // Chỉ thêm địa chỉ PTIT vào cuối nếu user là sinh viên PTIT
+    if (user?.isPtiter && !isPtiterOnly) {
+      filteredAddresses = [...filteredAddresses, ptitAddress]
+    }
+
+    return filteredAddresses
+  }, [isPtiterOnly, addresses, user?.isPtiter])
 
   return (
     <div className={styles.locationWrapper}>
