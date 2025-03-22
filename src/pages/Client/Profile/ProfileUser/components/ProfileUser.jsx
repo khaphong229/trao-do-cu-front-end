@@ -91,14 +91,40 @@ const ProfilePage = () => {
 
   const handleUpdateMe = async () => {
     try {
-      delete formData.address
+      // Validate required fields
+      const requiredFields = {
+        name: 'Họ và tên',
+        phone: 'Số điện thoại',
+        gender: 'Giới tính'
+      }
 
+      const missingFields = []
+      for (const [field, label] of Object.entries(requiredFields)) {
+        if (!formData[field]) {
+          missingFields.push(label)
+        }
+      }
+
+      if (missingFields.length > 0) {
+        message.error(`Vui lòng điền đầy đủ thông tin: ${missingFields.join(', ')}`)
+        return
+      }
+
+      delete formData.address
       const response = await dispatch(updateUserProfile(formData)).unwrap()
+
       if (response.status === 201) {
         message.success(response.message)
       }
     } catch (error) {
-      message.error('Cập nhật thông tin thất bại', error.message)
+      if (error.detail) {
+        // Handle specific API validation errors
+        Object.entries(error.detail).forEach(([field, errorMessage]) => {
+          message.error(`Lỗi ${field}: ${errorMessage}`)
+        })
+      } else {
+        message.error(error.message || 'Có lỗi xảy ra khi cập nhật thông tin')
+      }
     }
   }
 

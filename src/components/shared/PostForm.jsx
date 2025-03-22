@@ -229,9 +229,14 @@ const PostForm = ({
             <>
               <LocationModal
                 embeddedMode={true}
-                location={safeFormData.specificLocation || addressDefault || ''}
+                location={
+                  safeFormData.isPtiterOnly
+                    ? 'Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội'
+                    : safeFormData.specificLocation || addressDefault || ''
+                }
                 setLocation={handleLocationChange}
                 error={formErrors.specificLocation}
+                isPtiterOnly={safeFormData.isPtiterOnly}
               />
             </>
           )}
@@ -294,9 +299,14 @@ const PostForm = ({
                 alignItems: 'center'
               }}
               onChange={e => {
+                const isPtiterOnly = e.target.checked
                 dispatch(
                   updatePostData({
-                    isPtiterOnly: e.target.checked
+                    isPtiterOnly,
+                    specificLocation: isPtiterOnly
+                      ? 'Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội'
+                      : addressDefault || '',
+                    city: isPtiterOnly ? 'Hà Nội' : addressDefault ? addressDefault.split(', ').pop() : ''
                   })
                 )
               }}

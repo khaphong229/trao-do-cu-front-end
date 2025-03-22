@@ -44,8 +44,10 @@ const Register = () => {
           errors: [msg]
         }))
         form.setFields(errorListForm)
+      } else if (error.status === 500 && error.message.includes('reCAPTCHA')) {
+        message.error('Xác thực reCAPTCHA thất bại. Vui lòng thử lại.')
       } else {
-        message.error(error.response?.data?.message || 'Có lỗi xảy ra')
+        message.error(error.message || 'Có lỗi xảy ra')
       }
       recaptchaRef.current?.reset()
     }
