@@ -301,6 +301,9 @@ $transition-base: all 0.3s ease;
 .itemLove {
   color: #ff4d4f;
   margin-bottom: 8px !important;
+  @media screen and (max-width: 380px) {
+    font-size: 12px !important;
+  }
 }
 
 // Description Styles
