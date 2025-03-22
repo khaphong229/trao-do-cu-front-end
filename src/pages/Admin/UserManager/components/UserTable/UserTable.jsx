@@ -6,6 +6,7 @@ import styles from './styles.module.scss'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
 import { deleteUser, getUserPagination } from 'features/admin/user/userThunks'
 import { setPage, setPerPage } from 'features/admin/user/userSlice'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 
 const UserTable = ({ onEdit, onViewDetails }) => {
   const dispatch = useDispatch()
@@ -76,9 +77,10 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       title: 'Ảnh người dùng',
       dataIndex: 'avatar',
       key: 'avatar',
-      render: avatar => (
-        <img src={avatar || avt} alt="avatar-user" width={50} height={50} style={{ objectFit: 'cover' }} />
-      )
+      render: (avatar, record) => {
+        const avatarUrl = avatar ? `${URL_SERVER_IMAGE}${avatar}` : avt
+        return <img src={avatarUrl} alt="avatar-user" width={50} height={50} style={{ objectFit: 'cover' }} />
+      }
     },
     {
       title: 'Tên người dùng',

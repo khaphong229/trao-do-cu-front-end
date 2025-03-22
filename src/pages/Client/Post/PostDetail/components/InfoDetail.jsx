@@ -236,11 +236,7 @@ const PostInfoDetail = () => {
           <Divider />
           <div className={styles.SellerInfo}>
             <div className={styles.InfoName}>
-              <Avatar
-                className={styles.avtUser}
-                src={getAvatarPost(selectedPost?.user_id?.avatar)}
-                icon={<UserOutlined />}
-              />
+              <Avatar className={styles.avtUser} src={getAvatarPost(selectedPost?.user_id)} icon={<UserOutlined />} />
               <div>
                 <Text className={styles.TextName}>{selectedPost?.user_id?.name || 'Người dùng'}</Text>
                 <Text className={styles.TextStatus}>

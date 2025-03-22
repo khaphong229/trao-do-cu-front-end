@@ -31,6 +31,31 @@ const NotificationItem = ({ notification, onClick, navigate, setDropdownVisible 
     dispatch(setSelectedNotification(notification))
   }
 
+  const getNotificationIcon = (type, isApproved) => {
+    switch (type) {
+      case 'request':
+        return isApproved ? '✅' : '🔄' // Icon thành công hoặc icon trao đổi
+      case 'receive':
+        return isApproved ? '🎉' : '📦' // Icon thành công hoặc icon nhận hàng
+      default:
+        return isApproved ? '🔔' : '🔔' // Icon mặc định
+    }
+  }
+
+  const getNotificationTypeClass = (type, isApproved) => {
+    if (isApproved) {
+      return 'success' // Loại thành công
+    }
+    switch (type) {
+      case 'exchange':
+        return 'exchange' // Loại trao đổi
+      case 'receive':
+        return 'receive' // Loại trao tặng
+      default:
+        return 'other' // Loại khác
+    }
+  }
+
   let content
   if (notification.isApproved) {
     content = (
@@ -49,19 +74,30 @@ const NotificationItem = ({ notification, onClick, navigate, setDropdownVisible 
 
   return (
     <List.Item
-      className={`${styles.notificationItem} ${!notification.isRead ? styles.unread : ''}`}
+      className={`${styles.notificationItem} ${!notification.isRead ? styles.unread : styles.read}`}
       onClick={handleNotificationClick}
     >
       <div className={styles.notifiHref}>
         <List.Item.Meta
-          title={<Text className={styles.itemTitle}>{content}</Text>}
+          avatar={
+            <span className={styles.notificationIcon}>
+              {getNotificationIcon(notification.type, notification.isApproved)}
+            </span>
+          }
+          title={
+            <Text className={styles.itemTitle}>
+              {content}
+              <span className={`${styles.notificationType} ${styles[getNotificationTypeClass(notification.type)]}`}>
+                {notification.type}
+              </span>
+            </Text>
+          }
           description={<Text type="secondary">{notification.time}</Text>}
         />
       </div>
     </List.Item>
   )
 }
-
 export const NotificationMenu = ({ setDropdownVisible }) => {
   const navigate = useNavigate()
   const { notifications, isLoading, hasMore, handleMarkAsRead, handleMarkAllAsRead, loadMore } = UseListNotification()

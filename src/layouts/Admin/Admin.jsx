@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MdDashboard } from 'react-icons/md'
 import { IoMdSettings } from 'react-icons/io'
 import { BsPostcardFill } from 'react-icons/bs'
@@ -13,16 +13,20 @@ import { Link, useNavigate } from 'react-router-dom'
 import { removeAuthToken } from '../../utils/localStorageUtils'
 import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser } from '../../features/auth/authThunks'
+
 const { Header, Sider, Content } = Layout
 
 const App = ({ children }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [current, setCurrent] = useState('1')
+  const [popoverVisible, setPopoverVisible] = useState(false)
+  const [menuVisible, setMenuVisible] = useState(false)
   const { isAdmin } = useSelector(state => state.auth)
   const {
     token: { colorBgContainer, borderRadiusLG }
   } = theme.useToken()
+
   const handleLogout = async e => {
     e.preventDefault()
     try {
@@ -35,9 +39,39 @@ const App = ({ children }) => {
       message.error('Đăng xuất thất bại')
     }
   }
+
   const onClick = e => {
     setCurrent(e.key)
   }
+
+  const handlePopoverVisibleChange = visible => {
+    setPopoverVisible(visible)
+    if (!visible) {
+      setMenuVisible(false)
+    }
+  }
+
+  const handleMenuVisibleChange = visible => {
+    setMenuVisible(visible)
+    if (!visible) {
+      setPopoverVisible(false)
+    }
+  }
+
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (menuVisible && !event.target.closest(`.${styles.menuOverlay}`)) {
+        setMenuVisible(false)
+        setPopoverVisible(true)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [menuVisible])
+
   return (
     <Layout className={styles.layoutWrap} style={{ minHeight: '100vh' }}>
       <Sider
@@ -101,13 +135,28 @@ const App = ({ children }) => {
           }}
         >
           <div className={styles.headerWrap}>
-            <div className={styles.headerLeft}>{/* <span className={styles.headerText}>Bảng điều khiển</span> */}</div>
+            <div className={styles.headerLeft}></div>
             <div className={styles.headerRight}>
               <IoMdSettings />
               <IoNotifications />
-              <Popover placement="bottomRight" title={'phong'} content={'thông tin'}>
-                <img className={styles.headerImage} src={avatar} alt="" />
+              <Popover
+                placement="bottomRight"
+                title={'phong'}
+                content={'thông tin'}
+                visible={popoverVisible}
+                onVisibleChange={handlePopoverVisibleChange}
+              >
+                <img className={styles.headerImage} src={avatar} alt="" onClick={() => setMenuVisible(!menuVisible)} />
               </Popover>
+              {menuVisible && (
+                <div className={styles.menuOverlay}>
+                  <Menu className={styles.menu} onClick={() => setMenuVisible(false)}>
+                    <Menu.Item key="1">Option 1</Menu.Item>
+                    <Menu.Item key="2">Option 2</Menu.Item>
+                    <Menu.Item key="3">Option 3</Menu.Item>
+                  </Menu>
+                </div>
+              )}
             </div>
           </div>
         </Header>
@@ -130,4 +179,5 @@ const App = ({ children }) => {
     </Layout>
   )
 }
+
 export default App
