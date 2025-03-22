@@ -116,7 +116,16 @@ const PostTable = ({ onViewDetails }) => {
   // Định nghĩa cột
   const columns = [
     {
-      title: 'Ảnh bài đăng',
+      title: 'Mã sản phẩm',
+      dataIndex: 'itemCode',
+      key: 'itemCode',
+      width: isMobile ? 120 : 150,
+      render: itemCode => {
+        return itemCode || 'Không có mã sản phẩm'
+      }
+    },
+    {
+      title: 'Ảnh sản phẩm',
       dataIndex: 'image_url',
       key: 'image_url',
       fixed: !isMobile ? 'left' : undefined, // Chỉ fixed trên desktop và dùng undefined thay vì false
@@ -138,7 +147,7 @@ const PostTable = ({ onViewDetails }) => {
       }
     },
     {
-      title: 'Tên bài đăng',
+      title: 'Tên sản phẩm',
       dataIndex: 'title',
       key: 'title',
       fixed: !isMobile ? 'left' : undefined, // Chỉ fixed trên desktop và dùng undefined thay vì false
@@ -186,6 +195,19 @@ const PostTable = ({ onViewDetails }) => {
       ),
       onFilter: (value, record) => record.title && record.title.toString().toLowerCase().includes(value.toLowerCase()),
       filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    },
+    {
+      title: 'Giao dịch',
+      dataIndex: 'type',
+      key: 'type',
+      width: isMobile ? 120 : 150,
+      render: type => {
+        const typeMap = {
+          exchange: 'Trao đổi',
+          gift: 'Trao tặng'
+        }
+        return typeMap[type] || 'Không có giao dịch'
+      }
     },
     {
       title: 'Địa chỉ',
@@ -239,122 +261,6 @@ const PostTable = ({ onViewDetails }) => {
       width: isMobile ? 120 : 150,
       render: category_id => {
         return category_id?.name || 'Không có thể loại'
-      }
-    },
-    {
-      title: 'Sản Phẩm góc PTIT',
-      dataIndex: 'isPtiterOnly',
-      key: 'isPtiterOnly',
-      width: isMobile ? 120 : 150,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-        <div style={{ padding: 8, width: 200 }}>
-          <div style={{ marginBottom: 8 }}>
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '8px 0',
-                cursor: 'pointer'
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selectedKeys.includes(true)}
-                onChange={e => {
-                  const newKeys = [...selectedKeys]
-                  if (e.target.checked) {
-                    if (!newKeys.includes(true)) newKeys.push(true)
-                  } else {
-                    const index = newKeys.indexOf(true)
-                    if (index > -1) newKeys.splice(index, 1)
-                  }
-                  setSelectedKeys(newKeys)
-                }}
-                style={{ marginRight: 8 }}
-              />
-              <span
-                style={{
-                  backgroundColor: '#1890ff',
-                  color: 'white',
-                  padding: '2px 8px',
-                  borderRadius: '4px',
-                  fontWeight: 'bold'
-                }}
-              >
-                True
-              </span>
-            </label>
-
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '8px 0',
-                cursor: 'pointer'
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selectedKeys.includes(false)}
-                onChange={e => {
-                  const newKeys = [...selectedKeys]
-                  if (e.target.checked) {
-                    if (!newKeys.includes(false)) newKeys.push(false)
-                  } else {
-                    const index = newKeys.indexOf(false)
-                    if (index > -1) newKeys.splice(index, 1)
-                  }
-                  setSelectedKeys(newKeys)
-                }}
-                style={{ marginRight: 8 }}
-              />
-              <span
-                style={{
-                  backgroundColor: '#ff4d4f',
-                  color: 'white',
-                  padding: '2px 8px',
-                  borderRadius: '4px',
-                  fontWeight: 'bold'
-                }}
-              >
-                False
-              </span>
-            </label>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Button type="primary" onClick={() => confirm()} size="small" style={{ width: 90 }}>
-              Lọc
-            </Button>
-            <Button
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Đặt lại
-            </Button>
-          </div>
-        </div>
-      ),
-      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-      onFilter: (value, record) => record.isPtiterOnly === value,
-      render: isPtiterOnly => {
-        return (
-          <span
-            style={{
-              backgroundColor: isPtiterOnly ? '#1890ff' : '#ff4d4f',
-              color: 'white',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              fontWeight: 'bold'
-            }}
-          >
-            {isPtiterOnly ? 'true' : 'false'}
-          </span>
-        )
       }
     },
     {
@@ -534,6 +440,122 @@ const PostTable = ({ onViewDetails }) => {
             dropdownStyle={{ minWidth: 120 }}
             dropdownMatchSelectWidth={false}
           />
+        )
+      }
+    },
+    {
+      title: 'Sản Phẩm góc PTIT',
+      dataIndex: 'isPtiterOnly',
+      key: 'isPtiterOnly',
+      width: isMobile ? 120 : 150,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8, width: 200 }}>
+          <div style={{ marginBottom: 8 }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 0',
+                cursor: 'pointer'
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedKeys.includes(true)}
+                onChange={e => {
+                  const newKeys = [...selectedKeys]
+                  if (e.target.checked) {
+                    if (!newKeys.includes(true)) newKeys.push(true)
+                  } else {
+                    const index = newKeys.indexOf(true)
+                    if (index > -1) newKeys.splice(index, 1)
+                  }
+                  setSelectedKeys(newKeys)
+                }}
+                style={{ marginRight: 8 }}
+              />
+              <span
+                style={{
+                  backgroundColor: '#1890ff',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontWeight: 'bold'
+                }}
+              >
+                True
+              </span>
+            </label>
+
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 0',
+                cursor: 'pointer'
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedKeys.includes(false)}
+                onChange={e => {
+                  const newKeys = [...selectedKeys]
+                  if (e.target.checked) {
+                    if (!newKeys.includes(false)) newKeys.push(false)
+                  } else {
+                    const index = newKeys.indexOf(false)
+                    if (index > -1) newKeys.splice(index, 1)
+                  }
+                  setSelectedKeys(newKeys)
+                }}
+                style={{ marginRight: 8 }}
+              />
+              <span
+                style={{
+                  backgroundColor: '#ff4d4f',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontWeight: 'bold'
+                }}
+              >
+                False
+              </span>
+            </label>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button type="primary" onClick={() => confirm()} size="small" style={{ width: 90 }}>
+              Lọc
+            </Button>
+            <Button
+              onClick={() => {
+                clearFilters()
+                confirm()
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Đặt lại
+            </Button>
+          </div>
+        </div>
+      ),
+      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+      onFilter: (value, record) => record.isPtiterOnly === value,
+      render: isPtiterOnly => {
+        return (
+          <span
+            style={{
+              backgroundColor: isPtiterOnly ? '#1890ff' : '#ff4d4f',
+              color: 'white',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              fontWeight: 'bold'
+            }}
+          >
+            {isPtiterOnly ? 'true' : 'false'}
+          </span>
         )
       }
     },

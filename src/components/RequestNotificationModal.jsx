@@ -100,7 +100,7 @@ const RequestNotificationModal = () => {
 
           <Col span={24}>
             <Title level={5} style={{ marginTop: '8px', marginBottom: '4px', color: '#262626' }}>
-              Bạn và <span style={{ color: '#1890ff' }}>{count} người khác</span> đã xin đồ
+              Bạn và <span style={{ color: '#1890ff' }}>{count} người khác</span> đã đăng ký nhận đồ
             </Title>
           </Col>
         </Row>

@@ -58,6 +58,16 @@ const PostDetailModal = ({ open, post, onClose }) => {
 
         <Descriptions.Item label="Thể loại">{post.category_id?.name || 'Không có thể loại'}</Descriptions.Item>
 
+        <Descriptions.Item label="Giao dịch">
+          {post.type === 'exchange' ? 'Trao đổi' : post.type === 'gift' ? 'Trao tặng' : 'Không có giao dịch'}
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Mã sản phẩm">{post.itemCode || 'Không có mã sản phẩm'}</Descriptions.Item>
+
+        <Descriptions.Item label="Sản phẩm góc PTIT">
+          <Tag color={post.isPtiterOnly ? '#1890ff' : '#ff4d4f'}>{post.isPtiterOnly ? 'True' : 'False'}</Tag>
+        </Descriptions.Item>
+
         <Descriptions.Item label="Trạng thái">
           <Tag color={post.isApproved ? 'green' : 'orange'}>{post.isApproved ? 'Đã duyệt' : 'Đang chờ duyệt'}</Tag>
         </Descriptions.Item>
