@@ -6,7 +6,6 @@ import { registerUser } from 'features/auth/authThunks'
 import Policy from 'components/Policy'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { SITE_KEY } from 'config/url_server'
-
 const Register = () => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
