@@ -152,8 +152,10 @@ export const RegistrationDrawer = ({
       const totalPages = Math.ceil(pagination.total / pagination.pageSize)
       let allRequestsData = []
 
-      // Lưu lại trang hiện tại để sau khi fetch xong có thể quay lại
-      const originalPage = currentPage
+      if (totalPages <= 1) {
+        const pendingRequests = sortedRequests.filter(req => req.status === 'pending')
+        return pendingRequests
+      }
 
       for (let page = 1; page <= totalPages; page++) {
         const response = await refetch(listing, {
@@ -162,38 +164,30 @@ export const RegistrationDrawer = ({
           post_id: listing._id
         })
 
-        // Giả định rằng response chứa dữ liệu mới và cách để lấy danh sách requests
-        // Điều chỉnh dựa trên cấu trúc dữ liệu thực tế của bạn
-        if (response && response.data) {
+        if (response?.data) {
           const pendingRequests = response.data.filter(req => req.status === 'pending')
           allRequestsData = [...allRequestsData, ...pendingRequests]
         }
       }
 
-      // Quay lại trang ban đầu
       await refetch(listing, {
-        current: originalPage,
+        current: currentPage,
         pageSize: pagination.pageSize,
         post_id: listing._id
       })
 
-      setAllRequests(allRequestsData)
       return allRequestsData
     } catch (error) {
       message.error('Lỗi khi tải tất cả yêu cầu: ' + (error.message || 'Đã xảy ra lỗi'))
       return []
-    } finally {
-      setIsRandomizing(false)
     }
   }
 
-  // Mở modal random
   const showRandomModal = () => {
     setIsRandomModalVisible(true)
     setSelectedWinner(null)
   }
 
-  // Hàm chọn người nhận ngẫu nhiên
   const selectRandomWinner = async () => {
     setIsRandomizing(true)
     setSelectedWinner(null)
@@ -202,12 +196,9 @@ export const RegistrationDrawer = ({
       let eligibleRequests = []
 
       if (randomMode === 'currentPage') {
-        // Chỉ lấy các yêu cầu ở trang hiện tại với trạng thái 'pending'
         eligibleRequests = sortedRequests.filter(req => req.status === 'pending')
-      } else if (randomMode === 'allPages') {
-        // Lấy tất cả yêu cầu từ tất cả các trang
-        const allRequestsData = await fetchAllRequests()
-        eligibleRequests = allRequestsData
+      } else {
+        eligibleRequests = await fetchAllRequests()
       }
 
       if (eligibleRequests.length === 0) {
@@ -216,7 +207,6 @@ export const RegistrationDrawer = ({
         return
       }
 
-      // Hiệu ứng quay số ngẫu nhiên
       let counter = 0
       const maxIterations = 15
       const animationInterval = setInterval(() => {
@@ -227,7 +217,6 @@ export const RegistrationDrawer = ({
         if (counter >= maxIterations) {
           clearInterval(animationInterval)
 
-          // Chọn người thắng cuối cùng
           const finalIndex = Math.floor(Math.random() * eligibleRequests.length)
           const winner = eligibleRequests[finalIndex]
           setSelectedWinner(winner)
@@ -240,7 +229,6 @@ export const RegistrationDrawer = ({
     }
   }
 
-  // Hàm xác nhận chọn người thắng
   const confirmWinner = async () => {
     if (selectedWinner) {
       try {
@@ -254,6 +242,7 @@ export const RegistrationDrawer = ({
       message.warning('Vui lòng chọn ngẫu nhiên một người nhận trước')
     }
   }
+
   if (!listing) return null
   return (
     <Drawer

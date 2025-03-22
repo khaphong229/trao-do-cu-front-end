@@ -43,7 +43,8 @@ const ProfilePage = () => {
     isPtiter: false,
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    avatar: ''
   })
   const [savePassword, setSavePassword] = useState(false)
 
@@ -71,7 +72,8 @@ const ProfilePage = () => {
         },
         currentPassword: '',
         newPassword: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        avatar: userData?.avatar
       })
     }
   }, [userData])
