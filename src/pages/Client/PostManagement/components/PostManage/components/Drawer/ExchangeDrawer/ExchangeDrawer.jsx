@@ -351,12 +351,32 @@ export const ExchangeDrawer = ({
               </Descriptions>
             </div>
 
-            <div className={styles.requestActions}>
+            {/* <div className={styles.requestActions}>
               {request.status === 'accepted' ? (
                 <Button danger onClick={() => handleAccept(request._id, 'pending')}>
                   Hủy yêu cầu
                 </Button>
               ) : (
+                <>
+                  <Button
+                    type="primary"
+                    onClick={() => handleAccept(request._id)}
+                    disabled={hasAccepted || request.status !== 'pending'}
+                  >
+                    Chấp nhận
+                  </Button>
+                  <Button
+                    danger
+                    disabled={hasAccepted || request.status !== 'pending'}
+                    onClick={() => handleDelete(request._id)}
+                  >
+                    Từ chối
+                  </Button>
+                </>
+              )}
+            </div> */}
+            <div className={styles.requestActions}>
+              {request.status !== 'accepted' && (
                 <>
                   <Button
                     type="primary"

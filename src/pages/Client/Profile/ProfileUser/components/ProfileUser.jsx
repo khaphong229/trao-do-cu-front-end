@@ -1,5 +1,5 @@
 import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message, Checkbox, Input, Select } from 'antd'
-import { ClockCircleOutlined, EnvironmentOutlined, CameraOutlined } from '@ant-design/icons'
+import { ClockCircleOutlined, EnvironmentOutlined, CameraOutlined, PlusOutlined } from '@ant-design/icons'
 import Avatar from 'assets/images/logo/avtDefault.webp'
 import styles from '../scss/ProfileUser.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
@@ -304,12 +304,20 @@ const ProfilePage = () => {
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="address">Địa chỉ mặc định</label>
-                <Input
-                  id="address"
-                  placeholder="Nhập địa chỉ"
-                  value={formData.address ? getDefaultAddress(formData.address) : ''}
-                  onChange={handleInputChange}
-                />
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: 10
+                  }}
+                >
+                  <Input
+                    id="address"
+                    placeholder="Nhập địa chỉ"
+                    value={formData.address ? getDefaultAddress(formData.address) : ''}
+                    onChange={handleInputChange}
+                  />
+                  <Button icon={<PlusOutlined />} onClick={() => navigate('/profile?tab=location')} />
+                </div>
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="email">Email</label>
@@ -335,13 +343,13 @@ const ProfilePage = () => {
               </div> */}
 
               <div className={styles['form-actions1']}>
-                <Button type="primary" block style={{ width: '100px' }} onClick={handleUpdateMe}>
+                <Button type="primary" block style={{ width: '100px', marginLeft: 'auto' }} onClick={handleUpdateMe}>
                   Thay đổi
                 </Button>
               </div>
             </TabPane>
 
-            <TabPane tab="Danh sách địa chỉ">
+            <TabPane tab="Danh sách địa chỉ" key="location">
               <Location isInProfile={true} />
             </TabPane>
 

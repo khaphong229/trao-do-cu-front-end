@@ -10,5 +10,4 @@ export const URL_CLIENT =
 
 export const URL_SERVER_IMAGE = URL_SERVER + '/static/'
 
-export const SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY
-export const SECRET_KEY = process.env.REACT_APP_RECAPTCHA_SECRET_KEY
+export const SITE_KEY = process.env.REACT_APP_API_SITE_KEY
