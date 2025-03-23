@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Table, Button, Space, Modal, message, Input } from 'antd'
-import { EyeOutlined, PhoneOutlined, SearchOutlined, MailOutlined } from '@ant-design/icons'
+import {
+  EyeOutlined,
+  PhoneOutlined,
+  SearchOutlined,
+  MailOutlined,
+  WalletOutlined,
+  LockOutlined
+} from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
@@ -240,6 +247,26 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       ],
       onFilter: (value, record) => record.isPtiter === value,
       filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    },
+    {
+      title: 'Số dư PCoin',
+      dataIndex: 'pcoin_balance',
+      key: 'pcoin_balance',
+      render: pcoin_balance => (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <WalletOutlined style={{ color: '#1890ff' }} />
+            <span>Tổng: {pcoin_balance?.total || 0}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+            <LockOutlined style={{ color: '#ff4d4f' }} />
+            <span>Đã khóa: {pcoin_balance?.locked || 0}</span>
+          </div>
+        </div>
+      ),
+      sorter: {
+        compare: (a, b) => (a.pcoin_balance?.total || 0) - (b.pcoin_balance?.total || 0)
+      }
     },
     {
       title: 'Thao tác',

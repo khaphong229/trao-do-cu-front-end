@@ -1,6 +1,7 @@
 import React from 'react'
 import { Modal, Descriptions, Button } from 'antd'
 import moment from 'moment'
+import { WalletOutlined, LockOutlined } from '@ant-design/icons'
 
 const UserDetailModal = ({ visible, user, onClose }) => {
   if (!user) return null
@@ -69,6 +70,18 @@ const UserDetailModal = ({ visible, user, onClose }) => {
         </Descriptions.Item>
         <Descriptions.Item label="Sinh viên PTIT" span={2}>
           {user.isPtiter ? 'Có' : 'Không'}
+        </Descriptions.Item>
+        <Descriptions.Item label="Số dư PCoin" span={2}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <WalletOutlined style={{ color: '#1890ff' }} />
+              <span>Tổng: {user.pcoin_balance?.total || 0}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <LockOutlined style={{ color: '#ff4d4f' }} />
+              <span>Đã khóa: {user.pcoin_balance?.locked || 0}</span>
+            </div>
+          </div>
         </Descriptions.Item>
       </Descriptions>
     </Modal>
