@@ -6,7 +6,6 @@ import {
   EnvironmentOutlined,
   GiftOutlined,
   WalletOutlined,
-  InboxOutlined,
   ShoppingOutlined,
   ArrowLeftOutlined
 } from '@ant-design/icons'
