@@ -80,7 +80,18 @@ const ProfilePage = () => {
 
   const handleInputChange = e => {
     const { id, value } = e.target
-    setFormData(prev => ({ ...prev, [id]: value }))
+
+    if (id === 'facebook') {
+      setFormData(prev => ({
+        ...prev,
+        social_media: {
+          ...prev.social_media,
+          facebook: value
+        }
+      }))
+    } else {
+      setFormData(prev => ({ ...prev, [id]: value }))
+    }
   }
 
   const handleSelectChange = value => {
@@ -294,6 +305,10 @@ const ProfilePage = () => {
                 <Input id="name" value={formData.name} onChange={handleInputChange} />
               </div>
               <div className={styles['form-group']}>
+                <label htmlFor="email">Email</label>
+                <Input id="email" value={formData.email} readOnly />
+              </div>
+              <div className={styles['form-group']}>
                 <label htmlFor="phone">Số điện thoại</label>
                 <Input
                   id="phone"
@@ -301,6 +316,10 @@ const ProfilePage = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                 />
+              </div>
+              <div className={styles['form-group']}>
+                <label htmlFor="facebook">Facebook</label>
+                <Input id="facebook" value={formData.social_media.facebook} onChange={handleInputChange} />
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="address">Địa chỉ mặc định</label>
@@ -316,13 +335,14 @@ const ProfilePage = () => {
                     value={formData.address ? getDefaultAddress(formData.address) : ''}
                     onChange={handleInputChange}
                   />
-                  <Button icon={<PlusOutlined />} onClick={() => navigate('/profile?tab=location')} />
+                  <Button
+                    className={styles['button-add']}
+                    icon={<PlusOutlined />}
+                    onClick={() => navigate('/profile?tab=location')}
+                  />
                 </div>
               </div>
-              <div className={styles['form-group']}>
-                <label htmlFor="email">Email</label>
-                <Input id="email" value={formData.email} readOnly />
-              </div>
+
               <div className={styles['form-group']}>
                 <label htmlFor="gender">Giới tính</label>
                 <Select
