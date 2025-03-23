@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Modal, Form, Input, Select, Button, Row, Col, message, Upload, InputNumber, Switch } from 'antd'
 import {
   FileImageOutlined,
-  TagOutlined,
   EnvironmentOutlined,
   GiftOutlined,
   WalletOutlined,
@@ -268,15 +267,6 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
         }}
       >
         <Row gutter={16}>
-          <Col xs={24} md={12}>
-            <Form.Item
-              name="itemCode"
-              label="Mã sản phẩm"
-              rules={[{ required: true, message: 'Vui lòng nhập mã sản phẩm' }]}
-            >
-              <Input prefix={<TagOutlined />} placeholder="Nhập mã sản phẩm" />
-            </Form.Item>
-          </Col>
           <Col xs={24} md={12}>
             <Form.Item
               name="title"
