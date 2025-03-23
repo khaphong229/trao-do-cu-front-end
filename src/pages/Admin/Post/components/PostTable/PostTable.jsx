@@ -37,6 +37,9 @@ const PostTable = ({ onViewDetails, onEdit }) => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
+  useEffect(() => {
+    dispatch(getPostAdminPagination({ current, pageSize }))
+  }, [dispatch, current, pageSize])
 
   const isMobile = windowWidth < 768
 

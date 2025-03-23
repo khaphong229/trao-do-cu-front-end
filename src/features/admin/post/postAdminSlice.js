@@ -11,7 +11,8 @@ const initialState = {
   isDetailsModalVisible: false,
   selectedPost: null,
   error: null,
-  searchText: ''
+  searchText: '',
+  lastUpdated: null
 }
 
 const postAdminSlice = createSlice({
@@ -39,7 +40,10 @@ const postAdminSlice = createSlice({
     clearError: state => {
       state.error = null
     },
-    resetState: () => initialState
+    resetState: () => initialState,
+    forceRefresh: state => {
+      state.lastUpdated = new Date().getTime()
+    }
   },
   extraReducers: builder => {
     builder
@@ -49,6 +53,7 @@ const postAdminSlice = createSlice({
       })
       .addCase(getPostAdminPagination.fulfilled, (state, action) => {
         state.isLoading = false
+        state.lastUpdated = new Date().getTime()
 
         if (action.payload && action.payload.data) {
           // Extract posts from data.data
@@ -75,15 +80,28 @@ const postAdminSlice = createSlice({
         state.error = null
       })
       .addCase(approvalStatus.fulfilled, (state, action) => {
-        const index = state.posts.findIndex(post => post._id === action.payload._id)
+        const updatedPost = action.payload
+        const index = state.posts.findIndex(post => post._id === updatedPost._id)
+
         if (index !== -1) {
-          state.posts[index] = {
-            ...state.posts[index],
-            isApproved: action.payload.isApproved,
-            reason: action.payload.reason
+          const newPosts = [...state.posts]
+          newPosts[index] = {
+            ...newPosts[index],
+            ...updatedPost,
+            pcoin_config: {
+              reward_amount: updatedPost.rewardAmount, // Cập nhật rewardAmount
+              required_amount: updatedPost.requiredAmount // Cập nhật requiredAmount
+            },
+            isApproved: true,
+            reason: ''
           }
+          state.posts = newPosts
         }
-        state.posts = [...state.posts] // Update list to trigger re-render
+
+        state.lastUpdated = new Date().getTime()
+      })
+      .addCase(approvalStatus.rejected, (state, action) => {
+        state.error = action.payload
       })
   }
 })
@@ -96,7 +114,8 @@ export const {
   setPerPage,
   clearError,
   resetState,
-  setSearchText
+  setSearchText,
+  forceRefresh
 } = postAdminSlice.actions
 
 export default postAdminSlice.reducer

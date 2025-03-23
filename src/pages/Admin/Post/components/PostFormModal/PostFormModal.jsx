@@ -58,12 +58,13 @@ const customStyles = {
   }
 }
 
-const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories }) => {
+const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, onSuccessUpdate }) => {
   const [form] = Form.useForm()
   const dispatch = useDispatch()
   const [imageFiles, setImageFiles] = useState([])
   const [imagePreview, setImagePreview] = useState([])
   const [isEditingImages, setIsEditingImages] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const { current, pageSize } = useSelector(state => state.postManagement)
 
   // Set form values when editing
@@ -107,47 +108,44 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories })
       form.resetFields()
       setImageFiles([])
       setImagePreview([])
+      setIsSubmitting(false)
     }
   }, [visible, initialPost, form, isEditing])
 
-  const handleSubmit = values => {
-    const formData = new FormData()
+  const handleSubmit = async values => {
+    try {
+      setIsSubmitting(true)
 
-    // Append all form values
-    Object.keys(values).forEach(key => {
-      if (key === 'pcoin_config') {
-        formData.append('pcoin_config', JSON.stringify(values.pcoin_config))
-      } else if (key !== 'image_url') {
-        formData.append(key, values[key])
-      }
-    })
+      if (isEditing && initialPost) {
+        const { pcoin_config } = values
 
-    // Append images - only append new files, not existing ones
-    imageFiles.forEach(file => {
-      formData.append('images', file)
-    })
-
-    // If editing, dispatch approvalStatus
-    if (isEditing && initialPost) {
-      dispatch(
-        approvalStatus({
+        const requestData = {
           id: initialPost._id,
+          rewardAmount: pcoin_config.reward_amount,
+          requiredAmount: pcoin_config.required_amount,
           isApproved: true,
-          reason: '',
-          formData: formData
-        })
-      )
-        .then(() => {
-          message.success('Cập nhật bài đăng thành công')
-          // Sử dụng current và pageSize từ Redux store
-          dispatch(getPostAdminPagination({ current, pageSize }))
-          onClose()
-        })
-        .catch(error => {
-          message.error('Cập nhật bài đăng thất bại: ' + error.message)
-        })
+          reason: ''
+        }
+
+        console.log('Sending data:', requestData) // Log để kiểm tra
+
+        const result = await dispatch(approvalStatus(requestData)).unwrap()
+
+        message.success('Cập nhật bài đăng thành công')
+        await dispatch(getPostAdminPagination({ current, pageSize, forceRefresh: true })).unwrap()
+        if (onSuccessUpdate) {
+          onSuccessUpdate(result)
+        }
+        onClose()
+      }
+    } catch (error) {
+      console.error('Update failed:', error)
+      message.error('Cập nhật bài đăng thất bại: ' + (error.message || 'Đã xảy ra lỗi'))
+    } finally {
+      setIsSubmitting(false)
     }
   }
+
   const handleImageUpload = info => {
     // Filter out files with error or uploading status
     let fileList = info.fileList.filter(file => file.status !== 'error')
@@ -255,6 +253,8 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories })
       width={800}
       footer={null}
       className={styles.postFormModal}
+      maskClosable={!isSubmitting}
+      closable={!isSubmitting}
     >
       <Form
         form={form}
@@ -379,7 +379,7 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories })
         </Form.Item>
 
         <Form.Item className={styles.submitButton}>
-          <Button type="primary" htmlType="submit" block>
+          <Button type="primary" htmlType="submit" block loading={isSubmitting} disabled={isSubmitting}>
             {isEditing ? 'Cập nhật' : 'Thêm mới'}
           </Button>
         </Form.Item>
