@@ -2,6 +2,7 @@ import { Button, Descriptions, Modal, Image, Tag, Typography } from 'antd'
 import React from 'react'
 import moment from 'moment'
 import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
+import { GiftOutlined, WalletOutlined } from '@ant-design/icons'
 
 const { Text, Paragraph } = Typography
 
@@ -87,6 +88,35 @@ const PostDetailModal = ({ open, post, onClose }) => {
         </Descriptions.Item>
 
         <Descriptions.Item label="Lý do duyệt/từ chối">{post.reason || 'Không có lý do'}</Descriptions.Item>
+
+        <Descriptions.Item label="Quản lý Pcoin" span={2}>
+          {post.pcoin_config ? (
+            <div style={{ display: 'flex', gap: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <GiftOutlined style={{ color: '#52c41a', fontSize: '20px' }} />
+                <span>
+                  <Text type="secondary">Thưởng: </Text>
+                  <Text strong style={{ color: '#52c41a' }}>
+                    {post.pcoin_config.reward_amount} Pcoin
+                  </Text>
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <WalletOutlined style={{ color: '#1890ff', fontSize: '20px' }} />
+                <span>
+                  <Text type="secondary">Yêu cầu: </Text>
+                  <Text strong style={{ color: '#1890ff' }}>
+                    {post.pcoin_config.required_amount} Pcoin
+                  </Text>
+                </span>
+              </div>
+            </div>
+          ) : (
+            <Text type="secondary" italic>
+              Không có Pcoin
+            </Text>
+          )}
+        </Descriptions.Item>
 
         {post.price !== undefined && (
           <Descriptions.Item label="Giá">{post.price.toLocaleString()} VNĐ</Descriptions.Item>

@@ -2,7 +2,14 @@ import { Button, Input, message, Space, Table, Select } from 'antd'
 import { setPage, setPerPage } from 'features/admin/post/postAdminSlice'
 import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EyeOutlined, SearchOutlined, EnvironmentOutlined } from '@ant-design/icons'
+import {
+  EyeOutlined,
+  SearchOutlined,
+  EnvironmentOutlined,
+  EditOutlined,
+  GiftOutlined,
+  WalletOutlined
+} from '@ant-design/icons'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
 import styles from '../../styles.module.scss'
 import { approvalStatus, getPostAdminPagination } from 'features/admin/post/postAdminThunks'
@@ -12,7 +19,7 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 // Thêm CSS để đảm bảo bảng có thể cuộn trên mobile
 import '../../styles.module.scss'
 
-const PostTable = ({ onViewDetails }) => {
+const PostTable = ({ onViewDetails, onEdit }) => {
   const dispatch = useDispatch()
   const { posts, total, current, pageSize, isLoading, searchText } = useSelector(state => state.postManagement || {})
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -560,6 +567,31 @@ const PostTable = ({ onViewDetails }) => {
       }
     },
     {
+      title: 'Quản lý Pcoin',
+      dataIndex: 'pcoin_config',
+      key: 'pcoin_config',
+      width: isMobile ? 140 : 180,
+      render: pcoin_config => {
+        if (!pcoin_config) {
+          return <span style={{ color: '#999', fontStyle: 'italic' }}>Không có cấu hình</span>
+        }
+        return (
+          <div className={styles.pcoinConfig}>
+            <div className={styles.pcoinRow}>
+              <GiftOutlined className={styles.pcoinIcon} style={{ color: '#52c41a' }} />
+              <span>Thưởng: </span>
+              <span className={styles.pcoinAmount}>{pcoin_config.reward_amount} Pcoin</span>
+            </div>
+            <div className={styles.pcoinRow}>
+              <WalletOutlined className={styles.pcoinIcon} style={{ color: '#1890ff' }} />
+              <span>Yêu cầu: </span>
+              <span className={styles.pcoinAmount}>{pcoin_config.required_amount} Pcoin</span>
+            </div>
+          </div>
+        )
+      }
+    },
+    {
       title: 'Thao tác',
       key: 'actions',
       fixed: isMobile ? undefined : 'right', // Chỉ fixed trên desktop và dùng undefined thay vì false
@@ -573,6 +605,7 @@ const PostTable = ({ onViewDetails }) => {
             title="Xem chi tiết"
             type="primary"
           />
+          <Button icon={<EditOutlined />} onClick={() => onEdit(record)} size="small" title="Sửa" type="primary" />
         </Space>
       )
     }
