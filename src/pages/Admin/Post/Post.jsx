@@ -4,6 +4,7 @@ import { SearchOutlined, ReloadOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import {
+  forceRefresh,
   setIsDetailsModalVisible,
   setIsModalVisible,
   setSearchText,
@@ -48,6 +49,12 @@ const Post = () => {
   const handleReload = () => {
     dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
   }
+
+  const handleSuccessUpdate = () => {
+    // Force a refresh of the table data
+    dispatch(forceRefresh())
+    dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
+  }
   return (
     <div className={styles.userManagement}>
       <h2 className={styles.titleMain} style={{ marginBottom: '20px' }}>
@@ -84,6 +91,7 @@ const Post = () => {
           setIsEditing(false)
         }}
         categories={useSelector(state => state.category?.categories || [])}
+        onSuccessUpdate={handleSuccessUpdate}
       />
     </div>
   )

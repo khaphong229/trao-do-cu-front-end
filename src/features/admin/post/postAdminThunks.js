@@ -5,22 +5,38 @@ export const getPostAdminPagination = createAsyncThunk(
   'postManagement/getPostAdminPagination',
   async (params, { rejectWithValue }) => {
     try {
-      const response = await postAdminService.getPagination(params)
+      // Add timestamp to prevent caching
+      const timestamp = new Date().getTime()
+      const response = await postAdminService.getPagination({
+        ...params,
+        _t: timestamp
+      })
       return response.data
     } catch (error) {
-      return rejectWithValue(error.response.data)
+      return rejectWithValue(error.response?.data || { message: 'Failed to fetch posts' })
     }
   }
 )
 
 export const approvalStatus = createAsyncThunk(
   'postManagement/approvalStatus',
-  async ({ id, isApproved, reason }, { rejectWithValue }) => {
+  async ({ id, rewardAmount, requiredAmount, isApproved, reason }, { rejectWithValue }) => {
     try {
-      const response = await postAdminService.approvalStatus(id, { isApproved, reason })
-      return response.data // Trả về dữ liệu bài đăng đã được cập nhật
+      const response = await postAdminService.approvalStatus(id, {
+        rewardAmount,
+        requiredAmount,
+        isApproved,
+        reason,
+        data: {
+          rewardAmount,
+          requiredAmount,
+          isApproved,
+          reason
+        }
+      })
+      return response.data
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Failed to approve post' })
+      return rejectWithValue(error.response?.data || { message: 'Failed to update post' })
     }
   }
 )
