@@ -24,6 +24,7 @@ const PostPTIT = () => {
   const owlCarouselRef = useRef(null)
 
   const { ptitPosts, isErrorPtit, isLoadingPtit, query } = useSelector(state => state.post)
+  const { user } = useSelector(state => state.auth)
 
   const pageSizeConstant = 16
 
@@ -149,6 +150,10 @@ const PostPTIT = () => {
         </Row>
       )
     }
+  }
+
+  if (!user?.isPtiter) {
+    return null
   }
 
   return (

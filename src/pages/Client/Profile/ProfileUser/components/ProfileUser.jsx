@@ -181,15 +181,24 @@ const ProfilePage = () => {
 
       if (uploadResponse.success && uploadResponse.files?.[0]) {
         const newAvatarUrl = uploadResponse.files[0].filepath
+        // Cập nhật profile với avatar mới
         const response = await dispatch(
           updateUserProfile({
-            avatar: newAvatarUrl
+            avatar: newAvatarUrl,
+            // Thêm các thông tin hiện tại của user để tránh mất dữ liệu
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            gender: formData.gender,
+            isPtiter: formData.isPtiter,
+            social_media: formData.social_media
           })
         ).unwrap()
-        logger.log(response)
+
         if (response.status === 201) {
           message.success('Upload ảnh thành công')
-          dispatch(getCurrentUser(false))
+          // Cập nhật lại thông tin user sau khi upload thành công
+          await dispatch(getCurrentUser(false))
           onSuccess(uploadResponse)
         } else {
           message.error('Upload ảnh thất bại')
