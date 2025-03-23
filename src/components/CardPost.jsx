@@ -8,7 +8,7 @@ import { getValidImageUrl } from 'helpers/helper'
 import { GiftOutlined, HeartFilled, HeartOutlined, SwapOutlined } from '@ant-design/icons'
 import { FaMapMarkerAlt } from 'react-icons/fa'
 import { getAvatarPostNews } from 'hooks/useAvatar'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useGiftRequest } from 'pages/Client/Request/GiftRequest/useRequestGift'
 import withAuth from 'hooks/useAuth'
 import styles from './CardPost.module.scss'
@@ -17,9 +17,7 @@ import logoPtit from 'assets/images/logo/Ptit-penannt.png'
 const { Text, Paragraph } = Typography
 function CardPost({ item, onRequestComplete }) {
   const navigate = useNavigate()
-  const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
-  const { query } = useSelector(state => state.post)
 
   const goDetail = _id => {
     navigate(`/${_id}`)
