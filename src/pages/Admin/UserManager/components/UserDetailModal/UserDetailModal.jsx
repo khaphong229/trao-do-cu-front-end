@@ -67,6 +67,9 @@ const UserDetailModal = ({ visible, user, onClose }) => {
         <Descriptions.Item label="Ngày tạo" span={2}>
           {moment(user.createdAt).format('DD/MM/YYYY HH:mm:ss')}
         </Descriptions.Item>
+        <Descriptions.Item label="Sinh viên PTIT" span={2}>
+          {user.isPtiter ? 'Có' : 'Không'}
+        </Descriptions.Item>
       </Descriptions>
     </Modal>
   )

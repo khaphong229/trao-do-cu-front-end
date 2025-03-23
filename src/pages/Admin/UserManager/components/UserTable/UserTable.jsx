@@ -216,6 +216,32 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       filterIcon: filtered => <PhoneOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     },
     {
+      title: 'Sinh viên PTIT',
+      dataIndex: 'isPtiter',
+      key: 'isPtiter',
+      render: isPtiter => (
+        <div
+          style={{
+            padding: '4px 8px',
+            borderRadius: '4px',
+            backgroundColor: isPtiter ? '#e6f7ff' : '#fff1f0',
+            color: isPtiter ? '#1890ff' : '#ff4d4f',
+            border: `1px solid ${isPtiter ? '#91d5ff' : '#ffa39e'}`,
+            textAlign: 'center',
+            fontWeight: 500
+          }}
+        >
+          {isPtiter ? 'Có' : 'Không'}
+        </div>
+      ),
+      filters: [
+        { text: 'Có', value: true },
+        { text: 'Không', value: false }
+      ],
+      onFilter: (value, record) => record.isPtiter === value,
+      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    },
+    {
       title: 'Thao tác',
       key: 'actions',
       render: (_, record) => (
