@@ -10,6 +10,8 @@ import { UseListNotification } from 'hooks/UseListNotification'
 import { NotificationMenu } from 'constants/menus'
 import { useAvatar } from 'hooks/useAvatar'
 import { setInfoModalVisible } from 'features/client/request/giftRequest/giftRequestSlice'
+import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
+import pcoin from 'assets/images/logo/pcoin.png'
 
 const HeaderIcons = ({ menu }) => {
   const dispatch = useDispatch()
@@ -33,6 +35,20 @@ const HeaderIcons = ({ menu }) => {
     }
   }
 
+  const { isMobile } = useCheckMobileScreen()
+
+  const renderText = () => {
+    if (!isAuthenticated) {
+      return 'Đăng sản phẩm'
+    } else {
+      if (isMobile) {
+        return 'Đăng'
+      } else {
+        return 'Đăng sản phẩm'
+      }
+    }
+  }
+
   return (
     <>
       <Space size="middle" className={styles.contentWrapper}>
@@ -53,6 +69,18 @@ const HeaderIcons = ({ menu }) => {
             <BellOutlined className={styles.Icon} />
           </Badge>
         </Dropdown>
+        {isAuthenticated &&
+          (!isMobile ? (
+            <div className={styles.pcoinWrap}>
+              <span className={styles.textPcoin}>Hiện có: {user?.pcoin_balance?.total}</span>
+              <img className={styles.pcoin} src={pcoin} alt="pcoin_logo" />
+            </div>
+          ) : (
+            <div className={styles.pcoinWrap}>
+              <img className={styles.pcoin} src={pcoin} alt="pcoin_logo" />
+              <span className={styles.textPcoin}>{user?.pcoin_balance?.total}</span>
+            </div>
+          ))}
         <Dropdown overlay={menu} placement="bottomRight">
           <Space className={styles.Avatar} style={{ cursor: 'pointer', color: '#fff' }}>
             <Avatar className={styles.avt} src={avatar} size={32} />
@@ -61,7 +89,7 @@ const HeaderIcons = ({ menu }) => {
           </Space>
         </Dropdown>
         <AuthenticatedButton icon={<SignatureOutlined />} type="default" className={styles.Button} onClick={handlePost}>
-          Đăng sản phẩm
+          {renderText()}
         </AuthenticatedButton>
       </Space>
       <CreatePostModal />

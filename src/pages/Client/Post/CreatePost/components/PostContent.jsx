@@ -199,9 +199,9 @@ const ExchangeRequestContent = ({ titleRef, imageRef, errorPost, setErrorPost, u
           value={requestData.title || ''}
           onChange={handleTitleChange}
           style={{ width: '100%', borderRadius: '0' }}
-          ref={el => {
-            setTimeout(() => el?.focus(), 0)
-          }}
+          // ref={el => {
+          //   setTimeout(() => el?.focus(), 0)
+          // }}
         />
       </div>
 

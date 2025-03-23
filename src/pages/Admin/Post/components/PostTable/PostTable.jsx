@@ -2,7 +2,14 @@ import { Button, Input, message, Space, Table, Select } from 'antd'
 import { setPage, setPerPage } from 'features/admin/post/postAdminSlice'
 import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EyeOutlined, SearchOutlined, EnvironmentOutlined } from '@ant-design/icons'
+import {
+  EyeOutlined,
+  SearchOutlined,
+  EnvironmentOutlined,
+  EditOutlined,
+  GiftOutlined,
+  WalletOutlined
+} from '@ant-design/icons'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
 import styles from '../../styles.module.scss'
 import { approvalStatus, getPostAdminPagination } from 'features/admin/post/postAdminThunks'
@@ -12,7 +19,7 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 // Thêm CSS để đảm bảo bảng có thể cuộn trên mobile
 import '../../styles.module.scss'
 
-const PostTable = ({ onViewDetails }) => {
+const PostTable = ({ onViewDetails, onEdit }) => {
   const dispatch = useDispatch()
   const { posts, total, current, pageSize, isLoading, searchText } = useSelector(state => state.postManagement || {})
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -30,6 +37,9 @@ const PostTable = ({ onViewDetails }) => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
+  useEffect(() => {
+    dispatch(getPostAdminPagination({ current, pageSize }))
+  }, [dispatch, current, pageSize])
 
   const isMobile = windowWidth < 768
 
@@ -116,7 +126,16 @@ const PostTable = ({ onViewDetails }) => {
   // Định nghĩa cột
   const columns = [
     {
-      title: 'Ảnh bài đăng',
+      title: 'Mã sản phẩm',
+      dataIndex: 'itemCode',
+      key: 'itemCode',
+      width: isMobile ? 120 : 150,
+      render: itemCode => {
+        return itemCode || 'Không có mã sản phẩm'
+      }
+    },
+    {
+      title: 'Ảnh sản phẩm',
       dataIndex: 'image_url',
       key: 'image_url',
       fixed: !isMobile ? 'left' : undefined, // Chỉ fixed trên desktop và dùng undefined thay vì false
@@ -138,7 +157,7 @@ const PostTable = ({ onViewDetails }) => {
       }
     },
     {
-      title: 'Tên bài đăng',
+      title: 'Tên sản phẩm',
       dataIndex: 'title',
       key: 'title',
       fixed: !isMobile ? 'left' : undefined, // Chỉ fixed trên desktop và dùng undefined thay vì false
@@ -186,6 +205,19 @@ const PostTable = ({ onViewDetails }) => {
       ),
       onFilter: (value, record) => record.title && record.title.toString().toLowerCase().includes(value.toLowerCase()),
       filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    },
+    {
+      title: 'Giao dịch',
+      dataIndex: 'type',
+      key: 'type',
+      width: isMobile ? 120 : 150,
+      render: type => {
+        const typeMap = {
+          exchange: 'Trao đổi',
+          gift: 'Trao tặng'
+        }
+        return typeMap[type] || 'Không có giao dịch'
+      }
     },
     {
       title: 'Địa chỉ',
@@ -239,122 +271,6 @@ const PostTable = ({ onViewDetails }) => {
       width: isMobile ? 120 : 150,
       render: category_id => {
         return category_id?.name || 'Không có thể loại'
-      }
-    },
-    {
-      title: 'Sản Phẩm góc PTIT',
-      dataIndex: 'isPtiterOnly',
-      key: 'isPtiterOnly',
-      width: isMobile ? 120 : 150,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-        <div style={{ padding: 8, width: 200 }}>
-          <div style={{ marginBottom: 8 }}>
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '8px 0',
-                cursor: 'pointer'
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selectedKeys.includes(true)}
-                onChange={e => {
-                  const newKeys = [...selectedKeys]
-                  if (e.target.checked) {
-                    if (!newKeys.includes(true)) newKeys.push(true)
-                  } else {
-                    const index = newKeys.indexOf(true)
-                    if (index > -1) newKeys.splice(index, 1)
-                  }
-                  setSelectedKeys(newKeys)
-                }}
-                style={{ marginRight: 8 }}
-              />
-              <span
-                style={{
-                  backgroundColor: '#1890ff',
-                  color: 'white',
-                  padding: '2px 8px',
-                  borderRadius: '4px',
-                  fontWeight: 'bold'
-                }}
-              >
-                True
-              </span>
-            </label>
-
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '8px 0',
-                cursor: 'pointer'
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selectedKeys.includes(false)}
-                onChange={e => {
-                  const newKeys = [...selectedKeys]
-                  if (e.target.checked) {
-                    if (!newKeys.includes(false)) newKeys.push(false)
-                  } else {
-                    const index = newKeys.indexOf(false)
-                    if (index > -1) newKeys.splice(index, 1)
-                  }
-                  setSelectedKeys(newKeys)
-                }}
-                style={{ marginRight: 8 }}
-              />
-              <span
-                style={{
-                  backgroundColor: '#ff4d4f',
-                  color: 'white',
-                  padding: '2px 8px',
-                  borderRadius: '4px',
-                  fontWeight: 'bold'
-                }}
-              >
-                False
-              </span>
-            </label>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Button type="primary" onClick={() => confirm()} size="small" style={{ width: 90 }}>
-              Lọc
-            </Button>
-            <Button
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Đặt lại
-            </Button>
-          </div>
-        </div>
-      ),
-      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-      onFilter: (value, record) => record.isPtiterOnly === value,
-      render: isPtiterOnly => {
-        return (
-          <span
-            style={{
-              backgroundColor: isPtiterOnly ? '#1890ff' : '#ff4d4f',
-              color: 'white',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              fontWeight: 'bold'
-            }}
-          >
-            {isPtiterOnly ? 'true' : 'false'}
-          </span>
-        )
       }
     },
     {
@@ -538,6 +454,147 @@ const PostTable = ({ onViewDetails }) => {
       }
     },
     {
+      title: 'Sản Phẩm góc PTIT',
+      dataIndex: 'isPtiterOnly',
+      key: 'isPtiterOnly',
+      width: isMobile ? 120 : 150,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8, width: 200 }}>
+          <div style={{ marginBottom: 8 }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 0',
+                cursor: 'pointer'
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedKeys.includes(true)}
+                onChange={e => {
+                  const newKeys = [...selectedKeys]
+                  if (e.target.checked) {
+                    if (!newKeys.includes(true)) newKeys.push(true)
+                  } else {
+                    const index = newKeys.indexOf(true)
+                    if (index > -1) newKeys.splice(index, 1)
+                  }
+                  setSelectedKeys(newKeys)
+                }}
+                style={{ marginRight: 8 }}
+              />
+              <span
+                style={{
+                  backgroundColor: '#1890ff',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontWeight: 'bold'
+                }}
+              >
+                True
+              </span>
+            </label>
+
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 0',
+                cursor: 'pointer'
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedKeys.includes(false)}
+                onChange={e => {
+                  const newKeys = [...selectedKeys]
+                  if (e.target.checked) {
+                    if (!newKeys.includes(false)) newKeys.push(false)
+                  } else {
+                    const index = newKeys.indexOf(false)
+                    if (index > -1) newKeys.splice(index, 1)
+                  }
+                  setSelectedKeys(newKeys)
+                }}
+                style={{ marginRight: 8 }}
+              />
+              <span
+                style={{
+                  backgroundColor: '#ff4d4f',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontWeight: 'bold'
+                }}
+              >
+                False
+              </span>
+            </label>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button type="primary" onClick={() => confirm()} size="small" style={{ width: 90 }}>
+              Lọc
+            </Button>
+            <Button
+              onClick={() => {
+                clearFilters()
+                confirm()
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Đặt lại
+            </Button>
+          </div>
+        </div>
+      ),
+      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+      onFilter: (value, record) => record.isPtiterOnly === value,
+      render: isPtiterOnly => {
+        return (
+          <span
+            style={{
+              backgroundColor: isPtiterOnly ? '#1890ff' : '#ff4d4f',
+              color: 'white',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              fontWeight: 'bold'
+            }}
+          >
+            {isPtiterOnly ? 'true' : 'false'}
+          </span>
+        )
+      }
+    },
+    {
+      title: 'Quản lý Pcoin',
+      dataIndex: 'pcoin_config',
+      key: 'pcoin_config',
+      width: isMobile ? 140 : 180,
+      render: pcoin_config => {
+        if (!pcoin_config) {
+          return <span style={{ color: '#999', fontStyle: 'italic' }}>Không có cấu hình</span>
+        }
+        return (
+          <div className={styles.pcoinConfig}>
+            <div className={styles.pcoinRow}>
+              <GiftOutlined className={styles.pcoinIcon} style={{ color: '#52c41a' }} />
+              <span>Thưởng: </span>
+              <span className={styles.pcoinAmount}>{pcoin_config.reward_amount} Pcoin</span>
+            </div>
+            <div className={styles.pcoinRow}>
+              <WalletOutlined className={styles.pcoinIcon} style={{ color: '#1890ff' }} />
+              <span>Yêu cầu: </span>
+              <span className={styles.pcoinAmount}>{pcoin_config.required_amount} Pcoin</span>
+            </div>
+          </div>
+        )
+      }
+    },
+    {
       title: 'Thao tác',
       key: 'actions',
       fixed: isMobile ? undefined : 'right', // Chỉ fixed trên desktop và dùng undefined thay vì false
@@ -551,6 +608,7 @@ const PostTable = ({ onViewDetails }) => {
             title="Xem chi tiết"
             type="primary"
           />
+          <Button icon={<EditOutlined />} onClick={() => onEdit(record)} size="small" title="Sửa" type="primary" />
         </Space>
       )
     }

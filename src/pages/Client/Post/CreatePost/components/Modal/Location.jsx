@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { message, Button, List, Radio, Space, Typography, Tag } from 'antd'
+import { message, Button, List, Radio, Space, Typography, Tag, Popconfirm } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { setEdittingAddress, updatePostData } from 'features/client/post/postSlice'
 import AddressSelection from 'components/common/AddressSelection'
@@ -7,7 +7,7 @@ import { PlusOutlined, DeleteOutlined, EditOutlined, LeftOutlined } from '@ant-d
 import styles from '../../scss/LocationModal.module.scss'
 import { updateDefaultAddress, updateUserProfile } from '../../../../../../features/auth/authThunks'
 
-const Location = ({ location, setLocation, isInProfile = false }) => {
+const Location = ({ location, setLocation, isInProfile = false, isPtiterOnly = false }) => {
   const dispatch = useDispatch()
   const [fullAddress, setFullAddress] = useState('')
   const [editingIndex, setEditingIndex] = useState(-1) // -1 means not editing any existing address
@@ -21,6 +21,39 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
   // Initialize addresses from user.address or empty array if not available
   const [addresses, setAddresses] = useState([])
   const [addressesChanged, setAddressesChanged] = useState(false)
+
+  // Sửa lại useEffect xử lý location prop
+  useEffect(() => {
+    if (location && user) {
+      setFullAddress(location)
+      setInitialAddress(location)
+
+      if (Array.isArray(user.address)) {
+        const locationIndex = user.address.findIndex(addr => addr.address === location)
+        if (locationIndex !== -1) {
+          setSelectedAddressIndex(locationIndex)
+        }
+      }
+    }
+  }, [location, user])
+
+  // Sửa lại useEffect xử lý isPtiterOnly
+  useEffect(() => {
+    if (isPtiterOnly) {
+      const ptitAddress = 'Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội'
+      setSelectedAddressIndex(0)
+      if (location !== ptitAddress) {
+        setLocation(ptitAddress)
+      }
+    } else {
+      // Khi chuyển từ PTIT sang normal mode, chọn lại địa chỉ mặc định
+      const defaultAddress = addresses.find(addr => addr.isDefault)
+      if (defaultAddress) {
+        setSelectedAddressIndex(addresses.indexOf(defaultAddress))
+        setLocation(defaultAddress.address)
+      }
+    }
+  }, [isPtiterOnly])
 
   // Load addresses from user data when component mounts or user changes
   useEffect(() => {
@@ -43,33 +76,6 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
     }
     setAddressesChanged(false)
   }, [user])
-
-  // Handle location prop changes
-  useEffect(() => {
-    if (location && user) {
-      setFullAddress(location)
-      setInitialAddress(location)
-
-      if (Array.isArray(user.address)) {
-        const locationIndex = user.address.findIndex(addr => addr.address === location)
-
-        if (locationIndex !== -1) {
-          // If address exists, select it
-          setSelectedAddressIndex(locationIndex)
-        } else if (location.trim() !== '') {
-          // If address doesn't exist, add it to the list locally
-          const newAddress = {
-            address: location,
-            isDefault: addresses.length === 0 // If no addresses, set as default
-          }
-          const newAddresses = [...addresses, newAddress]
-          setAddresses(newAddresses)
-          setSelectedAddressIndex(newAddresses.length - 1)
-          setAddressesChanged(true) // Mark that we've made changes
-        }
-      }
-    }
-  }, [location, user])
 
   // Re-render addresses when the default address changes
   useEffect(() => {
@@ -94,6 +100,10 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
   }
 
   const handleAddAddress = async () => {
+    if (isPtiterOnly) {
+      message.info('Không thể thêm địa chỉ mới khi đang ở chế độ dành cho sinh viên PTIT')
+      return
+    }
     if (!fullAddress) {
       message.error('Vui lòng chọn đầy đủ thông tin địa điểm')
       return
@@ -132,6 +142,10 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
   }
 
   const handleEditAddress = index => {
+    if (isPtiterOnly) {
+      message.info('Không thể chỉnh sửa địa chỉ khi đang ở chế độ dành cho sinh viên PTIT')
+      return
+    }
     setEditingIndex(index)
     setFullAddress(addresses[index].address)
     setShowAddressForm(true)
@@ -188,6 +202,10 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
   }
 
   const handleDeleteAddress = async index => {
+    if (isPtiterOnly) {
+      message.info('Không thể xóa địa chỉ khi đang ở chế độ dành cho sinh viên PTIT')
+      return
+    }
     if (addresses.length === 1) {
       message.warning('Bạn không thể xóa địa chỉ duy nhất')
       return
@@ -226,7 +244,14 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
   }
 
   const handleSelectAddress = index => {
+    if (isPtiterOnly) {
+      return // Không cho phép thay đổi khi đang ở chế độ PTIT
+    }
     setSelectedAddressIndex(index)
+    const selectedAddress = addresses[index]
+    if (selectedAddress) {
+      setLocation(selectedAddress.address)
+    }
   }
 
   const handleUpdateDefaultAddress = async id => {
@@ -268,6 +293,35 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
     dispatch(setEdittingAddress(false))
   }
 
+  // Sửa lại displayAddresses
+  const displayAddresses = React.useMemo(() => {
+    const ptitAddress = {
+      address: 'Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội',
+      isDefault: false,
+      isPtitAddress: true
+    }
+
+    let filteredAddresses = [...addresses]
+
+    // Sắp xếp địa chỉ với địa chỉ mặc định lên đầu
+    filteredAddresses.sort((a, b) => {
+      if (a.isDefault === b.isDefault) return 0
+      return a.isDefault ? -1 : 1
+    })
+
+    if (user?.isPtiter) {
+      if (isPtiterOnly) {
+        // Khi chọn chế độ PTIT, địa chỉ PTIT lên đầu
+        return [ptitAddress, ...filteredAddresses]
+      } else {
+        // Khi không chọn chế độ PTIT, địa chỉ PTIT ở cuối
+        return [...filteredAddresses, ptitAddress]
+      }
+    }
+
+    return filteredAddresses
+  }, [isPtiterOnly, addresses, user?.isPtiter])
+
   return (
     <div className={styles.locationWrapper}>
       {!isInProfile && (
@@ -279,41 +333,63 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
         </div>
       )}
 
-      {addresses.length > 0 && (
-        <List
-          className={styles.addressList}
-          itemLayout="horizontal"
-          dataSource={addresses}
-          renderItem={(address, index) => (
-            <List.Item
-              actions={[
-                <EditOutlined key="edit" onClick={() => handleEditAddress(index)} style={{ color: '#1890ff' }} />,
-                <DeleteOutlined key="delete" onClick={() => handleDeleteAddress(index)} style={{ color: '#ff4d4f' }} />
-              ]}
-            >
-              <List.Item.Meta
-                avatar={<Radio checked={index === selectedAddressIndex} onChange={() => handleSelectAddress(index)} />}
-                title={
-                  <>
-                    {address.isDefault ? (
-                      <Tag color="green" className={styles.locationDefault}>
-                        Mặc định
-                      </Tag>
-                    ) : (
-                      <Tag style={{ cursor: 'pointer' }} onClick={() => handleUpdateDefaultAddress(address?._id)}>
-                        Đặt làm mặc định
-                      </Tag>
-                    )}
-                  </>
-                }
-                description={address.address}
-              />
-            </List.Item>
-          )}
-        />
+      <List
+        className={styles.addressList}
+        itemLayout="horizontal"
+        dataSource={displayAddresses}
+        renderItem={(address, index) => (
+          <List.Item
+            actions={
+              !address.isPtitAddress
+                ? [
+                    <EditOutlined key="edit" onClick={() => handleEditAddress(index)} style={{ color: '#1890ff' }} />,
+                    <Popconfirm
+                      title="Xóa địa chỉ"
+                      description="Bạn có chắc chắn muốn xóa địa chỉ này không?"
+                      okText="Chắc chắn"
+                      cancelText="Hủy"
+                      onConfirm={() => handleDeleteAddress(index)}
+                      placement="topRight"
+                    >
+                      <DeleteOutlined key="delete" style={{ color: '#ff4d4f' }} />
+                    </Popconfirm>
+                  ]
+                : []
+            }
+          >
+            <List.Item.Meta
+              avatar={<Radio checked={index === selectedAddressIndex} onChange={() => handleSelectAddress(index)} />}
+              title={
+                address.isPtitAddress ? (
+                  <Tag color="blue">Địa chỉ trường PTIT</Tag>
+                ) : address.isDefault ? (
+                  <Tag color="green" className={styles.locationDefault}>
+                    Mặc định
+                  </Tag>
+                ) : (
+                  <Tag style={{ cursor: 'pointer' }} onClick={() => handleUpdateDefaultAddress(address?._id)}>
+                    Đặt làm mặc định
+                  </Tag>
+                )
+              }
+              description={address.address}
+            />
+          </List.Item>
+        )}
+      />
+
+      {!isPtiterOnly && !showAddressForm && (
+        <Button
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={handleAddNewAddress}
+          style={{ marginTop: 10, width: '100%' }}
+        >
+          Thêm địa chỉ mới
+        </Button>
       )}
 
-      {showAddressForm ? (
+      {showAddressForm && !isPtiterOnly && (
         <Space direction="vertical" style={{ width: '100%', marginTop: 10 }}>
           <Typography.Title style={{ margin: 0, fontSize: 16 }} level={5}>
             {editingIndex >= 0 ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}
@@ -330,15 +406,6 @@ const Location = ({ location, setLocation, isInProfile = false }) => {
             </Button>
           </Space>
         </Space>
-      ) : (
-        <Button
-          type="dashed"
-          icon={<PlusOutlined />}
-          onClick={handleAddNewAddress}
-          style={{ marginTop: 10, width: '100%' }}
-        >
-          Thêm địa chỉ mới
-        </Button>
       )}
 
       {addresses.length > 0 && !isInProfile && (

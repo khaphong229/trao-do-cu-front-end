@@ -19,7 +19,6 @@
   height: 100px;
   box-sizing: border-box;
   padding: 36px;
-  // border-bottom: 1px solid $borderBottom;
 
   .demoLogoImg {
     width: 70px;
@@ -92,37 +91,6 @@
   }
 }
 
-[data-menu-collapsed='true'] {
-  .demoLogoVertical {
-    .demoLogoText {
-      opacity: 0;
-      width: 0;
-      overflow: hidden;
-    }
-  }
-
-  .menuWrap {
-    padding: 28px 6px;
-    text-align: center;
-
-    :global {
-      .ant-menu-item {
-        justify-content: center;
-
-        .ant-menu-title-content {
-          opacity: 0;
-          width: 0;
-          overflow: hidden;
-        }
-
-        .ant-menu-item-icon {
-          margin-right: 0;
-        }
-      }
-    }
-  }
-}
-
 .headerWrap {
   display: flex;
   height: 100%;
@@ -134,24 +102,13 @@
     display: flex;
     gap: 20px;
     align-items: center;
-    .headerText {
-      font-weight: 600;
-      font-size: 20px;
-      color: $colorMain;
-    }
   }
 
   .headerRight {
     display: flex;
     align-items: center;
     gap: 20px;
-
-    :global {
-      .ant-input-outlined {
-        border-radius: 20px;
-        height: 40px;
-      }
-    }
+    position: relative;
 
     > svg {
       flex-shrink: 0;
@@ -173,6 +130,31 @@
       width: 50px;
       height: 50px;
       flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+
+    .menuOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .menu {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
     }
   }
 }
@@ -182,18 +164,18 @@
 
   :global {
     .ant-layout-sider-zero-width-trigger {
-      position: fixed; // Changed from absolute to fixed
-      top: 20px; // Adjust to vertically center in the header
-      left: 20px; // Adjust horizontal positioning if needed
-      z-index: 1000; // Ensure it's above other elements
-      background-color: $colorMain; // Optional: use your main color
-      color: white; // Optional: set icon color
-      width: 40px; // Optional: set specific width
-      height: 40px; // Optional: set specific height
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background-color: $colorMain;
+      color: white;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 8px; // Optional: rounded corners
+      border-radius: 8px;
     }
   }
 }

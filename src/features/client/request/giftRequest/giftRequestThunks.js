@@ -70,7 +70,7 @@ export const acceptGiftRequest = createAsyncThunk(
 
 export const rejectGiftRequest = createAsyncThunk('giftRequest/rejectGiftRequest', async (id, { rejectWithValue }) => {
   try {
-    const response = await giftRequestService.rejectRequestGift(id)
+    const response = await giftRequestService.rejectedRequestGift(id)
     return response.data
   } catch (error) {
     return rejectWithValue(error.response.data || 'An error occurred while accepting the request')

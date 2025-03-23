@@ -4,6 +4,7 @@ import { SearchOutlined, ReloadOutlined } from '@ant-design/icons'
 import styles from './styles.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
 import {
+  forceRefresh,
   setIsDetailsModalVisible,
   setIsModalVisible,
   setSearchText,
@@ -13,22 +14,21 @@ import PostTable from './components/PostTable'
 import PostDetailModal from './components/PostDetailModal'
 import { setPage } from 'features/admin/user/userSlice'
 import { getPostAdminPagination } from 'features/admin/post/postAdminThunks'
+import PostFormModal from './components/PostFormModal/PostFormModal'
+import { getAllCategory } from 'features/client/category/categoryThunks'
 
 const Post = () => {
   const dispatch = useDispatch()
   const [isEditing, setIsEditing] = useState(false)
 
-  const {
-    isModalVisible,
-    isDetailsModalVisible,
-    selectedPost,
-    posts,
-    searchText // Add default value for posts
-  } = useSelector(state => state.postManagement || {})
+  const { isModalVisible, isDetailsModalVisible, selectedPost, searchText } = useSelector(
+    state => state.postManagement || {}
+  )
 
   useEffect(() => {
     dispatch(setPage(1))
     dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
+    dispatch(getAllCategory())
   }, [dispatch, searchText])
 
   const handleSearch = value => {
@@ -50,6 +50,11 @@ const Post = () => {
     dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
   }
 
+  const handleSuccessUpdate = () => {
+    // Force a refresh of the table data
+    dispatch(forceRefresh())
+    dispatch(getPostAdminPagination({ current: 1, pageSize: 10, searchText }))
+  }
   return (
     <div className={styles.userManagement}>
       <h2 className={styles.titleMain} style={{ marginBottom: '20px' }}>
@@ -58,7 +63,7 @@ const Post = () => {
       <Row gutter={[16, 16]} align="middle" justify="space-between" style={{ marginBottom: '40px' }}>
         <Col xs={24} sm={6}>
           <Input
-            placeholder="Tìm kiếm người dùng"
+            placeholder="Tìm kiếm sản phẩm"
             prefix={<SearchOutlined />}
             onChange={e => handleSearch(e.target.value)}
             value={searchText}
@@ -76,6 +81,17 @@ const Post = () => {
         open={isDetailsModalVisible}
         post={selectedPost}
         onClose={() => dispatch(setIsDetailsModalVisible(false))}
+      />
+      <PostFormModal
+        visible={isModalVisible}
+        isEditing={isEditing}
+        initialPost={selectedPost}
+        onClose={() => {
+          dispatch(setIsModalVisible(false))
+          setIsEditing(false)
+        }}
+        categories={useSelector(state => state.category?.categories || [])}
+        onSuccessUpdate={handleSuccessUpdate}
       />
     </div>
   )

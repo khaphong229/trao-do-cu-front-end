@@ -14,6 +14,7 @@ import 'owl.carousel/dist/assets/owl.carousel.css'
 import 'owl.carousel/dist/assets/owl.theme.default.css'
 import CardPost from 'components/CardPost'
 import gocPtit from 'assets/images/banner/goc_ptit.jpg'
+import useCheckMobileScreen from 'hooks/useCheckMobileScreen'
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
 
@@ -24,7 +25,8 @@ const PostPTIT = () => {
   const owlCarouselRef = useRef(null)
 
   const { ptitPosts, isErrorPtit, isLoadingPtit, query } = useSelector(state => state.post)
-
+  const { user } = useSelector(state => state.auth)
+  const { isMobile } = useCheckMobileScreen()
   const pageSizeConstant = 16
 
   // Import OwlCarousel dynamically
@@ -114,7 +116,7 @@ const PostPTIT = () => {
     if (isLoadingPtit || isErrorPtit) {
       return (
         <Row gutter={[16, 16]}>
-          {[...Array(4)].map((_, index) => (
+          {[...Array(isMobile ? 2 : 4)].map((_, index) => (
             <Col xs={12} sm={12} md={8} lg={6} key={index}>
               <PostCardSkeleton />
             </Col>

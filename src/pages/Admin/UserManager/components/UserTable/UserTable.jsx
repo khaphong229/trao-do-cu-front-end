@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { Table, Button, Space, Modal, message, Input } from 'antd'
-import { EyeOutlined, PhoneOutlined, SearchOutlined, MailOutlined } from '@ant-design/icons'
+import {
+  EyeOutlined,
+  PhoneOutlined,
+  SearchOutlined,
+  MailOutlined,
+  WalletOutlined,
+  LockOutlined
+} from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 import avt from '../../../../../assets/images/logo/avtDefault.webp'
 import { deleteUser, getUserPagination } from 'features/admin/user/userThunks'
 import { setPage, setPerPage } from 'features/admin/user/userSlice'
+import { URL_SERVER_IMAGE } from 'config/url_server'
 
 const UserTable = ({ onEdit, onViewDetails }) => {
   const dispatch = useDispatch()
@@ -76,9 +84,10 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       title: 'Ảnh người dùng',
       dataIndex: 'avatar',
       key: 'avatar',
-      render: avatar => (
-        <img src={avatar || avt} alt="avatar-user" width={50} height={50} style={{ objectFit: 'cover' }} />
-      )
+      render: (avatar, record) => {
+        const avatarUrl = avatar ? `${URL_SERVER_IMAGE}${avatar}` : avt
+        return <img src={avatarUrl} alt="avatar-user" width={50} height={50} style={{ objectFit: 'cover' }} />
+      }
     },
     {
       title: 'Tên người dùng',
@@ -212,6 +221,52 @@ const UserTable = ({ onEdit, onViewDetails }) => {
       ),
       onFilter: (value, record) => record.phone.toString().toLowerCase().includes(value.toLowerCase()),
       filterIcon: filtered => <PhoneOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    },
+    {
+      title: 'Sinh viên PTIT',
+      dataIndex: 'isPtiter',
+      key: 'isPtiter',
+      render: isPtiter => (
+        <div
+          style={{
+            padding: '4px 8px',
+            borderRadius: '4px',
+            backgroundColor: isPtiter ? '#e6f7ff' : '#fff1f0',
+            color: isPtiter ? '#1890ff' : '#ff4d4f',
+            border: `1px solid ${isPtiter ? '#91d5ff' : '#ffa39e'}`,
+            textAlign: 'center',
+            fontWeight: 500
+          }}
+        >
+          {isPtiter ? 'Có' : 'Không'}
+        </div>
+      ),
+      filters: [
+        { text: 'Có', value: true },
+        { text: 'Không', value: false }
+      ],
+      onFilter: (value, record) => record.isPtiter === value,
+      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    },
+    {
+      title: 'Số dư PCoin',
+      dataIndex: 'pcoin_balance',
+      key: 'pcoin_balance',
+      render: pcoin_balance => (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <WalletOutlined style={{ color: '#1890ff' }} />
+            <span>Tổng: {pcoin_balance?.total || 0}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+            <LockOutlined style={{ color: '#ff4d4f' }} />
+            <span>Đã khóa: {pcoin_balance?.locked || 0}</span>
+          </div>
+        </div>
+      ),
+      sorter: {
+        compare: (a, b) => (a.pcoin_balance?.total || 0) - (b.pcoin_balance?.total || 0)
+      }
     },
     {
       title: 'Thao tác',

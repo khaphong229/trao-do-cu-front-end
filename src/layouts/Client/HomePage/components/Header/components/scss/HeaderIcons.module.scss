@@ -44,7 +44,7 @@
   }
 
   .Button {
-    padding: 0 4px;
+    padding: 0 10px;
     font-size: 12px;
   }
 
@@ -60,5 +60,18 @@
     width: 28px !important;
     height: 28px !important;
     min-width: 28px !important;
+  }
+}
+
+.pcoinWrap {
+  display: flex;
+  align-items: center;
+  .textPcoin {
+    color: white;
+  }
+
+  .pcoin {
+    width: 40px;
+    height: 40px;
   }
 }

@@ -95,7 +95,13 @@ export const useGiftRequest = () => {
         }
       }
     } catch (error) {
-      message.error('Không thể cập nhật thông tin liên hệ')
+      if (error?.detail) {
+        Object.entries(error.detail).forEach(([field, errorMessage]) => {
+          message.error(`${errorMessage} Vui lòng nhập đầy đủ!`)
+        })
+      } else {
+        message.error('Không thể cập nhật thông tin liên hệ')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -162,7 +168,7 @@ export const useGiftRequest = () => {
           message.error(msg || 'Có lỗi xảy ra khi gửi yêu cầu')
         }
       } else if (status === 403) {
-        notifi.warning(msg)
+        notifi.warning('Thông báo', msg)
         dispatch(setAcceptModalVisible(false))
       }
       return { success: false }

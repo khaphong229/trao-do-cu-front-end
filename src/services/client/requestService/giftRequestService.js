@@ -56,6 +56,12 @@ const giftRequestService = {
       status: status
     })
   },
+  rejectedRequestGift(id, status = 'rejected') {
+    return this.http.patch('/request_gift', {
+      _id: id,
+      status: status
+    })
+  },
   rejectRequestGift(id) {
     return this.http.delete(`/request_gift/${id}`)
   },

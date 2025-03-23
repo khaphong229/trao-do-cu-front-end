@@ -27,7 +27,7 @@
 
 .notificationList {
   .notificationItem {
-    padding: 12px 16px;
+    padding: 8px 12px; // Giảm padding để giảm khoảng cách giữa các thông báo
     transition: background-color 0.3s;
     cursor: pointer;
 
@@ -36,11 +36,15 @@
     }
 
     &.unread {
-      background-color: #f5f5f5;
+      background-color: #ffffff; // Màu nền cho thông báo chưa đọc
 
       &:hover {
-        background-color: #dadada;
+        background-color: #f0f0f0;
       }
+    }
+
+    &.read {
+      background-color: #f9f9f9; // Màu nền nhạt cho thông báo đã đọc
     }
   }
 }
@@ -77,4 +81,38 @@
 .itemTitle {
   display: block;
   word-break: break-word;
+}
+
+.notificationIcon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.notificationType {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 8px;
+
+  &.exchange {
+    background-color: #e6f7ff; // Màu xanh dương nhạt cho trao đổi
+    color: #1890ff;
+  }
+
+  &.receive {
+    background-color: #f6ffed; // Màu xanh lá nhạt cho trao tặng
+    color: #52c41a;
+  }
+
+  &.success {
+    background-color: #fff7e6; // Màu cam nhạt cho thành công
+    color: #fa8c16;
+  }
+
+  &.other {
+    background-color: #f0f0f0; // Màu xám nhạt cho loại khác
+    color: #666;
+  }
 }

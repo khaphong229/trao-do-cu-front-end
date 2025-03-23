@@ -1,5 +1,5 @@
 import { Button, Card, Tabs, Badge, Tooltip, Image, Upload, message, Checkbox, Input, Select } from 'antd'
-import { ClockCircleOutlined, EnvironmentOutlined, CameraOutlined } from '@ant-design/icons'
+import { ClockCircleOutlined, EnvironmentOutlined, CameraOutlined, PlusOutlined } from '@ant-design/icons'
 import Avatar from 'assets/images/logo/avtDefault.webp'
 import styles from '../scss/ProfileUser.module.scss'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,7 +11,6 @@ import Title from 'antd/es/skeleton/Title'
 import { useAvatar } from 'hooks/useAvatar'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import Location from 'pages/Client/Post/CreatePost/components/Modal/Location'
-import logger from 'utils/logger'
 const { TabPane } = Tabs
 
 const ProfilePage = () => {
@@ -43,7 +42,8 @@ const ProfilePage = () => {
     isPtiter: false,
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    avatar: ''
   })
   const [savePassword, setSavePassword] = useState(false)
 
@@ -71,14 +71,26 @@ const ProfilePage = () => {
         },
         currentPassword: '',
         newPassword: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        avatar: userData?.avatar
       })
     }
   }, [userData])
 
   const handleInputChange = e => {
     const { id, value } = e.target
-    setFormData(prev => ({ ...prev, [id]: value }))
+
+    if (id === 'facebook') {
+      setFormData(prev => ({
+        ...prev,
+        social_media: {
+          ...prev.social_media,
+          facebook: value
+        }
+      }))
+    } else {
+      setFormData(prev => ({ ...prev, [id]: value }))
+    }
   }
 
   const handleSelectChange = value => {
@@ -91,14 +103,40 @@ const ProfilePage = () => {
 
   const handleUpdateMe = async () => {
     try {
-      delete formData.address
+      // Validate required fields
+      const requiredFields = {
+        name: 'Họ và tên',
+        phone: 'Số điện thoại',
+        gender: 'Giới tính'
+      }
 
+      const missingFields = []
+      for (const [field, label] of Object.entries(requiredFields)) {
+        if (!formData[field]) {
+          missingFields.push(label)
+        }
+      }
+
+      if (missingFields.length > 0) {
+        message.error(`Vui lòng điền đầy đủ thông tin: ${missingFields.join(', ')}`)
+        return
+      }
+
+      delete formData.address
       const response = await dispatch(updateUserProfile(formData)).unwrap()
+
       if (response.status === 201) {
         message.success(response.message)
       }
     } catch (error) {
-      message.error('Cập nhật thông tin thất bại', error.message)
+      if (error.detail) {
+        // Handle specific API validation errors
+        Object.entries(error.detail).forEach(([field, errorMessage]) => {
+          message.error(`Lỗi ${field}: ${errorMessage}`)
+        })
+      } else {
+        message.error(error.message || 'Có lỗi xảy ra khi cập nhật thông tin')
+      }
     }
   }
 
@@ -142,15 +180,24 @@ const ProfilePage = () => {
 
       if (uploadResponse.success && uploadResponse.files?.[0]) {
         const newAvatarUrl = uploadResponse.files[0].filepath
+        // Cập nhật profile với avatar mới
         const response = await dispatch(
           updateUserProfile({
-            avatar: newAvatarUrl
+            avatar: newAvatarUrl,
+            // Thêm các thông tin hiện tại của user để tránh mất dữ liệu
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            gender: formData.gender,
+            isPtiter: formData.isPtiter,
+            social_media: formData.social_media
           })
         ).unwrap()
-        logger.log(response)
+
         if (response.status === 201) {
           message.success('Upload ảnh thành công')
-          dispatch(getCurrentUser(false))
+          // Cập nhật lại thông tin user sau khi upload thành công
+          await dispatch(getCurrentUser(false))
           onSuccess(uploadResponse)
         } else {
           message.error('Upload ảnh thất bại')
@@ -266,6 +313,10 @@ const ProfilePage = () => {
                 <Input id="name" value={formData.name} onChange={handleInputChange} />
               </div>
               <div className={styles['form-group']}>
+                <label htmlFor="email">Email</label>
+                <Input id="email" value={formData.email} readOnly />
+              </div>
+              <div className={styles['form-group']}>
                 <label htmlFor="phone">Số điện thoại</label>
                 <Input
                   id="phone"
@@ -275,18 +326,31 @@ const ProfilePage = () => {
                 />
               </div>
               <div className={styles['form-group']}>
-                <label htmlFor="address">Địa chỉ mặc định</label>
-                <Input
-                  id="address"
-                  placeholder="Nhập địa chỉ"
-                  value={formData.address ? getDefaultAddress(formData.address) : ''}
-                  onChange={handleInputChange}
-                />
+                <label htmlFor="facebook">Facebook</label>
+                <Input id="facebook" value={formData.social_media.facebook} onChange={handleInputChange} />
               </div>
               <div className={styles['form-group']}>
-                <label htmlFor="email">Email</label>
-                <Input id="email" value={formData.email} readOnly />
+                <label htmlFor="address">Địa chỉ mặc định</label>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: 10
+                  }}
+                >
+                  <Input
+                    id="address"
+                    placeholder="Nhập địa chỉ"
+                    value={formData.address ? getDefaultAddress(formData.address) : ''}
+                    onChange={handleInputChange}
+                  />
+                  <Button
+                    className={styles['button-add']}
+                    icon={<PlusOutlined />}
+                    onClick={() => navigate('/profile?tab=location')}
+                  />
+                </div>
               </div>
+
               <div className={styles['form-group']}>
                 <label htmlFor="gender">Giới tính</label>
                 <Select
@@ -307,13 +371,13 @@ const ProfilePage = () => {
               </div> */}
 
               <div className={styles['form-actions1']}>
-                <Button type="primary" block style={{ width: '100px' }} onClick={handleUpdateMe}>
+                <Button type="primary" block style={{ width: '100px', marginLeft: 'auto' }} onClick={handleUpdateMe}>
                   Thay đổi
                 </Button>
               </div>
             </TabPane>
 
-            <TabPane tab="Danh sách địa chỉ">
+            <TabPane tab="Danh sách địa chỉ" key="location">
               <Location isInProfile={true} />
             </TabPane>
 

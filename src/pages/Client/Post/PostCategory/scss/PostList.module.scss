@@ -188,3 +188,11 @@ $transition-base: all 0.3s ease;
 .userText {
   margin-top: 10px;
 }
+
+.itemLove {
+  color: #ff4d4f;
+  margin-top: 10px !important;
+  @media screen and (max-width: 380px) {
+    font-size: 12px !important;
+  }
+}

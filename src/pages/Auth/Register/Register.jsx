@@ -6,7 +6,6 @@ import { registerUser } from 'features/auth/authThunks'
 import Policy from 'components/Policy'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { SITE_KEY } from 'config/url_server'
-
 const Register = () => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
@@ -45,8 +44,10 @@ const Register = () => {
           errors: [msg]
         }))
         form.setFields(errorListForm)
+      } else if (error.status === 500 && error.message.includes('reCAPTCHA')) {
+        message.error('Xác thực reCAPTCHA thất bại. Vui lòng thử lại.')
       } else {
-        message.error(error.response?.data?.message || 'Có lỗi xảy ra')
+        message.error(error.message || 'Có lỗi xảy ra')
       }
       recaptchaRef.current?.reset()
     }

@@ -76,7 +76,7 @@ export const rejectExchangeRequest = createAsyncThunk(
   'exchangeRequest/rejectExchangeRequest',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await exchangeRequestService.rejectRequestExchange(id)
+      const response = await exchangeRequestService.rejectedRequestExchange(id)
       return response.data
     } catch (error) {
       return rejectWithValue(error.response.data || 'An error occurred while accepting the request')
