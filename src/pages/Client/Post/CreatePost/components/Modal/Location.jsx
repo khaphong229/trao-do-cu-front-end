@@ -37,7 +37,7 @@ const Location = ({ location, setLocation, isInProfile = false, isPtiterOnly = f
     }
   }, [location, user])
 
-  // Tách riêng useEffect xử lý isPtiterOnly
+  // Sửa lại useEffect xử lý isPtiterOnly
   useEffect(() => {
     if (isPtiterOnly) {
       const ptitAddress = 'Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội'
@@ -46,9 +46,10 @@ const Location = ({ location, setLocation, isInProfile = false, isPtiterOnly = f
         setLocation(ptitAddress)
       }
     } else {
-      // Chỉ cập nhật khi chuyển từ PTIT sang normal mode
+      // Khi chuyển từ PTIT sang normal mode, chọn lại địa chỉ mặc định
       const defaultAddress = addresses.find(addr => addr.isDefault)
-      if (defaultAddress && location === 'Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội') {
+      if (defaultAddress) {
+        setSelectedAddressIndex(addresses.indexOf(defaultAddress))
         setLocation(defaultAddress.address)
       }
     }
@@ -300,10 +301,6 @@ const Location = ({ location, setLocation, isInProfile = false, isPtiterOnly = f
       isPtitAddress: true
     }
 
-    if (isPtiterOnly) {
-      return [ptitAddress]
-    }
-
     let filteredAddresses = [...addresses]
 
     // Sắp xếp địa chỉ với địa chỉ mặc định lên đầu
@@ -312,9 +309,14 @@ const Location = ({ location, setLocation, isInProfile = false, isPtiterOnly = f
       return a.isDefault ? -1 : 1
     })
 
-    // Chỉ thêm địa chỉ PTIT vào cuối nếu user là sinh viên PTIT
-    if (user?.isPtiter && !isPtiterOnly) {
-      filteredAddresses = [...filteredAddresses, ptitAddress]
+    if (user?.isPtiter) {
+      if (isPtiterOnly) {
+        // Khi chọn chế độ PTIT, địa chỉ PTIT lên đầu
+        return [ptitAddress, ...filteredAddresses]
+      } else {
+        // Khi không chọn chế độ PTIT, địa chỉ PTIT ở cuối
+        return [...filteredAddresses, ptitAddress]
+      }
     }
 
     return filteredAddresses

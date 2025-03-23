@@ -87,8 +87,10 @@ const NotificationItem = ({ notification, onClick, navigate, setDropdownVisible 
           title={
             <Text className={styles.itemTitle}>
               {content}
-              <span className={`${styles.notificationType} ${styles[getNotificationTypeClass(notification.type)]}`}>
-                {notification.type}
+              <span
+                className={`${styles.notificationType} ${styles[getNotificationTypeClass(notification.type, notification.isApproved)]}`}
+              >
+                {notification.isApproved ? 'Thành công' : notification.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
               </span>
             </Text>
           }

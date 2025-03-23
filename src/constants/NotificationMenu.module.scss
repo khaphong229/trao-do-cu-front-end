@@ -96,18 +96,23 @@
   font-weight: bold;
   margin-left: 8px;
 
-  &.request {
-    background-color: #e6f7ff; // Màu xanh dương nhạt cho yêu cầu
+  &.exchange {
+    background-color: #e6f7ff; // Màu xanh dương nhạt cho trao đổi
     color: #1890ff;
   }
 
   &.receive {
-    background-color: #f6ffed; // Màu xanh lá nhạt cho nhận
+    background-color: #f6ffed; // Màu xanh lá nhạt cho trao tặng
     color: #52c41a;
   }
 
-  &.other {
-    background-color: #fff7e6; // Màu cam nhạt cho loại khác
+  &.success {
+    background-color: #fff7e6; // Màu cam nhạt cho thành công
     color: #fa8c16;
+  }
+
+  &.other {
+    background-color: #f0f0f0; // Màu xám nhạt cho loại khác
+    color: #666;
   }
 }
