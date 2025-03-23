@@ -192,59 +192,22 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
 
   // Modify the image display section
   const renderImageSection = () => {
-    if (imagePreview.length > 0 && !isEditingImages) {
-      return (
-        <div className={styles.imageGallery}>
-          <div className={styles.imageGrid}>
-            {imagePreview.map((image, index) => (
-              <div key={image.uid} className={styles.imageContainer}>
-                <img src={image.url || image.thumbUrl} alt={`Product ${index + 1}`} />
-              </div>
-            ))}
-          </div>
-          <Button type="primary" onClick={toggleEditMode} icon={<FileImageOutlined />} className={styles.editButton}>
-            Chỉnh sửa ảnh
-          </Button>
-        </div>
-      )
-    }
-
     return (
-      <div>
-        {isEditingImages && (
-          <Button onClick={toggleEditMode} icon={<ArrowLeftOutlined />} style={{ marginBottom: '16px' }}>
-            Quay lại
-          </Button>
-        )}
-        <Dragger
-          name="images"
-          multiple={true}
-          onChange={handleImageUpload}
-          onRemove={handleRemove}
-          accept="image/*"
-          fileList={imagePreview}
-          style={customStyles.uploadArea}
-          customRequest={({ onSuccess }) => {
-            onSuccess('ok', null)
-          }}
-          showUploadList={{
-            showDownloadIcon: false,
-            showRemoveIcon: true
-          }}
-        >
-          <p className="ant-upload-drag-icon">
-            <FileImageOutlined />
-          </p>
-          <p className="ant-upload-text">Nhấp hoặc kéo thả ảnh vào đây</p>
-          <p className="ant-upload-hint">Hỗ trợ tải lên nhiều ảnh</p>
-        </Dragger>
+      <div className={styles.imageGallery}>
+        <div className={styles.imageGrid}>
+          {imagePreview.map((image, index) => (
+            <div key={image.uid} className={styles.imageContainer}>
+              <img src={image.url || image.thumbUrl} alt={`Product ${index + 1}`} />
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
 
   return (
     <Modal
-      title={isEditing ? 'Chỉnh sửa bài đăng' : 'Thêm bài đăng mới'}
+      title="Chỉnh sửa bài đăng"
       open={visible}
       onCancel={onClose}
       width={800}
@@ -253,28 +216,11 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
       maskClosable={!isSubmitting}
       closable={!isSubmitting}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        className={styles.postForm}
-        initialValues={{
-          isPtiterOnly: false,
-          type: 'exchange',
-          pcoin_config: {
-            reward_amount: 0,
-            required_amount: 0
-          }
-        }}
-      >
+      <Form form={form} layout="vertical" onFinish={handleSubmit} className={styles.postForm}>
         <Row gutter={16}>
           <Col xs={24} md={12}>
-            <Form.Item
-              name="title"
-              label="Tên sản phẩm"
-              rules={[{ required: true, message: 'Vui lòng nhập tên sản phẩm' }]}
-            >
-              <Input prefix={<ShoppingOutlined />} placeholder="Nhập tên sản phẩm" />
+            <Form.Item name="title" label="Tên sản phẩm">
+              <Input prefix={<ShoppingOutlined />} disabled />
             </Form.Item>
           </Col>
         </Row>
@@ -283,37 +229,21 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
           <div className="ant-form-item-label">
             <label>Ảnh sản phẩm</label>
           </div>
-          <Form.Item
-            name="image_url"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-            style={customStyles.noDottedLines}
-            noStyle
-          >
-            {renderImageSection()}
-          </Form.Item>
+          {renderImageSection()}
         </div>
 
         <Row gutter={16}>
           <Col xs={24} md={12}>
-            <Form.Item
-              name="type"
-              label="Loại giao dịch"
-              rules={[{ required: true, message: 'Vui lòng chọn loại giao dịch' }]}
-            >
-              <Select>
+            <Form.Item name="type" label="Loại giao dịch">
+              <Select disabled>
                 <Option value="exchange">Trao đổi</Option>
                 <Option value="gift">Trao tặng</Option>
               </Select>
             </Form.Item>
           </Col>
           <Col xs={24} md={12}>
-            <Form.Item
-              name="category_id"
-              label="Thể loại"
-              rules={[{ required: true, message: 'Vui lòng chọn thể loại' }]}
-            >
-              <Select placeholder="Chọn thể loại">
+            <Form.Item name="category_id" label="Thể loại">
+              <Select placeholder="Chọn thể loại" disabled>
                 {categories?.map(category => (
                   <Option key={category._id} value={category._id}>
                     {category.name}
@@ -324,12 +254,8 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
           </Col>
         </Row>
 
-        <Form.Item
-          name="specificLocation"
-          label="Địa chỉ"
-          rules={[{ required: true, message: 'Vui lòng nhập địa chỉ' }]}
-        >
-          <Input prefix={<EnvironmentOutlined />} placeholder="Nhập địa chỉ cụ thể" />
+        <Form.Item name="specificLocation" label="Địa chỉ">
+          <Input prefix={<EnvironmentOutlined />} disabled />
         </Form.Item>
 
         <div className={styles.configSection}>
@@ -343,6 +269,7 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
                     <GiftOutlined style={{ color: '#52c41a' }} /> Số Pcoin thưởng
                   </span>
                 }
+                rules={[{ required: true, message: 'Vui lòng nhập số Pcoin thưởng' }]}
               >
                 <InputNumber min={0} style={{ width: '100%' }} />
               </Form.Item>
@@ -355,6 +282,7 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
                     <WalletOutlined style={{ color: '#1890ff' }} /> Số Pcoin yêu cầu
                   </span>
                 }
+                rules={[{ required: true, message: 'Vui lòng nhập số Pcoin yêu cầu' }]}
               >
                 <InputNumber min={0} style={{ width: '100%' }} />
               </Form.Item>
@@ -363,12 +291,12 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
         </div>
 
         <Form.Item name="isPtiterOnly" label="Sản phẩm góc PTIT" valuePropName="checked">
-          <Switch />
+          <Switch disabled />
         </Form.Item>
 
         <Form.Item className={styles.submitButton}>
           <Button type="primary" htmlType="submit" block loading={isSubmitting} disabled={isSubmitting}>
-            {isEditing ? 'Cập nhật' : 'Thêm mới'}
+            Cập nhật
           </Button>
         </Form.Item>
       </Form>
