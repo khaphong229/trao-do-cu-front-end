@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Checkbox, message, Modal, Steps, theme } from 'antd'
+import { Alert, Button, Checkbox, message, Modal, Steps, theme } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { updatePostData } from 'features/client/post/postSlice'
 import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { setCategoryModalVisibility } from 'features/client/post/postSlice'
-
+import Marquee from 'react-fast-marquee'
 import UserInfoSection from 'pages/Client/Post/CreatePost/components/UserInfo'
 import PostContentEditor from 'pages/Client/Post/CreatePost/components/PostContent'
 import PostToolbar from 'pages/Client/Post/CreatePost/components/PostToolbar'
@@ -29,6 +29,7 @@ const PostForm = ({
   onContactInfoSubmit
 }) => {
   const { token } = theme.useToken()
+  const { selectedPostExchange } = useSelector(state => state.exchangeRequest)
   const [current, setCurrent] = useState(0)
   const dispatch = useDispatch()
   const {
@@ -267,6 +268,19 @@ const PostForm = ({
     marginTop: 16
   }
 
+  const renderText = () => {
+    if (selectedPostExchange?.pcoin_config) {
+      if (
+        selectedPostExchange?.pcoin_config?.required_amount === 0 ||
+        selectedPostExchange?.pcoin_config?.required_amount === undefined
+      ) {
+        return 'Sản phẩm này miễn phí nhé bạn!'
+      } else {
+        return `Để đổi sản phẩm này bạn phải có ít nhất ${selectedPostExchange?.pcoin_config?.required_amount} P-Coin`
+      }
+    }
+  }
+
   return (
     <>
       <Modal
@@ -287,6 +301,22 @@ const PostForm = ({
           //   title: item.title
           // }))}
         />
+
+        {contentType === 'exchange' &&
+          selectedPostExchange?.pcoin_config?.required_amount !== 0 &&
+          selectedPostExchange?.pcoin_config?.required_amount !== undefined && (
+            <Alert
+              style={{
+                marginBottom: 10
+              }}
+              banner
+              message={
+                <Marquee pauseOnHover gradient={false}>
+                  {renderText()}
+                </Marquee>
+              }
+            />
+          )}
 
         <div style={contentStyle}>{steps[current].content}</div>
 

@@ -55,6 +55,12 @@ const exchangeRequestService = {
       status: status
     })
   },
+  rejectedRequestExchange(id, status = 'rejected') {
+    return this.http.patch('/request_exchange', {
+      _id: id,
+      status: status
+    })
+  },
   rejectRequestExchange(id) {
     return this.http.delete(`/request_exchange/${id}`)
   },
