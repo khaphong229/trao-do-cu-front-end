@@ -126,8 +126,6 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
           reason: ''
         }
 
-        console.log('Sending data:', requestData) // Log để kiểm tra
-
         const result = await dispatch(approvalStatus(requestData)).unwrap()
 
         message.success('Cập nhật bài đăng thành công')
