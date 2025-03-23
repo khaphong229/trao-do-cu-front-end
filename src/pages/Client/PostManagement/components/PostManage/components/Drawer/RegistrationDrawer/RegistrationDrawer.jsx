@@ -54,15 +54,13 @@ export const RegistrationDrawer = ({
 
     let sorted = [...receiveRequests]
 
-    // Sắp xếp theo trạng thái trước (accepted luôn lên đầu)
-    sorted.sort((a, b) => {
+    // Sort by both status and time in one go
+    sorted = sorted.sort((a, b) => {
+      // First, sort by status (accepted first)
       if (a.status === 'accepted' && b.status !== 'accepted') return -1
       if (a.status !== 'accepted' && b.status === 'accepted') return 1
-      return 0
-    })
 
-    // Sau đó sắp xếp theo thời gian trong mỗi nhóm
-    sorted = sorted.sort((a, b) => {
+      // Then, within the same status group, sort by time
       if (sortOrder === 'newest') {
         return new Date(b.created_at) - new Date(a.created_at)
       } else {

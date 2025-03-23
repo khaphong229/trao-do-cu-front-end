@@ -57,15 +57,13 @@ export const ExchangeDrawer = ({
 
     let sorted = [...exchangeRequests]
 
-    // Sắp xếp theo trạng thái trước (accepted luôn lên đầu)
-    sorted.sort((a, b) => {
+    // Combine both status and time sorting in a single sort operation
+    sorted = sorted.sort((a, b) => {
+      // First prioritize by status (accepted first)
       if (a.status === 'accepted' && b.status !== 'accepted') return -1
       if (a.status !== 'accepted' && b.status === 'accepted') return 1
-      return 0
-    })
 
-    // Sau đó sắp xếp theo thời gian trong mỗi nhóm
-    sorted = sorted.sort((a, b) => {
+      // Then, for requests with the same status, sort by time
       if (sortOrder === 'newest') {
         return new Date(b.created_at) - new Date(a.created_at)
       } else {

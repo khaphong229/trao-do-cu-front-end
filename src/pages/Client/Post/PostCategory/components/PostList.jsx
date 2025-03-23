@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Row, Col, Card, Button, Avatar, Tabs, Typography, Select, Pagination, Tooltip } from 'antd'
-import { GiftOutlined, SwapOutlined } from '@ant-design/icons'
+import { GiftOutlined, HeartFilled, HeartOutlined, SwapOutlined } from '@ant-design/icons'
 import TabPane from 'antd/es/tabs/TabPane'
 import styles from '../scss/PostList.module.scss'
 import imageNotFound from 'assets/images/others/imagenotfound.webp'
@@ -23,8 +23,7 @@ import PostCardRowSkeleton from 'components/common/Skeleton/PostCardRowSkeleton'
 import { locationService } from 'services/client/locationService'
 import { getAvatarPost } from 'hooks/useAvatar'
 import logoptit from 'assets/images/logo/Ptit-penannt.png'
-const { Text } = Typography
-
+const { Text, Paragraph } = Typography
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
 const PostList = () => {
@@ -320,6 +319,19 @@ const PostList = () => {
                   <div className={styles.userText}>
                     <Avatar className={styles.avtUser} src={getAvatarPost(item?.user_id)} />
                     <Text className={styles.TextUser}>{item?.user_id?.name}</Text>
+                  </div>
+                  <div className={styles.itemLove}>
+                    {item.display_request_count > 0 ? (
+                      <>
+                        <HeartFilled style={{ marginRight: 8, color: '#f5222d' }} />
+                        <span style={{ color: '#f5222d' }}>{item.display_request_count || 0} người yêu thích</span>
+                      </>
+                    ) : (
+                      <>
+                        <HeartOutlined style={{ marginRight: 8, color: '#bfbfbf' }} />
+                        <span style={{ color: '#bfbfbf' }}>{item.display_request_count || 0} người yêu thích</span>
+                      </>
+                    )}
                   </div>
                   <div className={styles.TimeRole}>
                     <span className={styles.time}>
