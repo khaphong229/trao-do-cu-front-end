@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Modal, Form, Input, Select, Button, Row, Col, message, Upload, InputNumber, Switch } from 'antd'
 import {
   FileImageOutlined,
-  TagOutlined,
   EnvironmentOutlined,
   GiftOutlined,
   WalletOutlined,
