@@ -146,7 +146,6 @@ const ProfilePage = () => {
             avatar: newAvatarUrl
           })
         ).unwrap()
-        logger.log(response)
         if (response.status === 201) {
           message.success('Upload ảnh thành công')
           dispatch(getCurrentUser(false))
