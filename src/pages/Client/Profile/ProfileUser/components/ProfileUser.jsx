@@ -11,7 +11,6 @@ import Title from 'antd/es/skeleton/Title'
 import { useAvatar } from 'hooks/useAvatar'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import Location from 'pages/Client/Post/CreatePost/components/Modal/Location'
-import logger from 'utils/logger'
 const { TabPane } = Tabs
 
 const ProfilePage = () => {

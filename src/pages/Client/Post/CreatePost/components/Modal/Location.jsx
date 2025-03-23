@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { message, Button, List, Radio, Space, Typography, Tag } from 'antd'
+import { message, Button, List, Radio, Space, Typography, Tag, Popconfirm } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { setEdittingAddress, updatePostData } from 'features/client/post/postSlice'
 import AddressSelection from 'components/common/AddressSelection'
@@ -343,11 +343,16 @@ const Location = ({ location, setLocation, isInProfile = false, isPtiterOnly = f
               !address.isPtitAddress
                 ? [
                     <EditOutlined key="edit" onClick={() => handleEditAddress(index)} style={{ color: '#1890ff' }} />,
-                    <DeleteOutlined
-                      key="delete"
-                      onClick={() => handleDeleteAddress(index)}
-                      style={{ color: '#ff4d4f' }}
-                    />
+                    <Popconfirm
+                      title="Xóa địa chỉ"
+                      description="Bạn có chắc chắn muốn xóa địa chỉ này không?"
+                      okText="Chắc chắn"
+                      cancelText="Hủy"
+                      onConfirm={() => handleDeleteAddress(index)}
+                      placement="topRight"
+                    >
+                      <DeleteOutlined key="delete" style={{ color: '#ff4d4f' }} />
+                    </Popconfirm>
                   ]
                 : []
             }

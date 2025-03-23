@@ -152,10 +152,6 @@ const PostPTIT = () => {
     }
   }
 
-  if (!user?.isPtiter) {
-    return null
-  }
-
   return (
     <div className={styles.saleBannerContainer}>
       <div className={styles.ptitContainer}>

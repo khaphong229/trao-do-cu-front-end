@@ -63,7 +63,7 @@ const NotificationDetail = ({ notification }) => {
     } else {
       return (
         <Tag icon={<ClockCircleOutlined />} color="processing">
-          Chờ duyệt
+          Chờ đồng ý
         </Tag>
       )
     }

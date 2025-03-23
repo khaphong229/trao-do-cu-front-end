@@ -111,7 +111,7 @@ const App = ({ children }) => {
             {
               key: '3',
               icon: <BsPostcardFill />,
-              label: <Link to="/admin/post">Bài đăng</Link>
+              label: <Link to="/admin/post">Sản phẩm</Link>
             },
             {
               key: '4',

@@ -334,7 +334,7 @@ export const ExchangeDrawer = ({
               </div>
               <Badge
                 status={request.status === 'accepted' ? 'success' : 'processing'}
-                text={request.status === 'accepted' ? 'Được nhận' : 'Chờ duyệt'}
+                text={request.status === 'accepted' ? 'Được nhận' : 'Chờ đồng ý'}
                 className={`${styles.statusBadge} ${styles[request.status]}`}
               />
             </div>
