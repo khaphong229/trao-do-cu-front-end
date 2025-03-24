@@ -272,7 +272,8 @@ const PostForm = ({
     if (selectedPostExchange?.pcoin_config) {
       if (
         selectedPostExchange?.pcoin_config?.required_amount === 0 ||
-        selectedPostExchange?.pcoin_config?.required_amount === undefined
+        selectedPostExchange?.pcoin_config?.required_amount === undefined ||
+        selectedPostExchange?.pcoin_config?.required_amount === null
       ) {
         return 'Sản phẩm này miễn phí nhé bạn!'
       } else {
@@ -304,7 +305,8 @@ const PostForm = ({
 
         {contentType === 'exchange' &&
           selectedPostExchange?.pcoin_config?.required_amount !== 0 &&
-          selectedPostExchange?.pcoin_config?.required_amount !== undefined && (
+          selectedPostExchange?.pcoin_config?.required_amount !== undefined &&
+          selectedPostExchange?.pcoin_config?.required_amount !== null && (
             <Alert
               style={{
                 marginBottom: 10

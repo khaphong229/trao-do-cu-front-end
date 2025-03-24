@@ -27,7 +27,7 @@
 
 .notificationList {
   .notificationItem {
-    padding: 8px 12px; // Giảm padding để giảm khoảng cách giữa các thông báo
+    padding: 12px 16px;
     transition: background-color 0.3s;
     cursor: pointer;
 
@@ -36,15 +36,11 @@
     }
 
     &.unread {
-      background-color: #ffffff; // Màu nền cho thông báo chưa đọc
+      background-color: #f5f5f5;
 
       &:hover {
-        background-color: #f0f0f0;
+        background-color: #dadada;
       }
-    }
-
-    &.read {
-      background-color: #f9f9f9; // Màu nền nhạt cho thông báo đã đọc
     }
   }
 }

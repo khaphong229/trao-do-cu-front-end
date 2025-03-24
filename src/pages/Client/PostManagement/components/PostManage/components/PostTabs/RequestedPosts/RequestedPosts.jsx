@@ -87,6 +87,11 @@ const RequestedPosts = () => {
   }
 
   const getStatusTag = (postStatus, requestStatus) => {
+    // Add null checks for postStatus
+    if (!postStatus) {
+      return <Tag color="default">Không xác định</Tag>
+    }
+
     let typeCheck
     if (postStatus === 'inactive' && requestStatus === 'accepted') {
       typeCheck = 'acp'
@@ -107,16 +112,24 @@ const RequestedPosts = () => {
       title: 'Hình ảnh',
       key: 'postImage',
       width: 120,
-      render: (_, record) => (
-        <Image
-          src={record?.post_id?.image_url[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : imgNotFound}
-          alt="Post image"
-          style={{ width: 100, height: 100, objectFit: 'cover' }}
-          fallback={avt}
-          preview={false}
-          onClick={e => handlePostClick(record, e)}
-        />
-      )
+      render: (_, record) => {
+        // Add null check for post_id
+        if (!record?.post_id) {
+          return (
+            <Image src={imgNotFound} alt="Image not found" style={{ width: 100, height: 100, objectFit: 'cover' }} />
+          )
+        }
+        return (
+          <Image
+            src={record?.post_id?.image_url?.[0] ? `${URL_SERVER_IMAGE}${record.post_id.image_url[0]}` : imgNotFound}
+            alt="Post image"
+            style={{ width: 100, height: 100, objectFit: 'cover' }}
+            fallback={avt}
+            preview={false}
+            onClick={e => handlePostClick(record, e)}
+          />
+        )
+      }
     },
     {
       title: 'Sản phẩm',
@@ -124,24 +137,30 @@ const RequestedPosts = () => {
       key: 'title',
       width: 150,
       fixed: 'left',
-      render: text => <Text strong>{text}</Text>
+      render: text => <Text strong>{text || 'Không có tiêu đề'}</Text>
     },
     {
       title: 'Người trao đồ',
       key: 'owner',
       width: 200,
-      render: (_, record) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Avatar src={getAvatarPost(record?.post_id?.user_id)} size={40} />
-          <div>
-            <Text strong>{record?.post_id?.user_id?.name || 'Không xác định'}</Text>
-            <br />
-            <Text type="secondary">
-              {record?.post_id?.user_id?.email ? `xxxx${record?.post_id?.user_id?.email.slice(-12)}` : ''}
-            </Text>
+      render: (_, record) => {
+        // Add null check for post_id
+        if (!record?.post_id) {
+          return <Text>Không có dữ liệu</Text>
+        }
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Avatar src={getAvatarPost(record?.post_id?.user_id)} size={40} />
+            <div>
+              <Text strong>{record?.post_id?.user_id?.name || 'Không xác định'}</Text>
+              <br />
+              <Text type="secondary">
+                {record?.post_id?.user_id?.email ? `xxxx${record?.post_id?.user_id?.email.slice(-12)}` : ''}
+              </Text>
+            </div>
           </div>
-        </div>
-      )
+        )
+      }
     },
     {
       title: 'Thông tin liên hệ',
@@ -154,32 +173,52 @@ const RequestedPosts = () => {
       title: 'Địa chỉ',
       key: 'address',
       width: 200,
-      render: (_, record) => <Text>{record?.post_id?.city || 'Không rõ địa chỉ'}</Text>
+      render: (_, record) => {
+        // Add null check for post_id
+        if (!record?.post_id) {
+          return <Text>Không có dữ liệu</Text>
+        }
+        return <Text>{record?.post_id?.city || 'Không rõ địa chỉ'}</Text>
+      }
     },
     {
       title: 'Loại',
       key: 'type',
       width: 100,
-      render: (_, record) => (
-        <Tag color={record?.post_id?.type === 'exchange' ? 'green' : 'blue'}>
-          {record?.post_id?.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
-        </Tag>
-      )
+      render: (_, record) => {
+        // Add null check for post_id
+        if (!record?.post_id) {
+          return <Tag color="default">Không xác định</Tag>
+        }
+        return (
+          <Tag color={record?.post_id?.type === 'exchange' ? 'green' : 'blue'}>
+            {record?.post_id?.type === 'gift' ? 'Trao tặng' : 'Trao đổi'}
+          </Tag>
+        )
+      }
     },
     {
       title: 'Trạng thái',
       key: 'status',
       width: 120,
-      render: (_, record) => getStatusTag(record.post_id.status, record.status)
+      render: (_, record) => {
+        // Add null check for post_id
+        if (!record?.post_id) {
+          return <Tag color="default">Không xác định</Tag>
+        }
+        return getStatusTag(record.post_id.status, record.status)
+      }
     },
     {
       title: 'Hành động',
       key: 'action',
       width: 120,
       render: (_, record) => {
-        record.post_id.status === 'inactive' && record.status === 'accepted' && (
-          <Button className="button-qr" icon={<QrcodeOutlined />} onClick={() => handleOpenQr(record)} />
-        )
+        // Fix the return statement and add proper null checking
+        if (record?.post_id && record.post_id.status === 'inactive' && record.status === 'accepted') {
+          return <Button className="button-qr" icon={<QrcodeOutlined />} onClick={() => handleOpenQr(record)} />
+        }
+        return null
       }
     }
   ]
@@ -187,60 +226,73 @@ const RequestedPosts = () => {
   const renderCardView = (requests = activePosts) => (
     <Row gutter={[16, 16]} className="card-grid">
       {requests.length > 0 ? (
-        requests.map(request => (
-          <Col xs={24} sm={12} md={8} lg={6} xl={6} xxl={30} key={request.id}>
-            <Card
-              hoverable
-              className="item-card"
-              onClick={e => handlePostClick(request, e)}
-              cover={
-                <div className="image-wrapper">
-                  <Image
-                    src={
-                      request?.post_id?.image_url[0]
-                        ? `${URL_SERVER_IMAGE}${request.post_id.image_url[0]}`
-                        : imgNotFound
-                    }
-                    alt={request.post_id?.title}
-                    fallback={avt}
-                    preview={false}
-                  />
-                  <Badge.Ribbon
-                    text={request.post_id.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
-                    color={request.post_id.type === 'exchange' ? 'blue' : 'red'}
-                    className="post-type-ribbon"
-                  />
-                  {request.post_id.isPtiterOnly && <img className="logo_ptit_req" src={logoptit} alt="logo_ptit" />}
-                </div>
-              }
-              bodyStyle={{ padding: '12px', height: 'auto' }}
-            >
-              <div className="card-content">
-                <Typography.Title level={5} ellipsis className="card-title">
-                  {request.post_id.title}
-                </Typography.Title>
+        requests.map(request => {
+          // Add null check for post_id
+          if (!request?.post_id) {
+            return (
+              <Col xs={24} sm={12} md={8} lg={6} xl={6} xxl={30} key={request.id || Math.random()}>
+                <Card hoverable className="item-card">
+                  <Empty description="Dữ liệu lỗi" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                </Card>
+              </Col>
+            )
+          }
 
-                <div className="group-button-ok">
-                  <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
-                  {request.post_id.status === 'inactive' && request.status === 'accepted' && (
-                    <Button className="button-qr" icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
-                  )}
-                </div>
-
-                <div className="card-footer">
-                  <div className="user-info">
-                    <Avatar src={getAvatarPost(request?.post_id?.user_id)} size={20} />
-                    <Typography.Text className="user-name" ellipsis>
-                      {request?.post_id?.user_id?.name || 'Không xác định'}
-                    </Typography.Text>
+          return (
+            <Col xs={24} sm={12} md={8} lg={6} xl={6} xxl={30} key={request.id}>
+              <Card
+                hoverable
+                className="item-card"
+                onClick={e => handlePostClick(request, e)}
+                cover={
+                  <div className="image-wrapper">
+                    <Image
+                      src={
+                        request?.post_id?.image_url?.[0]
+                          ? `${URL_SERVER_IMAGE}${request.post_id.image_url[0]}`
+                          : imgNotFound
+                      }
+                      alt={request.post_id?.title}
+                      fallback={avt}
+                      preview={false}
+                    />
+                    <Badge.Ribbon
+                      text={request.post_id.type === 'exchange' ? 'Trao đổi' : 'Trao tặng'}
+                      color={request.post_id.type === 'exchange' ? 'blue' : 'red'}
+                      className="post-type-ribbon"
+                    />
+                    {request.post_id.isPtiterOnly && <img className="logo_ptit_req" src={logoptit} alt="logo_ptit" />}
                   </div>
-                </div>
+                }
+                bodyStyle={{ padding: '12px', height: 'auto' }}
+              >
+                <div className="card-content">
+                  <Typography.Title level={5} ellipsis className="card-title">
+                    {request.post_id.title}
+                  </Typography.Title>
 
-                <ContactInfoDisplay post={request} showInTable={false} />
-              </div>
-            </Card>
-          </Col>
-        ))
+                  <div className="group-button-ok">
+                    <div className="status-tags">{getStatusTag(request.post_id.status, request.status)}</div>
+                    {request.post_id.status === 'inactive' && request.status === 'accepted' && (
+                      <Button className="button-qr" icon={<QrcodeOutlined />} onClick={() => handleOpenQr(request)} />
+                    )}
+                  </div>
+
+                  <div className="card-footer">
+                    <div className="user-info">
+                      <Avatar src={getAvatarPost(request?.post_id?.user_id)} size={20} />
+                      <Typography.Text className="user-name" ellipsis>
+                        {request?.post_id?.user_id?.name || 'Không xác định'}
+                      </Typography.Text>
+                    </div>
+                  </div>
+
+                  <ContactInfoDisplay post={request} showInTable={false} />
+                </div>
+              </Card>
+            </Col>
+          )
+        })
       ) : (
         <Col span={24}>
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
