@@ -11,3 +11,5 @@ export const URL_CLIENT =
 export const URL_SERVER_IMAGE = URL_SERVER + '/static/'
 
 export const SITE_KEY = process.env.REACT_APP_API_SITE_KEY
+
+export const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID

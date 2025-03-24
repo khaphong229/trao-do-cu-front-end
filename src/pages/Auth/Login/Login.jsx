@@ -2,10 +2,10 @@ import React from 'react'
 import '../styles.scss'
 import { useDispatch } from 'react-redux'
 import { Form, Input, Button, Checkbox, message, Divider } from 'antd'
-import { UserOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons'
+import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { getCurrentUser, loginUser } from '../../../features/auth/authThunks'
-import URL_SERVER from 'config/url_server'
+import { getCurrentUser, loginUser, loginWithGoogle } from '../../../features/auth/authThunks'
+import { GoogleLogin } from '@react-oauth/google'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -48,8 +48,31 @@ const Login = () => {
     }
   }
 
-  const handleLoginGG = () => {
-    window.open(`${URL_SERVER}/auth/google`, '_self')
+  const handleGoogleLoginSuccess = async credentialResponse => {
+    try {
+      // Send the token ID to your backend
+      const responseLogin = await dispatch(
+        loginWithGoogle({
+          credential: credentialResponse.credential,
+          isAdmin: isAdminLogin
+        })
+      ).unwrap()
+
+      if (responseLogin.status === 200) {
+        const responseGetUser = await dispatch(getCurrentUser(isAdminLogin)).unwrap()
+        if (responseGetUser) {
+          message.success('Đăng nhập thành công')
+          const isSurvey = responseGetUser?.data?.isSurveyed
+          navigate(isAdminLogin ? '/admin/dashboard' : isSurvey ? '/' : '/survey')
+        }
+      }
+    } catch (error) {
+      message.error('Đăng nhập Google thất bại! Vui lòng thử lại.')
+    }
+  }
+
+  const handleGoogleLoginError = () => {
+    message.error('Đăng nhập Google thất bại! Vui lòng thử lại.')
   }
 
   return (
@@ -107,9 +130,16 @@ const Login = () => {
           {isAdminLogin || (
             <>
               <Divider plain>hoặc</Divider>
-              <Button type="default" className="authFormButton" onClick={handleLoginGG}>
-                <GoogleOutlined /> Google
-              </Button>
+              <div className="google-login-button">
+                <GoogleLogin
+                  onSuccess={handleGoogleLoginSuccess}
+                  onError={handleGoogleLoginError}
+                  useOneTap
+                  shape="rectangular"
+                  text="continue_with"
+                  width="100%"
+                />
+              </div>
               <p style={{ width: '100%', textAlign: 'center' }}>
                 Bạn chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
               </p>

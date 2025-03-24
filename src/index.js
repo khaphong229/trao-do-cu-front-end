@@ -11,20 +11,24 @@ import { configAntd, localeConfigAntd } from './config/antd'
 import './assets/scss/common.scss'
 import { HelmetProvider } from 'react-helmet-async'
 import ErrorBoundary from './components/common/ErrorBoundary'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import { GOOGLE_CLIENT_ID } from 'config/url_server'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <HelmetProvider>
     <ErrorBoundary>
-      <ConfigProvider
-        renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />}
-        theme={configAntd}
-        locale={localeConfigAntd}
-      >
-        <Provider store={store}>
-          <RouterProvider router={router} />
-        </Provider>
-      </ConfigProvider>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <ConfigProvider
+          renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />}
+          theme={configAntd}
+          locale={localeConfigAntd}
+        >
+          <Provider store={store}>
+            <RouterProvider router={router} />
+          </Provider>
+        </ConfigProvider>
+      </GoogleOAuthProvider>
     </ErrorBoundary>
   </HelmetProvider>
 )

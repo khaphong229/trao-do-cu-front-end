@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import AuthService from '../../services/authService'
 import { setAuthToken } from '../../utils/localStorageUtils'
 import { timeoutPromise } from 'utils/errorUtils'
+import axios from 'axios'
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
   const { isAdmin, ...data } = credentials
@@ -171,3 +172,25 @@ export const updateDefaultAddress = createAsyncThunk('auth/updateDefaultAddress'
     return rejectWithValue(error.response?.data || { message: 'Failed to update default address' })
   }
 })
+
+export const loginWithGoogle = createAsyncThunk(
+  'auth/loginWithGoogle',
+  async ({ credential, isAdmin }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(isAdmin ? '/api/auth/admin/google-login' : '/auth/login-success', {
+        credential
+      })
+
+      if (response.data && response.data.data && response.data.data.access_token) {
+        setAuthToken(response.data.data.access_token)
+      }
+
+      return response.data
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || 'Đăng nhập Google thất bại',
+        status: error.response?.status
+      })
+    }
+  }
+)

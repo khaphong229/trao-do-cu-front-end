@@ -88,7 +88,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
       // Kiểm tra số điện thoại nếu đã nhập
       if (values.phone) {
         if (!validatePhoneNumber(values.phone)) {
-          message.error('Số điện thoại không đúng định dạng (VD: 0912345678)')
+          message.error('Số điện thoại không đúng định dạng (VD: 0364867748)')
           hasError = true
           setIsSubmitting(false)
           return
