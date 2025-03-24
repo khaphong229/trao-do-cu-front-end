@@ -9,6 +9,8 @@ export const GiftRequestConfirmModal = ({ onConfirm }) => {
   const { isAcceptModalVisible, isLoading } = useSelector(state => state.giftRequest)
   const [localLoading, setLocalLoading] = React.useState(false)
   const { selectedPostExchange } = useSelector(state => state.exchangeRequest)
+  const requiredCoin = selectedPostExchange?.pcoin_config?.required_amount
+
   const handleOk = async () => {
     try {
       setLocalLoading(true)
@@ -31,7 +33,8 @@ export const GiftRequestConfirmModal = ({ onConfirm }) => {
     if (selectedPostExchange?.pcoin_config) {
       if (
         selectedPostExchange?.pcoin_config?.required_amount === 0 ||
-        selectedPostExchange?.pcoin_config?.required_amount === undefined
+        selectedPostExchange?.pcoin_config?.required_amount === undefined ||
+        selectedPostExchange?.pcoin_config?.required_amount === null
       ) {
         return 'Sản phẩm này miễn phí nhé bạn!'
       } else {
@@ -51,7 +54,8 @@ export const GiftRequestConfirmModal = ({ onConfirm }) => {
       cancelText="Hủy"
     >
       {selectedPostExchange?.pcoin_config?.required_amount !== 0 &&
-        selectedPostExchange?.pcoin_config?.required_amount !== undefined && (
+        selectedPostExchange?.pcoin_config?.required_amount !== undefined &&
+        selectedPostExchange?.pcoin_config?.required_amount !== null && (
           <Alert
             style={{
               marginBottom: 10
