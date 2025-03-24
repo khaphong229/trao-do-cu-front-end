@@ -14,47 +14,47 @@ import { URL_SERVER_IMAGE } from 'config/url_server'
 import { approvalStatus, getPostAdminPagination } from 'features/admin/post/postAdminThunks'
 
 const { Option } = Select
-const { TextArea } = Input
-const { Dragger } = Upload
+// const { TextArea } = Input
+// const { Dragger } = Upload
 
-// Custom styles to remove dotted lines
-const customStyles = {
-  noDottedLines: {
-    border: 'none',
-    outline: 'none',
-    background: 'transparent'
-  },
-  uploadArea: {
-    border: '2px dashed #d9d9d9',
-    borderRadius: '8px',
-    background: '#fafafa',
-    transition: 'border-color 0.3s'
-  },
-  uploadAreaHover: {
-    borderColor: '#40a9ff'
-  },
-  imageGallery: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  imageGrid: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center'
-  },
-  imageContainer: {
-    width: '200px',
-    height: '200px',
-    margin: '8px',
-    overflow: 'hidden',
-    borderRadius: '4px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-  },
-  editButton: {
-    marginTop: '16px'
-  }
-}
+// // Custom styles to remove dotted lines
+// const customStyles = {
+//   noDottedLines: {
+//     border: 'none',
+//     outline: 'none',
+//     background: 'transparent'
+//   },
+//   uploadArea: {
+//     border: '2px dashed #d9d9d9',
+//     borderRadius: '8px',
+//     background: '#fafafa',
+//     transition: 'border-color 0.3s'
+//   },
+//   uploadAreaHover: {
+//     borderColor: '#40a9ff'
+//   },
+//   imageGallery: {
+//     display: 'flex',
+//     flexDirection: 'column',
+//     alignItems: 'center'
+//   },
+//   imageGrid: {
+//     display: 'flex',
+//     flexWrap: 'wrap',
+//     justifyContent: 'center'
+//   },
+//   imageContainer: {
+//     width: '200px',
+//     height: '200px',
+//     margin: '8px',
+//     overflow: 'hidden',
+//     borderRadius: '4px',
+//     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+//   },
+//   editButton: {
+//     marginTop: '16px'
+//   }
+// }
 
 const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, onSuccessUpdate }) => {
   const [form] = Form.useForm()
@@ -142,52 +142,52 @@ const PostFormModal = ({ visible, isEditing, initialPost, onClose, categories, o
     }
   }
 
-  const handleImageUpload = info => {
-    // Filter out files with error or uploading status
-    let fileList = info.fileList.filter(file => file.status !== 'error')
+  // const handleImageUpload = info => {
+  //   // Filter out files with error or uploading status
+  //   let fileList = info.fileList.filter(file => file.status !== 'error')
 
-    // For each file waiting to be uploaded, immediately set the status to 'done'
-    fileList = fileList.map(file => {
-      if (file.status === 'uploading') {
-        return { ...file, status: 'done', percent: 100 }
-      }
-      return file
-    })
+  //   // For each file waiting to be uploaded, immediately set the status to 'done'
+  //   fileList = fileList.map(file => {
+  //     if (file.status === 'uploading') {
+  //       return { ...file, status: 'done', percent: 100 }
+  //     }
+  //     return file
+  //   })
 
-    setImagePreview(fileList)
+  //   setImagePreview(fileList)
 
-    // Only add new files to imageFiles
-    const newFile = info.file
-    if (newFile.status === 'done' && newFile.originFileObj) {
-      setImageFiles(prevFiles => {
-        // Only add if not already in the array
-        if (!prevFiles.some(f => f.uid === newFile.uid)) {
-          return [...prevFiles, newFile.originFileObj]
-        }
-        return prevFiles
-      })
-    }
-  }
+  //   // Only add new files to imageFiles
+  //   const newFile = info.file
+  //   if (newFile.status === 'done' && newFile.originFileObj) {
+  //     setImageFiles(prevFiles => {
+  //       // Only add if not already in the array
+  //       if (!prevFiles.some(f => f.uid === newFile.uid)) {
+  //         return [...prevFiles, newFile.originFileObj]
+  //       }
+  //       return prevFiles
+  //     })
+  //   }
+  // }
 
-  // Remove file from both preview and upload list
-  const handleRemove = file => {
-    setImagePreview(preview => preview.filter(item => item.uid !== file.uid))
-    setImageFiles(files => files.filter(item => item.uid !== file.uid))
-    return true
-  }
+  // // Remove file from both preview and upload list
+  // const handleRemove = file => {
+  //   setImagePreview(preview => preview.filter(item => item.uid !== file.uid))
+  //   setImageFiles(files => files.filter(item => item.uid !== file.uid))
+  //   return true
+  // }
 
-  // Custom file list that can handle both existing and new uploads
-  const normFile = e => {
-    if (Array.isArray(e)) {
-      return e
-    }
-    return e && e.fileList
-  }
+  // // Custom file list that can handle both existing and new uploads
+  // const normFile = e => {
+  //   if (Array.isArray(e)) {
+  //     return e
+  //   }
+  //   return e && e.fileList
+  // }
 
-  // Add new function to handle edit mode toggle
-  const toggleEditMode = () => {
-    setIsEditingImages(!isEditingImages)
-  }
+  // // Add new function to handle edit mode toggle
+  // const toggleEditMode = () => {
+  //   setIsEditingImages(!isEditingImages)
+  // }
 
   // Modify the image display section
   const renderImageSection = () => {
