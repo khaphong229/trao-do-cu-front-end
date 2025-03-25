@@ -50,7 +50,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
   // Hàm kiểm tra số điện thoại Việt Nam
   const validatePhoneNumber = phone => {
     // Kiểm tra định dạng số điện thoại Việt Nam (bắt đầu bằng 0, có 10 số)
-    const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/
+    const phoneRegex = /(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/
     return phoneRegex.test(phone)
   }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import { Image, Input } from 'antd'
 import EmojiPicker from 'emoji-picker-react'
 import styles from '../scss/PostContent.module.scss'
@@ -7,14 +7,13 @@ import { updatePostData } from 'features/client/post/postSlice'
 import { updateRequestData } from 'features/client/request/exchangeRequest/exchangeRequestSlice'
 import { CloseOutlined } from '@ant-design/icons'
 import { URL_SERVER_IMAGE } from '../../../../../config/url_server'
+import debounce from 'lodash/debounce'
 
 const { TextArea } = Input
 
-// Main component that handles both post and exchange request content
 const PostContent = props => {
   const { contentType, ref2 } = props
 
-  // Check content type to determine which component to render
   if (contentType === 'exchange') {
     return <ExchangeRequestContent {...props} />
   } else {
@@ -22,28 +21,20 @@ const PostContent = props => {
   }
 }
 
-// Component for regular posts
-const RegularPostContent = ({ titleRef, imageRef, errorPost, setErrorPost, setUploadedImages, ref2 }) => {
+// Reusable function to create debounced update
+const createDebouncedUpdate = updateAction => {
+  return debounce(value => {
+    updateAction({ title: value })
+  }, 300) // 300ms delay before updating Redux
+}
+
+// Common file handling logic extracted to a hook
+const useFileHandling = (imageUrlKey, updateAction, setUploadedImages) => {
   const dispatch = useDispatch()
-  const { user } = useSelector(state => state.auth)
-  const { isShowEmoji, dataCreatePost } = useSelector(state => state.post)
 
-  // Handle title change for regular post form
-  const handleTitleChange = e => {
-    dispatch(updatePostData({ title: e.target.value }))
-    if (errorPost?.title) {
-      setErrorPost(prev => (prev ? { ...prev, title: null } : null))
-    }
-  }
-
-  const handleEmojiClick = emojiObject => {
-    const updatedDescription = (dataCreatePost.title || '') + emojiObject.emoji
-    dispatch(updatePostData({ title: updatedDescription }))
-  }
-
-  const handleRemoveFile = indexToRemove => {
-    const updatedFiles = dataCreatePost.image_url.filter((_, index) => index !== indexToRemove)
-    dispatch(updatePostData({ image_url: updatedFiles }))
+  const handleRemoveFile = (indexToRemove, currentImageUrls) => {
+    const updatedFiles = currentImageUrls.filter((_, index) => index !== indexToRemove)
+    dispatch(updateAction({ [imageUrlKey]: updatedFiles }))
 
     // If setUploadedImages is provided, call it with the updated files
     if (setUploadedImages) {
@@ -57,7 +48,7 @@ const RegularPostContent = ({ titleRef, imageRef, errorPost, setErrorPost, setUp
     return videoExtensions.some(ext => typeof filename === 'string' && filename.toLowerCase().endsWith(ext))
   }
 
-  const renderPreview = (file, index) => {
+  const renderPreview = (file, index, currentImageUrls) => {
     const fileUrl = typeof file === 'string' ? `${URL_SERVER_IMAGE}${file}` : URL.createObjectURL(file)
 
     if (isVideoFile(typeof file === 'string' ? file : file.name)) {
@@ -69,7 +60,7 @@ const RegularPostContent = ({ titleRef, imageRef, errorPost, setErrorPost, setUp
               Trình duyệt của bạn không hỗ trợ video.
             </video>
           </div>
-          <button className={styles.removeFileButton} onClick={() => handleRemoveFile(index)}>
+          <button className={styles.removeFileButton} onClick={() => handleRemoveFile(index, currentImageUrls)}>
             <CloseOutlined />
           </button>
         </div>
@@ -79,11 +70,53 @@ const RegularPostContent = ({ titleRef, imageRef, errorPost, setErrorPost, setUp
     return (
       <div key={index} className={styles.filePreviewContainer}>
         <Image src={fileUrl} alt={`Uploaded ${index + 1}`} className={styles.previewImage} />
-        <button className={styles.removeFileButton} onClick={() => handleRemoveFile(index)}>
+        <button className={styles.removeFileButton} onClick={() => handleRemoveFile(index, currentImageUrls)}>
           <CloseOutlined />
         </button>
       </div>
     )
+  }
+
+  return { handleRemoveFile, isVideoFile, renderPreview }
+}
+
+// Component for regular posts
+const RegularPostContent = ({ titleRef, imageRef, errorPost, setErrorPost, setUploadedImages, ref2 }) => {
+  const dispatch = useDispatch()
+  const { user } = useSelector(state => state.auth)
+  const { isShowEmoji, dataCreatePost } = useSelector(state => state.post)
+
+  // Local state for input
+  const [localTitle, setLocalTitle] = useState(dataCreatePost.title || '')
+
+  // Memoized debounced update function
+  const debouncedUpdatePostData = useMemo(
+    () => createDebouncedUpdate(data => dispatch(updatePostData(data))),
+    [dispatch]
+  )
+
+  // File handling hooks
+  const { renderPreview } = useFileHandling('image_url', updatePostData, setUploadedImages)
+
+  // Handle title change
+  const handleTitleChange = e => {
+    const newValue = e.target.value
+    setLocalTitle(newValue)
+
+    // Clear previous error if present
+    if (errorPost?.title) {
+      setErrorPost(prev => (prev ? { ...prev, title: null } : null))
+    }
+
+    // Debounced Redux update
+    debouncedUpdatePostData(newValue)
+  }
+
+  // Emoji click handler
+  const handleEmojiClick = emojiObject => {
+    const updatedDescription = (localTitle || '') + emojiObject.emoji
+    setLocalTitle(updatedDescription)
+    debouncedUpdatePostData(updatedDescription)
   }
 
   return (
@@ -96,19 +129,16 @@ const RegularPostContent = ({ titleRef, imageRef, errorPost, setErrorPost, setUp
           placeholder={
             errorPost?.title ? errorPost.title : `${user.name} ơi, bạn đang muốn trao đổi hay cho đi gì thế?`
           }
-          value={dataCreatePost.title || ''}
+          value={localTitle}
           onChange={handleTitleChange}
           style={{ width: '100%', borderRadius: '0' }}
-          // ref={el => {
-          //   setTimeout(() => el?.focus(), 0)
-          // }}
         />
       </div>
 
       <div ref={imageRef}>
         {dataCreatePost.image_url && dataCreatePost.image_url.length > 0 && (
           <div className={styles.uploadedFiles}>
-            {dataCreatePost.image_url.map((file, index) => renderPreview(file, index))}
+            {dataCreatePost.image_url.map((file, index) => renderPreview(file, index, dataCreatePost.image_url))}
           </div>
         )}
       </div>
@@ -122,68 +152,43 @@ const RegularPostContent = ({ titleRef, imageRef, errorPost, setErrorPost, setUp
   )
 }
 
-// Component for exchange requests
+// Component for exchange requests (similar structure)
 const ExchangeRequestContent = ({ titleRef, imageRef, errorPost, setErrorPost, uploadedImages, setUploadedImages }) => {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const { isShowEmoji, requestData } = useSelector(state => state.exchangeRequest)
 
-  // Handle title change for exchange form
+  // Local state for input
+  const [localTitle, setLocalTitle] = useState(requestData.title || '')
+
+  // Memoized debounced update function
+  const debouncedUpdateRequestData = useMemo(
+    () => createDebouncedUpdate(data => dispatch(updateRequestData(data))),
+    [dispatch]
+  )
+
+  // File handling hooks
+  const { renderPreview } = useFileHandling('image_url', updateRequestData, setUploadedImages)
+
+  // Handle title change
   const handleTitleChange = e => {
-    dispatch(updateRequestData({ title: e.target.value }))
+    const newValue = e.target.value
+    setLocalTitle(newValue)
+
+    // Clear previous error if present
     if (errorPost?.title) {
       setErrorPost(prev => (prev ? { ...prev, title: null } : null))
     }
+
+    // Debounced Redux update
+    debouncedUpdateRequestData(newValue)
   }
 
+  // Emoji click handler
   const handleEmojiClick = emojiObject => {
-    const updatedDescription = (requestData.title || '') + emojiObject.emoji
-    dispatch(updateRequestData({ title: updatedDescription }))
-  }
-
-  const handleRemoveFile = indexToRemove => {
-    const updatedFiles = requestData.image_url.filter((_, index) => index !== indexToRemove)
-    dispatch(updateRequestData({ image_url: updatedFiles }))
-
-    // If setUploadedImages is provided, call it with the updated files
-    if (setUploadedImages) {
-      setUploadedImages(updatedFiles)
-    }
-  }
-
-  const isVideoFile = filename => {
-    if (!filename) return false
-    const videoExtensions = ['.mp4', '.mov', '.avi']
-    return videoExtensions.some(ext => typeof filename === 'string' && filename.toLowerCase().endsWith(ext))
-  }
-
-  const renderPreview = (file, index) => {
-    const fileUrl = typeof file === 'string' ? `${URL_SERVER_IMAGE}${file}` : URL.createObjectURL(file)
-
-    if (isVideoFile(typeof file === 'string' ? file : file.name)) {
-      return (
-        <div key={index} className={styles.filePreviewContainer}>
-          <div className={styles.videoWrapper}>
-            <video className={styles.previewVideo} controls>
-              <source src={fileUrl} type="video/mp4" />
-              Trình duyệt của bạn không hỗ trợ video.
-            </video>
-          </div>
-          <button className={styles.removeFileButton} onClick={() => handleRemoveFile(index)}>
-            <CloseOutlined />
-          </button>
-        </div>
-      )
-    }
-
-    return (
-      <div key={index} className={styles.filePreviewContainer}>
-        <img src={fileUrl} alt={`Uploaded ${index + 1}`} className={styles.previewImage} />
-        <button className={styles.removeFileButton} onClick={() => handleRemoveFile(index)}>
-          <CloseOutlined />
-        </button>
-      </div>
-    )
+    const updatedDescription = (localTitle || '') + emojiObject.emoji
+    setLocalTitle(updatedDescription)
+    debouncedUpdateRequestData(updatedDescription)
   }
 
   return (
@@ -196,19 +201,16 @@ const ExchangeRequestContent = ({ titleRef, imageRef, errorPost, setErrorPost, u
           placeholder={
             errorPost?.title ? errorPost.title : `${user.name} ơi, hãy điền nội dung mô tả đồ bạn muốn đổi nhé!`
           }
-          value={requestData.title || ''}
+          value={localTitle}
           onChange={handleTitleChange}
           style={{ width: '100%', borderRadius: '0' }}
-          // ref={el => {
-          //   setTimeout(() => el?.focus(), 0)
-          // }}
         />
       </div>
 
       <div ref={imageRef}>
         {requestData.image_url && requestData.image_url.length > 0 && (
           <div className={styles.uploadedFiles}>
-            {requestData.image_url.map((file, index) => renderPreview(file, index))}
+            {requestData.image_url.map((file, index) => renderPreview(file, index, requestData.image_url))}
           </div>
         )}
       </div>

@@ -6,6 +6,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { getCurrentUser, loginUser, loginWithGoogle } from '../../../features/auth/authThunks'
 import { GoogleLogin } from '@react-oauth/google'
+import { jwtDecode } from 'jwt-decode'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -50,10 +51,16 @@ const Login = () => {
 
   const handleGoogleLoginSuccess = async credentialResponse => {
     try {
-      // Send the token ID to your backend
+      // Decode the JWT to get the user information
+      const decoded = jwtDecode(credentialResponse.credential)
+
+      // Extract the Google ID (sub field contains the Google user ID)
+      const googleId = decoded.sub
+
+      // Send the Google ID to your backend
       const responseLogin = await dispatch(
         loginWithGoogle({
-          credential: credentialResponse.credential,
+          googleId,
           isAdmin: isAdminLogin
         })
       ).unwrap()
@@ -68,6 +75,7 @@ const Login = () => {
       }
     } catch (error) {
       message.error('Đăng nhập Google thất bại! Vui lòng thử lại.')
+      // console.error('Google login error:', error)
     }
   }
 
