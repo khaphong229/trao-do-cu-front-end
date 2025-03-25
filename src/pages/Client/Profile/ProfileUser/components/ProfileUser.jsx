@@ -133,8 +133,8 @@ const ProfilePage = () => {
         }
       }
 
-      if (missingFields.length > 0) {
-        message.error(`Vui lòng điền đầy đủ thông tin: ${missingFields.join(', ')}`)
+      if (!hasPhone && !hasFacebook) {
+        message.error('Vui lòng cung cấp ít nhất một trong hai thông tin: Số điện thoại hoặc Facebook')
         return
       }
 
