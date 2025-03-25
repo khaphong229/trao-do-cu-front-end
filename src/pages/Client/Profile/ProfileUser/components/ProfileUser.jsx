@@ -106,8 +106,7 @@ const ProfilePage = () => {
       // Validate required fields
       const requiredFields = {
         name: 'Họ và tên',
-        phone: 'Số điện thoại',
-        gender: 'Giới tính'
+        phone: 'Số điện thoại'
       }
 
       const missingFields = []
