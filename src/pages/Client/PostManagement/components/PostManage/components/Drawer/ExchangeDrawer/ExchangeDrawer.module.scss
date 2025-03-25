@@ -185,17 +185,28 @@ $screen-xl: 1200px;
 
   @media (max-width: 768px) {
     width: 100%;
+    gap: 16px;
   }
 }
 
 .searchContainer {
-  flex: 0.3;
-  min-width: 100px;
+  flex: 0.9; // Increased from 0.3 to 0.5 to make it wider
+  min-width: 200px; // Increased minimum width
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 
   .searchInput {
     width: 100%;
-    height: 36px;
-    border-radius: 4px;
+    height: 20px; // Slightly taller input
+    border-radius: 6px;
+    
+    @media (max-width: 768px) {
+      width: 100%;
+      height: 35px; // Even taller on mobile
+      border-radius: 8px;
+    }
   }
 }
 

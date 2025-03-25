@@ -7,11 +7,11 @@ $success-color: #52c41a;
       transition: width 0.3s ease;
 
       @media (max-width: 1200px) {
-        width: 80% !important;
+        width: 70% !important;
       }
 
       @media (max-width: 768px) {
-        width: 100% !important;
+        width: 90% !important;
       }
 
       @media (max-width: 480px) {
@@ -20,10 +20,11 @@ $success-color: #52c41a;
     }
 
     .ant-drawer-body {
-      padding: 12px;
-      
+      padding: 16px;
+      overflow-y: auto;
+
       @media (max-width: 480px) {
-        padding: 8px;
+        padding: 12px;
       }
     }
 
@@ -76,12 +77,6 @@ $success-color: #52c41a;
     flex-direction: column;
     align-items: flex-start;
   }
-
-  @media (max-width: 480px) {
-    gap: 8px;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-  }
 }
 
 .registrationInfo {
@@ -97,7 +92,6 @@ $success-color: #52c41a;
 
     @media (max-width: 480px) {
       font-size: 16px;
-      line-height: 1.4;
     }
   }
 
@@ -113,18 +107,6 @@ $success-color: #52c41a;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 4px;
-
-  @media (max-width: 480px) {
-    gap: 4px;
-    
-    :global {
-      .ant-tag {
-        margin: 2px;
-        font-size: 12px;
-        padding: 0 6px;
-      }
-    }
-  }
 }
 
 .registrationImages {
@@ -134,12 +116,12 @@ $success-color: #52c41a;
   margin-top: 16px;
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 
   @media (max-width: 480px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
   }
 
   .registrationImage {
@@ -170,8 +152,8 @@ $success-color: #52c41a;
     }
 
     @media (max-width: 480px) {
-      padding: 12px;
-      margin-bottom: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
     }
   }
 
@@ -184,23 +166,8 @@ $success-color: #52c41a;
     gap: 12px;
 
     @media (max-width: 480px) {
-      margin-bottom: 12px;
-      gap: 8px;
-
-      .userInfo {
-        width: 100%;
-        justify-content: space-between;
-
-        .userName {
-          font-size: 14px;
-        }
-      }
-
-      .statusBadge {
-        width: 100%;
-        text-align: left;
-        font-size: 13px;
-      }
+      flex-direction: column;
+      align-items: flex-start;
     }
 
     .userInfo {
@@ -232,16 +199,14 @@ $success-color: #52c41a;
         }
 
         @media (max-width: 480px) {
-          font-size: 13px;
-
-          .ant-descriptions-item {
-            padding: 8px !important;
+          .ant-descriptions-header {
+            padding: 8px 12px;
           }
 
           .ant-descriptions-item-label,
           .ant-descriptions-item-content {
+            padding: 8px 12px;
             font-size: 13px;
-            line-height: 1.4;
           }
         }
       }
@@ -255,15 +220,16 @@ $success-color: #52c41a;
     margin-top: 16px;
 
     @media (max-width: 480px) {
-      flex-direction: row;
-      gap: 6px;
+      flex-direction: column;
+      width: 100%;
+    }
 
-      button {
-        flex: 1;
-        min-width: unset;
-        padding: 4px 8px;
-        height: 32px;
-        font-size: 13px;
+    button {
+      min-width: 100px;
+
+      @media (max-width: 480px) {
+        width: 100%;
+        margin-bottom: 8px;
       }
     }
   }
@@ -322,11 +288,6 @@ $success-color: #52c41a;
   margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 16px;
-
-  @media (max-width: 480px) {
-    gap: 8px;
-    margin-bottom: 12px;
-  }
 }
 .searchAndFilterContainer {
   display: flex;
@@ -334,38 +295,20 @@ $success-color: #52c41a;
   gap: 12px;
   flex: 1;
   max-width: 350px;
-
-  @media (max-width: 480px) {
-    max-width: 100%;
-    gap: 8px;
-  }
 }
 
 .searchContainer {
   flex: 1;
   min-width: 100px;
   max-width: 300px;
-
-  @media (max-width: 480px) {
-    max-width: 100%;
-  }
 }
 
 .filterContainer {
   min-width: 120px;
-
-  @media (max-width: 480px) {
-    min-width: 100px;
-  }
 }
 
 .randomButton {
   white-space: nowrap;
-
-  @media (max-width: 480px) {
-    width: 100%;
-    margin-top: 8px;
-  }
 }
 
 // CSS responsive cho màn hình nhỏ
@@ -425,23 +368,6 @@ $success-color: #52c41a;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   background-color: #f8f8f8;
-
-  @media (max-width: 480px) {
-    padding: 12px;
-
-    .winnerHeader {
-      margin-bottom: 12px;
-    }
-
-    .winnerInfo h3 {
-      font-size: 16px;
-    }
-
-    .winnerDetails p {
-      font-size: 13px;
-      margin: 6px 0;
-    }
-  }
 }
 
 .winnerHeader {
