@@ -103,21 +103,17 @@ const ProfilePage = () => {
 
   const handleUpdateMe = async () => {
     try {
-      // Validate required fields
-      const requiredFields = {
-        name: 'Họ và tên',
-        phone: 'Số điện thoại'
+      // Validate: require either phone or facebook
+      const hasPhone = !!formData.phone
+      const hasFacebook = !!formData.social_media?.facebook
+
+      if (!formData.name) {
+        message.error('Vui lòng điền họ và tên')
+        return
       }
 
-      const missingFields = []
-      for (const [field, label] of Object.entries(requiredFields)) {
-        if (!formData[field]) {
-          missingFields.push(label)
-        }
-      }
-
-      if (missingFields.length > 0) {
-        message.error(`Vui lòng điền đầy đủ thông tin: ${missingFields.join(', ')}`)
+      if (!hasPhone && !hasFacebook) {
+        message.error('Vui lòng cung cấp ít nhất một trong hai thông tin: Số điện thoại hoặc Facebook')
         return
       }
 
