@@ -50,7 +50,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
   // Hàm kiểm tra số điện thoại Việt Nam
   const validatePhoneNumber = phone => {
     // Kiểm tra định dạng số điện thoại Việt Nam (bắt đầu bằng 0, có 10 số)
-    const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/
+    const phoneRegex = /(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/
     return phoneRegex.test(phone)
   }
 
@@ -88,7 +88,7 @@ export const ContactInfoModal = ({ onSubmit }) => {
       // Kiểm tra số điện thoại nếu đã nhập
       if (values.phone) {
         if (!validatePhoneNumber(values.phone)) {
-          message.error('Số điện thoại không đúng định dạng (VD: 0912345678)')
+          message.error('Số điện thoại không đúng định dạng (VD: 0364867748)')
           hasError = true
           setIsSubmitting(false)
           return

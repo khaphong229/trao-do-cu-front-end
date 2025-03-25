@@ -171,3 +171,23 @@ export const updateDefaultAddress = createAsyncThunk('auth/updateDefaultAddress'
     return rejectWithValue(error.response?.data || { message: 'Failed to update default address' })
   }
 })
+
+export const loginWithGoogle = createAsyncThunk(
+  'auth/loginWithGoogle',
+  async ({ googleId, isAdmin }, { rejectWithValue }) => {
+    try {
+      const response = await AuthService.loginGoogle(googleId)
+
+      if (response.data && response.data.data && response.data.data.access_token) {
+        setAuthToken(response.data.data.access_token)
+      }
+
+      return response.data
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || 'Đăng nhập Google thất bại',
+        status: error.response?.status
+      })
+    }
+  }
+)

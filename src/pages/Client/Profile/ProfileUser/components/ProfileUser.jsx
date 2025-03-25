@@ -55,6 +55,16 @@ const ProfilePage = () => {
     return defaultAddress?.address || 'Chưa cung cấp'
   }
 
+  const validateFacebookURL = url => {
+    // Allow empty string
+    if (!url) return true
+
+    // Regular expression for Facebook URL validation
+    const facebookUrlRegex = /^(https?:\/\/)?(www\.)?facebook\.com\/[a-zA-Z0-9.]+\/?$/
+
+    return facebookUrlRegex.test(url)
+  }
+
   useEffect(() => {
     if (userData) {
       setFormData({
@@ -103,7 +113,13 @@ const ProfilePage = () => {
 
   const handleUpdateMe = async () => {
     try {
-      // Validate required fields
+      // Validate Facebook URL before updating
+      if (formData.social_media.facebook && !validateFacebookURL(formData.social_media.facebook)) {
+        message.error('Vui lòng nhập URL Facebook hợp lệ')
+        return
+      }
+
+      // Existing validation for required fields
       const requiredFields = {
         name: 'Họ và tên',
         phone: 'Số điện thoại',
@@ -117,10 +133,10 @@ const ProfilePage = () => {
         }
       }
 
-      if (missingFields.length > 0) {
-        message.error(`Vui lòng điền đầy đủ thông tin: ${missingFields.join(', ')}`)
-        return
-      }
+      // if (!hasPhone && !hasFacebook) {
+      //   message.error('Vui lòng cung cấp ít nhất một trong hai thông tin: Số điện thoại hoặc Facebook')
+      //   return
+      // }
 
       delete formData.address
       const response = await dispatch(updateUserProfile(formData)).unwrap()
@@ -327,7 +343,21 @@ const ProfilePage = () => {
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="facebook">Facebook</label>
-                <Input id="facebook" value={formData.social_media.facebook} onChange={handleInputChange} />
+                <Input
+                  id="facebook"
+                  value={formData.social_media.facebook}
+                  onChange={handleInputChange}
+                  status={
+                    formData.social_media.facebook && !validateFacebookURL(formData.social_media.facebook)
+                      ? 'error'
+                      : ''
+                  }
+                />
+                {formData.social_media.facebook && !validateFacebookURL(formData.social_media.facebook) && (
+                  <div style={{ color: 'red', marginTop: '5px' }}>
+                    Vui lòng nhập URL Facebook hợp lệ (ví dụ: https://www.facebook.com/username)
+                  </div>
+                )}
               </div>
               <div className={styles['form-group']}>
                 <label htmlFor="address">Địa chỉ mặc định</label>

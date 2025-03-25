@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Form, Input, Select, Button, Row, Col, message, Upload, InputNumber, Switch } from 'antd'
-import {
-  FileImageOutlined,
-  EnvironmentOutlined,
-  GiftOutlined,
-  WalletOutlined,
-  ShoppingOutlined,
-  ArrowLeftOutlined
-} from '@ant-design/icons'
+import { Modal, Form, Input, Select, Button, Row, Col, message, InputNumber, Switch } from 'antd'
+import { EnvironmentOutlined, GiftOutlined, WalletOutlined, ShoppingOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from '../../styles.module.scss'
 import { URL_SERVER_IMAGE } from 'config/url_server'
