@@ -133,10 +133,10 @@ const ProfilePage = () => {
         }
       }
 
-      if (!hasPhone && !hasFacebook) {
-        message.error('Vui lòng cung cấp ít nhất một trong hai thông tin: Số điện thoại hoặc Facebook')
-        return
-      }
+      // if (!hasPhone && !hasFacebook) {
+      //   message.error('Vui lòng cung cấp ít nhất một trong hai thông tin: Số điện thoại hoặc Facebook')
+      //   return
+      // }
 
       delete formData.address
       const response = await dispatch(updateUserProfile(formData)).unwrap()
