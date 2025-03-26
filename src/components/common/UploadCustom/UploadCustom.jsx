@@ -27,7 +27,7 @@ function UploadCustom(props) {
         response = await dispatch(uploadExchangeImages(file)).unwrap()
       }
 
-      message.success('Tải ảnh thành công') // Changed to "Tải ảnh thành công"
+      message.success('Tải ảnh/video thành công!') // Changed to "Tải ảnh thành công"
 
       // Check if this is the last file uploading
       const updatedFileList = fileList.map(f => (f.uid === file.uid ? { ...f, status: 'done' } : f))
@@ -36,7 +36,7 @@ function UploadCustom(props) {
         setIsLoading(false) // Force loading to false when all uploads complete
       }
     } catch (error) {
-      message.error('Tải ảnh thất bại') // Changed to "Tải ảnh thất bại"
+      message.error('Tải ảnh/video lên thất bại! Vui lòng thử lại.') // Changed to "Tải ảnh thất bại"
 
       // Check if all files are now either done or error
       const updatedFileList = fileList.map(f => (f.uid === file.uid ? { ...f, status: 'error' } : f))
@@ -79,9 +79,9 @@ function UploadCustom(props) {
     }
 
     if (isVideo) {
-      const isValidSize = file.size / 1024 / 1024 < 10
+      const isValidSize = file.size / 1024 / 1024 < 5
       if (!isValidSize) {
-        message.error('Mỗi video phải nhỏ hơn 10MB!')
+        message.error('Mỗi video phải nhỏ hơn 5MB!')
         setIsLoading(false)
         return Upload.LIST_IGNORE
       }

@@ -11,11 +11,14 @@ const exchangeRequestService = {
       params: { post_id, user_req_id }
     })
   },
-  getMyRequestedExchange(status) {
-    let path = '/request_exchange/me'
+  getMyRequestedExchange(params = {}) {
+    const { status = null, pageSize = 10, current = 1 } = params
+    let path = `/request_exchange/me?pageSize=${pageSize}&current=${current}`
+
     if (status !== null) {
-      path += `?status=${status}`
+      path += `&status=${status}`
     }
+
     return this.http.get(path)
   },
 

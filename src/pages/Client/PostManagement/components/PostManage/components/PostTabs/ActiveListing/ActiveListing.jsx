@@ -1,5 +1,20 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Tabs, Typography, Badge, Button, Table, Image, Space, Card, Row, Col, Empty, Modal, Spin } from 'antd'
+import {
+  Tabs,
+  Typography,
+  Badge,
+  Button,
+  Table,
+  Image,
+  Space,
+  Card,
+  Row,
+  Col,
+  Empty,
+  Modal,
+  Spin,
+  Pagination
+} from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { RegistrationDrawer } from '../../Drawer/RegistrationDrawer/RegistrationDrawer'
 import { getPostGiftPagination } from 'features/client/post/postThunks'
@@ -407,6 +422,9 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
       </div>
 
       <Spin spinning={isTabLoading || isLoading}>
+        {activePosts.length === 0 && viewMode === 'card' && (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
+        )}
         {viewMode === 'table' ? (
           <Table
             columns={columns}
@@ -426,11 +444,22 @@ export const ActiveListings = ({ activeSubTab, setActiveSubTab, refreshKey, isAc
             })}
           />
         ) : (
-          renderCardView()
-        )}
-
-        {activePosts.length === 0 && viewMode === 'card' && (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
+          <>
+            <div>
+              {renderCardView()}
+              <div className={styles.cardPagination}>
+                <Pagination
+                  current={pagination.current}
+                  pageSize={pagination.pageSize}
+                  total={pagination.total}
+                  showSizeChanger
+                  showTotal={(total, range) => `${range[0]} - ${range[1]} của ${total} sản phẩm`}
+                  onChange={(page, pageSize) => handleTableChange({ current: page, pageSize })}
+                  onShowSizeChange={(current, size) => handleTableChange({ current, pageSize: size })}
+                />
+              </div>
+            </div>
+          </>
         )}
       </Spin>
 
