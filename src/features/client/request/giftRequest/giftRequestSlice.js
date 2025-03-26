@@ -63,7 +63,7 @@ const giftRequestSlice = createSlice({
       })
       .addCase(getMyRequestedGift.fulfilled, (state, action) => {
         state.isLoading = false
-        state.requests = action.payload.data.requests
+        state.requests = action.payload.data
       })
       .addCase(getMyRequestedGift.rejected, (state, action) => {
         state.isLoading = false

@@ -105,7 +105,7 @@ const exchangeRequestSlice = createSlice({
       })
       .addCase(getMyRequestedExchange.fulfilled, (state, action) => {
         state.isLoading = false
-        state.requests = action.payload.data.requests
+        state.requests = action.payload.data
       })
       .addCase(getMyRequestedExchange.rejected, (state, action) => {
         state.isLoading = false

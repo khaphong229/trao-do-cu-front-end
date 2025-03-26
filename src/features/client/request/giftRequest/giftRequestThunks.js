@@ -34,10 +34,16 @@ export const checkRequestedGift = createAsyncThunk(
 
 export const getMyRequestedGift = createAsyncThunk(
   'giftRequest/getMyRequestedGift',
-  async (status, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const response = await giftRequestService.getMyRequestedGift(status)
-      return response.data
+      const response = await giftRequestService.getMyRequestedGift(params)
+
+      return {
+        data: response.data.data.requests,
+        total: response.data.data.total,
+        current: response.data.data.current,
+        pageSize: response.data.data.limit
+      }
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Có lỗi xảy ra')
     }

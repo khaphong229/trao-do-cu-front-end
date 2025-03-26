@@ -1,5 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Avatar, Tag, Image, Typography, Tabs, Card, Row, Col, Empty, Badge, Button, Spin } from 'antd'
+import {
+  Table,
+  Avatar,
+  Tag,
+  Image,
+  Typography,
+  Tabs,
+  Card,
+  Row,
+  Col,
+  Empty,
+  Badge,
+  Button,
+  Spin,
+  Pagination
+} from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { TableOutlined, AppstoreOutlined, QrcodeOutlined } from '@ant-design/icons'
 import avt from 'assets/images/logo/avtDefault.webp'
@@ -36,9 +51,19 @@ const RequestedPosts = () => {
   const exchangeRequests = useSelector(state => state.exchangeRequest.requests)
 
   useEffect(() => {
-    dispatch(getMyRequestedGift(null))
-    dispatch(getMyRequestedExchange(null))
-  }, [dispatch])
+    dispatch(
+      getMyRequestedGift({
+        current: pagination.current,
+        pageSize: pagination.pageSize
+      })
+    )
+    dispatch(
+      getMyRequestedExchange({
+        current: pagination.current,
+        pageSize: pagination.pageSize
+      })
+    )
+  }, [dispatch, pagination])
 
   const handleOpenQr = post => {
     setQrCode(post.qrCode)
@@ -298,6 +323,17 @@ const RequestedPosts = () => {
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
         </Col>
       )}
+      <div className="card-pagination">
+        <Pagination
+          current={pagination.current}
+          pageSize={pagination.pageSize}
+          total={activePosts.length}
+          showSizeChanger
+          showTotal={(total, range) => `${range[0]} - ${range[1]} của ${total} sản phẩm`}
+          onChange={(page, pageSize) => handleTableChange({ current: page, pageSize })}
+          onShowSizeChange={(current, size) => handleTableChange({ current, pageSize: size })}
+        />
+      </div>
     </Row>
   )
 
@@ -383,7 +419,7 @@ const RequestedPosts = () => {
             pagination={{
               ...pagination,
               showSizeChanger: true,
-              showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} bài đăng`
+              showTotal: (total, range) => `${range[0]} - ${range[1]} của ${total} sản phẩm`
             }}
             onChange={handleTableChange}
             loading={isLoading}
