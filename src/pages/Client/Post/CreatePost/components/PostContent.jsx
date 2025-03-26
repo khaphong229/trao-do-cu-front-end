@@ -42,16 +42,41 @@ const useFileHandling = (imageUrlKey, updateAction, setUploadedImages) => {
     }
   }
 
-  const isVideoFile = filename => {
-    if (!filename) return false
-    const videoExtensions = ['.mp4', '.mov', '.avi']
-    return videoExtensions.some(ext => typeof filename === 'string' && filename.toLowerCase().endsWith(ext))
+  const isVideoFile = file => {
+    if (!file) return false
+
+    if (typeof file === 'string') {
+      const videoExtensions = ['.mp4', '.mov', '.avi']
+      return videoExtensions.some(ext => file.toLowerCase().endsWith(ext))
+    } else if (file.type) {
+      // For File objects
+      const videoTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo']
+      return videoTypes.includes(file.type)
+    }
+    return false
   }
 
   const renderPreview = (file, index, currentImageUrls) => {
-    const fileUrl = typeof file === 'string' ? `${URL_SERVER_IMAGE}${file}` : URL.createObjectURL(file)
+    // Handle both server URLs and File objects
+    let fileUrl
+    if (typeof file === 'string') {
+      // String URLs from server
+      fileUrl = `${URL_SERVER_IMAGE}${file}`
+    } else if (file instanceof File) {
+      // Direct File objects (or Blob)
+      fileUrl = URL.createObjectURL(file)
+    } else if (file && file.originFileObj) {
+      // Ant Design Upload file objects
+      fileUrl = URL.createObjectURL(file.originFileObj)
+    } else {
+      // Fallback
+      console.warn('Unknown file type:', file)
+      return null
+    }
 
-    if (isVideoFile(typeof file === 'string' ? file : file.name)) {
+    const fileToCheck = file instanceof File ? file : file && file.originFileObj ? file.originFileObj : file
+
+    if (isVideoFile(fileToCheck)) {
       return (
         <div key={index} className={styles.filePreviewContainer}>
           <div className={styles.videoWrapper}>

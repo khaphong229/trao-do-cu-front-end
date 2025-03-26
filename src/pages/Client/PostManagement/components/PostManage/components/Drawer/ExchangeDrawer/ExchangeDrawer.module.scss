@@ -132,6 +132,37 @@ $screen-xl: 1200px;
     color: rgba(0, 0, 0, 0.85);
   }
 }
+// Thêm CSS cho phần image trong các request
+.imagePost {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+
+  @media (min-width: $screen-sm) {
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 10px;
+  }
+
+  @media (min-width: $screen-md) {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 12px;
+  }
+
+  .imgPostItem {
+    aspect-ratio: 1;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    object-fit: cover;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.03);
+    }
+  }
+}
 
 .statusBadge {
   &.accepted {
@@ -192,7 +223,7 @@ $screen-xl: 1200px;
 .searchContainer {
   flex: 0.9; // Increased from 0.3 to 0.5 to make it wider
   min-width: 200px; // Increased minimum width
-  
+
   @media (max-width: 768px) {
     width: 100%;
   }
@@ -201,7 +232,7 @@ $screen-xl: 1200px;
     width: 100%;
     height: 20px; // Slightly taller input
     border-radius: 6px;
-    
+
     @media (max-width: 768px) {
       width: 100%;
       height: 35px; // Even taller on mobile

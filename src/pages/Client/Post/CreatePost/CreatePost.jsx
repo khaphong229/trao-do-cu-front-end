@@ -34,6 +34,8 @@ const CreatePostModal = () => {
   }, [isCreateModalVisible, dispatch])
 
   const validateSubmit = async formData => {
+    // formData now has the actual image URLs after upload in handleSubmit
+
     const postData = {
       ...formData,
       isApproved: false // Mặc định bài đăng chưa được duyệt
