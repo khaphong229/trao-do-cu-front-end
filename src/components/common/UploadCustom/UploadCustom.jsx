@@ -70,9 +70,9 @@ function UploadCustom(props) {
     }
 
     if (isImage) {
-      const isValidSize = file.size / 1024 / 1024 < 2
+      const isValidSize = file.size / 1024 / 1024 < 5
       if (!isValidSize) {
-        message.error('Mỗi ảnh phải nhỏ hơn 2MB!')
+        message.error('Mỗi ảnh phải nhỏ hơn 5MB!')
         setIsLoading(false)
         return Upload.LIST_IGNORE
       }
