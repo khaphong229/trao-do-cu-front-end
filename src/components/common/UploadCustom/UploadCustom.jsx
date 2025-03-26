@@ -70,18 +70,18 @@ function UploadCustom(props) {
     }
 
     if (isImage) {
-      const isValidSize = file.size / 1024 / 1024 < 5
+      const isValidSize = file.size / 1024 / 1024 < 2
       if (!isValidSize) {
-        message.error('Mỗi ảnh phải nhỏ hơn 5MB!')
+        message.error('Mỗi ảnh phải nhỏ hơn 2MB!')
         setIsLoading(false)
         return Upload.LIST_IGNORE
       }
     }
 
     if (isVideo) {
-      const isValidSize = file.size / 1024 / 1024 < 10
+      const isValidSize = file.size / 1024 / 1024 < 5
       if (!isValidSize) {
-        message.error('Mỗi video phải nhỏ hơn 10MB!')
+        message.error('Mỗi video phải nhỏ hơn 5MB!')
         setIsLoading(false)
         return Upload.LIST_IGNORE
       }
