@@ -60,9 +60,9 @@ const handleDataCategory = categories => {
       children: []
     }
 
-    if (category.children && category.children.length > 0) {
-      formattedCategory.children = handleDataCategory(category.children)
-    }
+    // if (category.children && category.children.length > 0) {
+    //   formattedCategory.children = handleDataCategory(category.children)
+    // }
 
     return formattedCategory
   })

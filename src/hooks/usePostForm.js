@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { message } from 'antd'
-import { uploadPostImages } from 'features/upload/uploadThunks'
+import { uploadExchangeImages, uploadPostImages } from 'features/upload/uploadThunks'
 import useDefaultLocation from './useDefaultLocation'
-import notifi from 'utils/notifi'
 
 export const usePostForm = ({ type, updateData, validateSubmit, formData, user, isModalVisible, dispatch }) => {
   const [errorPost, setErrorPost] = useState(null)
@@ -108,7 +107,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     setErrorPost(Object.keys(errors).length > 0 ? errors : null)
 
     if (Object.keys(errors).length > 0) {
-      message.error(String(Object.values(errors)[0])) // Ensure this is a string
+      message.error(String(Object.values(errors)[0]))
 
       // If category error exists, open category modal immediately
       if (errors.category_id) {
@@ -121,7 +120,67 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
     }
 
     try {
-      await validateSubmit(formData)
+      // Check which items in image_url are actual File objects
+      const fileObjects = []
+      const serverUrls = []
+
+      // Filter and organize images
+      if (formData.image_url && formData.image_url.length > 0) {
+        formData.image_url.forEach(item => {
+          if (typeof item === 'string') {
+            // If it's already a server URL (not a blob URL)
+            if (!item.startsWith('blob:')) {
+              serverUrls.push(item)
+            }
+          } else if (item instanceof File) {
+            // If it's a File object
+            fileObjects.push(item)
+          } else if (item && item.originFileObj) {
+            // If it's an Ant Design Upload file object
+            fileObjects.push(item.originFileObj)
+          }
+        })
+      }
+
+      // If there are files to upload
+      let uploadedUrls = []
+      if (fileObjects.length > 0) {
+        message.loading('Đang tải ảnh lên...', 0)
+
+        try {
+          // Upload files using the appropriate field name based on type
+          // This ensures the backend sees the field name 'post' or 'exchange'
+          const uploadType = type === 'exchange' ? 'exchange' : 'post'
+
+          if (type === 'exchange') {
+            const response = await dispatch(uploadExchangeImages(fileObjects)).unwrap()
+            // Extract the URLs from the response based on the backend structure
+            uploadedUrls = response.files ? response.files.map(file => file.filepath) : []
+          } else {
+            const response = await dispatch(uploadPostImages(fileObjects)).unwrap()
+            // Extract the URLs from the response based on the backend structure
+            uploadedUrls = response.files ? response.files.map(file => file.filepath) : []
+          }
+
+          message.destroy()
+        } catch (error) {
+          message.destroy()
+          message.error('Tải ảnh thất bại! Vui lòng thử lại.')
+          return
+        }
+      }
+
+      // Combine server URLs with newly uploaded URLs
+      const allImageUrls = [...serverUrls, ...uploadedUrls]
+
+      // Create updated formData with all image URLs
+      const updatedFormData = {
+        ...formData,
+        image_url: allImageUrls
+      }
+
+      // Now proceed with the submission
+      await validateSubmit(updatedFormData)
     } catch (error) {
       if (error.status === 400) {
         const newErrors = {}
@@ -131,8 +190,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
           newErrors[field] = msg
 
           if (!hasDisplayedError) {
-            // message.error(String(msg)) // Ensure this is a string
-            notifi.error('Tạo bài đăng sản phẩm thất bại', String(msg))
+            message.error(String(msg))
             hasDisplayedError = true
           }
         })
@@ -141,7 +199,8 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
         setErrorPost(error?.detail || error?.data)
         scrollToFirstError(newErrors)
       } else {
-        // console.error('Đã xảy ra lỗi. Vui lòng thử lại sau.')
+        console.error('Submission error:', error)
+        message.error('Đã xảy ra lỗi. Vui lòng thử lại sau.')
       }
     }
   }
@@ -178,7 +237,7 @@ export const usePostForm = ({ type, updateData, validateSubmit, formData, user, 
         }
       }
     } catch (error) {
-      message.error('Tải ảnh thất bại')
+      message.error('Tải ảnh thất bại! Vui lòng thử lại.')
 
       // Set image error
       setFormErrors(prev => ({

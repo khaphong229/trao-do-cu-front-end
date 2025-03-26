@@ -348,6 +348,16 @@ export const ExchangeDrawer = ({
                 </Descriptions.Item>
               </Descriptions>
             </div>
+            <div className={styles.imagePost}>
+              {request.image_url?.map((img, index) => (
+                <Image
+                  className={styles.imgItem}
+                  key={index}
+                  src={`${URL_SERVER_IMAGE}${img}`}
+                  alt={`Post image ${index + 1}`}
+                />
+              ))}
+            </div>
 
             {/* <div className={styles.requestActions}>
               {request.status === 'accepted' ? (
