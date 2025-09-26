@@ -9,7 +9,6 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.22.2",
     "axios": "^1.7.8",
-    "cross-env": "^7.0.3",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "emoji-picker-react": "^4.12.0",
@@ -71,6 +70,7 @@
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^7.0.2",
     "@react-oauth/google": "^0.12.1",
+    "cross-env": "^10.0.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "jwt-decode": "^4.0.0",
     "postcss": "^8.5.1",
